@@ -3,7 +3,9 @@ import mongoose from 'mongoose';
 const ColorSchema = new mongoose.Schema({
   name: { type: String, required: true },
   hex: { type: String, required: true },
+  image: { type: String, default: '' },
 });
+
 
 const ProductSchema = new mongoose.Schema(
   {

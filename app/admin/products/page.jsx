@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Plus, Edit, Trash2, Search, Upload, X, ArrowLeft, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Upload, X, ArrowLeft, Palette, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 
 const ALL_AVAILABLE_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
@@ -15,6 +15,15 @@ const SAMPLE_PRESET_IMAGES = [
   { name: 'Anime Manga Print', url: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=800&q=80' },
   { name: 'Minimalist Line Art', url: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=800&q=80' },
   { name: 'Artist Drop Hoodie', url: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?auto=format&fit=crop&w=800&q=80' },
+];
+
+const PRESET_COLOR_VARIANTS = [
+  { name: 'Pitch Black', hex: '#0f172a', image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Off White', hex: '#f8fafc', image: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Washed Charcoal', hex: '#334155', image: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Royal Navy', hex: '#1e3a8a', image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Crimson Maroon', hex: '#881337', image: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Olive Green', hex: '#3f6212', image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80' },
 ];
 
 // Helper to compress local uploaded image files before sending to server (prevents 413 Payload Too Large)
@@ -81,7 +90,7 @@ export default function AdminProductsPage() {
     stock: '25',
     images: [''],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    colors: [{ name: 'Black', hex: '#0f172a' }],
+    colors: PRESET_COLOR_VARIANTS.slice(0, 3),
     isFeatured: false,
     isTrending: false,
     isBestSeller: false,
@@ -124,7 +133,7 @@ export default function AdminProductsPage() {
       stock: '25',
       images: ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80'],
       sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-      colors: [{ name: 'Black', hex: '#0f172a' }],
+      colors: PRESET_COLOR_VARIANTS.slice(0, 3),
       isFeatured: false,
       isTrending: false,
       isBestSeller: false,
@@ -144,7 +153,7 @@ export default function AdminProductsPage() {
       stock: product.stock.toString(),
       images: product.images && product.images.length > 0 ? product.images : ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80'],
       sizes: product.sizes || ['S', 'M', 'L', 'XL'],
-      colors: product.colors || [{ name: 'Black', hex: '#0f172a' }],
+      colors: product.colors && product.colors.length > 0 ? product.colors : PRESET_COLOR_VARIANTS.slice(0, 2),
       isFeatured: product.isFeatured || false,
       isTrending: product.isTrending || false,
       isBestSeller: product.isBestSeller || false,
@@ -184,7 +193,6 @@ export default function AdminProductsPage() {
 
     try {
       setUploadingImage(true);
-      // Compress local image file to lightweight ~40KB JPEG Data URL to avoid payload size limit
       const compressedDataUrl = await compressImage(file, 800, 1000, 0.75);
       const dataUrl = compressedDataUrl || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80';
 
@@ -198,9 +206,9 @@ export default function AdminProductsPage() {
 
       setFormData((prev) => ({
         ...prev,
-        images: [finalUrl, ...prev.images.filter(Boolean)],
+        images: Array.from(new Set([finalUrl, ...prev.images])).filter(Boolean),
       }));
-      addToast('Local image compressed & uploaded!', 'success');
+      addToast('Image uploaded successfully!', 'success');
     } catch (e) {
       console.error('Image Upload Error:', e);
       addToast('Image uploaded locally', 'info');
@@ -221,11 +229,16 @@ export default function AdminProductsPage() {
       const url = editingId ? `/api/products/${editingId}` : '/api/products';
       const method = editingId ? 'PUT' : 'POST';
 
+      // Gather all color images into product images list
+      const colorImages = (formData.colors || []).map(c => c.image).filter(Boolean);
+      const combinedImages = Array.from(new Set([...colorImages, ...formData.images])).filter(Boolean);
+
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
+          images: combinedImages.length > 0 ? combinedImages : ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80'],
           price: parseFloat(formData.price),
           originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : parseFloat(formData.price),
           stock: parseInt(formData.stock, 10),
@@ -256,7 +269,7 @@ export default function AdminProductsPage() {
             <ArrowLeft size={16} /> Back
           </button>
           <h1>Product Management</h1>
-          <p>Add, edit, or manage clothing items, gender filters (Men/Women/Unisex), and available sizes.</p>
+          <p>Add, edit, or manage clothing items, color-wise t-shirt photos, gender filters, and sizes.</p>
         </div>
         <button onClick={handleOpenAddModal} className="btn btn-primary">
           <Plus size={18} /> Add New Clothes Product
@@ -286,10 +299,10 @@ export default function AdminProductsPage() {
               <th>Product Name</th>
               <th>Gender</th>
               <th>Category</th>
+              <th>Color Variants</th>
               <th>Sizes Available</th>
               <th>Price</th>
               <th>Stock</th>
-              <th>Badges</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -312,6 +325,22 @@ export default function AdminProductsPage() {
                   </td>
                   <td><span className="badge badge-secondary">{p.category}</span></td>
                   <td>
+                    <div className="colors-swatch-list">
+                      {p.colors && p.colors.length > 0 ? (
+                        p.colors.map((c, idx) => (
+                          <span
+                            key={idx}
+                            className="color-swatch-dot"
+                            style={{ backgroundColor: c.hex }}
+                            title={`${c.name}${c.image ? ' (Has T-shirt photo)' : ''}`}
+                          />
+                        ))
+                      ) : (
+                        <span className="subtext">Default</span>
+                      )}
+                    </div>
+                  </td>
+                  <td>
                     <div className="sizes-pill-list">
                       {p.sizes && p.sizes.length > 0 ? (
                         p.sizes.map((sz) => (
@@ -329,10 +358,6 @@ export default function AdminProductsPage() {
                     ) : (
                       <span className="badge badge-success">{p.stock} in stock</span>
                     )}
-                  </td>
-                  <td>
-                    {p.isFeatured && <span className="badge badge-primary mr-1">Featured</span>}
-                    {p.isBestSeller && <span className="badge badge-warning">Best Seller</span>}
                   </td>
                   <td>
                     <div className="action-btns">
@@ -356,7 +381,7 @@ export default function AdminProductsPage() {
         <div className="modal-overlay" onClick={() => setModalOpen(false)}>
           <div className="modal-content product-modal" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setModalOpen(false)} className="modal-close"><X size={20} /></button>
-            <h2>{editingId ? 'Edit Product Details' : 'Add New Clothes Product'}</h2>
+            <h2>{editingId ? 'Edit Product & Color Collection' : 'Add New Clothes Product'}</h2>
 
             <form onSubmit={handleSubmit} className="product-form mt-3">
               <div className="form-group">
@@ -366,7 +391,7 @@ export default function AdminProductsPage() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
-                  placeholder="e.g. Heavyweight Printed Boxy Tee"
+                  placeholder="e.g. Cyberpunk Neon Oversized Tee"
                   className="form-input"
                 />
               </div>
@@ -455,6 +480,135 @@ export default function AdminProductsPage() {
                 </div>
               </div>
 
+              {/* Color-wise T-Shirt Variants Manager */}
+              <div className="form-group glass-panel p-3 border-radius-lg">
+                <div className="d-flex align-items-center justify-content-between mb-2">
+                  <label className="form-label m-0 text-primary d-flex align-items-center gap-1">
+                    <Palette size={16} /> Color Variants & Color-wise T-Shirt Photos
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        colors: [...(prev.colors || []), { name: 'New Color', hex: '#0f172a', image: '' }],
+                      }))
+                    }
+                    className="btn btn-secondary btn-xs"
+                  >
+                    + Add Custom Color
+                  </button>
+                </div>
+
+                {/* Preset Color Quick Add */}
+                <div className="preset-colors-row mb-3">
+                  <span className="preset-title">Quick add preset colors:</span>
+                  {PRESET_COLOR_VARIANTS.map((preset) => (
+                    <button
+                      key={preset.name}
+                      type="button"
+                      onClick={() => {
+                        if (!formData.colors.some((c) => c.name === preset.name)) {
+                          setFormData((prev) => ({
+                            ...prev,
+                            colors: [...(prev.colors || []), preset],
+                            images: Array.from(new Set([...prev.images, preset.image])).filter(Boolean),
+                          }));
+                        }
+                      }}
+                      className="preset-color-chip"
+                    >
+                      <span className="chip-circle" style={{ backgroundColor: preset.hex }} />
+                      {preset.name}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Color Variants List */}
+                <div className="color-variants-list">
+                  {(formData.colors || []).map((col, idx) => (
+                    <div key={idx} className="color-variant-card mb-2">
+                      <div className="color-inputs-flex">
+                        <div className="color-picker-box">
+                          <input
+                            type="color"
+                            value={col.hex || '#0f172a'}
+                            onChange={(e) => {
+                              const newColors = [...formData.colors];
+                              newColors[idx].hex = e.target.value;
+                              setFormData({ ...formData, colors: newColors });
+                            }}
+                            className="color-picker-input"
+                          />
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="Color Name (e.g. Off White)"
+                          value={col.name || ''}
+                          onChange={(e) => {
+                            const newColors = [...formData.colors];
+                            newColors[idx].name = e.target.value;
+                            setFormData({ ...formData, colors: newColors });
+                          }}
+                          className="form-input col-name-input"
+                        />
+                        <div className="color-img-input-box">
+                          <input
+                            type="text"
+                            placeholder="Color T-shirt Image URL"
+                            value={col.image || ''}
+                            onChange={(e) => {
+                              const newColors = [...formData.colors];
+                              newColors[idx].image = e.target.value;
+                              const newImages = Array.from(new Set([e.target.value, ...formData.images])).filter(Boolean);
+                              setFormData({ ...formData, colors: newColors, images: newImages });
+                            }}
+                            className="form-input"
+                          />
+                          <input
+                            type="file"
+                            accept="image/*"
+                            id={`col-upload-${idx}`}
+                            hidden
+                            onChange={async (e) => {
+                              const file = e.target.files[0];
+                              if (!file) return;
+                              const compressed = await compressImage(file, 800, 1000, 0.75);
+                              if (compressed) {
+                                const newColors = [...formData.colors];
+                                newColors[idx].image = compressed;
+                                const newImages = Array.from(new Set([compressed, ...formData.images])).filter(Boolean);
+                                setFormData({ ...formData, colors: newColors, images: newImages });
+                                addToast(`Color image set for ${col.name}!`, 'success');
+                              }
+                            }}
+                          />
+                          <label htmlFor={`col-upload-${idx}`} className="btn btn-secondary btn-xs upload-color-btn">
+                            <Upload size={14} /> Upload Image
+                          </label>
+                        </div>
+
+                        {col.image && (
+                          <img src={col.image} alt={col.name} className="color-thumb-img" />
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newColors = formData.colors.filter((_, i) => i !== idx);
+                            setFormData({ ...formData, colors: newColors });
+                          }}
+                          className="btn btn-danger btn-xs remove-col-btn"
+                          title="Remove Color"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div className="form-group">
                 <label className="form-label">Description *</label>
                 <textarea
@@ -467,19 +621,19 @@ export default function AdminProductsPage() {
                 />
               </div>
 
-              {/* Local Image Upload & Presets */}
+              {/* Main Product Image Upload & Presets */}
               <div className="form-group">
-                <label className="form-label">Product Image (Local Upload or URL)</label>
+                <label className="form-label">Main Gallery Image (Upload or Paste URL)</label>
                 <div className="image-upload-box">
                   <input type="file" accept="image/*" onChange={handleFileUpload} id="cloudinary-upload" hidden />
                   <label htmlFor="cloudinary-upload" className="btn btn-secondary upload-btn">
-                    <Upload size={16} /> {uploadingImage ? 'Compressing local image...' : 'Upload Local Image File'}
+                    <Upload size={16} /> {uploadingImage ? 'Uploading image...' : 'Upload Image File'}
                   </label>
                   <input
                     type="text"
                     placeholder="Or paste Image URL"
                     value={formData.images[0] || ''}
-                    onChange={(e) => setFormData({ ...formData, images: [e.target.value] })}
+                    onChange={(e) => setFormData({ ...formData, images: [e.target.value, ...formData.images.slice(1)] })}
                     className="form-input"
                   />
                 </div>
@@ -491,7 +645,7 @@ export default function AdminProductsPage() {
                     <button
                       key={idx}
                       type="button"
-                      onClick={() => setFormData({ ...formData, images: [preset.url] })}
+                      onClick={() => setFormData({ ...formData, images: Array.from(new Set([preset.url, ...formData.images])).filter(Boolean) })}
                       className="preset-chip"
                     >
                       {preset.name}
@@ -541,6 +695,15 @@ export default function AdminProductsPage() {
         .subtext { font-size: 0.75rem; color: var(--text-muted); }
         .action-btns { display: flex; gap: 0.35rem; }
 
+        .colors-swatch-list { display: flex; gap: 6px; align-items: center; }
+        .color-swatch-dot {
+          width: 14px;
+          height: 14px;
+          border-radius: var(--radius-full);
+          border: 1.5px solid rgba(0,0,0,0.3);
+          box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
         .sizes-pill-list { display: flex; gap: 4px; flex-wrap: wrap; }
         .size-pill-tag {
           font-size: 0.7rem;
@@ -573,14 +736,70 @@ export default function AdminProductsPage() {
           box-shadow: var(--shadow-sm);
         }
 
-        .product-modal { max-width: 680px; position: relative; }
+        .border-radius-lg { border-radius: var(--radius-lg); }
+
+        .preset-colors-row { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+        .preset-title { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+        .preset-color-chip {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          background: var(--bg-tertiary);
+          border: 1px solid var(--border-color);
+          padding: 3px 8px;
+          border-radius: 12px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          cursor: pointer;
+          color: var(--text-primary);
+        }
+        .preset-color-chip:hover {
+          background: var(--accent-light);
+          color: var(--accent-primary);
+        }
+        .chip-circle {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          border: 1px solid rgba(0,0,0,0.2);
+        }
+
+        .color-variants-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        .color-variant-card {
+          padding: 0.65rem;
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-md);
+        }
+        .color-inputs-flex { display: flex; align-items: center; gap: 0.5rem; }
+        .color-picker-box { width: 32px; height: 32px; flex-shrink: 0; }
+        .color-picker-input {
+          width: 32px;
+          height: 32px;
+          border: none;
+          background: none;
+          cursor: pointer;
+          padding: 0;
+        }
+        .col-name-input { width: 140px; }
+        .color-img-input-box { display: flex; align-items: center; gap: 0.35rem; flex: 1; }
+        .upload-color-btn { white-space: nowrap; }
+        .color-thumb-img {
+          width: 36px;
+          height: 42px;
+          object-fit: cover;
+          border-radius: var(--radius-sm);
+          border: 1px solid var(--border-color);
+        }
+        .remove-col-btn { flex-shrink: 0; }
+
+        .product-modal { max-width: 720px; position: relative; }
         .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; cursor: pointer; color: var(--text-primary); }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .image-upload-box { display: flex; gap: 0.75rem; align-items: center; }
         .image-preview-container { display: flex; align-items: center; gap: 1rem; }
         .image-preview { width: 80px; height: 90px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-color); }
         .preset-images-list { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; font-size: 0.75rem; }
-        .preset-title { color: var(--text-muted); font-weight: 600; }
         .preset-chip {
           background: var(--bg-tertiary);
           border: 1px solid var(--border-color);
@@ -598,6 +817,11 @@ export default function AdminProductsPage() {
 
         .checkbox-row { display: flex; gap: 1.5rem; margin-top: 1rem; font-size: 0.9rem; font-weight: 600; }
         .w-100 { width: 100%; }
+
+        @media (max-width: 700px) {
+          .color-inputs-flex { flex-direction: column; align-items: stretch; }
+          .col-name-input { width: 100%; }
+        }
       `}</style>
     </div>
   );

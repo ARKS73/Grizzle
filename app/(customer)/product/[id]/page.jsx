@@ -159,16 +159,23 @@ export default function ProductDetailPage() {
                 {product.colors.map((c) => (
                   <button
                     key={c.name}
-                    onClick={() => setSelectedColor(c.name)}
+                    onClick={() => {
+                      setSelectedColor(c.name);
+                      if (c.image) {
+                        setSelectedImage(c.image);
+                      }
+                    }}
                     className={`color-btn ${selectedColor === c.name ? 'active' : ''}`}
                   >
                     <span className="swatch-circle" style={{ backgroundColor: c.hex }} />
                     <span>{c.name}</span>
+                    {c.image && <span className="color-img-indicator">📷</span>}
                   </button>
                 ))}
               </div>
             </div>
           )}
+
 
           {/* Sizes Selection */}
           {product.sizes?.length > 0 && (
