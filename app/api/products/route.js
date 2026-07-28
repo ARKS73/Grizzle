@@ -142,6 +142,7 @@ export async function POST(request) {
       name,
       description,
       category,
+      gender,
       price,
       originalPrice,
       sizes,
@@ -169,9 +170,10 @@ export async function POST(request) {
       slug: `${slug}-${Date.now().toString().slice(-4)}`,
       description,
       category,
+      gender: gender || 'Unisex',
       price: parseFloat(price),
       originalPrice: originalPrice ? parseFloat(originalPrice) : parseFloat(price),
-      sizes: sizes || ['S', 'M', 'L', 'XL'],
+      sizes: sizes && sizes.length > 0 ? sizes : ['S', 'M', 'L', 'XL'],
       colors: colors || [{ name: 'Black', hex: '#000000' }],
       stock: parseInt(stock || '20', 10),
       images,
@@ -180,6 +182,7 @@ export async function POST(request) {
       isTrending: Boolean(isTrending),
       isBestSeller: Boolean(isBestSeller),
     });
+
 
     return NextResponse.json({
       success: true,

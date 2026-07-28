@@ -71,13 +71,19 @@ export default function AdminLayout({ children }) {
       <main className="admin-main">
         <header className="admin-header glass-panel">
           <div className="admin-header-title">
-            <ShieldCheck size={20} className="text-primary" />
+            <Link href="/" className="btn btn-secondary btn-sm mr-2" title="Back to Customer Storefront">
+              <ArrowLeft size={16} /> Back to Store
+            </Link>
+            <ShieldCheck size={20} className="text-primary ml-2" />
             <span>Logged in as <strong>{user?.name || 'Admin'}</strong> ({user?.email})</span>
           </div>
-          <button onClick={logout} className="btn btn-secondary btn-sm">
-            <LogOut size={16} /> Logout
-          </button>
+          <div className="admin-header-actions">
+            <button onClick={logout} className="btn btn-secondary btn-sm">
+              <LogOut size={16} /> Logout
+            </button>
+          </div>
         </header>
+
 
         <div className="admin-content-body">{children}</div>
       </main>
