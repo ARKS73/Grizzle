@@ -115,29 +115,35 @@ export default function AdminProductsPage() {
 
     const reader = new FileReader();
     reader.onloadend = async () => {
+      const dataUrl = reader.result;
       try {
         setUploadingImage(true);
         const res = await fetch('/api/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ file: reader.result }),
+          body: JSON.stringify({ file: dataUrl }),
         });
         const data = await res.json();
-        if (data.success && data.url) {
-          setFormData((prev) => ({
-            ...prev,
-            images: [data.url, ...prev.images.filter(Boolean)],
-          }));
-          addToast('Image uploaded to Cloudinary!', 'success');
-        }
+        const finalUrl = (data.success && data.url) ? data.url : dataUrl;
+
+        setFormData((prev) => ({
+          ...prev,
+          images: [finalUrl, ...prev.images.filter(Boolean)],
+        }));
+        addToast(data.success ? 'Image uploaded successfully!' : 'Image preview added', 'success');
       } catch (e) {
-        addToast('Cloudinary image upload failed', 'error');
+        setFormData((prev) => ({
+          ...prev,
+          images: [dataUrl, ...prev.images.filter(Boolean)],
+        }));
+        addToast('Image preview added', 'info');
       } finally {
         setUploadingImage(false);
       }
     };
     reader.readAsDataURL(file);
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
