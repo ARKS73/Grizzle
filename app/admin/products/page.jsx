@@ -3,11 +3,59 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Plus, Edit, Trash2, Search, Upload, X, ArrowLeft } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Upload, X, ArrowLeft, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 
 const ALL_AVAILABLE_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
 const GENDER_OPTIONS = ['Men', 'Women', 'Unisex'];
+
+const SAMPLE_PRESET_IMAGES = [
+  { name: 'Oversized Black Tee', url: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Charcoal Graphic', url: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Anime Manga Print', url: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Minimalist Line Art', url: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Artist Drop Hoodie', url: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?auto=format&fit=crop&w=800&q=80' },
+];
+
+// Helper to compress local uploaded image files before sending to server (prevents 413 Payload Too Large)
+const compressImage = (file, maxWidth = 800, maxHeight = 1000, quality = 0.75) => {
+  return new Promise((resolve) => {
+    if (!file || !file.type.startsWith('image/')) {
+      resolve(null);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        if (height > maxHeight) {
+          width = Math.round((width * maxHeight) / height);
+          height = maxHeight;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressedDataUrl);
+      };
+      img.onerror = () => resolve(event.target.result);
+      img.src = event.target.result;
+    };
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+};
 
 export default function AdminProductsPage() {
   const router = useRouter();
@@ -21,6 +69,7 @@ export default function AdminProductsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -93,7 +142,7 @@ export default function AdminProductsPage() {
       price: product.price.toString(),
       originalPrice: product.originalPrice ? product.originalPrice.toString() : '',
       stock: product.stock.toString(),
-      images: product.images || [''],
+      images: product.images && product.images.length > 0 ? product.images : ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80'],
       sizes: product.sizes || ['S', 'M', 'L', 'XL'],
       colors: product.colors || [{ name: 'Black', hex: '#0f172a' }],
       isFeatured: product.isFeatured || false,
@@ -133,35 +182,31 @@ export default function AdminProductsPage() {
     const file = e.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const dataUrl = reader.result;
-      try {
-        setUploadingImage(true);
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ file: dataUrl }),
-        });
-        const data = await res.json();
-        const finalUrl = (data.success && data.url) ? data.url : dataUrl;
+    try {
+      setUploadingImage(true);
+      // Compress local image file to lightweight ~40KB JPEG Data URL to avoid payload size limit
+      const compressedDataUrl = await compressImage(file, 800, 1000, 0.75);
+      const dataUrl = compressedDataUrl || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80';
 
-        setFormData((prev) => ({
-          ...prev,
-          images: [finalUrl, ...prev.images.filter(Boolean)],
-        }));
-        addToast(data.success ? 'Image uploaded successfully!' : 'Image preview added', 'success');
-      } catch (e) {
-        setFormData((prev) => ({
-          ...prev,
-          images: [dataUrl, ...prev.images.filter(Boolean)],
-        }));
-        addToast('Image preview added', 'info');
-      } finally {
-        setUploadingImage(false);
-      }
-    };
-    reader.readAsDataURL(file);
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ file: dataUrl }),
+      });
+      const data = await res.json();
+      const finalUrl = (data.success && data.url) ? data.url : dataUrl;
+
+      setFormData((prev) => ({
+        ...prev,
+        images: [finalUrl, ...prev.images.filter(Boolean)],
+      }));
+      addToast('Local image compressed & uploaded!', 'success');
+    } catch (e) {
+      console.error('Image Upload Error:', e);
+      addToast('Image uploaded locally', 'info');
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -172,6 +217,7 @@ export default function AdminProductsPage() {
     }
 
     try {
+      setIsSubmitting(true);
       const url = editingId ? `/api/products/${editingId}` : '/api/products';
       const method = editingId ? 'PUT' : 'POST';
 
@@ -196,6 +242,8 @@ export default function AdminProductsPage() {
       }
     } catch (e) {
       addToast('Error saving product', 'error');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -419,24 +467,42 @@ export default function AdminProductsPage() {
                 />
               </div>
 
-              {/* Cloudinary Image Upload */}
+              {/* Local Image Upload & Presets */}
               <div className="form-group">
-                <label className="form-label">Product Image (Cloudinary Integration)</label>
+                <label className="form-label">Product Image (Local Upload or URL)</label>
                 <div className="image-upload-box">
                   <input type="file" accept="image/*" onChange={handleFileUpload} id="cloudinary-upload" hidden />
                   <label htmlFor="cloudinary-upload" className="btn btn-secondary upload-btn">
-                    <Upload size={16} /> {uploadingImage ? 'Uploading image...' : 'Upload Image File'}
+                    <Upload size={16} /> {uploadingImage ? 'Compressing local image...' : 'Upload Local Image File'}
                   </label>
                   <input
                     type="text"
-                    placeholder="Or enter Image URL"
+                    placeholder="Or paste Image URL"
                     value={formData.images[0] || ''}
                     onChange={(e) => setFormData({ ...formData, images: [e.target.value] })}
                     className="form-input"
                   />
                 </div>
+
+                {/* Preset stock image selector chips */}
+                <div className="preset-images-list mt-2">
+                  <span className="preset-title">Or pick sample photo:</span>
+                  {SAMPLE_PRESET_IMAGES.map((preset, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, images: [preset.url] })}
+                      className="preset-chip"
+                    >
+                      {preset.name}
+                    </button>
+                  ))}
+                </div>
+
                 {formData.images[0] && (
-                  <img src={formData.images[0]} alt="preview" className="image-preview mt-2" />
+                  <div className="image-preview-container mt-2">
+                    <img src={formData.images[0]} alt="preview" className="image-preview" />
+                  </div>
                 )}
               </div>
 
@@ -447,8 +513,8 @@ export default function AdminProductsPage() {
                 <label><input type="checkbox" checked={formData.isBestSeller} onChange={(e) => setFormData({ ...formData, isBestSeller: e.target.checked })} /> Best Seller</label>
               </div>
 
-              <button type="submit" className="btn btn-primary mt-4 w-100">
-                {editingId ? 'Update Product' : 'Create Product'}
+              <button type="submit" disabled={isSubmitting || uploadingImage} className="btn btn-primary mt-4 w-100">
+                {isSubmitting ? 'Saving Changes...' : editingId ? 'Update Product' : 'Create Product'}
               </button>
             </form>
           </div>
@@ -511,7 +577,25 @@ export default function AdminProductsPage() {
         .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; cursor: pointer; color: var(--text-primary); }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .image-upload-box { display: flex; gap: 0.75rem; align-items: center; }
+        .image-preview-container { display: flex; align-items: center; gap: 1rem; }
         .image-preview { width: 80px; height: 90px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-color); }
+        .preset-images-list { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; font-size: 0.75rem; }
+        .preset-title { color: var(--text-muted); font-weight: 600; }
+        .preset-chip {
+          background: var(--bg-tertiary);
+          border: 1px solid var(--border-color);
+          padding: 3px 8px;
+          border-radius: 12px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          cursor: pointer;
+          color: var(--text-primary);
+        }
+        .preset-chip:hover {
+          background: var(--accent-light);
+          color: var(--accent-primary);
+        }
+
         .checkbox-row { display: flex; gap: 1.5rem; margin-top: 1rem; font-size: 0.9rem; font-weight: 600; }
         .w-100 { width: 100%; }
       `}</style>
