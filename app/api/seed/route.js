@@ -62,7 +62,8 @@ export async function GET() {
 
     // 3. Seed Products
     await Product.deleteMany({});
-    const createdProducts = await Product.insertMany(seedProducts);
+    const productsToInsert = seedProducts.map(({ _id, ...rest }) => rest);
+    const createdProducts = await Product.insertMany(productsToInsert);
 
     // Update Category product counts
     for (const cat of createdCategories) {
