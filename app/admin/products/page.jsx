@@ -153,7 +153,7 @@ export default function AdminProductsPage() {
       stock: product.stock.toString(),
       images: product.images && product.images.length > 0 ? product.images : ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80'],
       sizes: product.sizes || ['S', 'M', 'L', 'XL'],
-      colors: product.colors && product.colors.length > 0 ? product.colors : PRESET_COLOR_VARIANTS.slice(0, 2),
+      colors: product.colors && product.colors.length > 0 ? product.colors : PRESET_COLOR_VARIANTS.slice(0, 3),
       isFeatured: product.isFeatured || false,
       isTrending: product.isTrending || false,
       isBestSeller: product.isBestSeller || false,
@@ -208,7 +208,7 @@ export default function AdminProductsPage() {
         ...prev,
         images: Array.from(new Set([finalUrl, ...prev.images])).filter(Boolean),
       }));
-      addToast('Image uploaded successfully!', 'success');
+      addToast('Main image uploaded successfully!', 'success');
     } catch (e) {
       console.error('Image Upload Error:', e);
       addToast('Image uploaded locally', 'info');
@@ -229,7 +229,7 @@ export default function AdminProductsPage() {
       const url = editingId ? `/api/products/${editingId}` : '/api/products';
       const method = editingId ? 'PUT' : 'POST';
 
-      // Gather all color images into product images list
+      // Gather all color-specific t-shirt images into main product images list
       const colorImages = (formData.colors || []).map(c => c.image).filter(Boolean);
       const combinedImages = Array.from(new Set([...colorImages, ...formData.images])).filter(Boolean);
 
@@ -299,7 +299,7 @@ export default function AdminProductsPage() {
               <th>Product Name</th>
               <th>Gender</th>
               <th>Category</th>
-              <th>Color Variants</th>
+              <th>Color Variants (T-Shirt Photos)</th>
               <th>Sizes Available</th>
               <th>Price</th>
               <th>Stock</th>
@@ -328,12 +328,10 @@ export default function AdminProductsPage() {
                     <div className="colors-swatch-list">
                       {p.colors && p.colors.length > 0 ? (
                         p.colors.map((c, idx) => (
-                          <span
-                            key={idx}
-                            className="color-swatch-dot"
-                            style={{ backgroundColor: c.hex }}
-                            title={`${c.name}${c.image ? ' (Has T-shirt photo)' : ''}`}
-                          />
+                          <div key={idx} className="color-swatch-item-box" title={`${c.name}: ${c.image ? 'Has T-shirt photo' : 'No photo'}`}>
+                            <span className="color-swatch-dot" style={{ backgroundColor: c.hex }} />
+                            {c.image && <span className="photo-indicator-tag">📷</span>}
+                          </div>
                         ))
                       ) : (
                         <span className="subtext">Default</span>
@@ -381,7 +379,7 @@ export default function AdminProductsPage() {
         <div className="modal-overlay" onClick={() => setModalOpen(false)}>
           <div className="modal-content product-modal" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setModalOpen(false)} className="modal-close"><X size={20} /></button>
-            <h2>{editingId ? 'Edit Product & Color Collection' : 'Add New Clothes Product'}</h2>
+            <h2>{editingId ? 'Edit Product & Color Collection' : 'Add New Clothes Product (1 Style, Multiple Colors)'}</h2>
 
             <form onSubmit={handleSubmit} className="product-form mt-3">
               <div className="form-group">
@@ -481,11 +479,16 @@ export default function AdminProductsPage() {
               </div>
 
               {/* Color-wise T-Shirt Variants Manager */}
-              <div className="form-group glass-panel p-3 border-radius-lg">
+              <div className="form-group glass-panel p-3 border-radius-lg border-primary-light">
                 <div className="d-flex align-items-center justify-content-between mb-2">
-                  <label className="form-label m-0 text-primary d-flex align-items-center gap-1">
-                    <Palette size={16} /> Color Variants & Color-wise T-Shirt Photos
-                  </label>
+                  <div>
+                    <label className="form-label m-0 text-primary d-flex align-items-center gap-2 font-bold text-md">
+                      <Palette size={18} /> Color Variants & Color-Wise T-Shirt Photos (1 Style, Multiple Colors)
+                    </label>
+                    <p className="subtext mt-1">
+                      Add color variants for this t-shirt style and upload/set a specific t-shirt photo for each color option.
+                    </p>
+                  </div>
                   <button
                     type="button"
                     onClick={() =>
@@ -494,15 +497,15 @@ export default function AdminProductsPage() {
                         colors: [...(prev.colors || []), { name: 'New Color', hex: '#0f172a', image: '' }],
                       }))
                     }
-                    className="btn btn-secondary btn-xs"
+                    className="btn btn-secondary btn-sm"
                   >
-                    + Add Custom Color
+                    + Add Color Variant
                   </button>
                 </div>
 
                 {/* Preset Color Quick Add */}
-                <div className="preset-colors-row mb-3">
-                  <span className="preset-title">Quick add preset colors:</span>
+                <div className="preset-colors-row mb-3 p-2 bg-secondary rounded">
+                  <span className="preset-title font-semibold">⚡ Quick Add Preset Colors:</span>
                   {PRESET_COLOR_VARIANTS.map((preset) => (
                     <button
                       key={preset.name}
@@ -527,9 +530,9 @@ export default function AdminProductsPage() {
                 {/* Color Variants List */}
                 <div className="color-variants-list">
                   {(formData.colors || []).map((col, idx) => (
-                    <div key={idx} className="color-variant-card mb-2">
-                      <div className="color-inputs-flex">
-                        <div className="color-picker-box">
+                    <div key={idx} className="color-variant-card-box mb-3 p-3 border rounded glass-panel">
+                      <div className="color-card-header d-flex align-items-center justify-content-between mb-2">
+                        <div className="d-flex align-items-center gap-2">
                           <input
                             type="color"
                             value={col.hex || '#0f172a'}
@@ -538,71 +541,84 @@ export default function AdminProductsPage() {
                               newColors[idx].hex = e.target.value;
                               setFormData({ ...formData, colors: newColors });
                             }}
-                            className="color-picker-input"
+                            className="color-picker-circle"
                           />
-                        </div>
-                        <input
-                          type="text"
-                          placeholder="Color Name (e.g. Off White)"
-                          value={col.name || ''}
-                          onChange={(e) => {
-                            const newColors = [...formData.colors];
-                            newColors[idx].name = e.target.value;
-                            setFormData({ ...formData, colors: newColors });
-                          }}
-                          className="form-input col-name-input"
-                        />
-                        <div className="color-img-input-box">
                           <input
                             type="text"
-                            placeholder="Color T-shirt Image URL"
-                            value={col.image || ''}
+                            placeholder="Color Name (e.g. Off White, Pitch Black)"
+                            value={col.name || ''}
                             onChange={(e) => {
                               const newColors = [...formData.colors];
-                              newColors[idx].image = e.target.value;
-                              const newImages = Array.from(new Set([e.target.value, ...formData.images])).filter(Boolean);
-                              setFormData({ ...formData, colors: newColors, images: newImages });
+                              newColors[idx].name = e.target.value;
+                              setFormData({ ...formData, colors: newColors });
                             }}
-                            className="form-input"
+                            className="form-input col-name-input font-bold"
                           />
-                          <input
-                            type="file"
-                            accept="image/*"
-                            id={`col-upload-${idx}`}
-                            hidden
-                            onChange={async (e) => {
-                              const file = e.target.files[0];
-                              if (!file) return;
-                              const compressed = await compressImage(file, 800, 1000, 0.75);
-                              if (compressed) {
-                                const newColors = [...formData.colors];
-                                newColors[idx].image = compressed;
-                                const newImages = Array.from(new Set([compressed, ...formData.images])).filter(Boolean);
-                                setFormData({ ...formData, colors: newColors, images: newImages });
-                                addToast(`Color image set for ${col.name}!`, 'success');
-                              }
-                            }}
-                          />
-                          <label htmlFor={`col-upload-${idx}`} className="btn btn-secondary btn-xs upload-color-btn">
-                            <Upload size={14} /> Upload Image
-                          </label>
+                          <span className="color-hex-tag subtext">{col.hex}</span>
                         </div>
-
-                        {col.image && (
-                          <img src={col.image} alt={col.name} className="color-thumb-img" />
-                        )}
-
                         <button
                           type="button"
                           onClick={() => {
                             const newColors = formData.colors.filter((_, i) => i !== idx);
                             setFormData({ ...formData, colors: newColors });
                           }}
-                          className="btn btn-danger btn-xs remove-col-btn"
-                          title="Remove Color"
+                          className="btn btn-danger btn-xs"
+                          title="Remove this color variant"
                         >
-                          <Trash2 size={14} />
+                          <Trash2 size={14} /> Remove Color
                         </button>
+                      </div>
+
+                      {/* T-Shirt Photo for this Color */}
+                      <div className="color-photo-upload-row mt-2 p-2 bg-tertiary rounded d-flex align-items-center gap-3">
+                        {col.image ? (
+                          <img src={col.image} alt={col.name} className="color-variant-preview-img" />
+                        ) : (
+                          <div className="color-no-img-box">
+                            <ImageIcon size={20} className="text-muted" />
+                            <span className="subtext">No Photo</span>
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <label className="subtext font-semibold d-block mb-1">
+                            T-Shirt Photo for <strong>{col.name || 'this color'}</strong>:
+                          </label>
+                          <div className="d-flex gap-2">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              id={`col-file-${idx}`}
+                              hidden
+                              onChange={async (e) => {
+                                const file = e.target.files[0];
+                                if (!file) return;
+                                const compressed = await compressImage(file, 800, 1000, 0.75);
+                                if (compressed) {
+                                  const newColors = [...formData.colors];
+                                  newColors[idx].image = compressed;
+                                  const newImages = Array.from(new Set([compressed, ...formData.images])).filter(Boolean);
+                                  setFormData({ ...formData, colors: newColors, images: newImages });
+                                  addToast(`T-shirt image uploaded for ${col.name}!`, 'success');
+                                }
+                              }}
+                            />
+                            <label htmlFor={`col-file-${idx}`} className="btn btn-secondary btn-xs upload-btn">
+                              <Upload size={14} /> Upload T-Shirt Photo
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="Or paste T-Shirt Image URL"
+                              value={col.image || ''}
+                              onChange={(e) => {
+                                const newColors = [...formData.colors];
+                                newColors[idx].image = e.target.value;
+                                const newImages = Array.from(new Set([e.target.value, ...formData.images])).filter(Boolean);
+                                setFormData({ ...formData, colors: newColors, images: newImages });
+                              }}
+                              className="form-input form-input-sm"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -621,7 +637,7 @@ export default function AdminProductsPage() {
                 />
               </div>
 
-              {/* Main Product Image Upload & Presets */}
+              {/* Main Product Gallery Images */}
               <div className="form-group">
                 <label className="form-label">Main Gallery Image (Upload or Paste URL)</label>
                 <div className="image-upload-box">
@@ -693,16 +709,21 @@ export default function AdminProductsPage() {
         .admin-table th, .admin-table td { padding: 0.85rem; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; }
         .product-table-img { width: 44px; height: 52px; object-fit: cover; border-radius: var(--radius-sm); }
         .subtext { font-size: 0.75rem; color: var(--text-muted); }
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .text-md { font-size: 1rem; }
         .action-btns { display: flex; gap: 0.35rem; }
 
         .colors-swatch-list { display: flex; gap: 6px; align-items: center; }
+        .color-swatch-item-box { display: flex; align-items: center; gap: 2px; }
         .color-swatch-dot {
-          width: 14px;
-          height: 14px;
+          width: 16px;
+          height: 16px;
           border-radius: var(--radius-full);
           border: 1.5px solid rgba(0,0,0,0.3);
           box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
+        .photo-indicator-tag { font-size: 0.65rem; }
 
         .sizes-pill-list { display: flex; gap: 4px; flex-wrap: wrap; }
         .size-pill-tag {
@@ -738,62 +759,69 @@ export default function AdminProductsPage() {
 
         .border-radius-lg { border-radius: var(--radius-lg); }
 
-        .preset-colors-row { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
-        .preset-title { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+        .preset-colors-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+        .preset-title { font-size: 0.8rem; color: var(--text-secondary); }
         .preset-color-chip {
           display: flex;
           align-items: center;
           gap: 4px;
-          background: var(--bg-tertiary);
+          background: var(--bg-primary);
           border: 1px solid var(--border-color);
-          padding: 3px 8px;
-          border-radius: 12px;
+          padding: 4px 10px;
+          border-radius: 14px;
           font-size: 0.75rem;
-          font-weight: 600;
+          font-weight: 700;
           cursor: pointer;
           color: var(--text-primary);
         }
         .preset-color-chip:hover {
           background: var(--accent-light);
           color: var(--accent-primary);
+          border-color: var(--accent-primary);
         }
         .chip-circle {
-          width: 10px;
-          height: 10px;
+          width: 12px;
+          height: 12px;
           border-radius: 50%;
-          border: 1px solid rgba(0,0,0,0.2);
+          border: 1px solid rgba(0,0,0,0.25);
         }
 
-        .color-variants-list { display: flex; flex-direction: column; gap: 0.5rem; }
-        .color-variant-card {
-          padding: 0.65rem;
+        .color-variants-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .color-variant-card-box {
           background: var(--bg-secondary);
-          border: 1px solid var(--border-color);
-          border-radius: var(--radius-md);
+          border: 1.5px solid var(--border-color);
         }
-        .color-inputs-flex { display: flex; align-items: center; gap: 0.5rem; }
-        .color-picker-box { width: 32px; height: 32px; flex-shrink: 0; }
-        .color-picker-input {
+        .color-picker-circle {
           width: 32px;
           height: 32px;
+          border-radius: 50%;
           border: none;
           background: none;
           cursor: pointer;
           padding: 0;
         }
-        .col-name-input { width: 140px; }
-        .color-img-input-box { display: flex; align-items: center; gap: 0.35rem; flex: 1; }
-        .upload-color-btn { white-space: nowrap; }
-        .color-thumb-img {
-          width: 36px;
-          height: 42px;
+        .col-name-input { width: 220px; }
+        .color-variant-preview-img {
+          width: 54px;
+          height: 62px;
           object-fit: cover;
           border-radius: var(--radius-sm);
-          border: 1px solid var(--border-color);
+          border: 1.5px solid var(--accent-primary);
         }
-        .remove-col-btn { flex-shrink: 0; }
+        .color-no-img-box {
+          width: 54px;
+          height: 62px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background: var(--bg-secondary);
+          border: 1px dashed var(--border-color);
+          border-radius: var(--radius-sm);
+        }
+        .form-input-sm { padding: 0.35rem 0.65rem; font-size: 0.8rem; }
 
-        .product-modal { max-width: 720px; position: relative; }
+        .product-modal { max-width: 760px; position: relative; }
         .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; cursor: pointer; color: var(--text-primary); }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .image-upload-box { display: flex; gap: 0.75rem; align-items: center; }
@@ -819,8 +847,9 @@ export default function AdminProductsPage() {
         .w-100 { width: 100%; }
 
         @media (max-width: 700px) {
-          .color-inputs-flex { flex-direction: column; align-items: stretch; }
+          .color-card-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
           .col-name-input { width: 100%; }
+          .color-photo-upload-row { flex-direction: column; align-items: flex-start; }
         }
       `}</style>
     </div>
