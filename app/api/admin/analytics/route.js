@@ -12,33 +12,48 @@ export async function GET(request) {
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 403 });
     }
 
-    const conn = await connectDB();
+    await connectDB();
 
-    let totalRevenue = 14850.50;
-    let totalOrders = 124;
-    let totalUsers = 48;
-    let totalProducts = 18;
-    let lowStockProducts = [];
-    let recentOrders = [];
-    let monthlySales = [
-      { month: 'Jan', revenue: 1800, orders: 15 },
-      { month: 'Feb', revenue: 2200, orders: 18 },
-      { month: 'Mar', revenue: 2900, orders: 24 },
-      { month: 'Apr', revenue: 3100, orders: 26 },
-      { month: 'May', revenue: 4200, orders: 35 },
-      { month: 'Jun', revenue: 4850, orders: 42 },
-    ];
+    // 1. Fetch Real Database Aggregations
+    const allOrders = await Order.find({}).populate('user', 'name email').sort({ createdAt: -1 });
+    const totalUsers = await User.countDocuments({});
+    const totalProducts = await Product.countDocuments({});
 
-    if (conn) {
-      const orders = await Order.find({ isPaid: true });
-      totalRevenue = orders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
-      totalOrders = await Order.countDocuments({});
-      totalUsers = await User.countDocuments({});
-      totalProducts = await Product.countDocuments({});
+    // Total Revenue from all created orders
+    const totalRevenue = allOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
+    const totalOrders = allOrders.length;
 
-      lowStockProducts = await Product.find({ stock: { $lte: 10 } }).select('name stock category price images');
-      recentOrders = await Order.find({}).populate('user', 'name email').sort({ createdAt: -1 }).limit(5);
+    // 2. Fetch Low Stock Items (stock <= 10)
+    const lowStockProducts = await Product.find({ stock: { $lte: 10 } }).select('name stock category price images');
+
+    // 3. Recent 5 Orders
+    const recentOrders = allOrders.slice(0, 5);
+
+    // 4. Dynamic Monthly Sales Trajectory (Last 6 Months)
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const now = new Date();
+    const monthlyMap = {};
+
+    // Initialize last 6 calendar months with 0
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const mLabel = months[d.getMonth()];
+      monthlyMap[mLabel] = { month: mLabel, revenue: 0, orders: 0 };
     }
+
+    // Populate actual order revenues into monthly bins
+    allOrders.forEach((o) => {
+      if (o.createdAt) {
+        const orderDate = new Date(o.createdAt);
+        const mLabel = months[orderDate.getMonth()];
+        if (monthlyMap[mLabel]) {
+          monthlyMap[mLabel].revenue += Math.round(o.totalPrice || 0);
+          monthlyMap[mLabel].orders += 1;
+        }
+      }
+    });
+
+    const monthlySales = Object.values(monthlyMap);
 
     return NextResponse.json({
       success: true,
@@ -54,6 +69,8 @@ export async function GET(request) {
       monthlySales,
     });
   } catch (error) {
+    console.error('Analytics API Error:', error);
     return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }
+
