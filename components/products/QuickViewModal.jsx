@@ -12,12 +12,16 @@ export default function QuickViewModal({ product, onClose }) {
 
   const [selectedImage, setSelectedImage] = useState(product?.images?.[0] || '');
   const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || 'M');
-  const [selectedColor, setSelectedColor] = useState(product?.colors?.[0]?.name || 'Pitch Black');
+  const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
 
   if (!product) return null;
 
   const isSaved = isInWishlist(product._id);
+
+  const activeColorObj = product?.colors?.find((c) => c.name === selectedColor);
+  const activeColorImg = activeColorObj?.image;
+  const displayedThumbnails = (selectedColor && activeColorImg) ? [activeColorImg] : (product?.images || []);
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -30,11 +34,11 @@ export default function QuickViewModal({ product, onClose }) {
           {/* Gallery */}
           <div className="quickview-gallery">
             <div className="main-image-box">
-              <img src={selectedImage || product.images?.[0]} alt={product.name} className="main-image" />
+              <img src={selectedImage || activeColorImg || product.images?.[0]} alt={product.name} className="main-image" />
             </div>
-            {product.images?.length > 1 && (
+            {displayedThumbnails.length > 1 && (
               <div className="thumbnails-row">
-                {product.images.map((img, idx) => (
+                {displayedThumbnails.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(img)}
@@ -76,12 +80,42 @@ export default function QuickViewModal({ product, onClose }) {
             {/* Colors Picker */}
             {product.colors?.length > 0 && (
               <div className="variant-group">
-                <label className="variant-label">Color: <strong>{selectedColor}</strong></label>
+                <div className="d-flex align-items-center justify-content-between">
+                  <label className="variant-label">Color Option: <strong>{selectedColor || 'All Colors'}</strong></label>
+                  {selectedColor && (
+                    <button
+                      onClick={() => {
+                        setSelectedColor('');
+                        setSelectedImage(product.images?.[0] || '');
+                      }}
+                      className="btn-link-reset-sm"
+                    >
+                      Show All Photos
+                    </button>
+                  )}
+                </div>
+
                 <div className="colors-picker">
+                  <button
+                    onClick={() => {
+                      setSelectedColor('');
+                      setSelectedImage(product.images?.[0] || '');
+                    }}
+                    className={`color-pill ${selectedColor === '' ? 'active' : ''}`}
+                  >
+                    <span className="color-dot-all" />
+                    <span>All Colors</span>
+                  </button>
+
                   {product.colors.map((c) => (
                     <button
                       key={c.name}
-                      onClick={() => setSelectedColor(c.name)}
+                      onClick={() => {
+                        setSelectedColor(c.name);
+                        if (c.image) {
+                          setSelectedImage(c.image);
+                        }
+                      }}
                       className={`color-pill ${selectedColor === c.name ? 'active' : ''}`}
                     >
                       <span className="color-dot" style={{ backgroundColor: c.hex }} />
@@ -91,6 +125,7 @@ export default function QuickViewModal({ product, onClose }) {
                 </div>
               </div>
             )}
+
 
             {/* Sizes Picker */}
             {product.sizes?.length > 0 && (
@@ -281,6 +316,23 @@ export default function QuickViewModal({ product, onClose }) {
           border-radius: var(--radius-full);
           border: 1px solid rgba(0,0,0,0.2);
         }
+        .color-dot-all {
+          width: 12px;
+          height: 12px;
+          border-radius: var(--radius-full);
+          background: linear-gradient(135deg, #ef4444 25%, #3b82f6 25%, #3b82f6 50%, #10b981 50%, #10b981 75%, #f59e0b 75%);
+          border: 1px solid rgba(0,0,0,0.2);
+        }
+        .btn-link-reset-sm {
+          background: none;
+          border: none;
+          color: var(--accent-primary);
+          font-size: 0.75rem;
+          font-weight: 700;
+          cursor: pointer;
+          text-decoration: underline;
+        }
+
 
         .sizes-picker {
           display: flex;
