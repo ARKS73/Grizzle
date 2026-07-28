@@ -35,7 +35,7 @@ export default function ProductDetailPage() {
         setProduct(prod);
         setSelectedImage(prod.images?.[0] || '');
         setSelectedSize(prod.sizes?.[0] || 'M');
-        setSelectedColor(prod.colors?.[0]?.name || 'Pitch Black');
+        setSelectedColor(''); // Default: Show All Colors Mode
 
         // Fetch related products
         const relRes = await fetch(`/api/products?category=${encodeURIComponent(prod.category)}&limit=4`);
@@ -81,6 +81,10 @@ export default function ProductDetailPage() {
 
   const isSaved = isInWishlist(product._id);
 
+  const activeColorObj = product?.colors?.find((c) => c.name === selectedColor);
+  const activeColorImg = activeColorObj?.image;
+  const displayedThumbnails = (selectedColor && activeColorImg) ? [activeColorImg] : (product?.images || []);
+
   return (
     <div className="container product-detail-wrapper">
       {/* Breadcrumb */}
@@ -93,14 +97,14 @@ export default function ProductDetailPage() {
         {/* Gallery */}
         <div className="gallery-section">
           <div className="main-image-container glass-panel">
-            <img src={selectedImage || product.images?.[0]} alt={product.name} className="main-image" />
+            <img src={selectedImage || activeColorImg || product.images?.[0]} alt={product.name} className="main-image" />
             {product.discountPercentage > 0 && (
               <span className="badge badge-danger discount-tag">Save {product.discountPercentage}%</span>
             )}
           </div>
-          {product.images?.length > 1 && (
+          {displayedThumbnails.length > 1 && (
             <div className="thumbnails-grid">
-              {product.images.map((img, idx) => (
+              {displayedThumbnails.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(img)}
@@ -154,8 +158,35 @@ export default function ProductDetailPage() {
           {/* Colors Selection */}
           {product.colors?.length > 0 && (
             <div className="variant-box">
-              <label className="variant-title">Color Option: <strong>{selectedColor}</strong></label>
+              <div className="d-flex align-items-center justify-content-between mb-1">
+                <label className="variant-title">
+                  Color Filter: <strong>{selectedColor || 'All Colors (Showing All Images)'}</strong>
+                </label>
+                {selectedColor && (
+                  <button
+                    onClick={() => {
+                      setSelectedColor('');
+                      setSelectedImage(product.images?.[0] || '');
+                    }}
+                    className="btn-link-reset"
+                  >
+                    Reset (Show All Photos)
+                  </button>
+                )}
+              </div>
+
               <div className="color-swatches">
+                <button
+                  onClick={() => {
+                    setSelectedColor('');
+                    setSelectedImage(product.images?.[0] || '');
+                  }}
+                  className={`color-btn ${selectedColor === '' ? 'active' : ''}`}
+                >
+                  <span className="swatch-circle-all" />
+                  <span>All Colors</span>
+                </button>
+
                 {product.colors.map((c) => (
                   <button
                     key={c.name}
@@ -169,12 +200,12 @@ export default function ProductDetailPage() {
                   >
                     <span className="swatch-circle" style={{ backgroundColor: c.hex }} />
                     <span>{c.name}</span>
-                    {c.image && <span className="color-img-indicator">📷</span>}
                   </button>
                 ))}
               </div>
             </div>
           )}
+
 
 
           {/* Sizes Selection */}
@@ -448,6 +479,23 @@ export default function ProductDetailPage() {
           border-radius: var(--radius-full);
           border: 1px solid rgba(0,0,0,0.2);
         }
+        .swatch-circle-all {
+          width: 14px;
+          height: 14px;
+          border-radius: var(--radius-full);
+          background: linear-gradient(135deg, #ef4444 25%, #3b82f6 25%, #3b82f6 50%, #10b981 50%, #10b981 75%, #f59e0b 75%);
+          border: 1px solid rgba(0,0,0,0.2);
+        }
+        .btn-link-reset {
+          background: none;
+          border: none;
+          color: var(--accent-primary);
+          font-size: 0.78rem;
+          font-weight: 700;
+          cursor: pointer;
+          text-decoration: underline;
+        }
+
 
         .size-header {
           display: flex;
