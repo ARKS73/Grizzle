@@ -465,37 +465,47 @@ export default function Navbar() {
                   <p className="dropdown-user-name">{user.name}</p>
                   <p className="dropdown-user-email">{user.email}</p>
                 </div>
-                <div className="dropdown-divider"></div>
-                <Link 
-                  href="/profile" 
-                  onClick={closeAllMenus}
-                  className="dropdown-item"
-                >
-                  <User size={16} /> Profile & Address
-                </Link>
-                <Link 
-                  href="/orders" 
-                  onClick={closeAllMenus}
-                  className="dropdown-item"
-                >
-                  <PackageCheck size={16} /> Order History
-                </Link>
-                {user.role === 'admin' && (
+
+                <div className="dropdown-menu-list">
                   <Link 
-                    href="/admin" 
+                    href="/profile" 
                     onClick={closeAllMenus}
-                    className="dropdown-item dropdown-admin"
+                    className="dropdown-item"
                   >
-                    <ShieldAlert size={16} /> Admin Dashboard
+                    <User size={16} className="dropdown-item-icon" />
+                    <span>Profile & Address</span>
                   </Link>
-                )}
-                <div className="dropdown-divider"></div>
-                <button 
-                  onClick={() => { logout(); closeAllMenus(); }} 
-                  className="dropdown-item dropdown-logout"
-                >
-                  <LogOut size={16} /> Logout
-                </button>
+
+                  <Link 
+                    href="/orders" 
+                    onClick={closeAllMenus}
+                    className="dropdown-item"
+                  >
+                    <PackageCheck size={16} className="dropdown-item-icon" />
+                    <span>Order History</span>
+                  </Link>
+
+                  {user.role === 'admin' && (
+                    <Link 
+                      href="/admin" 
+                      onClick={closeAllMenus}
+                      className="dropdown-item dropdown-admin"
+                    >
+                      <ShieldAlert size={16} className="dropdown-item-icon" />
+                      <span>Admin Dashboard</span>
+                    </Link>
+                  )}
+
+                  <div className="dropdown-divider"></div>
+
+                  <button 
+                    onClick={() => { logout(); closeAllMenus(); }} 
+                    className="dropdown-item dropdown-logout"
+                  >
+                    <LogOut size={16} className="dropdown-item-icon" />
+                    <span>Logout</span>
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -1296,45 +1306,99 @@ export default function Navbar() {
 
         .user-dropdown-menu {
           position: absolute;
-          top: calc(100% + 10px);
+          top: calc(100% + 12px);
           right: 0;
-          width: 220px;
-          padding: 0.75rem;
-          box-shadow: var(--shadow-xl);
+          width: 240px;
+          min-width: 240px;
+          padding: 0.85rem;
+          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
           background: var(--bg-elevated);
           z-index: 1000;
           border-radius: var(--radius-lg);
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 0.25rem;
+          box-sizing: border-box;
         }
         .dropdown-user-header {
-          padding: 0.25rem 0.5rem;
+          padding: 0.35rem 0.65rem 0.65rem 0.65rem;
+          border-bottom: 1px solid var(--border-color);
+          margin-bottom: 0.35rem;
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
         }
-        .dropdown-user-name { font-weight: 700; font-size: 0.9rem; }
-        .dropdown-user-email { font-size: 0.75rem; color: var(--text-muted); }
+        .dropdown-user-name {
+          font-weight: 800;
+          font-size: 0.92rem;
+          color: var(--text-primary);
+          line-height: 1.2;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .dropdown-user-email {
+          font-size: 0.78rem;
+          color: var(--text-muted);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .dropdown-menu-list {
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 0.35rem !important;
+          width: 100%;
+        }
         .dropdown-divider {
           height: 1px;
           background: var(--border-color);
-          margin: 0.5rem 0;
+          margin: 0.35rem 0;
         }
         .dropdown-item {
-          display: flex;
-          align-items: center;
-          gap: 0.65rem;
-          padding: 0.55rem 0.65rem;
-          border-radius: var(--radius-md);
-          font-size: 0.85rem;
-          font-weight: 500;
-          color: var(--text-primary);
-          transition: background var(--transition-fast);
-          width: 100%;
+          display: flex !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          gap: 0.75rem !important;
+          padding: 0.65rem 0.75rem !important;
+          border-radius: var(--radius-md) !important;
+          font-size: 0.88rem !important;
+          font-weight: 600 !important;
+          color: var(--text-secondary);
+          transition: all 0.2s ease;
+          width: 100% !important;
           border: none;
-          background: none;
+          background: transparent;
           cursor: pointer;
           text-align: left;
           text-decoration: none;
+          white-space: nowrap !important;
+          box-sizing: border-box;
         }
-        .dropdown-item:hover { background: var(--bg-tertiary); }
-        .dropdown-admin { color: var(--accent-primary); font-weight: 600; }
-        .dropdown-logout { color: var(--danger); }
+        .dropdown-item:hover {
+          background: var(--bg-tertiary);
+          color: var(--text-primary);
+          transform: translateX(3px);
+        }
+        .dropdown-item-icon {
+          flex-shrink: 0;
+        }
+        .dropdown-admin {
+          color: var(--accent-primary) !important;
+          background: rgba(99, 102, 241, 0.08);
+          border: 1px solid rgba(99, 102, 241, 0.2) !important;
+        }
+        .dropdown-admin:hover {
+          background: rgba(99, 102, 241, 0.18) !important;
+          color: white !important;
+        }
+        .dropdown-logout {
+          color: #ef4444 !important;
+        }
+        .dropdown-logout:hover {
+          background: rgba(239, 68, 68, 0.12) !important;
+          color: #ef4444 !important;
+        }
 
         .mobile-toggle { display: none; }
 
