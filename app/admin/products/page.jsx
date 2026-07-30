@@ -6,25 +6,10 @@ import { useRouter } from 'next/navigation';
 import { Plus, Edit, Trash2, Search, Upload, X, ArrowLeft, Palette, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 
+
 const ALL_AVAILABLE_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
 const GENDER_OPTIONS = ['Men', 'Women', 'Unisex'];
 
-const SAMPLE_PRESET_IMAGES = [
-  { name: 'Oversized Black Tee', url: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Charcoal Graphic', url: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Anime Manga Print', url: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Minimalist Line Art', url: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Artist Drop Hoodie', url: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?auto=format&fit=crop&w=800&q=80' },
-];
-
-const PRESET_COLOR_VARIANTS = [
-  { name: 'Pitch Black', hex: '#0f172a', image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Off White', hex: '#f8fafc', image: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Washed Charcoal', hex: '#334155', image: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Royal Navy', hex: '#1e3a8a', image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Crimson Maroon', hex: '#881337', image: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Olive Green', hex: '#3f6212', image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80' },
-];
 
 // Helper to compress local uploaded image files before sending to server (prevents 413 Payload Too Large)
 const compressImage = (file, maxWidth = 800, maxHeight = 1000, quality = 0.75) => {
@@ -83,14 +68,14 @@ export default function AdminProductsPage() {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    category: 'T-Shirts',
+    category: '',
     gender: 'Men',
     price: '',
     originalPrice: '',
     stock: '25',
-    images: [''],
+    images: [],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    colors: PRESET_COLOR_VARIANTS.slice(0, 3),
+    colors: [],
     isFeatured: false,
     isTrending: false,
     isBestSeller: false,
@@ -131,9 +116,9 @@ export default function AdminProductsPage() {
       price: '',
       originalPrice: '',
       stock: '25',
-      images: ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80'],
+      images: [],
       sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-      colors: PRESET_COLOR_VARIANTS.slice(0, 3),
+      colors: [],
       isFeatured: false,
       isTrending: false,
       isBestSeller: false,
@@ -151,9 +136,9 @@ export default function AdminProductsPage() {
       price: product.price.toString(),
       originalPrice: product.originalPrice ? product.originalPrice.toString() : '',
       stock: product.stock.toString(),
-      images: product.images && product.images.length > 0 ? product.images : ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80'],
+      images: product.images && product.images.length > 0 ? product.images : [],
       sizes: product.sizes || ['S', 'M', 'L', 'XL'],
-      colors: product.colors && product.colors.length > 0 ? product.colors : PRESET_COLOR_VARIANTS.slice(0, 3),
+      colors: product.colors && product.colors.length > 0 ? product.colors : [],
       isFeatured: product.isFeatured || false,
       isTrending: product.isTrending || false,
       isBestSeller: product.isBestSeller || false,
@@ -194,7 +179,12 @@ export default function AdminProductsPage() {
     try {
       setUploadingImage(true);
       const compressedDataUrl = await compressImage(file, 800, 1000, 0.75);
-      const dataUrl = compressedDataUrl || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80';
+      if (!compressedDataUrl) {
+        addToast('Failed to read image file', 'error');
+        setUploadingImage(false);
+        return;
+      }
+      const dataUrl = compressedDataUrl;
 
       const res = await fetch('/api/upload', {
         method: 'POST',
@@ -238,7 +228,7 @@ export default function AdminProductsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          images: combinedImages.length > 0 ? combinedImages : ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80'],
+          images: combinedImages.length > 0 ? combinedImages : [],
           price: parseFloat(formData.price),
           originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : parseFloat(formData.price),
           stock: parseInt(formData.stock, 10),

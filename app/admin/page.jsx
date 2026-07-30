@@ -134,7 +134,18 @@ export default function AdminDashboardPage() {
     return <div className="skeleton" style={{ height: '400px', borderRadius: '16px' }} />;
   }
 
-  const maxRevenue = Math.max(...monthlySales.map((m) => m.revenue), 5000);
+  const maxRevenue = Math.max(...monthlySales.map((m) => m.revenue), 1);
+
+  // Real month-over-month trend calculation from MongoDB data
+  const computeTrend = (key) => {
+    if (monthlySales.length < 2) return null;
+    const current = monthlySales[monthlySales.length - 1]?.[key] || 0;
+    const previous = monthlySales[monthlySales.length - 2]?.[key] || 0;
+    if (previous === 0) return current > 0 ? 100 : null;
+    return Math.round(((current - previous) / previous) * 100);
+  };
+  const revenueTrend = computeTrend('revenue');
+  const ordersTrend = computeTrend('orders');
 
   return (
     <div className="admin-dashboard-wrapper">
@@ -150,7 +161,10 @@ export default function AdminDashboardPage() {
           <div>
             <span className="kpi-label">Total Revenue</span>
             <h2 className="kpi-value">₹{metrics?.totalRevenue?.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</h2>
-            <span className="kpi-trend text-success"><TrendingUp size={14} /> +18.4% this month</span>
+            <span className={`kpi-trend ${revenueTrend === null ? 'text-muted' : revenueTrend >= 0 ? 'text-success' : 'text-danger'}`}>
+              <TrendingUp size={14} />
+              {revenueTrend === null ? 'No prior month data' : `${revenueTrend >= 0 ? '+' : ''}${revenueTrend}% vs last month`}
+            </span>
           </div>
         </div>
 
@@ -159,7 +173,10 @@ export default function AdminDashboardPage() {
           <div>
             <span className="kpi-label">Total Orders</span>
             <h2 className="kpi-value">{metrics?.totalOrders || 0}</h2>
-            <span className="kpi-trend text-success"><TrendingUp size={14} /> +12.1% orders</span>
+            <span className={`kpi-trend ${ordersTrend === null ? 'text-muted' : ordersTrend >= 0 ? 'text-success' : 'text-danger'}`}>
+              <TrendingUp size={14} />
+              {ordersTrend === null ? 'No prior month data' : `${ordersTrend >= 0 ? '+' : ''}${ordersTrend}% vs last month`}
+            </span>
           </div>
         </div>
 
