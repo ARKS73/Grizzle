@@ -4,41 +4,34 @@ import React from 'react';
 import Link from 'next/link';
 
 export default function GrizzleLogo({ size = 'medium', href = '/' }) {
-  // Sizing mappings: Bigger logo image, sleeker reduced GRIZZLE title font
-  const dimensions = {
-    small: { logoSize: 48, fontSize: '1.05rem' },
-    medium: { logoSize: 58, fontSize: '1.25rem' },
-    large: { logoSize: 78, fontSize: '1.65rem' },
-  }[size] || { logoSize: 58, fontSize: '1.25rem' };
+  // Sizing mappings for standalone full-fledged logo2 emblem
+  const logoSize = {
+    small: 44,
+    medium: 56,
+    large: 80,
+  }[size] || 56;
 
   const logoContent = (
     <div className={`grizzle-logo-container size-${size}`}>
-      {/* Uploaded Grizzle Brand Logo 2 Image */}
+      {/* Standalone Full-Fledged Brand Logo 2 Emblem */}
       <img
         src="/logo2.png"
-        alt="Grizzle Apparel Logo"
+        alt="Grizzle Apparel Brand Logo"
         style={{
-          width: dimensions.logoSize,
-          height: dimensions.logoSize,
+          width: `${logoSize}px`,
+          height: `${logoSize}px`,
           objectFit: 'contain',
           borderRadius: '50%',
-          filter: 'drop-shadow(0 0 10px rgba(239, 68, 68, 0.45)) drop-shadow(0 0 4px rgba(251, 191, 36, 0.45))',
+          filter: 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.5)) drop-shadow(0 0 5px rgba(251, 191, 36, 0.5))',
         }}
         className="grizzle-brand-img"
       />
 
-      {/* Brand Text */}
-      <div className="grizzle-text-wrapper">
-        <span className="brand-name" style={{ fontSize: dimensions.fontSize }}>
-          GRIZZLE
-        </span>
-      </div>
-
       <style jsx>{`
         .grizzle-logo-container {
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 0.75rem;
+          justify-content: center;
           text-decoration: none;
           user-select: none;
         }
@@ -48,25 +41,8 @@ export default function GrizzleLogo({ size = 'medium', href = '/' }) {
         }
 
         .grizzle-logo-container:hover .grizzle-brand-img {
-          transform: scale(1.08) rotate(-3deg);
-          filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.75)) drop-shadow(0 0 8px rgba(251, 191, 36, 0.75));
-        }
-
-        .grizzle-text-wrapper {
-          display: flex;
-          flex-direction: column;
-          line-height: 1;
-        }
-
-        .brand-name {
-          font-family: 'Outfit', 'Inter', sans-serif;
-          font-weight: 900;
-          letter-spacing: 0.02em;
-          background: linear-gradient(135deg, #ffffff 0%, #f4f4f5 60%, #fbbf24 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          text-transform: uppercase;
-          text-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+          transform: scale(1.1) rotate(-3deg);
+          filter: drop-shadow(0 0 18px rgba(239, 68, 68, 0.8)) drop-shadow(0 0 10px rgba(251, 191, 36, 0.8));
         }
       `}</style>
     </div>
@@ -74,7 +50,7 @@ export default function GrizzleLogo({ size = 'medium', href = '/' }) {
 
   if (href) {
     return (
-      <Link href={href} style={{ textDecoration: 'none' }}>
+      <Link href={href} style={{ textDecoration: 'none', display: 'inline-flex' }}>
         {logoContent}
       </Link>
     );
