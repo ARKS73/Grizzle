@@ -53,8 +53,10 @@ export default function AdminLayout({ children }) {
                 href={link.href}
                 className={`admin-nav-item ${isActive ? 'active' : ''}`}
               >
-                <Icon size={18} />
-                <span>{link.name}</span>
+                <div className="nav-icon-bubble">
+                  <Icon size={18} />
+                </div>
+                <span className="nav-link-text">{link.name}</span>
               </Link>
             );
           })}
@@ -84,7 +86,6 @@ export default function AdminLayout({ children }) {
           </div>
         </header>
 
-
         <div className="admin-content-body">{children}</div>
       </main>
 
@@ -93,6 +94,7 @@ export default function AdminLayout({ children }) {
           display: grid;
           grid-template-columns: 260px 1fr;
           min-height: 100vh;
+          background: var(--bg-primary);
         }
 
         .admin-sidebar {
@@ -100,19 +102,22 @@ export default function AdminLayout({ children }) {
           border-top: none;
           border-bottom: none;
           border-left: none;
-          padding: 1.5rem;
+          padding: 1.5rem 0 1.5rem 1rem;
           display: flex;
           flex-direction: column;
           position: sticky;
           top: 0;
           height: 100vh;
           background: var(--bg-secondary);
+          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+          z-index: 50;
         }
         .sidebar-brand {
           display: flex;
           align-items: center;
           gap: 0.75rem;
           padding-bottom: 1.5rem;
+          padding-right: 1rem;
           border-bottom: 1px solid var(--border-color);
         }
         .brand-badge {
@@ -121,10 +126,11 @@ export default function AdminLayout({ children }) {
           background: var(--accent-gradient);
           color: white;
           font-weight: 800;
-          border-radius: var(--radius-md);
+          border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
+          box-shadow: var(--shadow-sm);
         }
         .brand-subtitle { font-size: 0.75rem; color: var(--text-muted); }
 
@@ -134,30 +140,95 @@ export default function AdminLayout({ children }) {
           gap: 0.5rem;
           margin-top: 1.5rem;
           flex: 1;
+          position: relative;
         }
         .admin-nav-item {
+          position: relative;
           display: flex;
           align-items: center;
-          gap: 0.75rem;
+          gap: 0.85rem;
           padding: 0.75rem 1rem;
-          border-radius: var(--radius-md);
+          border-radius: 30px 0 0 30px;
           font-size: 0.9rem;
           font-weight: 600;
           color: var(--text-secondary);
-          transition: all var(--transition-fast);
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          text-decoration: none;
         }
-        .admin-nav-item:hover {
-          background: var(--bg-tertiary);
+        .admin-nav-item:hover:not(.active) {
           color: var(--text-primary);
+          background: var(--bg-tertiary);
+          border-radius: var(--radius-md);
+          margin-right: 1rem;
         }
+
+        /* Organic curved bubble notch for active nav tab (matches design reference) */
         .admin-nav-item.active {
+          background: var(--bg-primary);
+          color: var(--text-primary);
+          font-weight: 700;
+          z-index: 10;
+        }
+
+        .admin-nav-item.active::before {
+          content: '';
+          position: absolute;
+          top: -24px;
+          right: 0;
+          width: 24px;
+          height: 24px;
+          background: transparent;
+          border-bottom-right-radius: 24px;
+          box-shadow: 10px 10px 0 10px var(--bg-primary);
+          pointer-events: none;
+        }
+
+        .admin-nav-item.active::after {
+          content: '';
+          position: absolute;
+          bottom: -24px;
+          right: 0;
+          width: 24px;
+          height: 24px;
+          background: transparent;
+          border-top-right-radius: 24px;
+          box-shadow: 10px -10px 0 10px var(--bg-primary);
+          pointer-events: none;
+        }
+
+        .nav-icon-bubble {
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255, 255, 255, 0.05);
+          color: var(--text-secondary);
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+          flex-shrink: 0;
+        }
+
+        .admin-nav-item:hover:not(.active) .nav-icon-bubble {
+          color: var(--text-primary);
+          background: rgba(255, 255, 255, 0.1);
+        }
+
+        .admin-nav-item.active .nav-icon-bubble {
           background: var(--accent-gradient);
           color: white;
-          box-shadow: var(--shadow-md);
+          transform: scale(1.1);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .nav-link-text {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .sidebar-footer {
-          padding-top: 1rem;
+          padding: 1rem 1rem 0 0;
           border-top: 1px solid var(--border-color);
         }
         .exit-btn { width: 100%; justify-content: center; }
