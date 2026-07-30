@@ -7,8 +7,6 @@ import ProductFilter from '@/components/products/ProductFilter';
 import QuickViewModal from '@/components/products/QuickViewModal';
 import { Search, SlidersHorizontal, ArrowUpDown, RefreshCw } from 'lucide-react';
 
-import { seedProducts } from '@/lib/seedData';
-
 function ProductsCatalogContent() {
   const searchParams = useSearchParams();
 
@@ -36,8 +34,8 @@ function ProductsCatalogContent() {
     }));
   }, [searchParams]);
 
-  const [products, setProducts] = useState(seedProducts.map((p, i) => ({ ...p, _id: p._id || `mock_${i}` })));
-  const [totalProducts, setTotalProducts] = useState(seedProducts.length);
+  const [products, setProducts] = useState([]);
+  const [totalProducts, setTotalProducts] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [quickViewProduct, setQuickViewProduct] = useState(null);

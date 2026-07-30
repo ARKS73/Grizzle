@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Product from '@/models/Product';
 import { getAuthUser } from '@/lib/jwt';
-import { seedProducts } from '@/lib/seedData';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +13,7 @@ export async function GET(request) {
     const category = searchParams.get('category') || '';
     const gender = searchParams.get('gender') || '';
     const minPrice = searchParams.get('minPrice') ? parseFloat(searchParams.get('minPrice')) : 0;
-    const maxPrice = searchParams.get('maxPrice') ? parseFloat(searchParams.get('maxPrice')) : 1000;
+    const maxPrice = searchParams.get('maxPrice') ? parseFloat(searchParams.get('maxPrice')) : 100000;
     const size = searchParams.get('size') || '';
     const color = searchParams.get('color') || '';
     const rating = searchParams.get('rating') ? parseFloat(searchParams.get('rating')) : 0;
@@ -26,100 +25,61 @@ export async function GET(request) {
     const page = parseInt(searchParams.get('page') || '1', 10);
     const limit = parseInt(searchParams.get('limit') || '12', 10);
 
-    const conn = await connectDB();
+    await connectDB();
 
-    let products = [];
-    let totalProducts = 0;
+    const query = {};
 
-    if (conn) {
-      // Auto-seed MongoDB if empty so DB contains baseline products
-      const dbTotalCount = await Product.countDocuments({});
-      if (dbTotalCount === 0) {
-        try {
-          const productsToInsert = seedProducts.map(({ _id, ...rest }) => rest);
-          await Product.insertMany(productsToInsert);
-        } catch (seedErr) {
-          console.error('Auto seed error:', seedErr);
-        }
-      }
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+        { category: { $regex: search, $options: 'i' } },
+      ];
+    }
 
-      const query = {};
+    if (category && category !== 'All' && category !== 'ALL') {
+      query.category = { $regex: new RegExp(`^${category.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}$`, 'i') };
+    }
 
-      if (search) {
-        query.$or = [
-          { name: { $regex: search, $options: 'i' } },
-          { description: { $regex: search, $options: 'i' } },
-          { category: { $regex: search, $options: 'i' } },
-        ];
-      }
+    if (gender && gender !== 'All' && gender !== 'ALL') {
+      query.gender = { $regex: new RegExp(`^${gender.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}$`, 'i') };
+    }
 
-      if (category && category !== 'All') {
-        query.category = { $regex: new RegExp(`^${category}$`, 'i') };
-      }
+    if (minPrice > 0 || maxPrice < 100000) {
+      query.price = { $gte: minPrice, $lte: maxPrice };
+    }
 
-      if (gender && gender !== 'All') {
-        query.gender = { $regex: new RegExp(`^${gender}$`, 'i') };
-      }
+    if (size) {
+      query.sizes = size;
+    }
 
-      if (minPrice > 0 || maxPrice < 1000) {
-        query.price = { $gte: minPrice, $lte: maxPrice };
-      }
+    if (color) {
+      query['colors.name'] = { $regex: color, $options: 'i' };
+    }
 
-      if (size) {
-        query.sizes = size;
-      }
+    if (rating > 0) {
+      query.ratings = { $gte: rating };
+    }
 
-      if (color) {
-        query['colors.name'] = { $regex: color, $options: 'i' };
-      }
+    if (isFeatured) query.isFeatured = true;
+    if (isTrending) query.isTrending = true;
+    if (isBestSeller) query.isBestSeller = true;
+    if (inStock) query.stock = { $gt: 0 };
 
-      if (rating > 0) {
-        query.ratings = { $gte: rating };
-      }
+    let sortOptions = { createdAt: -1 };
+    if (sort === 'price-low' || sort === 'price_asc') sortOptions = { price: 1 };
+    if (sort === 'price-high' || sort === 'price_desc') sortOptions = { price: -1 };
+    if (sort === 'rating') sortOptions = { ratings: -1 };
 
-      if (isFeatured) query.isFeatured = true;
-      if (isTrending) query.isTrending = true;
-      if (isBestSeller) query.isBestSeller = true;
-      if (inStock) query.stock = { $gt: 0 };
-
-      let sortOptions = { createdAt: -1 };
-      if (sort === 'price-low') sortOptions = { price: 1 };
-      if (sort === 'price-high') sortOptions = { price: -1 };
-      if (sort === 'rating') sortOptions = { ratings: -1 };
-
-      totalProducts = await Product.countDocuments(query);
-      products = await Product.find(query)
+    // Ultra-fast parallel count + query using lean documents
+    const [totalProducts, products] = await Promise.all([
+      Product.countDocuments(query),
+      Product.find(query)
         .sort(sortOptions)
         .skip((page - 1) * limit)
-        .limit(limit);
-
-      return NextResponse.json({
-        success: true,
-        products,
-        totalProducts,
-        totalPages: Math.ceil(totalProducts / limit) || 1,
-        currentPage: page,
-      });
-    }
-
-    // Fallback ONLY if MongoDB connection failed completely
-    let mockList = seedProducts.map((p, idx) => ({ ...p, _id: p._id || `mock_${idx}` }));
-    if (search) {
-      const s = search.toLowerCase();
-      mockList = mockList.filter(p => p.name.toLowerCase().includes(s) || p.description.toLowerCase().includes(s) || (p.category && p.category.toLowerCase().includes(s)));
-    }
-    if (category && category !== 'All') {
-      mockList = mockList.filter(p => p.category && p.category.toLowerCase() === category.toLowerCase());
-    }
-    if (gender && gender !== 'All') {
-      mockList = mockList.filter(p => p.gender && p.gender.toLowerCase() === gender.toLowerCase());
-    }
-    if (isFeatured) mockList = mockList.filter(p => p.isFeatured);
-    if (isBestSeller) mockList = mockList.filter(p => p.isBestSeller);
-    if (isTrending) mockList = mockList.filter(p => p.isTrending);
-
-    totalProducts = mockList.length;
-    products = mockList.slice((page - 1) * limit, page * limit);
+        .limit(limit)
+        .lean(),
+    ]);
 
     return NextResponse.json({
       success: true,
@@ -130,14 +90,14 @@ export async function GET(request) {
     });
   } catch (error) {
     console.error('Fetch products error:', error);
-    const mockProducts = seedProducts.map((p, idx) => ({ ...p, _id: `mock_${idx}` }));
     return NextResponse.json({
-      success: true,
-      products: mockProducts,
-      totalProducts: mockProducts.length,
+      success: false,
+      message: error.message,
+      products: [],
+      totalProducts: 0,
       totalPages: 1,
       currentPage: 1,
-    });
+    }, { status: 500 });
   }
 }
 
@@ -193,7 +153,6 @@ export async function POST(request) {
       isTrending: Boolean(isTrending),
       isBestSeller: Boolean(isBestSeller),
     });
-
 
     return NextResponse.json({
       success: true,

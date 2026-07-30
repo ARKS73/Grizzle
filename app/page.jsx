@@ -23,14 +23,14 @@ import {
 import ProductCard from '@/components/products/ProductCard';
 import QuickViewModal from '@/components/products/QuickViewModal';
 import GlobalScrollCanvas from '@/components/home/GlobalScrollCanvas';
-import { seedCategories, seedProducts } from '@/lib/seedData';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useToast } from '@/components/ui/Toast';
 
 export default function SinglePageStreetwearStore() {
-  const [categories, setCategories] = useState(seedCategories);
-  const [allProducts, setAllProducts] = useState(seedProducts);
+  const [categories, setCategories] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
   const [activeCategory, setActiveCategory] = useState('ALL');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [manifestoOpen, setManifestoOpen] = useState(false);
@@ -53,15 +53,16 @@ export default function SinglePageStreetwearStore() {
   useEffect(() => {
     async function fetchData() {
       try {
+        setLoadingProducts(true);
         const catRes = await fetch('/api/categories');
         const catData = await catRes.json();
-        if (catData.success && catData.categories?.length > 0) {
+        if (catData.success && Array.isArray(catData.categories)) {
           setCategories(catData.categories);
         }
 
         const prodRes = await fetch('/api/products?limit=20');
         const prodData = await prodRes.json();
-        if (prodData.success && prodData.products?.length > 0) {
+        if (prodData.success && Array.isArray(prodData.products)) {
           setAllProducts(prodData.products);
         }
 
@@ -72,6 +73,8 @@ export default function SinglePageStreetwearStore() {
         }
       } catch (e) {
         console.error('Failed to fetch store data:', e);
+      } finally {
+        setLoadingProducts(false);
       }
     }
     fetchData();
@@ -187,67 +190,84 @@ export default function SinglePageStreetwearStore() {
           </div>
 
           {/* Pastel Product Grid */}
-          <div className="pastel-products-grid">
-            {filteredProducts.slice(0, 8).map((product, idx) => {
-              const bgPastel = pastelColors[idx % pastelColors.length];
-              const isSaved = isInWishlist(product._id);
+          {loadingProducts ? (
+            <div className="pastel-products-grid">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="skeleton" style={{ height: '340px', borderRadius: '24px' }} />
+              ))}
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="glass-panel text-center p-5" style={{ borderRadius: '24px', padding: '3.5rem 2rem' }}>
+              <ShoppingBag size={48} style={{ opacity: 0.4, marginBottom: '1rem' }} />
+              <h3 style={{ fontSize: '1.4rem', fontWeight: 800 }}>No Seller Products Added Yet</h3>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Your MongoDB seller database is online and connected. Add clothing products from the Admin Dashboard to display them live!</p>
+              <Link href="/admin/products" className="btn-street-dark">
+                Go to Admin Product Manager &rarr;
+              </Link>
+            </div>
+          ) : (
+            <div className="pastel-products-grid">
+              {filteredProducts.slice(0, 8).map((product, idx) => {
+                const bgPastel = pastelColors[idx % pastelColors.length];
+                const isSaved = isInWishlist(product._id);
 
-              return (
-                <div key={product._id} className="pastel-card-wrapper">
-                  {/* Soft Pastel Image Block */}
-                  <div className="pastel-image-block" style={{ backgroundColor: bgPastel }}>
-                    <img 
-                      src={product.images?.[0] || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80'} 
-                      alt={product.name}
-                      className="pastel-product-img"
-                    />
+                return (
+                  <div key={product._id} className="pastel-card-wrapper">
+                    {/* Soft Pastel Image Block */}
+                    <div className="pastel-image-block" style={{ backgroundColor: bgPastel }}>
+                      <img 
+                        src={product.images?.[0] || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80'} 
+                        alt={product.name}
+                        className="pastel-product-img"
+                      />
 
-                    {/* Action Overlay */}
-                    <div className="pastel-action-overlay">
-                      <button 
-                        onClick={() => toggleWishlist(product)}
-                        className={`pastel-icon-btn ${isSaved ? 'saved' : ''}`}
-                        title="Wishlist"
-                      >
-                        <Heart size={16} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : '#1e293b'} />
-                      </button>
-                      <button 
-                        onClick={() => setQuickViewProduct(product)}
-                        className="pastel-icon-btn"
-                        title="Quick View"
-                      >
-                        <Eye size={16} color="#1e293b" />
-                      </button>
+                      {/* Action Overlay */}
+                      <div className="pastel-action-overlay">
+                        <button 
+                          onClick={() => toggleWishlist(product)}
+                          className={`pastel-icon-btn ${isSaved ? 'saved' : ''}`}
+                          title="Wishlist"
+                        >
+                          <Heart size={16} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : '#1e293b'} />
+                        </button>
+                        <button 
+                          onClick={() => setQuickViewProduct(product)}
+                          className="pastel-icon-btn"
+                          title="Quick View"
+                        >
+                          <Eye size={16} color="#1e293b" />
+                        </button>
+                      </div>
+
+                      {/* Tag Badge */}
+                      {product.isBestSeller && (
+                        <span className="pastel-tag-badge">BESTSELLER</span>
+                      )}
+                      {product.isTrending && (
+                        <span className="pastel-tag-badge badge-trending">TRENDING</span>
+                      )}
                     </div>
 
-                    {/* Tag Badge */}
-                    {product.isBestSeller && (
-                      <span className="pastel-tag-badge">BESTSELLER</span>
-                    )}
-                    {product.isTrending && (
-                      <span className="pastel-tag-badge badge-trending">TRENDING</span>
-                    )}
-                  </div>
+                    {/* Bottom Dark Info Bar */}
+                    <div className="pastel-card-info">
+                      <div className="info-text-box">
+                        <h4 className="pastel-card-title">{product.name}</h4>
+                        <span className="pastel-card-price">₹{product.price?.toFixed(0)}</span>
+                      </div>
 
-                  {/* Bottom Dark Info Bar */}
-                  <div className="pastel-card-info">
-                    <div className="info-text-box">
-                      <h4 className="pastel-card-title">{product.name}</h4>
-                      <span className="pastel-card-price">₹{product.price?.toFixed(0)}</span>
+                      <button 
+                        onClick={() => addToCart(product, product.sizes?.[0] || 'M', product.colors?.[0]?.name || 'Default', 1)}
+                        className="pastel-add-btn"
+                        title="Add to Cart"
+                      >
+                        <ShoppingBag size={15} />
+                      </button>
                     </div>
-
-                    <button 
-                      onClick={() => addToCart(product, product.sizes?.[0] || 'M', product.colors?.[0]?.name || 'Default', 1)}
-                      className="pastel-add-btn"
-                      title="Add to Cart"
-                    >
-                      <ShoppingBag size={15} />
-                    </button>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 

@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Category from '@/models/Category';
 import { getAuthUser } from '@/lib/jwt';
-import { seedCategories } from '@/lib/seedData';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,16 +10,11 @@ export async function GET() {
     const conn = await connectDB();
     let categories = [];
     if (conn) {
-      categories = await Category.find({}).sort({ name: 1 });
+      categories = await Category.find({}).sort({ name: 1 }).lean();
     }
-
-    if (categories.length === 0) {
-      categories = seedCategories.map((c, idx) => ({ ...c, _id: `mock_cat_${idx}` }));
-    }
-
     return NextResponse.json({ success: true, categories });
   } catch (error) {
-    return NextResponse.json({ success: true, categories: seedCategories });
+    return NextResponse.json({ success: true, categories: [] });
   }
 }
 
