@@ -32,6 +32,17 @@ export async function GET(request) {
     let totalProducts = 0;
 
     if (conn) {
+      // Auto-seed MongoDB if empty so DB contains baseline products
+      const dbTotalCount = await Product.countDocuments({});
+      if (dbTotalCount === 0) {
+        try {
+          const productsToInsert = seedProducts.map(({ _id, ...rest }) => rest);
+          await Product.insertMany(productsToInsert);
+        } catch (seedErr) {
+          console.error('Auto seed error:', seedErr);
+        }
+      }
+
       const query = {};
 
       if (search) {
@@ -81,36 +92,34 @@ export async function GET(request) {
         .sort(sortOptions)
         .skip((page - 1) * limit)
         .limit(limit);
+
+      return NextResponse.json({
+        success: true,
+        products,
+        totalProducts,
+        totalPages: Math.ceil(totalProducts / limit) || 1,
+        currentPage: page,
+      });
     }
 
-    // Fallback if DB is unseeded or offline
-    if (products.length === 0) {
-      let mockList = seedProducts.map((p, idx) => ({ ...p, _id: p._id || `mock_${idx}` }));
-      if (search) {
-        const s = search.toLowerCase();
-        mockList = mockList.filter(p => p.name.toLowerCase().includes(s) || p.description.toLowerCase().includes(s) || (p.category && p.category.toLowerCase().includes(s)));
-      }
-      if (category && category !== 'All') {
-        mockList = mockList.filter(p => p.category && p.category.toLowerCase() === category.toLowerCase());
-      }
-      if (gender && gender !== 'All') {
-        mockList = mockList.filter(p => p.gender && p.gender.toLowerCase() === gender.toLowerCase());
-      }
-      if (isFeatured) {
-        mockList = mockList.filter(p => p.isFeatured);
-      }
-      if (isBestSeller) {
-        mockList = mockList.filter(p => p.isBestSeller);
-      }
-      if (isTrending) {
-        mockList = mockList.filter(p => p.isTrending);
-      }
-      if (mockList.length === 0) {
-        mockList = seedProducts.map((p, idx) => ({ ...p, _id: p._id || `mock_${idx}` }));
-      }
-      totalProducts = mockList.length;
-      products = mockList.slice((page - 1) * limit, page * limit);
+    // Fallback ONLY if MongoDB connection failed completely
+    let mockList = seedProducts.map((p, idx) => ({ ...p, _id: p._id || `mock_${idx}` }));
+    if (search) {
+      const s = search.toLowerCase();
+      mockList = mockList.filter(p => p.name.toLowerCase().includes(s) || p.description.toLowerCase().includes(s) || (p.category && p.category.toLowerCase().includes(s)));
     }
+    if (category && category !== 'All') {
+      mockList = mockList.filter(p => p.category && p.category.toLowerCase() === category.toLowerCase());
+    }
+    if (gender && gender !== 'All') {
+      mockList = mockList.filter(p => p.gender && p.gender.toLowerCase() === gender.toLowerCase());
+    }
+    if (isFeatured) mockList = mockList.filter(p => p.isFeatured);
+    if (isBestSeller) mockList = mockList.filter(p => p.isBestSeller);
+    if (isTrending) mockList = mockList.filter(p => p.isTrending);
+
+    totalProducts = mockList.length;
+    products = mockList.slice((page - 1) * limit, page * limit);
 
     return NextResponse.json({
       success: true,
