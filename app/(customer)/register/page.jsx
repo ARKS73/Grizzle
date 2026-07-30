@@ -30,7 +30,7 @@ export default function RegisterPage() {
     <div className="container auth-page-wrapper">
       <div className="auth-card glass-panel">
         <div className="auth-header text-center">
-          <img src="/logo2.png" alt="Grizzle Apparel Logo" style={{ height: '64px', width: 'auto', maxWidth: '220px', borderRadius: '0px', marginBottom: '0.75rem', objectFit: 'contain', filter: 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.5))' }} />
+          <img src="/logo2.png" alt="Grizzle Apparel Logo" style={{ display: 'block', margin: '0 auto 0.75rem auto', height: '64px', width: 'auto', maxWidth: '220px', borderRadius: '0px', objectFit: 'contain', filter: 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.5))' }} />
           <h2>Create Your Grizzle Account</h2>
           <p>Join to unlock members-only discount drops and order tracking.</p>
         </div>
