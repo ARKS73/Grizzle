@@ -1,8 +1,49 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { DollarSign, ShoppingBag, Users, AlertTriangle, TrendingUp, PackageCheck, ArrowUpRight } from 'lucide-react';
+import { DollarSign, ShoppingBag, Users, AlertTriangle, TrendingUp, PackageCheck, ArrowUpRight, Image as ImageIcon, Upload, Save, Sparkles } from 'lucide-react';
+import { useToast } from '@/components/ui/Toast';
+
+// Helper to compress uploaded hero image
+const compressHeroImage = (file, maxWidth = 900, maxHeight = 1200, quality = 0.85) => {
+  return new Promise((resolve) => {
+    if (!file || !file.type.startsWith('image/')) {
+      resolve(null);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        if (height > maxHeight) {
+          width = Math.round((width * maxHeight) / height);
+          height = maxHeight;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressedDataUrl);
+      };
+      img.onerror = () => resolve(event.target.result);
+      img.src = event.target.result;
+    };
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+};
 
 export default function AdminDashboardPage() {
   const [metrics, setMetrics] = useState(null);
@@ -10,9 +51,21 @@ export default function AdminDashboardPage() {
   const [recentOrders, setRecentOrders] = useState([]);
   const [monthlySales, setMonthlySales] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [savingSettings, setSavingSettings] = useState(false);
+  const { addToast } = useToast();
+
+  const fileInputRef = useRef(null);
+  const [storeSettings, setStoreSettings] = useState({
+    heroImage: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80',
+    heroBadge: 'NEW DROP | SEASON 2026',
+    heroTitle: 'HIGH-DENSITY DTF PRINTS',
+    heroAccentTitle: 'YOU CAN WEAR',
+    heroDesc: 'Merging high-fidelity DTF printing with 240 GSM bio-washed heavy cotton. Vibrant prints built to last for 50+ washes.',
+    heroTapeNote: 'LIMITED TO 100 PIECES GLOBALLY',
+  });
 
   useEffect(() => {
-    async function fetchAnalytics() {
+    async function fetchData() {
       try {
         setLoading(true);
         const res = await fetch('/api/admin/analytics');
@@ -24,14 +77,58 @@ export default function AdminDashboardPage() {
           setRecentOrders(data.recentOrders || []);
           setMonthlySales(data.monthlySales || []);
         }
+
+        const settingsRes = await fetch('/api/admin/settings');
+        const settingsData = await settingsRes.json();
+        if (settingsData.success && settingsData.settings) {
+          setStoreSettings(settingsData.settings);
+        }
       } catch (e) {
         console.error(e);
       } finally {
         setLoading(false);
       }
     }
-    fetchAnalytics();
+    fetchData();
   }, []);
+
+  const handleHeroImageFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const compressed = await compressHeroImage(file);
+      if (compressed) {
+        setStoreSettings((prev) => ({ ...prev, heroImage: compressed }));
+        if (addToast) addToast('Hero image updated preview! Click "Save Banner Changes" to publish.', 'success');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSaveStoreSettings = async (e) => {
+    e.preventDefault();
+    try {
+      setSavingSettings(true);
+      const res = await fetch('/api/admin/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(storeSettings),
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (addToast) addToast('Hero Banner Image & Settings published to Landing Page!', 'success');
+      } else {
+        if (addToast) addToast('Failed to save settings: ' + data.message, 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      if (addToast) addToast('Error updating store settings', 'error');
+    } finally {
+      setSavingSettings(false);
+    }
+  };
 
   if (loading) {
     return <div className="skeleton" style={{ height: '400px', borderRadius: '16px' }} />;
@@ -81,6 +178,108 @@ export default function AdminDashboardPage() {
             <span className="kpi-label">Low Stock Alerts</span>
             <h2 className="kpi-value">{metrics?.lowStockCount || 0}</h2>
             <span className="kpi-trend text-danger">Stock &lt; 10 units</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Hidden Hero Image File Input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept="image/*"
+        onChange={handleHeroImageFileChange}
+        style={{ display: 'none' }}
+      />
+
+      {/* Hero Banner & Polaroid Image Editor Card */}
+      <div className="hero-settings-card glass-panel mt-4 mb-4">
+        <div className="card-header-flex">
+          <div>
+            <h3><ImageIcon size={20} className="text-primary inline-icon" /> Hero Banner Image & Text Customization</h3>
+            <p className="subtext">Upload a new photo for the landing page hero polaroid card and edit banner headlines.</p>
+          </div>
+          <button
+            onClick={handleSaveStoreSettings}
+            disabled={savingSettings}
+            className="btn btn-primary"
+          >
+            <Save size={16} /> {savingSettings ? 'Saving Changes...' : 'Save Banner Changes'}
+          </button>
+        </div>
+
+        <div className="hero-editor-grid mt-3">
+          {/* Polaroid Image Preview & Upload Button */}
+          <div className="hero-preview-box text-center">
+            <label className="form-label mb-2">Hero Polaroid Image Preview</label>
+            <div className="polaroid-preview-wrapper" onClick={() => fileInputRef.current?.click()} title="Click to Upload New Hero Photo">
+              <img src={storeSettings.heroImage} alt="Hero Polaroid Preview" className="hero-preview-img" />
+              <div className="preview-overlay">
+                <Upload size={24} />
+                <span>Upload Local Photo</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="btn btn-secondary btn-sm mt-3 w-100"
+            >
+              <Upload size={14} /> Upload New Photo From Device
+            </button>
+          </div>
+
+          {/* Form Inputs */}
+          <div className="hero-form-inputs">
+            <div className="form-group mb-2">
+              <label className="form-label">Hero Badge Text</label>
+              <input
+                type="text"
+                className="form-input"
+                value={storeSettings.heroBadge}
+                onChange={(e) => setStoreSettings((prev) => ({ ...prev, heroBadge: e.target.value }))}
+              />
+            </div>
+
+            <div className="form-grid-2">
+              <div className="form-group mb-2">
+                <label className="form-label">Hero Main Headline</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={storeSettings.heroTitle}
+                  onChange={(e) => setStoreSettings((prev) => ({ ...prev, heroTitle: e.target.value }))}
+                />
+              </div>
+
+              <div className="form-group mb-2">
+                <label className="form-label">Hero Accent Italic Text</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={storeSettings.heroAccentTitle}
+                  onChange={(e) => setStoreSettings((prev) => ({ ...prev, heroAccentTitle: e.target.value }))}
+                />
+              </div>
+            </div>
+
+            <div className="form-group mb-2">
+              <label className="form-label">Description Subtitle</label>
+              <textarea
+                className="form-input"
+                rows={2}
+                value={storeSettings.heroDesc}
+                onChange={(e) => setStoreSettings((prev) => ({ ...prev, heroDesc: e.target.value }))}
+              />
+            </div>
+
+            <div className="form-group mb-2">
+              <label className="form-label">Image Tape Note Label</label>
+              <input
+                type="text"
+                className="form-input"
+                value={storeSettings.heroTapeNote}
+                onChange={(e) => setStoreSettings((prev) => ({ ...prev, heroTapeNote: e.target.value }))}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -172,6 +371,79 @@ export default function AdminDashboardPage() {
       </div>
 
       <style jsx>{`
+        .hero-settings-card {
+          padding: 2rem;
+          border-radius: var(--radius-lg);
+        }
+        .card-header-flex {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1.5rem;
+          flex-wrap: wrap;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid var(--border-color);
+        }
+        .inline-icon {
+          display: inline-block;
+          vertical-align: middle;
+          margin-right: 0.35rem;
+        }
+        .hero-editor-grid {
+          display: grid;
+          grid-template-columns: 220px 1fr;
+          gap: 2rem;
+          align-items: flex-start;
+          margin-top: 1.5rem;
+        }
+        .polaroid-preview-wrapper {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 3 / 4;
+          border-radius: 12px;
+          overflow: hidden;
+          cursor: pointer;
+          border: 2px solid var(--accent-primary);
+          box-shadow: var(--shadow-lg);
+        }
+        .hero-preview-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.3s ease;
+        }
+        .preview-overlay {
+          position: absolute;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.6);
+          backdrop-filter: blur(3px);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          opacity: 0;
+          transition: opacity 0.25s ease;
+          font-size: 0.75rem;
+          font-weight: 700;
+          gap: 0.35rem;
+        }
+        .polaroid-preview-wrapper:hover .preview-overlay {
+          opacity: 1;
+        }
+        .polaroid-preview-wrapper:hover .hero-preview-img {
+          transform: scale(1.05);
+        }
+        .form-grid-2 {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+        }
+        @media (max-width: 800px) {
+          .hero-editor-grid { grid-template-columns: 1fr; }
+          .form-grid-2 { grid-template-columns: 1fr; }
+        }
+
         .kpi-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

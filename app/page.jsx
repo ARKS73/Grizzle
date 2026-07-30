@@ -37,6 +37,14 @@ export default function SinglePageStreetwearStore() {
   const [lookbookModalOpen, setLookbookModalOpen] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
+  const [heroSettings, setHeroSettings] = useState({
+    heroImage: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80',
+    heroBadge: 'NEW DROP | SEASON 2026',
+    heroTitle: 'HIGH-DENSITY DTF PRINTS',
+    heroAccentTitle: 'YOU CAN WEAR',
+    heroDesc: 'Merging high-fidelity DTF printing with 240 GSM bio-washed heavy cotton. Vibrant prints built to last for 50+ washes.',
+    heroTapeNote: 'LIMITED TO 100 PIECES GLOBALLY',
+  });
 
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
@@ -55,6 +63,12 @@ export default function SinglePageStreetwearStore() {
         const prodData = await prodRes.json();
         if (prodData.success && prodData.products?.length > 0) {
           setAllProducts(prodData.products);
+        }
+
+        const settingsRes = await fetch('/api/admin/settings');
+        const settingsData = await settingsRes.json();
+        if (settingsData.success && settingsData.settings) {
+          setHeroSettings(settingsData.settings);
         }
       } catch (e) {
         console.error('Failed to fetch store data:', e);
@@ -100,16 +114,16 @@ export default function SinglePageStreetwearStore() {
           <div className="hero-text-content">
             <div className="hero-pill-badge">
               <Sparkles size={14} className="badge-sparkle" />
-              <span>NEW DROP | SEASON 2026</span>
+              <span>{heroSettings.heroBadge}</span>
             </div>
 
             <h1 className="hero-street-title">
-              HIGH-DENSITY DTF PRINTS <br />
-              <span className="title-accent-italic">YOU CAN WEAR</span>
+              {heroSettings.heroTitle} <br />
+              <span className="title-accent-italic">{heroSettings.heroAccentTitle}</span>
             </h1>
 
             <p className="hero-street-desc">
-              Merging high-fidelity DTF printing with 240 GSM bio-washed heavy cotton. Vibrant prints built to last for 50+ washes.
+              {heroSettings.heroDesc}
             </p>
 
             <div className="hero-btn-group">
@@ -129,12 +143,12 @@ export default function SinglePageStreetwearStore() {
             <div className="polaroid-frame-card">
               <div className="badge-hot-pink">HOT</div>
               <img
-                src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80"
-                alt="Streetwear Culture Model"
+                src={heroSettings.heroImage}
+                alt={heroSettings.heroTitle}
                 className="polaroid-img"
               />
               <div className="sticky-tape-note">
-                LIMITED TO 100 PIECES GLOBALLY
+                {heroSettings.heroTapeNote}
               </div>
             </div>
           </div>
