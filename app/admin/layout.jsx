@@ -36,7 +36,7 @@ export default function AdminLayout({ children }) {
       {/* Admin Sidebar */}
       <aside className="admin-sidebar glass-panel">
         <div className="sidebar-brand">
-          <img src="/logo2.png" alt="Grizzle Admin Logo" style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.4))' }} />
+          <img src="/logo2.png" alt="Grizzle Admin Logo" style={{ height: '46px', width: 'auto', maxWidth: '150px', objectFit: 'contain', borderRadius: '0px', filter: 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.4))' }} />
           <div>
             <h3>Grizzle Admin</h3>
             <span className="brand-subtitle">Management Console</span>

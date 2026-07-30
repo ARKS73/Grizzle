@@ -33,7 +33,7 @@ function LoginContent() {
   return (
     <div className="auth-card glass-panel">
       <div className="auth-header text-center">
-        <img src="/logo2.png" alt="Grizzle Apparel Logo" style={{ width: '68px', height: '68px', borderRadius: '50%', marginBottom: '0.75rem', objectFit: 'contain', filter: 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.5))' }} />
+        <img src="/logo2.png" alt="Grizzle Apparel Logo" style={{ height: '64px', width: 'auto', maxWidth: '220px', borderRadius: '0px', marginBottom: '0.75rem', objectFit: 'contain', filter: 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.5))' }} />
         <h2>Welcome Back to Grizzle</h2>
         <p>Sign in to your Grizzle account to access orders, wishlist, profile & account settings.</p>
       </div>

@@ -4,25 +4,26 @@ import React from 'react';
 import Link from 'next/link';
 
 export default function GrizzleLogo({ size = 'medium', href = '/' }) {
-  // Sizing mappings for standalone full-fledged logo2 emblem
-  const logoSize = {
-    small: 44,
-    medium: 56,
-    large: 80,
-  }[size] || 56;
+  // Natural rectangular aspect ratio sizing for high visibility without circular clipping
+  const logoStyles = {
+    small: { height: '42px', maxWidth: '140px' },
+    medium: { height: '54px', maxWidth: '190px' },
+    large: { height: '76px', maxWidth: '260px' },
+  }[size] || { height: '54px', maxWidth: '190px' };
 
   const logoContent = (
     <div className={`grizzle-logo-container size-${size}`}>
-      {/* Standalone Full-Fledged Brand Logo 2 Emblem */}
+      {/* Rectangular Natural Aspect Ratio Logo Image without curve clipping */}
       <img
         src="/logo2.png"
-        alt="Grizzle Apparel Brand Logo"
+        alt="Grizzle Apparel Logo"
         style={{
-          width: `${logoSize}px`,
-          height: `${logoSize}px`,
+          height: logoStyles.height,
+          width: 'auto',
+          maxWidth: logoStyles.maxWidth,
           objectFit: 'contain',
-          borderRadius: '50%',
-          filter: 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.5)) drop-shadow(0 0 5px rgba(251, 191, 36, 0.5))',
+          borderRadius: '0px',
+          filter: 'drop-shadow(0 0 10px rgba(239, 68, 68, 0.4)) drop-shadow(0 0 4px rgba(251, 191, 36, 0.3))',
         }}
         className="grizzle-brand-img"
       />
@@ -37,12 +38,12 @@ export default function GrizzleLogo({ size = 'medium', href = '/' }) {
         }
 
         .grizzle-brand-img {
-          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+          transition: transform 0.3s ease, filter 0.3s ease;
         }
 
         .grizzle-logo-container:hover .grizzle-brand-img {
-          transform: scale(1.1) rotate(-3deg);
-          filter: drop-shadow(0 0 18px rgba(239, 68, 68, 0.8)) drop-shadow(0 0 10px rgba(251, 191, 36, 0.8));
+          transform: scale(1.05);
+          filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.7)) drop-shadow(0 0 8px rgba(251, 191, 36, 0.6));
         }
       `}</style>
     </div>
@@ -50,7 +51,7 @@ export default function GrizzleLogo({ size = 'medium', href = '/' }) {
 
   if (href) {
     return (
-      <Link href={href} style={{ textDecoration: 'none', display: 'inline-flex' }}>
+      <Link href={href} style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
         {logoContent}
       </Link>
     );
