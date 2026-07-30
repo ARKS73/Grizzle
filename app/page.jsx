@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import ProductCard from '@/components/products/ProductCard';
 import QuickViewModal from '@/components/products/QuickViewModal';
+import ScrollTshirtShowcase from '@/components/home/ScrollTshirtShowcase';
 import { seedCategories, seedProducts } from '@/lib/seedData';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
@@ -137,6 +138,11 @@ export default function SinglePageStreetwearStore() {
           </div>
         </div>
       </section>
+
+      {/* =========================================================================
+         SECTION: 3D SCROLL T-SHIRT SHOWCASE (240 FRAMES CANVASES)
+         ========================================================================= */}
+      <ScrollTshirtShowcase />
 
       {/* =========================================================================
          SECTION 2: LATEST DROPS (Matching Image Section 2)
