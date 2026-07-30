@@ -80,6 +80,9 @@ function LoginContent() {
       <div className="auth-footer">
         Don&apos;t have an account? <Link href="/register" className="auth-link">Create Account</Link>
       </div>
+      <div style={{ textAlign: 'center', marginTop: '0.75rem', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+        First time? <Link href="/setup-admin" style={{ color: 'var(--accent-primary)', fontWeight: 700 }}>Set up your Admin account →</Link>
+      </div>
 
       <style jsx>{`
         .auth-card {
