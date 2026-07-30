@@ -51,16 +51,19 @@ export async function POST(request) {
 
     const conn = await connectDB();
 
-    // Deduct stock automatically for real product IDs
-    if (conn) {
-      for (const item of orderItems) {
-        if (item.product && item.product.length === 24) {
-          const product = await Product.findById(item.product);
-          if (product) {
-            product.stock = Math.max(0, product.stock - item.quantity);
-            await product.save();
-          }
-        }
+    // ATOMIC stock deduction — prevents race condition overselling
+    for (const item of orderItems) {
+      if (!item.product || item.product.length !== 24) continue;
+      const updated = await Product.findOneAndUpdate(
+        { _id: item.product, stock: { $gte: item.quantity } }, // atomic check + deduct
+        { $inc: { stock: -item.quantity } },
+        { new: true }
+      );
+      if (!updated) {
+        return NextResponse.json(
+          { success: false, message: `"${item.name}" is out of stock or insufficient quantity available.` },
+          { status: 400 }
+        );
       }
     }
 

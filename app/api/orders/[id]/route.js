@@ -52,7 +52,19 @@ export async function PATCH(request, { params }) {
       return NextResponse.json({ success: false, message: 'Forbidden' }, { status: 403 });
     }
 
+    const VALID_STATUSES = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+    const CUSTOMER_ALLOWED_STATUSES = ['Cancelled'];
+
     if (status) {
+      if (!VALID_STATUSES.includes(status)) {
+        return NextResponse.json({ success: false, message: 'Invalid status value' }, { status: 400 });
+      }
+      if (authUser.role !== 'admin' && !CUSTOMER_ALLOWED_STATUSES.includes(status)) {
+        return NextResponse.json({ success: false, message: 'Customers can only cancel orders' }, { status: 403 });
+      }
+      if (authUser.role !== 'admin' && !['Pending', 'Processing'].includes(order.status)) {
+        return NextResponse.json({ success: false, message: 'This order cannot be cancelled at its current stage' }, { status: 400 });
+      }
       order.status = status;
     }
 
