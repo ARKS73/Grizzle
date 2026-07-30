@@ -15,7 +15,12 @@ export default function ProductCard({ product, onQuickView }) {
   return (
     <div className="product-card glass-panel">
       {/* Image & Overlay Actions */}
-      <div className="card-media">
+      <div
+        className="card-media"
+        onClick={() => onQuickView && onQuickView(product)}
+        style={{ cursor: 'pointer' }}
+        title="Click to view product details"
+      >
         <img
           src={product.images?.[0] || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80'}
           alt={product.name}
@@ -35,24 +40,18 @@ export default function ProductCard({ product, onQuickView }) {
           )}
         </div>
 
-        {/* Quick Action Overlay Buttons */}
+        {/* Wishlist Button Overlay */}
         <div className="media-actions">
           <button
-            onClick={() => toggleWishlist(product)}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleWishlist(product);
+            }}
             className={`action-btn ${isSaved ? 'saved' : ''}`}
             title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
           >
             <Heart size={18} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : 'currentColor'} />
           </button>
-          {onQuickView && (
-            <button
-              onClick={() => onQuickView(product)}
-              className="action-btn"
-              title="Quick View"
-            >
-              <Eye size={18} />
-            </button>
-          )}
         </div>
       </div>
 

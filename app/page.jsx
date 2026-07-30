@@ -214,7 +214,12 @@ export default function SinglePageStreetwearStore() {
                 return (
                   <div key={product._id} className="pastel-card-wrapper">
                     {/* Soft Pastel Image Block */}
-                    <div className="pastel-image-block" style={{ backgroundColor: bgPastel }}>
+                    <div 
+                      className="pastel-image-block" 
+                      style={{ backgroundColor: bgPastel, cursor: 'pointer' }}
+                      onClick={() => setQuickViewProduct(product)}
+                      title="Click to view product details"
+                    >
                       <img 
                         src={product.images?.[0] || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80'} 
                         alt={product.name}
@@ -224,18 +229,14 @@ export default function SinglePageStreetwearStore() {
                       {/* Action Overlay */}
                       <div className="pastel-action-overlay">
                         <button 
-                          onClick={() => toggleWishlist(product)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleWishlist(product);
+                          }}
                           className={`pastel-icon-btn ${isSaved ? 'saved' : ''}`}
-                          title="Wishlist"
+                          title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
                         >
                           <Heart size={16} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : '#1e293b'} />
-                        </button>
-                        <button 
-                          onClick={() => setQuickViewProduct(product)}
-                          className="pastel-icon-btn"
-                          title="Quick View"
-                        >
-                          <Eye size={16} color="#1e293b" />
                         </button>
                       </div>
 
@@ -250,7 +251,11 @@ export default function SinglePageStreetwearStore() {
 
                     {/* Bottom Dark Info Bar */}
                     <div className="pastel-card-info">
-                      <div className="info-text-box">
+                      <div 
+                        className="info-text-box"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setQuickViewProduct(product)}
+                      >
                         <h4 className="pastel-card-title">{product.name}</h4>
                         <span className="pastel-card-price">₹{product.price?.toFixed(0)}</span>
                       </div>
@@ -295,7 +300,12 @@ export default function SinglePageStreetwearStore() {
 
               return (
                 <div key={product._id} className="pastel-card-wrapper">
-                  <div className="pastel-image-block" style={{ backgroundColor: bgPastel }}>
+                  <div 
+                    className="pastel-image-block" 
+                    style={{ backgroundColor: bgPastel, cursor: 'pointer' }}
+                    onClick={() => setQuickViewProduct(product)}
+                    title="Click to view product details"
+                  >
                     <img 
                       src={product.images?.[0] || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80'} 
                       alt={product.name}
@@ -303,25 +313,25 @@ export default function SinglePageStreetwearStore() {
                     />
                     <div className="pastel-action-overlay">
                       <button 
-                        onClick={() => toggleWishlist(product)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleWishlist(product);
+                        }}
                         className={`pastel-icon-btn ${isSaved ? 'saved' : ''}`}
-                        title="Wishlist"
+                        title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
                       >
                         <Heart size={16} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : '#1e293b'} />
-                      </button>
-                      <button 
-                        onClick={() => setQuickViewProduct(product)}
-                        className="pastel-icon-btn"
-                        title="Quick View"
-                      >
-                        <Eye size={16} color="#1e293b" />
                       </button>
                     </div>
                     {product.isBestSeller && <span className="pastel-tag-badge">BESTSELLER</span>}
                   </div>
 
                   <div className="pastel-card-info">
-                    <div className="info-text-box">
+                    <div 
+                      className="info-text-box"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => setQuickViewProduct(product)}
+                    >
                       <h4 className="pastel-card-title">{product.name}</h4>
                       <span className="pastel-card-price">₹{product.price?.toFixed(0)}</span>
                     </div>
@@ -371,7 +381,12 @@ export default function SinglePageStreetwearStore() {
 
               return (
                 <div key={product._id} className="pastel-card-wrapper">
-                  <div className="pastel-image-block" style={{ backgroundColor: bgPastel }}>
+                  <div 
+                    className="pastel-image-block" 
+                    style={{ backgroundColor: bgPastel, cursor: 'pointer' }}
+                    onClick={() => setQuickViewProduct(product)}
+                    title="Click to view product details"
+                  >
                     <img 
                       src={product.images?.[0] || 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=600&q=80'} 
                       alt={product.name}
@@ -379,25 +394,25 @@ export default function SinglePageStreetwearStore() {
                     />
                     <div className="pastel-action-overlay">
                       <button 
-                        onClick={() => toggleWishlist(product)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleWishlist(product);
+                        }}
                         className={`pastel-icon-btn ${isSaved ? 'saved' : ''}`}
-                        title="Wishlist"
+                        title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
                       >
                         <Heart size={16} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : '#1e293b'} />
-                      </button>
-                      <button 
-                        onClick={() => setQuickViewProduct(product)}
-                        className="pastel-icon-btn"
-                        title="Quick View"
-                      >
-                        <Eye size={16} color="#1e293b" />
                       </button>
                     </div>
                     {product.isTrending && <span className="pastel-tag-badge badge-trending">TRENDING</span>}
                   </div>
 
                   <div className="pastel-card-info">
-                    <div className="info-text-box">
+                    <div 
+                      className="info-text-box"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => setQuickViewProduct(product)}
+                    >
                       <h4 className="pastel-card-title">{product.name}</h4>
                       <span className="pastel-card-price">₹{product.price?.toFixed(0)}</span>
                     </div>
