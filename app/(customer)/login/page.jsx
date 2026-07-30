@@ -33,7 +33,7 @@ function LoginContent() {
   return (
     <div className="auth-card glass-panel">
       <div className="auth-header text-center">
-        <img src="/logo2.png" alt="Grizzle Apparel Logo" style={{ height: '64px', width: 'auto', maxWidth: '220px', borderRadius: '0px', marginBottom: '0.75rem', objectFit: 'contain', filter: 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.5))' }} />
+        <img src="/logo2.png" alt="Grizzle Apparel Logo" style={{ display: 'block', margin: '0 auto 0.75rem auto', height: '64px', width: 'auto', maxWidth: '220px', borderRadius: '0px', objectFit: 'contain', filter: 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.5))' }} />
         <h2>Welcome Back to Grizzle</h2>
         <p>Sign in to your Grizzle account to access orders, wishlist, profile & account settings.</p>
       </div>
@@ -80,9 +80,7 @@ function LoginContent() {
       <div className="auth-footer">
         Don&apos;t have an account? <Link href="/register" className="auth-link">Create Account</Link>
       </div>
-      <div style={{ textAlign: 'center', marginTop: '0.75rem', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-        First time? <Link href="/setup-admin" style={{ color: 'var(--accent-primary)', fontWeight: 700 }}>Set up your Admin account →</Link>
-      </div>
+
 
       <style jsx>{`
         .auth-card {
