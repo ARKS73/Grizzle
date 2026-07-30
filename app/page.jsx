@@ -236,7 +236,7 @@ export default function SinglePageStreetwearStore() {
                       title="Click to view product details"
                     >
                       <img 
-                        src={product.images?.[0] || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80'} 
+                        src={product.images?.[0] || '/logo2.png'} 
                         alt={product.name}
                         className="pastel-product-img"
                       />
@@ -308,61 +308,78 @@ export default function SinglePageStreetwearStore() {
             </Link>
           </div>
 
-          <div className="pastel-products-grid">
-            {mensProducts.slice(0, 4).map((product, idx) => {
-              const bgPastel = pastelColors[idx % pastelColors.length];
-              const isSaved = isInWishlist(product._id);
+          {loadingProducts ? (
+            <div className="pastel-products-grid">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="skeleton" style={{ height: '340px', borderRadius: '24px' }} />
+              ))}
+            </div>
+          ) : mensProducts.length === 0 ? (
+            <div className="glass-panel text-center p-5" style={{ borderRadius: '24px', padding: '3rem 2rem' }}>
+              <ShoppingBag size={40} style={{ opacity: 0.4, marginBottom: '1rem' }} />
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 800 }}>No Men&apos;s Products Added Yet</h3>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Products created by the seller in Admin Dashboard will be displayed live here.</p>
+              <Link href="/admin/products" className="btn-street-dark">
+                Go to Admin Product Manager &rarr;
+              </Link>
+            </div>
+          ) : (
+            <div className="pastel-products-grid">
+              {mensProducts.slice(0, 4).map((product, idx) => {
+                const bgPastel = pastelColors[idx % pastelColors.length];
+                const isSaved = isInWishlist(product._id);
 
-              return (
-                <div key={product._id} className="pastel-card-wrapper">
-                  <div 
-                    className="pastel-image-block" 
-                    style={{ backgroundColor: bgPastel, cursor: 'pointer' }}
-                    onClick={() => setQuickViewProduct(product)}
-                    title="Click to view product details"
-                  >
-                    <img 
-                      src={product.images?.[0] || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80'} 
-                      alt={product.name}
-                      className="pastel-product-img"
-                    />
-                    <div className="pastel-action-overlay">
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleWishlist(product);
-                        }}
-                        className={`pastel-icon-btn ${isSaved ? 'saved' : ''}`}
-                        title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                return (
+                  <div key={product._id} className="pastel-card-wrapper">
+                    <div 
+                      className="pastel-image-block" 
+                      style={{ backgroundColor: bgPastel, cursor: 'pointer' }}
+                      onClick={() => setQuickViewProduct(product)}
+                      title="Click to view product details"
+                    >
+                      <img 
+                        src={product.images?.[0] || '/logo2.png'} 
+                        alt={product.name}
+                        className="pastel-product-img"
+                      />
+                      <div className="pastel-action-overlay">
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleWishlist(product);
+                          }}
+                          className={`pastel-icon-btn ${isSaved ? 'saved' : ''}`}
+                          title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                        >
+                          <Heart size={16} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : '#1e293b'} />
+                        </button>
+                      </div>
+                      {product.isBestSeller && <span className="pastel-tag-badge">BESTSELLER</span>}
+                    </div>
+
+                    <div className="pastel-card-info">
+                      <div 
+                        className="info-text-box"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setQuickViewProduct(product)}
                       >
-                        <Heart size={16} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : '#1e293b'} />
+                        <h4 className="pastel-card-title">{product.name}</h4>
+                        <span className="pastel-card-price">₹{product.price?.toFixed(0)}</span>
+                      </div>
+
+                      <button 
+                        onClick={() => addToCart(product, product.sizes?.[0] || 'M', product.colors?.[0]?.name || 'Default', 1)}
+                        className="pastel-add-btn"
+                        title="Add to Cart"
+                      >
+                        <ShoppingBag size={15} />
                       </button>
                     </div>
-                    {product.isBestSeller && <span className="pastel-tag-badge">BESTSELLER</span>}
                   </div>
-
-                  <div className="pastel-card-info">
-                    <div 
-                      className="info-text-box"
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => setQuickViewProduct(product)}
-                    >
-                      <h4 className="pastel-card-title">{product.name}</h4>
-                      <span className="pastel-card-price">₹{product.price?.toFixed(0)}</span>
-                    </div>
-
-                    <button 
-                      onClick={() => addToCart(product, product.sizes?.[0] || 'M', product.colors?.[0]?.name || 'Default', 1)}
-                      className="pastel-add-btn"
-                      title="Add to Cart"
-                    >
-                      <ShoppingBag size={15} />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
 
           <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
             <Link href="/products?gender=Men" className="btn btn-primary btn-lg" style={{ padding: '0.9rem 2.2rem', borderRadius: 'var(--radius-full)' }}>
@@ -389,24 +406,40 @@ export default function SinglePageStreetwearStore() {
             </Link>
           </div>
 
-          <div className="pastel-products-grid">
-            {womensProducts.slice(0, 4).map((product, idx) => {
-              const bgPastel = pastelColors[(idx + 2) % pastelColors.length];
-              const isSaved = isInWishlist(product._id);
+          {loadingProducts ? (
+            <div className="pastel-products-grid">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="skeleton" style={{ height: '340px', borderRadius: '24px' }} />
+              ))}
+            </div>
+          ) : womensProducts.length === 0 ? (
+            <div className="glass-panel text-center p-5" style={{ borderRadius: '24px', padding: '3rem 2rem' }}>
+              <ShoppingBag size={40} style={{ opacity: 0.4, marginBottom: '1rem' }} />
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 800 }}>No Women&apos;s Products Added Yet</h3>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Products created by the seller in Admin Dashboard will be displayed live here.</p>
+              <Link href="/admin/products" className="btn-street-light">
+                Go to Admin Product Manager &rarr;
+              </Link>
+            </div>
+          ) : (
+            <div className="pastel-products-grid">
+              {womensProducts.slice(0, 4).map((product, idx) => {
+                const bgPastel = pastelColors[(idx + 2) % pastelColors.length];
+                const isSaved = isInWishlist(product._id);
 
-              return (
-                <div key={product._id} className="pastel-card-wrapper">
-                  <div 
-                    className="pastel-image-block" 
-                    style={{ backgroundColor: bgPastel, cursor: 'pointer' }}
-                    onClick={() => setQuickViewProduct(product)}
-                    title="Click to view product details"
-                  >
-                    <img 
-                      src={product.images?.[0] || 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=600&q=80'} 
-                      alt={product.name}
-                      className="pastel-product-img"
-                    />
+                return (
+                  <div key={product._id} className="pastel-card-wrapper">
+                    <div 
+                      className="pastel-image-block" 
+                      style={{ backgroundColor: bgPastel, cursor: 'pointer' }}
+                      onClick={() => setQuickViewProduct(product)}
+                      title="Click to view product details"
+                    >
+                      <img 
+                        src={product.images?.[0] || '/logo2.png'} 
+                        alt={product.name}
+                        className="pastel-product-img"
+                      />
                     <div className="pastel-action-overlay">
                       <button 
                         onClick={(e) => {
@@ -444,6 +477,7 @@ export default function SinglePageStreetwearStore() {
               );
             })}
           </div>
+        )}
 
           <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
             <Link href="/products?gender=Women" className="btn btn-secondary btn-lg" style={{ padding: '0.9rem 2.2rem', borderRadius: 'var(--radius-full)' }}>
@@ -483,7 +517,7 @@ export default function SinglePageStreetwearStore() {
                 }}
               >
                 <img 
-                  src={cat.image || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=400&q=80'} 
+                  src={cat.image || '/logo2.png'} 
                   alt={cat.name} 
                   style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: 'var(--radius-md)' }}
                 />

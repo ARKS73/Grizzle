@@ -448,7 +448,13 @@ export default function Navbar() {
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)} 
                 className="user-avatar-btn"
               >
-                <img src={user.profileImage || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'} alt={user.name} className="user-avatar-img" />
+                {user.profileImage ? (
+                  <img src={user.profileImage} alt={user.name} className="user-avatar-img" />
+                ) : (
+                  <div className="user-avatar-placeholder" style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: '0.85rem' }}>
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
                 <span className="user-name-short">{user.name.split(' ')[0]}</span>
                 <ChevronDown size={14} />
               </button>

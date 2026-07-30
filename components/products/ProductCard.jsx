@@ -22,7 +22,7 @@ export default function ProductCard({ product, onQuickView }) {
         title="Click to view product details"
       >
         <img
-          src={product.images?.[0] || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80'}
+          src={product.images?.[0] || '/logo2.png'}
           alt={product.name}
           className="card-img"
         />

@@ -16,7 +16,7 @@ const CategorySchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      default: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80',
+      default: '/logo2.png',
     },
     description: {
       type: String,
