@@ -5,6 +5,8 @@ export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
   const isProtectedCustomerRoute =
+    pathname.startsWith('/cart') ||
+    pathname.startsWith('/wishlist') ||
     pathname.startsWith('/checkout') ||
     pathname.startsWith('/orders') ||
     pathname.startsWith('/profile');
@@ -44,5 +46,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/checkout/:path*', '/orders/:path*', '/profile/:path*'],
+  matcher: ['/admin/:path*', '/cart/:path*', '/wishlist/:path*', '/checkout/:path*', '/orders/:path*', '/profile/:path*'],
 };
