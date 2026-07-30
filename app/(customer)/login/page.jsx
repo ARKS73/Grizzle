@@ -32,8 +32,8 @@ function LoginContent() {
 
   return (
     <div className="auth-card glass-panel">
-      <div className="auth-header">
-        <div className="logo-badge mb-2">G</div>
+      <div className="auth-header text-center">
+        <img src="/logo.jpeg" alt="Grizzle Apparel Logo" style={{ width: '56px', height: '56px', borderRadius: '50%', marginBottom: '0.75rem', objectFit: 'cover', boxShadow: '0 0 12px rgba(239, 68, 68, 0.4)' }} />
         <h2>Welcome Back to Grizzle</h2>
         <p>Sign in to your Grizzle account to access orders, wishlist, profile & account settings.</p>
       </div>
