@@ -499,32 +499,59 @@ export default function SinglePageStreetwearStore() {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
-            {categories.map((cat) => (
-              <Link 
-                key={cat._id || cat.slug} 
-                href={`/products?category=${encodeURIComponent(cat.name)}`}
-                className="glass-panel"
-                style={{
-                  padding: '1.5rem',
-                  borderRadius: 'var(--radius-lg)',
-                  textDecoration: 'none',
-                  color: 'var(--text-primary)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.75rem',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  background: 'var(--bg-secondary)',
-                }}
-              >
-                <img 
-                  src={cat.image || '/logo2.png'} 
-                  alt={cat.name} 
-                  style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: 'var(--radius-md)' }}
-                />
-                <h4 style={{ fontSize: '1rem', fontWeight: '800' }}>{cat.name}</h4>
-                <span style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: '700' }}>Show Filters &rarr;</span>
-              </Link>
-            ))}
+            {categories.map((cat) => {
+              // Find all admin-added products belonging to this category
+              const catProds = allProducts.filter(p => 
+                p.category?.toLowerCase() === cat.name?.toLowerCase() ||
+                (cat.name?.toLowerCase().includes('desi') && p.category?.toLowerCase().includes('desi')) ||
+                (cat.name?.toLowerCase().includes('anime') && p.category?.toLowerCase().includes('anime')) ||
+                (cat.name?.toLowerCase().includes('oversized') && p.category?.toLowerCase().includes('oversized')) ||
+                (cat.name?.toLowerCase().includes('minimalist') && p.category?.toLowerCase().includes('minimalist')) ||
+                (cat.name?.toLowerCase().includes('artist') && p.category?.toLowerCase().includes('artist'))
+              );
+
+              // Pick image from admin-added products in this category
+              let displayImg = cat.image && cat.image !== '/logo2.png' ? cat.image : null;
+              if (!displayImg && catProds.length > 0) {
+                const randomProd = catProds[Math.floor(Math.random() * catProds.length)];
+                displayImg = randomProd.images?.[0] || null;
+              }
+
+              // Fallback to any admin product image if available, else logo2.png
+              if (!displayImg && allProducts.length > 0) {
+                displayImg = allProducts[0].images?.[0] || '/logo2.png';
+              }
+              if (!displayImg) displayImg = '/logo2.png';
+
+              return (
+                <Link 
+                  key={cat._id || cat.slug} 
+                  href={`/products?category=${encodeURIComponent(cat.name)}`}
+                  className="glass-panel"
+                  style={{
+                    padding: '1.5rem',
+                    borderRadius: 'var(--radius-lg)',
+                    textDecoration: 'none',
+                    color: 'var(--text-primary)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.75rem',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    background: 'var(--bg-secondary)',
+                  }}
+                >
+                  <img 
+                    src={displayImg} 
+                    alt={cat.name} 
+                    style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: 'var(--radius-md)' }}
+                  />
+                  <h4 style={{ fontSize: '1rem', fontWeight: '800' }}>{cat.name}</h4>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: '700' }}>
+                    {catProds.length > 0 ? `${catProds.length} Drops Live →` : 'Explore Filters →'}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
 
           <div style={{ textAlign: 'center' }}>
