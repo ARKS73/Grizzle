@@ -3,26 +3,26 @@
 import React from 'react';
 import Link from 'next/link';
 
-export default function GrizzleLogo({ size = 'medium', showSubtext = true, href = '/' }) {
-  // Sizing mappings
+export default function GrizzleLogo({ size = 'medium', href = '/' }) {
+  // Sizing mappings: Bigger logo image, sleeker reduced GRIZZLE title font
   const dimensions = {
-    small: { logoSize: 36, fontSize: '1.15rem', subSize: '0.65rem' },
-    medium: { logoSize: 44, fontSize: '1.45rem', subSize: '0.75rem' },
-    large: { logoSize: 64, fontSize: '2.1rem', subSize: '0.9rem' },
-  }[size] || { logoSize: 44, fontSize: '1.45rem', subSize: '0.75rem' };
+    small: { logoSize: 48, fontSize: '1.05rem' },
+    medium: { logoSize: 58, fontSize: '1.25rem' },
+    large: { logoSize: 78, fontSize: '1.65rem' },
+  }[size] || { logoSize: 58, fontSize: '1.25rem' };
 
   const logoContent = (
     <div className={`grizzle-logo-container size-${size}`}>
-      {/* Uploaded Grizzle Brand Logo Image */}
+      {/* Uploaded Grizzle Brand Logo 2 Image */}
       <img
-        src="/logo.jpeg"
+        src="/logo2.png"
         alt="Grizzle Apparel Logo"
         style={{
           width: dimensions.logoSize,
           height: dimensions.logoSize,
-          objectFit: 'cover',
+          objectFit: 'contain',
           borderRadius: '50%',
-          boxShadow: '0 0 12px rgba(239, 68, 68, 0.4), 0 0 4px rgba(251, 191, 36, 0.4)',
+          filter: 'drop-shadow(0 0 10px rgba(239, 68, 68, 0.45)) drop-shadow(0 0 4px rgba(251, 191, 36, 0.45))',
         }}
         className="grizzle-brand-img"
       />
@@ -32,11 +32,6 @@ export default function GrizzleLogo({ size = 'medium', showSubtext = true, href 
         <span className="brand-name" style={{ fontSize: dimensions.fontSize }}>
           GRIZZLE
         </span>
-        {showSubtext && (
-          <span className="brand-subtext" style={{ fontSize: dimensions.subSize }}>
-            DTF PRINTING <span className="text-gold">&bull; 240 GSM</span>
-          </span>
-        )}
       </div>
 
       <style jsx>{`
@@ -54,7 +49,7 @@ export default function GrizzleLogo({ size = 'medium', showSubtext = true, href 
 
         .grizzle-logo-container:hover .grizzle-brand-img {
           transform: scale(1.08) rotate(-3deg);
-          filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.7));
+          filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.75)) drop-shadow(0 0 8px rgba(251, 191, 36, 0.75));
         }
 
         .grizzle-text-wrapper {
@@ -66,24 +61,12 @@ export default function GrizzleLogo({ size = 'medium', showSubtext = true, href 
         .brand-name {
           font-family: 'Outfit', 'Inter', sans-serif;
           font-weight: 900;
-          letter-spacing: -0.03em;
-          background: linear-gradient(135deg, #ffffff 0%, #f4f4f5 50%, #fbbf24 100%);
+          letter-spacing: 0.02em;
+          background: linear-gradient(135deg, #ffffff 0%, #f4f4f5 60%, #fbbf24 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           text-transform: uppercase;
-          text-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
-        }
-
-        .brand-subtext {
-          font-weight: 800;
-          letter-spacing: 0.18em;
-          color: var(--text-muted);
-          text-transform: uppercase;
-          margin-top: 0.15rem;
-        }
-
-        .text-gold {
-          color: #fbbf24;
+          text-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
         }
       `}</style>
     </div>
