@@ -38,7 +38,7 @@ export default function SinglePageStreetwearStore() {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
   const [heroSettings, setHeroSettings] = useState({
-    heroImage: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80',
+    heroImage: '',
     heroBadge: 'NEW DROP | SEASON 2026',
     heroTitle: 'HIGH-DENSITY DTF PRINTS',
     heroAccentTitle: 'YOU CAN WEAR',
@@ -145,11 +145,26 @@ export default function SinglePageStreetwearStore() {
             {/* Framed Polaroid Artwork */}
             <div className="polaroid-frame-card">
               <div className="badge-hot-pink">HOT</div>
-              <img
-                src={heroSettings.heroImage}
-                alt={heroSettings.heroTitle}
-                className="polaroid-img"
-              />
+              {heroSettings.heroImage ? (
+                <img
+                  src={heroSettings.heroImage}
+                  alt={heroSettings.heroTitle}
+                  className="polaroid-img"
+                />
+              ) : (
+                <div 
+                  className="polaroid-img skeleton" 
+                  style={{ 
+                    minHeight: '380px', 
+                    borderRadius: '16px', 
+                    background: 'rgba(255,255,255,0.04)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backdropFilter: 'blur(16px)'
+                  }} 
+                />
+              )}
               <div className="sticky-tape-note">
                 {heroSettings.heroTapeNote}
               </div>

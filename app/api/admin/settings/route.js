@@ -18,7 +18,7 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       settings: {
-        heroImage: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80',
+        heroImage: '',
         heroBadge: 'NEW DROP | SEASON 2026',
         heroTitle: 'HIGH-DENSITY DTF PRINTS',
         heroAccentTitle: 'YOU CAN WEAR',

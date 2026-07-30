@@ -4,7 +4,7 @@ const StoreSettingsSchema = new mongoose.Schema(
   {
     heroImage: {
       type: String,
-      default: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80',
+      default: '',
     },
     heroBadge: {
       type: String,
