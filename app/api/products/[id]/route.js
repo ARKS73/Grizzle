@@ -4,6 +4,8 @@ import Product from '@/models/Product';
 import { getAuthUser } from '@/lib/jwt';
 import { seedProducts } from '@/lib/seedData';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request, { params }) {
   try {
     const { id } = params;

@@ -3,6 +3,8 @@ import connectDB from '@/lib/mongodb';
 import Order from '@/models/Order';
 import { getAuthUser } from '@/lib/jwt';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request, { params }) {
   try {
     const authUser = getAuthUser(request);

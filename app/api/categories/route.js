@@ -4,6 +4,8 @@ import Category from '@/models/Category';
 import { getAuthUser } from '@/lib/jwt';
 import { seedCategories } from '@/lib/seedData';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const conn = await connectDB();

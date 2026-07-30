@@ -4,6 +4,8 @@ import Order from '@/models/Order';
 import Product from '@/models/Product';
 import { getAuthUser } from '@/lib/jwt';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request) {
   try {
     const authUser = getAuthUser(request);

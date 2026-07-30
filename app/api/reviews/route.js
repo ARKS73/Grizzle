@@ -5,6 +5,8 @@ import Product from '@/models/Product';
 import Order from '@/models/Order';
 import { getAuthUser } from '@/lib/jwt';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);

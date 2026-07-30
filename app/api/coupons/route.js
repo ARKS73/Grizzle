@@ -3,6 +3,8 @@ import connectDB from '@/lib/mongodb';
 import Coupon from '@/models/Coupon';
 import { getAuthUser } from '@/lib/jwt';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);

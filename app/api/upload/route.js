@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { uploadImageToCloudinary } from '@/lib/cloudinary';
 import { getAuthUser } from '@/lib/jwt';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request) {
   try {
     const authUser = getAuthUser(request);
