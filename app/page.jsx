@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import ProductCard from '@/components/products/ProductCard';
 import QuickViewModal from '@/components/products/QuickViewModal';
-import ScrollTshirtShowcase from '@/components/home/ScrollTshirtShowcase';
+import GlobalScrollCanvas from '@/components/home/GlobalScrollCanvas';
 import { seedCategories, seedProducts } from '@/lib/seedData';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
@@ -89,6 +89,8 @@ export default function SinglePageStreetwearStore() {
 
   return (
     <div className="single-page-wrapper">
+      {/* 240-Frame Interactive Global Background Scroll Canvas */}
+      <GlobalScrollCanvas />
       
       {/* =========================================================================
          SECTION 1: HERO BANNER (Matching Image Section 1)
@@ -138,11 +140,6 @@ export default function SinglePageStreetwearStore() {
           </div>
         </div>
       </section>
-
-      {/* =========================================================================
-         SECTION: 3D SCROLL T-SHIRT SHOWCASE (240 FRAMES CANVASES)
-         ========================================================================= */}
-      <ScrollTshirtShowcase />
 
       {/* =========================================================================
          SECTION 2: LATEST DROPS (Matching Image Section 2)
