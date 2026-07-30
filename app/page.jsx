@@ -559,9 +559,9 @@ export default function SinglePageStreetwearStore() {
           background-color: var(--bg-primary);
         }
 
-        /* ------------------ HERO SECTION ------------------ */
+        /* ------------------ LIQUID GLASS HERO SECTION ------------------ */
         .hero-section-street {
-          padding: 4rem 0 2rem 0;
+          padding: 3rem 0 2rem 0;
           position: relative;
         }
         .hero-street-container {
@@ -569,13 +569,21 @@ export default function SinglePageStreetwearStore() {
           grid-template-columns: 1.1fr 0.9fr;
           gap: 3rem;
           align-items: center;
+          background: rgba(255, 255, 255, 0.04);
+          backdrop-filter: blur(24px) saturate(190%);
+          border: 1px solid rgba(255, 255, 255, 0.16);
+          border-radius: 32px;
+          padding: 3.5rem 3rem;
+          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.25);
         }
         .hero-pill-badge {
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
-          padding: 0.35rem 0.85rem;
-          background: #2563eb;
+          padding: 0.45rem 1rem;
+          background: linear-gradient(135deg, rgba(37, 99, 235, 0.35), rgba(168, 85, 247, 0.35));
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
           color: #ffffff;
           font-weight: 800;
           font-size: 0.75rem;
@@ -583,6 +591,7 @@ export default function SinglePageStreetwearStore() {
           border-radius: 9999px;
           margin-bottom: 1.5rem;
           text-transform: uppercase;
+          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.4);
         }
         .hero-street-title {
           font-size: 4rem;
@@ -596,7 +605,7 @@ export default function SinglePageStreetwearStore() {
         }
         .title-accent-italic {
           font-style: italic;
-          background: linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #60a5fa 100%);
+          background: linear-gradient(135deg, #60a5fa 0%, #a855f7 50%, #ec4899 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
         }
@@ -613,34 +622,40 @@ export default function SinglePageStreetwearStore() {
           gap: 1rem;
         }
         .btn-street-dark {
-          background: #0f172a;
+          background: linear-gradient(135deg, #2563eb, #7c3aed);
           color: #ffffff;
-          padding: 0.9rem 2rem;
+          padding: 0.95rem 2.2rem;
           font-weight: 800;
           font-size: 0.9rem;
           letter-spacing: 0.05em;
-          border-radius: 6px;
-          transition: all 0.2s ease;
+          border-radius: 14px;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          box-shadow: 0 12px 25px rgba(37, 99, 235, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+          transition: all 0.3s ease;
+          text-decoration: none;
         }
         .btn-street-dark:hover {
-          background: #1e293b;
-          transform: translateY(-2px);
-          box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+          transform: translateY(-3px) scale(1.02);
+          box-shadow: 0 18px 35px rgba(37, 99, 235, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.5);
         }
         .btn-street-light {
-          background: var(--bg-secondary);
+          background: rgba(255, 255, 255, 0.08);
+          backdrop-filter: blur(12px);
           color: var(--text-primary);
-          border: 1px solid var(--border-color);
-          padding: 0.9rem 2rem;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          padding: 0.95rem 2.2rem;
           font-weight: 800;
           font-size: 0.9rem;
           letter-spacing: 0.05em;
-          border-radius: 6px;
-          transition: all 0.2s ease;
+          border-radius: 14px;
+          transition: all 0.3s ease;
+          text-decoration: none;
+          box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
         }
         .btn-street-light:hover {
-          background: var(--bg-tertiary);
-          transform: translateY(-2px);
+          background: rgba(255, 255, 255, 0.16);
+          transform: translateY(-3px);
+          border-color: rgba(255, 255, 255, 0.4);
         }
 
         /* Hero Visual Frame */
@@ -651,40 +666,43 @@ export default function SinglePageStreetwearStore() {
         }
         .ambient-glow-orb {
           position: absolute;
-          width: 320px;
-          height: 320px;
-          background: radial-gradient(circle, rgba(236, 72, 153, 0.25) 0%, rgba(99, 102, 241, 0.15) 60%, transparent 80%);
-          filter: blur(40px);
+          width: 340px;
+          height: 340px;
+          background: radial-gradient(circle, rgba(236, 72, 153, 0.35) 0%, rgba(99, 102, 241, 0.25) 60%, transparent 80%);
+          filter: blur(50px);
           z-index: 1;
         }
         .polaroid-frame-card {
           position: relative;
           z-index: 2;
-          background: #ffffff;
+          background: rgba(255, 255, 255, 0.08);
+          backdrop-filter: blur(20px) saturate(180%);
+          border: 1px solid rgba(255, 255, 255, 0.25);
           padding: 14px 14px 45px 14px;
-          border-radius: 4px;
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          border-radius: 20px;
+          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3);
           transform: rotate(2.5deg);
           max-width: 380px;
           width: 100%;
-          transition: transform 0.3s ease;
+          transition: all 0.35s ease;
         }
         .polaroid-frame-card:hover {
-          transform: rotate(0deg) scale(1.02);
+          transform: rotate(0deg) scale(1.03);
+          border-color: rgba(255, 255, 255, 0.45);
         }
         .polaroid-img {
           width: 100%;
           aspect-ratio: 3 / 4;
           object-fit: cover;
-          border-radius: 2px;
+          border-radius: 12px;
         }
         .badge-hot-pink {
           position: absolute;
           top: -14px;
           right: -14px;
-          width: 52px;
-          height: 52px;
-          background: #ff0055;
+          width: 54px;
+          height: 54px;
+          background: linear-gradient(135deg, #ff0055, #ec4899);
           color: white;
           font-weight: 900;
           font-size: 0.85rem;
@@ -692,7 +710,7 @@ export default function SinglePageStreetwearStore() {
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 4px 14px rgba(255, 0, 85, 0.4);
+          box-shadow: 0 8px 20px rgba(255, 0, 85, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
           z-index: 3;
           letter-spacing: 0.05em;
           transform: rotate(12deg);
@@ -701,19 +719,21 @@ export default function SinglePageStreetwearStore() {
           position: absolute;
           bottom: 12px;
           left: 14px;
-          background: #e2e0fd;
+          background: rgba(226, 224, 253, 0.9);
+          backdrop-filter: blur(8px);
           color: #1e1b4b;
           font-weight: 800;
           font-size: 0.65rem;
-          padding: 0.4rem 0.75rem;
+          padding: 0.45rem 0.85rem;
           letter-spacing: 0.08em;
           border: 1px dashed #a5b4fc;
+          border-radius: 6px;
           transform: rotate(-1.5deg);
         }
 
-        /* ------------------ LATEST DROPS ------------------ */
+        /* ------------------ LIQUID GLASS DROPS SECTION ------------------ */
         .latest-drops-section {
-          padding: 3rem 0;
+          padding: 4rem 0;
         }
         .drops-header {
           display: flex;
@@ -730,7 +750,7 @@ export default function SinglePageStreetwearStore() {
           text-transform: uppercase;
         }
         .drops-subtitle {
-          font-size: 0.8rem;
+          font-size: 0.85rem;
           font-weight: 700;
           color: var(--text-muted);
           letter-spacing: 0.1em;
@@ -739,44 +759,51 @@ export default function SinglePageStreetwearStore() {
         .category-filter-tabs {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.65rem;
           flex-wrap: wrap;
         }
         .filter-tab {
-          padding: 0.45rem 0.9rem;
-          font-size: 0.75rem;
-          font-weight: 700;
+          padding: 0.55rem 1.1rem;
+          font-size: 0.78rem;
+          font-weight: 800;
           border-radius: 9999px;
-          background: var(--bg-tertiary);
+          background: rgba(255, 255, 255, 0.06);
+          backdrop-filter: blur(12px);
           color: var(--text-secondary);
-          border: 1px solid var(--border-color);
+          border: 1px solid rgba(255, 255, 255, 0.14);
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.25s ease;
+          box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
         }
         .filter-tab:hover, .filter-tab.active {
-          background: #0f172a;
+          background: linear-gradient(135deg, #2563eb, #ec4899);
           color: #ffffff;
-          border-color: #0f172a;
+          border-color: rgba(255, 255, 255, 0.4);
+          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+          transform: translateY(-2px);
         }
 
-        /* Pastel Grid */
+        /* LIQUID GLASS PRODUCT CARDS */
         .pastel-products-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          gap: 1.5rem;
+          gap: 1.75rem;
         }
         .pastel-card-wrapper {
           display: flex;
           flex-direction: column;
-          border-radius: 12px;
+          border-radius: 24px;
           overflow: hidden;
-          background: var(--bg-secondary);
-          border: 1px solid var(--border-color);
-          transition: transform 0.25s ease, box-shadow 0.25s ease;
+          background: rgba(255, 255, 255, 0.05) !important;
+          backdrop-filter: blur(20px) saturate(180%) !important;
+          border: 1px solid rgba(255, 255, 255, 0.15) !important;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+          transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .pastel-card-wrapper:hover {
-          transform: translateY(-5px);
-          box-shadow: var(--shadow-xl);
+          transform: translateY(-8px) scale(1.02) !important;
+          border-color: rgba(99, 102, 241, 0.5) !important;
+          box-shadow: 0 30px 60px rgba(99, 102, 241, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.4) !important;
         }
         .pastel-image-block {
           position: relative;

@@ -119,6 +119,8 @@ export default function GlobalScrollCanvas() {
   return (
     <>
       <div className="global-canvas-background-fixed">
+        <div className="bg-liquid-glow-orb-1"></div>
+        <div className="bg-liquid-glow-orb-2"></div>
         <canvas ref={canvasRef} className="bg-canvas-element" />
         <div className="bg-vignette-overlay"></div>
       </div>
@@ -133,15 +135,42 @@ export default function GlobalScrollCanvas() {
           z-index: 0;
           pointer-events: none;
           overflow: hidden;
-          background: #09090b;
+          background: #070709;
+        }
+
+        .bg-liquid-glow-orb-1 {
+          position: absolute;
+          top: -10%;
+          left: 15%;
+          width: 550px;
+          height: 550px;
+          background: radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(236, 72, 153, 0.12) 50%, transparent 70%);
+          filter: blur(80px);
+          animation: floatOrb 18s ease-in-out infinite alternate;
+        }
+
+        .bg-liquid-glow-orb-2 {
+          position: absolute;
+          bottom: -10%;
+          right: 15%;
+          width: 600px;
+          height: 600px;
+          background: radial-gradient(circle, rgba(37, 99, 235, 0.25) 0%, rgba(168, 85, 247, 0.15) 50%, transparent 70%);
+          filter: blur(90px);
+          animation: floatOrb 22s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes floatOrb {
+          0% { transform: translate(0, 0) scale(1); }
+          100% { transform: translate(40px, 30px) scale(1.1); }
         }
 
         .bg-canvas-element {
           width: 100vw;
           height: 100vh;
           object-fit: contain;
-          opacity: 0.55;
-          filter: contrast(1.1) brightness(0.9);
+          opacity: 0.65;
+          filter: contrast(1.15) brightness(0.95);
         }
 
         .bg-vignette-overlay {
@@ -149,14 +178,14 @@ export default function GlobalScrollCanvas() {
           inset: 0;
           background: radial-gradient(
             circle at center,
-            rgba(9, 9, 11, 0.2) 0%,
-            rgba(9, 9, 11, 0.75) 70%,
-            rgba(9, 9, 11, 0.95) 100%
+            rgba(7, 7, 9, 0.15) 0%,
+            rgba(7, 7, 9, 0.65) 60%,
+            rgba(7, 7, 9, 0.92) 100%
           );
           pointer-events: none;
         }
 
-        /* Make sections semi-transparent to reveal background 3D scroll animation */
+        /* LIQUID GLASS SECTION OVERRIDES */
         .single-page-wrapper {
           position: relative;
           z-index: 1;
@@ -164,35 +193,34 @@ export default function GlobalScrollCanvas() {
         }
 
         .hero-section-street {
-          background: rgba(9, 9, 11, 0.45) !important;
-          backdrop-filter: blur(8px);
+          background: transparent !important;
         }
 
         .latest-drops-section {
-          background: rgba(9, 9, 11, 0.65) !important;
-          backdrop-filter: blur(12px);
-          border-top: 1px solid rgba(255, 255, 255, 0.08);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          background: rgba(18, 18, 24, 0.45) !important;
+          backdrop-filter: blur(20px) saturate(180%);
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .mens-collection-section {
-          background: rgba(15, 23, 42, 0.7) !important;
-          backdrop-filter: blur(12px);
+          background: rgba(15, 23, 42, 0.5) !important;
+          backdrop-filter: blur(20px) saturate(180%);
         }
 
         .womens-collection-section {
-          background: rgba(24, 18, 28, 0.7) !important;
-          backdrop-filter: blur(12px);
+          background: rgba(24, 18, 28, 0.5) !important;
+          backdrop-filter: blur(20px) saturate(180%);
         }
 
         .all-collections-section {
-          background: rgba(9, 9, 11, 0.75) !important;
-          backdrop-filter: blur(14px);
+          background: rgba(18, 18, 24, 0.55) !important;
+          backdrop-filter: blur(24px) saturate(190%);
         }
 
         .join-collective-section {
-          background: rgba(9, 9, 11, 0.8) !important;
-          backdrop-filter: blur(16px);
+          background: rgba(18, 18, 24, 0.65) !important;
+          backdrop-filter: blur(24px) saturate(190%);
         }
       `}</style>
     </>
