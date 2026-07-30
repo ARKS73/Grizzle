@@ -2,13 +2,19 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Mail, ArrowRight, ShieldCheck, Truck, RotateCcw, Github, Twitter, Instagram } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 import GrizzleLogo from '@/components/ui/GrizzleLogo';
 
 export default function Footer() {
+  const pathname = usePathname();
   const [email, setEmail] = useState('');
   const { addToast } = useToast();
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -117,8 +123,12 @@ export default function Footer() {
 
       <style jsx>{`
         .footer-wrapper {
-          background: var(--bg-secondary);
-          border-top: 1px solid var(--border-color);
+          position: relative;
+          z-index: 10;
+          background: rgba(18, 18, 24, 0.75) !important;
+          backdrop-filter: blur(24px) saturate(190%);
+          border-top: 1px solid rgba(255, 255, 255, 0.15);
+          box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
           margin-top: 5rem;
         }
         .features-bar {
@@ -126,8 +136,10 @@ export default function Footer() {
           border-left: none;
           border-right: none;
           border-top: none;
-          padding: 2rem 0;
-          background: var(--bg-tertiary);
+          padding: 2.2rem 0;
+          background: rgba(255, 255, 255, 0.04);
+          backdrop-filter: blur(16px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         .features-grid {
           display: grid;
