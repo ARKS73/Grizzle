@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/Toast';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 const CartContext = createContext();
 
@@ -9,23 +11,37 @@ export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const { addToast } = useToast();
+  const { user } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    const savedCart = localStorage.getItem('grizzle_cart');
-    if (savedCart) {
-      try {
-        setCartItems(JSON.parse(savedCart));
-      } catch (e) {
-        console.error('Failed to parse cart JSON', e);
+    if (user && user._id) {
+      const savedCart = localStorage.getItem(`grizzle_cart_${user._id}`);
+      if (savedCart) {
+        try {
+          setCartItems(JSON.parse(savedCart));
+        } catch (e) {
+          console.error('Failed to parse cart JSON', e);
+        }
       }
+    } else {
+      setCartItems([]);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
-    localStorage.setItem('grizzle_cart', JSON.stringify(cartItems));
-  }, [cartItems]);
+    if (user && user._id) {
+      localStorage.setItem(`grizzle_cart_${user._id}`, JSON.stringify(cartItems));
+    }
+  }, [cartItems, user]);
 
   const addToCart = (product, size = 'M', color = 'Pitch Black', quantity = 1) => {
+    if (!user) {
+      if (addToast) addToast('Please sign in to add items to your shopping bag!', 'info');
+      router.push('/login?redirect=' + encodeURIComponent(window.location.pathname));
+      return;
+    }
+
     setCartItems((prev) => {
       const existingIndex = prev.findIndex(
         (item) => item.product._id === product._id && item.size === size && item.color === color

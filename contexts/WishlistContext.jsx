@@ -2,30 +2,40 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/Toast';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 const WishlistContext = createContext();
 
 export function WishlistProvider({ children }) {
   const [wishlistItems, setWishlistItems] = useState([]);
   const { addToast } = useToast();
+  const { user } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    const savedWishlist = localStorage.getItem('grizzle_wishlist');
-    if (savedWishlist) {
-      try {
-        const parsed = JSON.parse(savedWishlist);
-        if (Array.isArray(parsed)) {
-          setWishlistItems(parsed.filter((item) => item && (item._id || item.slug || item.name)));
+    if (user && user._id) {
+      const savedWishlist = localStorage.getItem(`grizzle_wishlist_${user._id}`);
+      if (savedWishlist) {
+        try {
+          const parsed = JSON.parse(savedWishlist);
+          if (Array.isArray(parsed)) {
+            setWishlistItems(parsed.filter((item) => item && (item._id || item.slug || item.name)));
+          }
+        } catch (e) {
+          console.error('Failed to parse wishlist JSON', e);
         }
-      } catch (e) {
-        console.error('Failed to parse wishlist JSON', e);
       }
+    } else {
+      setWishlistItems([]);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
-    localStorage.setItem('grizzle_wishlist', JSON.stringify(wishlistItems));
-  }, [wishlistItems]);
+    if (user && user._id) {
+      localStorage.setItem(`grizzle_wishlist_${user._id}`, JSON.stringify(wishlistItems));
+    }
+  }, [wishlistItems, user]);
 
   const getItemId = (productOrId) => {
     if (!productOrId) return null;
@@ -36,6 +46,12 @@ export function WishlistProvider({ children }) {
   };
 
   const toggleWishlist = (product) => {
+    if (!user) {
+      if (addToast) addToast('Please sign in to add items to your Wishlist!', 'info');
+      router.push('/login?redirect=' + encodeURIComponent(window.location.pathname));
+      return;
+    }
+
     try {
       if (!product) return;
       const id = getItemId(product);
