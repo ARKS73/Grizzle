@@ -540,6 +540,7 @@ export default function AdminDashboardPage() {
         .table-card {
           padding: 1.5rem;
           border-radius: var(--radius-lg);
+          overflow-x: auto;
         }
         .table-card-header {
           display: flex;
@@ -552,6 +553,7 @@ export default function AdminDashboardPage() {
         .admin-table {
           width: 100%;
           border-collapse: collapse;
+          min-width: 500px;
         }
         .admin-table th, .admin-table td {
           padding: 0.75rem;
@@ -562,7 +564,11 @@ export default function AdminDashboardPage() {
         .admin-table th { color: var(--text-muted); text-transform: uppercase; font-size: 0.75rem; }
 
         @media (max-width: 900px) {
+          .metrics-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
           .dashboard-tables-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 500px) {
+          .metrics-grid { grid-template-columns: 1fr; }
         }
       `}</style>
     </div>

@@ -13,13 +13,16 @@ import {
   Tag, 
   ArrowLeft, 
   LogOut,
-  ShieldCheck 
+  ShieldCheck,
+  Menu,
+  X
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   const navLinks = [
     { name: 'Dashboard Overview', href: '/admin', icon: LayoutDashboard },
@@ -33,14 +36,17 @@ export default function AdminLayout({ children }) {
 
   return (
     <div className="admin-wrapper">
-      {/* Admin Sidebar */}
-      <aside className="admin-sidebar glass-panel">
+      {/* Admin Sidebar (Desktop) */}
+      <aside className={`admin-sidebar glass-panel ${mobileMenuOpen ? 'mobile-open' : ''}`}>
         <div className="sidebar-brand">
           <img src="/logo2.png" alt="Grizzle Admin Logo" style={{ height: '46px', width: 'auto', maxWidth: '150px', objectFit: 'contain', borderRadius: '0px', filter: 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.4))' }} />
-          <div>
+          <div className="brand-info">
             <h3>Grizzle Admin</h3>
             <span className="brand-subtitle">Management Console</span>
           </div>
+          <button onClick={() => setMobileMenuOpen(false)} className="mobile-close-btn">
+            <X size={20} />
+          </button>
         </div>
 
         <nav className="admin-nav">
@@ -51,6 +57,7 @@ export default function AdminLayout({ children }) {
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
                 className={`admin-nav-item ${isActive ? 'active' : ''}`}
               >
                 <div className="nav-icon-bubble">
@@ -73,18 +80,26 @@ export default function AdminLayout({ children }) {
       <main className="admin-main">
         <header className="admin-header glass-panel">
           <div className="admin-header-title">
-            <Link href="/" className="btn btn-secondary btn-sm mr-2" title="Back to Customer Storefront">
-              <ArrowLeft size={16} /> Back to Store
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="mobile-menu-trigger">
+              <Menu size={22} />
+            </button>
+            <Link href="/" className="btn btn-secondary btn-sm store-back-btn" title="Back to Customer Storefront">
+              <ArrowLeft size={16} /> <span className="btn-text">Back to Store</span>
             </Link>
-            <ShieldCheck size={20} className="text-primary ml-2" />
-            <span>Logged in as <strong>{user?.name || 'Admin'}</strong> ({user?.email})</span>
+            <ShieldCheck size={20} className="text-primary ml-2 admin-shield-icon" />
+            <span className="admin-user-info">Logged in as <strong>{user?.name || 'Admin'}</strong></span>
           </div>
           <div className="admin-header-actions">
             <button onClick={logout} className="btn btn-secondary btn-sm">
-              <LogOut size={16} /> Logout
+              <LogOut size={16} /> <span className="btn-text">Logout</span>
             </button>
           </div>
         </header>
+
+        {/* Mobile Backdrop */}
+        {mobileMenuOpen && (
+          <div className="mobile-backdrop" onClick={() => setMobileMenuOpen(false)} />
+        )}
 
         <div className="admin-content-body">{children}</div>
       </main>
@@ -262,9 +277,66 @@ export default function AdminLayout({ children }) {
           padding: 2rem;
         }
 
+        .mobile-menu-trigger {
+          display: none;
+          background: none;
+          border: none;
+          color: var(--text-primary);
+          cursor: pointer;
+          padding: 0.25rem;
+        }
+
+        .mobile-close-btn {
+          display: none;
+          background: none;
+          border: none;
+          color: var(--text-secondary);
+          cursor: pointer;
+          padding: 0.25rem;
+          margin-left: auto;
+        }
+
+        .mobile-backdrop {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.6);
+          backdrop-filter: blur(4px);
+          z-index: 140;
+        }
+
         @media (max-width: 900px) {
           .admin-wrapper { grid-template-columns: 1fr; }
-          .admin-sidebar { display: none; }
+          
+          .mobile-menu-trigger { display: flex; align-items: center; }
+          .mobile-close-btn { display: flex; align-items: center; }
+
+          .admin-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 280px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 150;
+            box-shadow: var(--shadow-xl);
+          }
+
+          .admin-sidebar.mobile-open {
+            transform: translateX(0);
+          }
+
+          .admin-header {
+            padding: 0 1rem;
+          }
+
+          .admin-content-body {
+            padding: 1rem;
+          }
+
+          .btn-text { display: none; }
+          .admin-user-info { font-size: 0.8rem; }
+          .admin-shield-icon { display: none; }
         }
       `}</style>
     </div>
