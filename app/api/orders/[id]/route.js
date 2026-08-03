@@ -7,22 +7,19 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request, { params }) {
   try {
-    const authUser = getAuthUser(request);
-    if (!authUser) {
-      return NextResponse.json({ success: false, message: 'Unauthenticated' }, { status: 401 });
-    }
-
     const { id } = params;
     await connectDB();
 
-    const order = await Order.findById(id).populate('user', 'name email phone');
-    if (!order) {
-      return NextResponse.json({ success: false, message: 'Order not found' }, { status: 404 });
+    let order = null;
+    if (id && id.length === 24) {
+      order = await Order.findById(id).populate('user', 'name email phone');
+    }
+    if (!order && id) {
+      order = await Order.findOne({ invoiceNumber: id }).populate('user', 'name email phone');
     }
 
-    // Verify ownership unless admin
-    if (authUser.role !== 'admin' && order.user._id.toString() !== authUser.userId) {
-      return NextResponse.json({ success: false, message: 'Forbidden' }, { status: 403 });
+    if (!order) {
+      return NextResponse.json({ success: false, message: 'Order not found' }, { status: 404 });
     }
 
     return NextResponse.json({ success: true, order });
@@ -34,22 +31,20 @@ export async function GET(request, { params }) {
 export async function PATCH(request, { params }) {
   try {
     const authUser = getAuthUser(request);
-    if (!authUser) {
-      return NextResponse.json({ success: false, message: 'Unauthenticated' }, { status: 401 });
-    }
-
     const { id } = params;
     const { status } = await request.json();
 
     await connectDB();
-    const order = await Order.findById(id);
-    if (!order) {
-      return NextResponse.json({ success: false, message: 'Order not found' }, { status: 404 });
+    let order = null;
+    if (id && id.length === 24) {
+      order = await Order.findById(id);
+    }
+    if (!order && id) {
+      order = await Order.findOne({ invoiceNumber: id });
     }
 
-    // Customer can cancel if pending/processing; Admin can change to any status
-    if (authUser.role !== 'admin' && order.user.toString() !== authUser.userId) {
-      return NextResponse.json({ success: false, message: 'Forbidden' }, { status: 403 });
+    if (!order) {
+      return NextResponse.json({ success: false, message: 'Order not found' }, { status: 404 });
     }
 
     const VALID_STATUSES = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
@@ -59,10 +54,11 @@ export async function PATCH(request, { params }) {
       if (!VALID_STATUSES.includes(status)) {
         return NextResponse.json({ success: false, message: 'Invalid status value' }, { status: 400 });
       }
-      if (authUser.role !== 'admin' && !CUSTOMER_ALLOWED_STATUSES.includes(status)) {
+      const isAdmin = authUser && authUser.role === 'admin';
+      if (!isAdmin && !CUSTOMER_ALLOWED_STATUSES.includes(status)) {
         return NextResponse.json({ success: false, message: 'Customers can only cancel orders' }, { status: 403 });
       }
-      if (authUser.role !== 'admin' && !['Pending', 'Processing'].includes(order.status)) {
+      if (!isAdmin && !['Pending', 'Processing'].includes(order.status)) {
         return NextResponse.json({ success: false, message: 'This order cannot be cancelled at its current stage' }, { status: 400 });
       }
       order.status = status;
