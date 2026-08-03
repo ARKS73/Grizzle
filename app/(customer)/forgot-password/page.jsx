@@ -2,34 +2,72 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Mail, Lock, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Mail, Lock, KeyRound, ArrowRight, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 
 export default function ForgotPasswordPage() {
   const { addToast } = useToast();
+  
+  // Step 1: Send OTP | Step 2: Verify OTP & New Password | Step 3: Success
+  const [step, setStep] = useState(1);
   const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [demoOtpNotice, setDemoOtpNotice] = useState('');
 
-  const handleSubmit = async (e) => {
+  // Step 1: Request 6-digit OTP
+  const handleSendOtp = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+    setDemoOtpNotice('');
+
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setStep(2);
+        addToast(data.message, 'success');
+        if (data.demoOtp) {
+          setDemoOtpNotice(data.demoOtp);
+          setOtp(data.demoOtp); // Auto-fill demo OTP for easy testing
+        }
+      } else {
+        addToast(data.message || 'Failed to send OTP code', 'error');
+      }
+    } catch (err) {
+      addToast('An error occurred while requesting OTP', 'error');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Step 2: Verify OTP & Set New Password
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+
     try {
       const res = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, newPassword }),
+        body: JSON.stringify({ email, otp, newPassword }),
       });
       const data = await res.json();
+
       if (data.success) {
-        setSuccess(true);
+        setStep(3);
         addToast('Password reset successfully!', 'success');
       } else {
-        addToast(data.message || 'Password reset failed', 'error');
+        addToast(data.message || 'Invalid or expired OTP code', 'error');
       }
-    } catch (e) {
-      addToast('Error resetting password', 'error');
+    } catch (err) {
+      addToast('Error verifying OTP and resetting password', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -38,22 +76,35 @@ export default function ForgotPasswordPage() {
   return (
     <div className="container auth-page-wrapper">
       <div className="auth-card glass-panel">
-        <div className="auth-header">
-          <h2>Reset Your Password</h2>
-          <p>Enter your email address and new password.</p>
+        <div className="auth-header text-center">
+          <img
+            src="/logo2.png"
+            alt="Grizzle Apparel Logo"
+            style={{
+              display: 'block',
+              margin: '0 auto 0.75rem auto',
+              height: '56px',
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.5))',
+            }}
+          />
+          <h2>
+            {step === 1 && 'Forgot Password?'}
+            {step === 2 && 'Verify OTP Code'}
+            {step === 3 && 'Password Reset!'}
+          </h2>
+          <p>
+            {step === 1 && 'Enter your registered email address to receive a 6-digit OTP code.'}
+            {step === 2 && `Enter the 6-digit OTP code sent to ${email}`}
+            {step === 3 && 'Your password has been updated. You can now sign in.'}
+          </p>
         </div>
 
-        {success ? (
-          <div className="success-box text-center">
-            <CheckCircle2 size={48} className="text-success mb-2" />
-            <h3>Password Updated!</h3>
-            <p className="mt-2 text-muted">Your account password has been updated successfully.</p>
-            <Link href="/login" className="btn btn-primary mt-4">Sign In Now</Link>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="auth-form">
+        {/* STEP 1: Enter Email */}
+        {step === 1 && (
+          <form onSubmit={handleSendOtp} className="auth-form">
             <div className="form-group">
-              <label className="form-label">Account Email</label>
+              <label className="form-label">Registered Account Email</label>
               <div className="input-icon-wrapper">
                 <Mail size={18} className="input-icon" />
                 <input
@@ -67,8 +118,42 @@ export default function ForgotPasswordPage() {
               </div>
             </div>
 
+            <button type="submit" disabled={submitting} className="btn btn-primary btn-lg submit-btn">
+              {submitting ? 'Sending OTP Code...' : 'Send 6-Digit OTP'} <ArrowRight size={18} />
+            </button>
+          </form>
+        )}
+
+        {/* STEP 2: Enter OTP & New Password */}
+        {step === 2 && (
+          <form onSubmit={handleResetPassword} className="auth-form">
+            {demoOtpNotice && (
+              <div className="demo-notice-box p-3 mb-3 bg-secondary rounded border border-primary text-center">
+                <ShieldCheck size={20} className="text-primary mb-1 d-inline" />
+                <p className="subtext m-0">
+                  <strong>Verification Code:</strong> <span className="otp-badge">{demoOtpNotice}</span>
+                </p>
+              </div>
+            )}
+
             <div className="form-group">
-              <label className="form-label">New Password</label>
+              <label className="form-label">6-Digit OTP Code *</label>
+              <div className="input-icon-wrapper">
+                <KeyRound size={18} className="input-icon" />
+                <input
+                  type="text"
+                  placeholder="e.g. 849201"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  required
+                  maxLength={6}
+                  className="form-input otp-input"
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">New Secure Password *</label>
               <div className="input-icon-wrapper">
                 <Lock size={18} className="input-icon" />
                 <input
@@ -84,25 +169,90 @@ export default function ForgotPasswordPage() {
             </div>
 
             <button type="submit" disabled={submitting} className="btn btn-primary btn-lg submit-btn">
-              {submitting ? 'Resetting Password...' : 'Reset Password'} <ArrowRight size={18} />
+              {submitting ? 'Verifying OTP...' : 'Verify OTP & Reset Password'} <ArrowRight size={18} />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setStep(1)}
+              className="btn btn-secondary btn-sm w-100 mt-2"
+            >
+              Resend OTP Code
             </button>
           </form>
         )}
 
-        <div className="auth-footer">
+        {/* STEP 3: Success Screen */}
+        {step === 3 && (
+          <div className="success-box text-center py-4">
+            <CheckCircle2 size={56} className="text-success mb-2" />
+            <h3>Password Changed Successfully!</h3>
+            <p className="mt-2 text-muted">Use your new password to sign in to your Grizzle account.</p>
+            <Link href="/login" className="btn btn-primary btn-lg mt-4 w-100">
+              Sign In to Your Account <ArrowRight size={18} />
+            </Link>
+          </div>
+        )}
+
+        <div className="auth-footer text-center mt-4">
           Remembered password? <Link href="/login" className="auth-link">Back to Login</Link>
         </div>
       </div>
 
       <style jsx>{`
-        .auth-page-wrapper { display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 200px); padding: 2rem 0; }
-        .auth-card { width: 100%; max-width: 440px; padding: 2.5rem; border-radius: var(--radius-lg); }
-        .auth-header { text-align: center; margin-bottom: 1.5rem; }
-        .input-icon-wrapper { position: relative; display: flex; align-items: center; }
-        .input-icon { position: absolute; left: 14px; color: var(--text-muted); }
-        .input-icon-wrapper input { padding-left: 2.6rem; }
+        .auth-page-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: calc(100vh - 200px);
+          padding: 2rem 0;
+        }
+        .auth-card {
+          width: 100%;
+          max-width: 440px;
+          padding: 2.5rem;
+          border-radius: var(--radius-lg);
+        }
+        .auth-header h2 { font-size: 1.6rem; }
+        .auth-header p { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+        .input-icon-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+        .input-icon {
+          position: absolute;
+          left: 14px;
+          color: var(--text-muted);
+        }
+        .input-icon-wrapper input {
+          padding-left: 2.6rem;
+        }
+
+        .otp-input {
+          letter-spacing: 4px;
+          font-weight: 800;
+          font-size: 1.1rem;
+        }
+
+        .otp-badge {
+          background: var(--accent-gradient);
+          color: white;
+          padding: 2px 10px;
+          border-radius: 6px;
+          font-weight: 800;
+          letter-spacing: 2px;
+        }
+
         .submit-btn { width: 100%; margin-top: 1rem; }
-        .auth-footer { text-align: center; font-size: 0.85rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); }
+
+        .auth-footer {
+          font-size: 0.85rem;
+          color: var(--text-secondary);
+          padding-top: 1rem;
+          border-top: 1px solid var(--border-color);
+        }
         .auth-link { color: var(--accent-primary); font-weight: 700; }
       `}</style>
     </div>
