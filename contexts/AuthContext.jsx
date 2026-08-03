@@ -79,6 +79,9 @@ export function AuthProvider({ children }) {
       await fetch('/api/auth/logout', { method: 'POST' });
       setUser(null);
       addToast('Logged out successfully', 'info');
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      }
     } catch (err) {
       console.error('Logout error:', err);
     }

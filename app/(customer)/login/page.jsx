@@ -22,10 +22,12 @@ function LoginContent() {
     const result = await login(email, password);
     setSubmitting(false);
     if (result.success) {
-      if (result.user?.role === 'admin' && (redirect === '/' || !redirect)) {
+      if (result.user?.role === 'admin') {
         router.push('/admin');
-      } else {
+      } else if (redirect && redirect !== '/login' && redirect !== '/') {
         router.push(redirect);
+      } else {
+        router.push('/');
       }
     }
   };
