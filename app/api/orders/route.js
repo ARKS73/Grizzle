@@ -11,22 +11,20 @@ export async function GET(request) {
     const authUser = getAuthUser(request);
     await connectDB();
 
+    if (!authUser || !authUser.userId) {
+      return NextResponse.json({ success: true, orders: [] });
+    }
+
     let orders = [];
-    if (authUser && authUser.role === 'admin') {
+    if (authUser.role === 'admin') {
       orders = await Order.find({}).populate('user', 'name email').sort({ createdAt: -1 });
-    } else if (authUser && authUser.userId) {
+    } else {
       orders = await Order.find({
         $or: [
           { user: authUser.userId },
           { 'shippingAddress.phone': authUser.phone || '__NONE__' },
-          { 'shippingAddress.fullName': authUser.name || '__NONE__' },
         ],
       }).sort({ createdAt: -1 });
-    }
-
-    // Fallback: If no user-specific orders found or unauthenticated, return all recent orders
-    if (!orders || orders.length === 0) {
-      orders = await Order.find({}).sort({ createdAt: -1 });
     }
 
     return NextResponse.json({ success: true, orders });

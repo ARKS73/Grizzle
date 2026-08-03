@@ -4,12 +4,20 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Package, Clock, Truck, CheckCircle2, XCircle, ArrowRight, FileText } from 'lucide-react';
 
+import { useAuth } from '@/contexts/AuthContext';
+
 export default function OrderHistoryPage() {
+  const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchOrders() {
+      if (!user) {
+        setOrders([]);
+        setLoading(false);
+        return;
+      }
       try {
         setLoading(true);
         const res = await fetch('/api/orders');
@@ -24,7 +32,7 @@ export default function OrderHistoryPage() {
       }
     }
     fetchOrders();
-  }, []);
+  }, [user]);
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -47,6 +55,13 @@ export default function OrderHistoryPage() {
 
       {loading ? (
         <div className="skeleton" style={{ height: '300px', borderRadius: '16px' }} />
+      ) : !user ? (
+        <div className="empty-orders glass-panel text-center">
+          <Package size={56} className="text-muted mb-3" />
+          <h2>Sign In to View Your Orders</h2>
+          <p>Please sign in to view your personal order history, live tracking, and official invoices.</p>
+          <Link href="/login?redirect=/orders" className="btn btn-primary mt-3">Sign In to Your Account</Link>
+        </div>
       ) : orders.length === 0 ? (
         <div className="empty-orders glass-panel text-center">
           <Package size={56} className="text-muted mb-3" />
