@@ -10,7 +10,18 @@ import { useToast } from '@/components/ui/Toast';
 const ALL_AVAILABLE_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
 const GENDER_OPTIONS = ['Men', 'Women', 'Unisex'];
 
+const PRESET_COLOR_VARIANTS = [
+  { name: 'White', hex: '#ffffff', image: '' },
+  { name: 'Black', hex: '#000000', image: '' },
+  { name: 'Red', hex: '#ef4444', image: '' },
+  { name: 'Blue', hex: '#3b82f6', image: '' },
+  { name: 'Green', hex: '#10b981', image: '' },
+];
 
+const SAMPLE_PRESET_IMAGES = [
+  { name: 'Sample 1', url: 'https://example.com/sample1.jpg' },
+  { name: 'Sample 2', url: 'https://example.com/sample2.jpg' },
+];
 // Helper to compress local uploaded image files before sending to server (prevents 413 Payload Too Large)
 const compressImage = (file, maxWidth = 800, maxHeight = 1000, quality = 0.75) => {
   return new Promise((resolve) => {
