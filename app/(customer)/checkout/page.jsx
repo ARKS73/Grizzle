@@ -24,7 +24,7 @@ export default function CheckoutPage() {
     country: user?.address?.country || 'India',
   });
 
-  const [paymentMethod, setPaymentMethod] = useState('UPI (GPay / PhonePe / Paytm)');
+  const [paymentMethod, setPaymentMethod] = useState('Cash on Delivery (COD)');
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -111,7 +111,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="container checkout-page-wrapper">
-      <h1 className="checkout-title"><Lock size={24} /> Secure Checkout</h1>
+      <h1 className="checkout-title"><Lock size={24} /> Cash Only Delivery</h1>
 
       <div className="checkout-grid">
         {/* Left Form Column */}
@@ -216,7 +216,7 @@ export default function CheckoutPage() {
             <div className="payment-section mt-4">
               <h3>2. Payment Method (India)</h3>
               <div className="payment-options">
-                {['UPI (GPay / PhonePe / Paytm)', 'Cash on Delivery (COD)', 'Debit / Credit Card (INR)', 'Net Banking (All Indian Banks)'].map((method) => (
+                {['Cash on Delivery (COD)'].map((method) => (
                   <label key={method} className={`payment-card ${paymentMethod === method ? 'selected' : ''}`}>
                     <input
                       type="radio"

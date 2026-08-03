@@ -30,26 +30,13 @@ export default function Footer() {
       <div className="features-bar glass-panel">
         <div className="container features-grid">
           <div className="feature-item">
-            <Truck className="feature-icon" size={24} />
-            <div>
-              <h4>Pan-India Express Delivery</h4>
-              <p>Free delivery on orders over ₹999</p>
-            </div>
-          </div>
-          <div className="feature-item">
             <RotateCcw className="feature-icon" size={24} />
             <div>
-              <h4>Cash on Delivery (COD)</h4>
+              <h4>Cash Only Delivery</h4>
               <p>Pay at your doorstep anywhere in India</p>
             </div>
           </div>
-          <div className="feature-item">
-            <ShieldCheck className="feature-icon" size={24} />
-            <div>
-              <h4>100% Secure Checkout</h4>
-              <p>Encrypted payment processing</p>
-            </div>
-          </div>
+          
         </div>
       </div>
 
@@ -111,12 +98,7 @@ export default function Footer() {
         <div className="container bottom-container">
           <p>&copy; {new Date().getFullYear()} Grizzle Apparel India. All rights reserved. Self-Made Printed T-Shirts.</p>
           <div className="payment-badges">
-            <span className="pay-badge">UPI</span>
-            <span className="pay-badge">GPay</span>
-            <span className="pay-badge">PhonePe</span>
-            <span className="pay-badge">Paytm</span>
             <span className="pay-badge">COD</span>
-            <span className="pay-badge">Cards</span>
           </div>
         </div>
       </div>
