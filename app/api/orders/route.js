@@ -91,7 +91,7 @@ export async function POST(request) {
 
         fetch(process.env.GOOGLE_SHEETS_WEBHOOK_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           redirect: 'follow',
           body: JSON.stringify({
             orderId: order._id.toString(),
