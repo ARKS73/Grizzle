@@ -14,13 +14,11 @@ export default function ForgotPasswordPage() {
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [demoOtpNotice, setDemoOtpNotice] = useState('');
 
   // Step 1: Request 6-digit OTP
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    setDemoOtpNotice('');
 
     try {
       const res = await fetch('/api/auth/forgot-password', {
@@ -32,11 +30,8 @@ export default function ForgotPasswordPage() {
 
       if (data.success) {
         setStep(2);
+        setOtp('');
         addToast(data.message, 'success');
-        if (data.demoOtp) {
-          setDemoOtpNotice(data.demoOtp);
-          setOtp(data.demoOtp); // Auto-fill demo OTP for easy testing
-        }
       } else {
         addToast(data.message || 'Failed to send OTP code', 'error');
       }
@@ -127,15 +122,6 @@ export default function ForgotPasswordPage() {
         {/* STEP 2: Enter OTP & New Password */}
         {step === 2 && (
           <form onSubmit={handleResetPassword} className="auth-form">
-            {demoOtpNotice && (
-              <div className="demo-notice-box p-3 mb-3 bg-secondary rounded border border-primary text-center">
-                <ShieldCheck size={20} className="text-primary mb-1 d-inline" />
-                <p className="subtext m-0">
-                  <strong>Verification Code:</strong> <span className="otp-badge">{demoOtpNotice}</span>
-                </p>
-              </div>
-            )}
-
             <div className="form-group">
               <label className="form-label">6-Digit OTP Code *</label>
               <div className="input-icon-wrapper">

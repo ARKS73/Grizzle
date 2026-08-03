@@ -37,10 +37,7 @@ export async function POST(request) {
 
     return NextResponse.json({
       success: true,
-      message: mailResult.method === 'demo'
-        ? `OTP code generated (${otp}). Check server console or configure SMTP.`
-        : '6-digit OTP code sent to your email address!',
-      demoOtp: mailResult.method === 'demo' ? otp : undefined,
+      message: 'A 6-digit OTP verification code has been sent to your email address.',
     });
   } catch (error) {
     console.error('Forgot password error:', error);
