@@ -86,8 +86,8 @@ export async function POST(request) {
     if (process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
       try {
         const productSummary = orderItems
-          .map((i) => `${i.name} (Qty: ${i.quantity}, Size: ${i.size}, Color: ${i.color || 'N/A'})`)
-          .join('; ');
+          .map((i, idx) => `${idx + 1}. ${i.name}\n   [ Qty: ${i.quantity} | Size: ${i.size} | Color: ${i.color || 'Default'} ]`)
+          .join('\n');
 
         fetch(process.env.GOOGLE_SHEETS_WEBHOOK_URL, {
           method: 'POST',
