@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import connectDB from '@/lib/mongodb';
 import Order from '@/models/Order';
 import Product from '@/models/Product';
@@ -11,20 +12,33 @@ export async function GET(request) {
     const authUser = getAuthUser(request);
     await connectDB();
 
-    if (!authUser || !authUser.userId) {
+    if (!authUser || (!authUser.userId && !authUser._id)) {
       return NextResponse.json({ success: true, orders: [] });
     }
+
+    const userIdStr = (authUser.userId || authUser._id).toString();
 
     let orders = [];
     if (authUser.role === 'admin') {
       orders = await Order.find({}).populate('user', 'name email').sort({ createdAt: -1 });
     } else {
-      orders = await Order.find({
-        $or: [
-          { user: authUser.userId },
-          { 'shippingAddress.phone': authUser.phone || '__NONE__' },
-        ],
-      }).sort({ createdAt: -1 });
+      const orConditions = [];
+
+      if (mongoose.Types.ObjectId.isValid(userIdStr)) {
+        orConditions.push({ user: new mongoose.Types.ObjectId(userIdStr) });
+      } else {
+        orConditions.push({ user: userIdStr });
+      }
+
+      if (authUser.phone && authUser.phone.trim() !== '') {
+        orConditions.push({ 'shippingAddress.phone': authUser.phone.trim() });
+      }
+
+      if (authUser.name && authUser.name.trim() !== '') {
+        orConditions.push({ 'shippingAddress.fullName': authUser.name.trim() });
+      }
+
+      orders = await Order.find({ $or: orConditions }).sort({ createdAt: -1 });
     }
 
     return NextResponse.json({ success: true, orders });
