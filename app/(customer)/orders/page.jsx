@@ -76,7 +76,7 @@ export default function OrderHistoryPage() {
                       <span className="item-name">{item.name}</span>
                       <span className="item-spec">{item.quantity}x • Size {item.size} • {item.color}</span>
                     </div>
-                    <span className="item-price">${(item.price * item.quantity).toFixed(2)}</span>
+                    <span className="item-price">₹{(item.price * item.quantity).toFixed(0)}</span>
                   </div>
                 ))}
               </div>
@@ -84,7 +84,7 @@ export default function OrderHistoryPage() {
               <div className="order-footer">
                 <div className="total-box">
                   <span>Total Amount Paid:</span>
-                  <strong>${order.totalPrice?.toFixed(2)}</strong>
+                  <strong>₹{order.totalPrice?.toFixed(0)}</strong>
                 </div>
 
                 <div className="action-btns">
