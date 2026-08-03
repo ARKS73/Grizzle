@@ -82,6 +82,39 @@ export async function POST(request) {
       invoiceNumber: `INV-${Math.floor(100000 + Math.random() * 900000)}`,
     });
 
+    // Send order details to Google Sheet if Webhook URL is configured
+    if (process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+      try {
+        const productSummary = orderItems
+          .map((i) => `${i.name} (Qty: ${i.quantity}, Size: ${i.size}, Color: ${i.color || 'N/A'})`)
+          .join('; ');
+
+        fetch(process.env.GOOGLE_SHEETS_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          redirect: 'follow',
+          body: JSON.stringify({
+            orderId: order._id.toString(),
+            invoiceNumber: order.invoiceNumber,
+            date: new Date(order.createdAt || Date.now()).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+            customerName: shippingAddress.fullName || '',
+            phone: shippingAddress.phone || '',
+            street: shippingAddress.street || '',
+            city: shippingAddress.city || '',
+            state: shippingAddress.state || '',
+            postalCode: shippingAddress.postalCode || '',
+            country: shippingAddress.country || 'India',
+            products: productSummary,
+            paymentMethod: paymentMethod || 'Cash on Delivery (COD)',
+            totalPrice: totalPrice,
+            status: order.status || 'Processing',
+          }),
+        }).catch((err) => console.error('Google Sheet Webhook Error:', err));
+      } catch (sheetErr) {
+        console.error('Failed to trigger Google Sheet webhook:', sheetErr);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Order placed successfully!',
