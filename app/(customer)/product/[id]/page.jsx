@@ -164,9 +164,9 @@ export default function ProductDetailPage() {
           {/* Colors Selection */}
           {product.colors?.length > 0 && (
             <div className="variant-box">
-              <div className="d-flex align-items-center justify-content-between mb-1">
+              <div className="variant-header-row">
                 <label className="variant-title">
-                  Color Filter: <strong>{selectedColor || 'All Colors (Showing All Images)'}</strong>
+                  Color Option: <span className="selected-color-name">{selectedColor || 'All Colors'}</span>
                 </label>
                 {selectedColor && (
                   <button
@@ -427,14 +427,28 @@ export default function ProductDetailPage() {
           background: linear-gradient(135deg, #ef4444 25%, #3b82f6 25%, #3b82f6 50%, #10b981 50%, #10b981 75%, #f59e0b 75%);
           border: 1px solid rgba(0,0,0,0.2);
         }
+        .variant-header-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          margin-bottom: 0.5rem;
+        }
+        .selected-color-name {
+          font-weight: 800;
+          margin-left: 0.35rem;
+          color: var(--accent-primary);
+        }
         .btn-link-reset {
           background: none;
           border: none;
           color: var(--accent-primary);
-          font-size: 0.78rem;
+          font-size: 0.82rem;
           font-weight: 700;
           cursor: pointer;
           text-decoration: underline;
+          margin-left: auto;
+          white-space: nowrap;
         }
 
 
