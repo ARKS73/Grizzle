@@ -273,8 +273,6 @@ export default function CheckoutPage() {
     }
   };
 
-  const currentCities = INDIAN_STATES_CITIES[formData.state] || [];
-
   return (
     <div className="container checkout-page-wrapper">
       <h1 className="checkout-title"><Lock size={24} /> Cash On Delivery Checkout</h1>
