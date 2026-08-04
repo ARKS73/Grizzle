@@ -111,14 +111,14 @@ export default function CheckoutPage() {
     return digits.length >= 10 ? digits.slice(-10) : '';
   };
 
-  const [phoneDigits, setPhoneDigits] = useState(extractPhoneDigits(user?.phone));
+  const [phoneDigits, setPhoneDigits] = useState('');
   const [customCity, setCustomCity] = useState('');
 
   const [formData, setFormData] = useState({
     fullName: user?.name || '',
     street: user?.address?.street || '',
     landmark: user?.address?.landmark || '',
-    city: user?.address?.city || 'Chennai',
+    city: user?.address?.city || '',
     state: user?.address?.state || 'Tamil Nadu',
     postalCode: user?.address?.postalCode || '',
     country: 'India',
@@ -134,14 +134,11 @@ export default function CheckoutPage() {
         fullName: prev.fullName || user.name || '',
         street: prev.street || user.address?.street || '',
         landmark: prev.landmark || user.address?.landmark || '',
-        city: prev.city || user.address?.city || 'Chennai',
+        city: prev.city || user.address?.city || '',
         state: prev.state || user.address?.state || 'Tamil Nadu',
         postalCode: prev.postalCode || user.address?.postalCode || '',
         country: 'India',
       }));
-      if (user.phone && !phoneDigits) {
-        setPhoneDigits(extractPhoneDigits(user.phone));
-      }
     }
   }, [user]);
 
@@ -381,7 +378,7 @@ export default function CheckoutPage() {
 
               {/* City Selection dropdown based on State */}
               <div className="form-group">
-                <label className="form-label">City * (Options for {formData.state})</label>
+                <label className="form-label">City * ({currentCities.length} Cities in {formData.state})</label>
                 <select
                   name="city"
                   value={formData.city}
@@ -389,6 +386,7 @@ export default function CheckoutPage() {
                   required
                   className="form-select font-semibold"
                 >
+                  <option value="" disabled>-- Select City ({currentCities.length} Cities) --</option>
                   {currentCities.map((ct) => (
                     <option key={ct} value={ct}>
                       {ct}
