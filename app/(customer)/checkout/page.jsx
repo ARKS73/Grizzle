@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { CreditCard, Truck, ShieldCheck, CheckCircle2, ArrowRight, Lock, MapPin, Phone } from 'lucide-react';
+import { CreditCard, Truck, ShieldCheck, CheckCircle2, ArrowRight, Lock, MapPin, Phone, Search, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/components/ui/Toast';
@@ -113,6 +113,7 @@ export default function CheckoutPage() {
 
   const [phoneDigits, setPhoneDigits] = useState('');
   const [customCity, setCustomCity] = useState('');
+  const [citySearch, setCitySearch] = useState('');
 
   const [formData, setFormData] = useState({
     fullName: user?.name || '',
@@ -171,11 +172,17 @@ export default function CheckoutPage() {
       const updated = { ...prev, [name]: value };
       if (name === 'state') {
         updated.city = ''; // Prompt user to select city from all available cities for selected state
+        setCitySearch('');
         setCustomCity('');
       }
       return updated;
     });
   };
+
+  const currentCities = INDIAN_STATES_CITIES[formData.state] || [];
+  const filteredCities = currentCities.filter((ct) =>
+    ct.toLowerCase().includes(citySearch.trim().toLowerCase())
+  );
 
   const handlePhoneChange = (e) => {
     const val = e.target.value.replace(/\D/g, '');
@@ -375,9 +382,35 @@ export default function CheckoutPage() {
                 </select>
               </div>
 
-              {/* City Selection dropdown based on State */}
-              <div className="form-group">
-                <label className="form-label">City * ({currentCities.length} Cities in {formData.state})</label>
+              {/* City Selection dropdown with Live Search Filter */}
+              <div className="form-group span-2">
+                <label className="form-label d-flex justify-content-between align-items-center">
+                  <span>City * ({currentCities.length} Cities in {formData.state})</span>
+                  {formData.city && <span className="text-success font-bold" style={{ fontSize: '0.8rem' }}>✓ Selected: {formData.city}</span>}
+                </label>
+
+                {/* City Search Bar */}
+                <div className="city-search-wrapper mb-2">
+                  <Search size={16} className="city-search-icon" />
+                  <input
+                    type="text"
+                    placeholder={`🔍 Type to search city name (e.g. Chennai, Madurai, Hosur, Ooty, Salem...)`}
+                    value={citySearch}
+                    onChange={(e) => setCitySearch(e.target.value)}
+                    className="form-input city-search-input"
+                  />
+                  {citySearch && (
+                    <button
+                      type="button"
+                      onClick={() => setCitySearch('')}
+                      className="clear-search-btn"
+                      title="Clear Search"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+
                 <select
                   name="city"
                   value={formData.city}
@@ -385,13 +418,20 @@ export default function CheckoutPage() {
                   required
                   className="form-select font-semibold"
                 >
-                  <option value="" disabled>-- Select City ({currentCities.length} Cities) --</option>
-                  {currentCities.map((ct) => (
+                  <option value="" disabled>
+                    {filteredCities.length > 0
+                      ? `-- Choose from ${filteredCities.length} ${citySearch ? 'Matching' : 'Available'} Cities --`
+                      : '❌ No matching city found. Choose "Other" below'}
+                  </option>
+                  {filteredCities.map((ct) => (
                     <option key={ct} value={ct}>
                       {ct}
                     </option>
                   ))}
                 </select>
+                <small className="subtext mt-1 d-block">
+                  {citySearch ? `Showing ${filteredCities.length} of ${currentCities.length} cities.` : 'Type in search box above to instantly find your city name.'}
+                </small>
               </div>
 
               {/* If "Other" city is selected, show input */}
@@ -573,6 +613,43 @@ export default function CheckoutPage() {
           font-size: 0.95rem !important;
           font-weight: 700 !important;
           color: var(--text-primary) !important;
+        }
+
+        /* City Live Search Box */
+        .city-search-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+        .city-search-icon {
+          position: absolute;
+          left: 12px;
+          color: var(--text-muted);
+          pointer-events: none;
+        }
+        .city-search-input {
+          padding-left: 2.3rem !important;
+          padding-right: 2.2rem !important;
+          font-size: 0.9rem !important;
+          border-color: var(--accent-primary) !important;
+        }
+        .clear-search-btn {
+          position: absolute;
+          right: 10px;
+          background: var(--bg-tertiary);
+          border: 1px solid var(--border-color);
+          color: var(--text-muted);
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+        }
+        .clear-search-btn:hover {
+          color: var(--accent-primary);
+          border-color: var(--accent-primary);
         }
 
         .border-danger {

@@ -2,11 +2,13 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { X, Star, ShoppingBag, Heart, Check, Truck, ShieldCheck } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { X, Star, ShoppingBag, Heart, Check, Truck, ShieldCheck, ArrowRight } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 
 export default function QuickViewModal({ product, onClose }) {
+  const router = useRouter();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
@@ -163,10 +165,12 @@ export default function QuickViewModal({ product, onClose }) {
                 onClick={() => {
                   addToCart(product, selectedSize, selectedColor, quantity);
                   onClose();
+                  router.push('/checkout');
                 }}
-                className="btn btn-primary add-to-cart-btn"
+                className="btn btn-primary add-to-cart-btn btn-lg font-bold"
+                style={{ fontSize: '1.05rem', padding: '0.85rem 1.25rem' }}
               >
-                <ShoppingBag size={18} /> Add to Bag
+                <ShoppingBag size={20} /> Checkout ({quantity}) <ArrowRight size={18} />
               </button>
 
               <button

@@ -2,16 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowUp, ShoppingBag, ChevronUp } from 'lucide-react';
+import { ShoppingBag, ChevronUp, ArrowRight } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 
 export default function FloatingActions() {
-  const { getTotalCount } = useCart();
+  const { getTotalCount, getTotalPrice } = useCart();
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 280) {
+      if (window.scrollY > 240) {
         setShowBackToTop(true);
       } else {
         setShowBackToTop(false);
@@ -30,13 +30,22 @@ export default function FloatingActions() {
   };
 
   const totalCount = getTotalCount();
+  const totalPrice = getTotalPrice();
 
   return (
     <div className="floating-actions-wrapper">
-      {/* Floating View Cart / Bag Button */}
+      {/* Floating Checkout Bag Button with Item Count */}
       {totalCount > 0 && (
-        <Link href="/cart" className="floating-btn floating-cart-btn glass-panel" title="View Shopping Bag">
-          <ShoppingBag size={20} />
+        <Link href="/checkout" className="floating-btn floating-checkout-btn glass-panel" title="Proceed to Checkout">
+          <div className="btn-icon-box">
+            <ShoppingBag size={20} />
+            <span className="count-badge">{totalCount}</span>
+          </div>
+          <div className="btn-text-content">
+            <span className="label-text">Checkout Bag ({totalCount})</span>
+            <span className="price-text">₹{totalPrice.toFixed(0)}</span>
+          </div>
+          <ArrowRight size={18} className="arrow-icon" />
         </Link>
       )}
 
@@ -69,42 +78,88 @@ export default function FloatingActions() {
           pointer-events: auto;
           display: flex;
           align-items: center;
-          justify-content: center;
-          width: 46px;
-          height: 46px;
-          padding: 0;
+          gap: 10px;
           border-radius: 9999px;
           border: 1.5px solid var(--border-color);
-          background: rgba(15, 23, 42, 0.85);
+          background: rgba(15, 23, 42, 0.9);
           backdrop-filter: blur(12px);
           color: white;
           text-decoration: none;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 15px rgba(239, 68, 68, 0.25);
+          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 20px rgba(239, 68, 68, 0.3);
           transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
           cursor: pointer;
         }
 
         .floating-btn:hover {
           transform: translateY(-4px) scale(1.03);
-          border-color: var(--accent-primary);
-          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent-primary);
+          box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), 0 0 25px var(--accent-primary);
         }
 
-        /* View Cart Floating Button */
-        .floating-cart-btn {
+        /* Prominent Checkout Bag Floating Button */
+        .floating-checkout-btn {
+          padding: 10px 18px;
           background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
           border-color: rgba(255, 255, 255, 0.3);
-          animation: floatBounce 2s ease-in-out infinite;
+          font-weight: 800;
         }
-        @keyframes floatBounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-4px); }
+
+        .btn-icon-box {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .count-badge {
+          position: absolute;
+          top: -8px;
+          right: -10px;
+          background: #ffffff;
+          color: #dc2626;
+          font-size: 0.72rem;
+          font-weight: 900;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-text-content {
+          display: flex;
+          flex-direction: column;
+          line-height: 1.1;
+        }
+
+        .label-text {
+          font-size: 0.88rem;
+          font-weight: 900;
+          letter-spacing: 0.02em;
+          color: #ffffff;
+        }
+
+        .price-text {
+          font-size: 0.76rem;
+          opacity: 0.92;
+          font-weight: 700;
+          color: #fee2e2;
+        }
+
+        .arrow-icon {
+          margin-left: 2px;
+          transition: transform 0.2s ease;
+        }
+
+        .floating-checkout-btn:hover .arrow-icon {
+          transform: translateX(4px);
         }
 
         /* Back to Top Floating Button */
         .back-to-top-btn {
-          width: 46px;
-          height: 46px;
+          width: 48px;
+          height: 48px;
           padding: 0;
           justify-content: center;
           background: var(--bg-tertiary);
@@ -119,16 +174,19 @@ export default function FloatingActions() {
 
         @media (max-width: 768px) {
           .floating-actions-wrapper {
-            bottom: 80px; /* Space for mobile navigation bar */
+            bottom: 80px;
             right: 16px;
-            gap: 8px;
+            gap: 10px;
           }
-          .floating-btn {
-            padding: 8px 14px;
+          .floating-checkout-btn {
+            padding: 10px 16px;
+          }
+          .label-text {
+            font-size: 0.82rem;
           }
           .back-to-top-btn {
-            width: 42px;
-            height: 42px;
+            width: 44px;
+            height: 44px;
           }
         }
       `}</style>

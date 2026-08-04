@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Star, Heart, ShoppingBag, Check } from 'lucide-react';
+import { Star, Heart, ShoppingBag, Check, ArrowRight } from 'lucide-react';
 import ProductCard from '@/components/products/ProductCard';
 import ReviewSection from '@/components/products/ReviewSection';
 import { useCart } from '@/contexts/CartContext';
@@ -13,7 +13,8 @@ import { getOptimizedImageUrl } from '@/utils/imageOptimizer';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
-  const { addToCart } = useCart();
+  const router = useRouter();
+  const { addToCart, getTotalCount } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
   const [product, setProduct] = useState(null);
@@ -268,10 +269,14 @@ export default function ProductDetailPage() {
             </div>
 
             <button
-              onClick={() => addToCart(product, selectedSize, selectedColor, quantity)}
-              className="btn btn-primary btn-lg add-btn"
+              onClick={() => {
+                addToCart(product, selectedSize, selectedColor, quantity);
+                router.push('/checkout');
+              }}
+              className="btn btn-primary btn-lg add-btn font-bold"
+              style={{ fontSize: '1.08rem', padding: '0.85rem 1.4rem' }}
             >
-              <ShoppingBag size={20} /> Add to Bag
+              <ShoppingBag size={20} /> Checkout ({quantity}) <ArrowRight size={18} />
             </button>
 
             <button

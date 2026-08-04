@@ -15,6 +15,9 @@ export default function ProductCard({ product, onQuickView }) {
   const isSaved = isInWishlist(product._id);
   const isInCart = cartItems?.some((item) => item.product?._id === product._id);
 
+  const cartItemForProduct = cartItems?.find((item) => item.product?._id === product._id);
+  const itemCountInCart = cartItemForProduct ? cartItemForProduct.quantity : 1;
+
   return (
     <div className="product-card glass-panel">
       {/* Image & Overlay Actions */}
@@ -39,24 +42,34 @@ export default function ProductCard({ product, onQuickView }) {
             <span className="badge badge-danger">-{product.discountPercentage}%</span>
           )}
           {product.isBestSeller && (
-            <span className="badge badge-warning">Best Seller</span>
+            <span className="badge badge-warning">🔥 Best Seller</span>
           )}
           {product.stock <= 10 && product.stock > 0 && (
             <span className="badge badge-info">Only {product.stock} left</span>
           )}
         </div>
 
-        {/* Wishlist Button Overlay */}
-        <div className="media-actions">
+        {/* Quick Action Overlay Buttons */}
+        <div className="card-overlay-actions">
           <button
             onClick={(e) => {
               e.stopPropagation();
               toggleWishlist(product);
             }}
-            className={`action-btn ${isSaved ? 'saved' : ''}`}
+            className={`action-btn ${isSaved ? 'active' : ''}`}
             title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
           >
             <Heart size={18} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : 'currentColor'} />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onQuickView && onQuickView(product);
+            }}
+            className="action-btn"
+            title="Quick View"
+          >
+            <Eye size={18} />
           </button>
         </div>
       </div>
@@ -99,7 +112,7 @@ export default function ProductCard({ product, onQuickView }) {
           ))}
         </div>
 
-        {/* Price & Add to Cart / View Bag Action */}
+        {/* Price & Add to Cart / Checkout Action */}
         <div className="card-footer">
           <div className="price-box">
             <span className="price-current">₹{product.price?.toFixed(0)}</span>
@@ -109,8 +122,8 @@ export default function ProductCard({ product, onQuickView }) {
           </div>
 
           {isInCart ? (
-            <Link href="/cart" className="btn btn-outline-success card-add-btn font-bold">
-              <ShoppingBag size={16} /> View Bag
+            <Link href="/checkout" className="btn btn-primary card-add-btn card-checkout-btn font-bold">
+              <ShoppingBag size={16} /> Checkout ({itemCountInCart})
             </Link>
           ) : (
             <button
