@@ -83,7 +83,7 @@ export async function POST(request) {
     `;
 
     await transporter.sendMail({
-      from: `"Grizzle Apparel" <${smtpUser}>`,
+      from: `"Grizzle Support" <${smtpUser}>`,
       to: email.toLowerCase(),
       subject: `🔐 ${generatedOtp} is your Grizzle Registration Verification OTP Code`,
       html: htmlContent,
