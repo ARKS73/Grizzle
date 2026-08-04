@@ -24,11 +24,8 @@ export default function CartPage() {
 
   const subtotal = getSubtotal();
   const discount = getDiscountAmount();
-  const shipping = subtotal >= 999 || subtotal === 0 ? 0 : 99;
-  const totalPrice = getTotalPrice();
-
-  const freeShippingThreshold = 999;
-  const progressPercent = Math.min(100, (subtotal / freeShippingThreshold) * 100);
+  const shipping = subtotal === 0 ? 0 : 49;
+  const totalPrice = Math.max(0, subtotal - discount + shipping);
 
   const handleCouponSubmit = async (e) => {
     e.preventDefault();
@@ -57,21 +54,6 @@ export default function CartPage() {
   return (
     <div className="container cart-page-wrapper">
       <h1 className="cart-title">Your Shopping Bag ({cartItems.length} items)</h1>
-
-      {/* Free Shipping Progress Bar */}
-      <div className="shipping-progress-card glass-panel">
-        <div className="progress-header">
-          <Truck size={20} className="text-primary" />
-          {subtotal >= freeShippingThreshold ? (
-            <span className="text-success font-bold">🎉 Congratulations! You unlocked Free Pan-India Express Shipping!</span>
-          ) : (
-            <span>Add <strong>₹{(freeShippingThreshold - subtotal).toFixed(0)}</strong> more to get FREE Pan-India Shipping</span>
-          )}
-        </div>
-        <div className="progress-bar-track">
-          <div className="progress-bar-fill" style={{ width: `${progressPercent}%` }} />
-        </div>
-      </div>
 
       <div className="cart-layout">
         {/* Items List */}

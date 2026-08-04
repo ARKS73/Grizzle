@@ -149,10 +149,10 @@ export function CartProvider({ children }) {
     return appliedCoupon.discountValue;
   };
 
-  const getTotalPrice = () => {
+  const getTotalPrice = (customShippingFee) => {
     const subtotal = getSubtotal();
     const discount = getDiscountAmount();
-    const shipping = subtotal >= 999 || subtotal === 0 ? 0 : 99;
+    const shipping = customShippingFee !== undefined ? customShippingFee : (subtotal === 0 ? 0 : 49);
     return Math.max(0, subtotal - discount + shipping);
   };
 

@@ -9,7 +9,58 @@ import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/components/ui/Toast';
 
 const INDIAN_STATES_CITIES = {
-  'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem', 'Tiruppur', 'Erode', 'Vellore', 'Thanjavur', 'Tuticorin', 'Nagercoil', 'Dindigul', 'Kanchipuram', 'Cuddalore', 'Kumbakonam', 'Other'],
+  'Tamil Nadu': [
+    'Aarkadu', 'Adirampattinam', 'Adiyakkamangalam', 'Aduthurai', 'Alangudi', 'Alwarthirunagiri', 'Alāndurai', 'Ambasamudram', 'Ambaturai', 'Ambur',
+    'Ammaianayakkanur', 'Anaikatti', 'Anaimalai', 'Anakkara', 'Anandathandavapuram', 'Anangur', 'Andampallam', 'Andevanahalli', 'Andipatti', 'Anekal',
+    'Annur', 'Anuppampattu', 'Anvarthikanpettei', 'Arakkonam', 'Aralvaimozhi', 'Arani', 'Aranthangi', 'Ariyalur', 'Ariyanoor', 'Arumuganeri',
+    'Aruppukkottai', 'Attadi', 'Attur', 'Auroville', 'Avinashi', 'Ayandur', 'Ayodhiyapatinam', 'Ayyampalayam', 'Ayyampettai', 'Banavarm',
+    'Bangarapet', 'Batlagundu', 'Belukkurichchi', 'Bengaluru', 'Bhavani', 'Bhel Township', 'Bhutapandi', 'Bodinayakanur', 'Bommayapalayam', 'Bommidi',
+    'Booluvampatti', 'Budalur', 'Buddireddipatti', 'Chalakudy', 'Chamarajanagara', 'Chellarcovil', 'Chengalpattu', 'Chengam', 'Chennai', 'Cherambadi',
+    'Cheranmahadevi', 'Chettippattu', 'Cheyyur', 'Chidambaram', 'Chinna Salem', 'Chinnakanal', 'Chitra Nagar', 'Chittar Lake', 'Chittoor', 'Chittur',
+    'Chittāmūr', 'Coimbatore', 'Colachel', 'Coonoor', 'Courtallam', 'Cuddalore', 'Cuddalore-Puducherry Administrative Boundary', 'Cumbum', 'Danishpet', 'Dasampatti',
+    'Denkanikota', 'Devakottai', 'Devala', 'Devikolam', 'Dhanushkodi', 'Dhārāpuram', 'Eachangadu', 'Egattur', 'Elanthoppu', 'Elavur',
+    'Eraniel', 'Eriyodu', 'Erode', 'Ethapur', 'Ganapathichettikulam', 'Gangaikonda Cholapuram', 'Genguvarpatti', 'Gingee', 'Gobichettipalayam', 'Golden Rock',
+    'Gudalur', 'Gudiyatham', 'Guduvancheri', 'Gummidipundi', 'Gundlupet', 'Gvanagar', 'Harur', 'Hogenakkal', 'Hoskote', 'Hosur',
+    'Huligal', 'Ilaiyankudi', 'Ingur', 'Iravanpatti', 'Ithalar', 'Jolarpet', 'Kadambattur', 'Kadambur', 'Kadayam', 'Kadayanallur',
+    'Kaduvanur', 'Kalambur', 'Kalanivasal', 'Kalapet', 'Kalial', 'Kallagam', 'Kallakkurichi', 'Kallal', 'Kallidaikurichi', 'Kambarasampettai',
+    'Kamudi', 'Kanakammachattram', 'Kanakapura', 'Kanchipuram', 'Kaniyambadi', 'Kannamangalam', 'Kannan Devan Hills', 'Kanyakumari', 'Karaikal', 'Karaikudi',
+    'Karambavayal', 'Karumattampatti', 'Karungulam', 'Karunya Nagar', 'Karuppur', 'Karur', 'Kathadimattam', 'Katpadi', 'Kattankulathur', 'Kattumannarkoil',
+    'Kavanur', 'Kilvelur', 'Kizha Ambur', 'Kodaikanal', 'Kollegal', 'Kollidam', 'Konni', 'Koolipalayam', 'Koonimedu', 'Koradacheri',
+    'Korampallam', 'Kotagiri', 'Kothamangalam', 'Kottachchedu', 'Kottagudi', 'Kottakuppam', 'Kovilampoondi', 'Kovilpatti', 'Krishna Karanai', 'Krishnagiri',
+    'Kuchanur', 'Kuilapalayam', 'Kulattur', 'Kulithalai', 'Kumaran Nagar', 'Kumbakonam', 'Kumily', 'Kuppam', 'Kurumbur', 'Kuthalam',
+    'Kuthambakkam', 'Kuzhithurai', 'Kālpākkam', 'Kānādukāttān', 'Kāramadai', 'Kāverippattanam', 'Kāveripāk', 'Lalgudi', 'Latteri', 'Lokur',
+    'Lovedale', 'Madurai', 'Madurantakam', 'Magudanchavadi', 'Mahabalipuram', 'Mailam', 'Malaiyāndipattanam', 'Malampuzha-I', 'Mallur', 'Malur',
+    'Mambalapattu', 'Manamadurai', 'Manamedu', 'Manapparai', 'Manavur', 'Mandapam', 'Mandavi', 'Mangalam', 'Manganallur', 'Manimutharu',
+    'Maniyachi', 'Manjakuppam', 'Manjakuttai', 'Mannargudi', 'Mannarkkad', 'Maraimalai Nagar', 'Marie Oulgaret', 'Marthandam', 'Marungai', 'Marungoor',
+    'Masinagudi', 'Mattur', 'Mavelipalayam', 'Mayiladuthurai', 'Mekkarai', 'Melmaruvathur', 'Melnariyappanur', 'Melpattampakkam', 'Melpatti', 'Melur',
+    'Mettupalayam', 'Mettur', 'Minjur', 'Mohanur', 'Morappur', 'Moratandi', 'Mudukulattur', 'Mudumalai', 'Mulligoor', 'Mundiyampakkam',
+    'Munthal', 'Musiri', 'Muthalamada', 'Muthupet', 'Naduhatty', 'Nagapattinam', 'Nagercoil', 'Nagore', 'Namakkal', 'Nandhiyan Kudikkadu',
+    'Nanguneri', 'Nannilam', 'Nattam', 'Nazareth', 'Nedumangad', 'Needamangalam', 'Nellikuppam', 'Nerinjippettai', 'Nettapakkam', 'Neyveli',
+    'Neyyattinkara', 'Nidur', 'Nilakkottai', 'Nilambur', 'Oddanchatram', 'Olakur', 'Omalur', 'Ooty', 'Oragadam', 'Orattanadu',
+    'Ottapidaram', 'Pachakuppam', 'Padavayal', 'Palakkad', 'Palakkodu', 'Palani', 'Palayam', 'Palayankottai', 'Palladam', 'Pallapatti',
+    'Pallipalayam', 'Pallippattu', 'Palliyadi', 'Palmaner', 'Pamba Kovil Shandy', 'Panagudi', 'Panambakkam', 'Panangudi', 'Panruti', 'Papanasam',
+    'Papasanam', 'Paramakudi', 'Parangipettai', 'Parassala', 'Pattukkottai', 'Pedda Nayakkanpalaiyam', 'Peermade', 'Pennadam', 'Pennagaram', 'Peralam',
+    'Perambalūr', 'Perani', 'Peravurani', 'Periyakulam', 'Perumal Kovil Pathy', 'Perumālmalai', 'Perundurai', 'Pollachi', 'Polur', 'Ponneri',
+    'Ponnirai', 'Poondi', 'Poondithangal', 'Poothurai', 'Poovar', 'Potheri', 'Pottaveli', 'Pudi', 'Puducherry', 'Pudukkottai',
+    'Pudukudi', 'Pudumund', 'Pukkiravari', 'Puliyūr', 'Punalur', 'Punjai Puliyampatti', 'Pushpagiri', 'Puthiamputhur', 'Puttur', 'Pykara',
+    'Pāchchalūr', 'Pālamedu', 'Radhapuram', 'Rajapalayam', 'Ramakkalmedu', 'Ramanathapuram', 'Rameshwaram', 'Ranipet', 'Rasipuram', 'Salem',
+    'Saliamangalam', 'Samalpatti', 'Samayanallur', 'Samayapuram', 'Samudram', 'Sankagiri', 'Sankarankovil', 'Sannanallur', 'Saranthangi', 'Saravanampatty',
+    'Sathyamangalam', 'Sattankulam', 'Sattiyakudi', 'Sattur', 'Satyavedu', 'Sembatti', 'Sendurai', 'Sengulam', 'Sethumadai', 'Sevoor',
+    'Seydunganallur', 'Shenkottai', 'Shimla', 'Sholavandan', 'Silaiman', 'Sillakkudi', 'Singanallur', 'Singaperumal Koil', 'Sirkazhi', 'Sirumalai',
+    'Sirumugai', 'Siruseri', 'Sivaganga', 'Sivagiri', 'Sivakasi', 'Solagampatti', 'Somanur', 'Sorapattu', 'Sriharikota', 'Sriperumbudur',
+    'Srivaikuntam', 'Srivilliputhur', 'Srīrangam', 'Suchindram', 'Sulerikadu', 'Sulthan Bathery', 'Swamimalai', 'Tada', 'Taingapatam', 'Taiyūr',
+    'Takkolam', 'Tarangambadi', 'Tenkasi', 'Thadikombu', 'Thalaivasal', 'Thalayathimund', 'Thanjavur', 'Tharumapuri', 'Thekkady', 'Theni',
+    'Thindal', 'Thindukkal', 'Thirukadaiyur', 'Thirukkadaiyur', 'Thirumayam', 'Thirunageswaram', 'Thirunallar', 'Thirunankovil', 'Thiruparankundram', 'Thiruthangal',
+    'Thiruthani', 'Thiruthuraipoondi', 'Thiruthuraiyur', 'Thiruvaiyaru', 'Thiruvalangadu', 'Thiruvallam', 'Thiruvarur', 'Thiruvavaduthurai', 'Thiruverumbur', 'Thiruvidaimarudur',
+    'Thiruvisanallur', 'Thoothukudi', 'Thovalai', 'Thuckalay', 'Thuraiyur', 'Tindivanam', 'Tiruchendur', 'Tiruchengode', 'Tiruchirappalli', 'Tiruchuli',
+    'Tirukoilur', 'Tirumalaisamudram', 'Tirumalpur', 'Tirumangalam', 'Tirunelveli', 'Tirupattur', 'Tiruppattur', 'Tirupporur', 'Tiruppuvanam', 'Tirupur',
+    'Tiruvadanai', 'Tiruvannamalai', 'Tiruvettipuram', 'Tiruvādūr', 'Tozhuppedu', 'Tranquebar', 'Uchipuli', 'Udaiyarpalaiyam', 'Udumalaipettai', 'Udumbanchola',
+    'Ulundurpet', 'Umayalparamancheri', 'Usilampatti', 'Uthamapalayam', 'Uthukuli', 'Uttangarai', 'Uttiramerur', 'Uttukkottai', 'Vadavalli', 'Vadipatti',
+    'Vaduvanchal', 'Vaithīsvarankoil', 'Vallam', 'Vallampadugai', 'Vallioor', 'Valparai', 'Vandavasi', 'Vaniyambadi', 'Vannarpet', 'Varakalpattu',
+    'Vasavasamudram', 'Vazhapadi', 'Vedasandur', 'Veerarakiyam', 'Velankanni', 'Velayuthampalayam', 'Velliyanai', 'Vellore', 'Veppadai', 'Vijayamanagaram',
+    'Vijayamangalam', 'Vikravandi', 'Vilattikulam', 'Villiyanallur', 'Vilpatti', 'Viluppuram', 'Vinnamangalam', 'Virudhunagar', 'Vriddhachalam', 'Vythiri',
+    'Walajabad', 'Walajapet', 'Walayar', 'West Mere', 'Yelagiri', 'Yercaud', 'Other'
+  ],
   'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Thane', 'Nashik', 'Kalyan-Dombivli', 'Vasai-Virar', 'Aurangabad', 'Solapur', 'Amravati', 'Kolhapur', 'Navi Mumbai', 'Nanded', 'Sangli', 'Latur', 'Other'],
   'Karnataka': ['Bengaluru', 'Mysuru', 'Hubballi-Dharwad', 'Mangaluru', 'Belagavi', 'Gulbarga', 'Davanagere', 'Bellary', 'Shimoga', 'Tumakuru', 'Udupi', 'Bidar', 'Hospet', 'Other'],
   'Delhi': ['New Delhi', 'North Delhi', 'South Delhi', 'East Delhi', 'West Delhi', 'Central Delhi', 'North East Delhi', 'South West Delhi', 'Other'],
@@ -53,11 +104,11 @@ export default function CheckoutPage() {
   const { cartItems, getSubtotal, getDiscountAmount, getTotalPrice, clearCart } = useCart();
   const { addToast } = useToast();
 
-  // Extract clean 10-digit phone if available
+  // Extract clean 10-digit phone if available (ignore dummy numbers)
   const extractPhoneDigits = (raw) => {
-    if (!raw) return '';
+    if (!raw || raw.includes('12345') || raw.includes('00000')) return '';
     const digits = raw.replace(/\D/g, '');
-    return digits.slice(-10);
+    return digits.length >= 10 ? digits.slice(-10) : '';
   };
 
   const [phoneDigits, setPhoneDigits] = useState(extractPhoneDigits(user?.phone));
@@ -94,10 +145,18 @@ export default function CheckoutPage() {
     }
   }, [user]);
 
+  const METRO_CITIES = ['Chennai', 'Mumbai', 'Bengaluru', 'Delhi', 'New Delhi', 'Hyderabad', 'Kolkata', 'Pune', 'Ahmedabad', 'Surat'];
+
+  // Calculate Shipping Fee based strictly on City
+  const calculateCityShippingFee = (city) => {
+    if (METRO_CITIES.includes(city)) return 49; // Express Metro City rate
+    return 79; // Standard regional city rate
+  };
+
   const subtotal = getSubtotal();
   const discount = getDiscountAmount();
-  const shipping = subtotal >= 999 ? 0 : 99;
-  const totalPrice = getTotalPrice();
+  const shipping = calculateCityShippingFee(formData.city);
+  const totalPrice = Math.max(0, subtotal - discount + shipping);
 
   if (cartItems.length === 0) {
     return (
@@ -253,12 +312,12 @@ export default function CheckoutPage() {
                     onChange={handlePhoneChange}
                     maxLength={10}
                     required
-                    placeholder="9876543210"
+                    placeholder="e.g. 9876543210"
                     className="phone-number-input"
                   />
                 </div>
                 <small className="subtext mt-1 d-block">
-                  Enter 10-digit Indian mobile number. Courier OTP & SMS updates will be sent to +91 {phoneDigits || 'XXXXXXXXXX'}.
+                  e.g. 98765 43210 — Enter 10-digit Indian mobile number. Courier OTP & tracking updates sent to +91 {phoneDigits || '9876543210'}.
                 </small>
               </div>
 
@@ -429,7 +488,10 @@ export default function CheckoutPage() {
             <div className="summary-breakdown mt-3">
               <div className="row"><span>Items Subtotal</span><span>₹{subtotal.toFixed(0)}</span></div>
               {discount > 0 && <div className="row text-success"><span>Promo Discount</span><span>-₹{discount.toFixed(0)}</span></div>}
-              <div className="row"><span>Shipping Fee</span><span>{shipping === 0 ? 'FREE' : `₹${shipping.toFixed(0)}`}</span></div>
+              <div className="row">
+                <span>Shipping ({formData.city || 'City'})</span>
+                <span>{shipping === 0 ? <strong className="text-success">FREE</strong> : `₹${shipping}`}</span>
+              </div>
               <div className="divider" />
               <div className="row total-row"><span>Total Payable</span><span>₹{totalPrice.toFixed(0)}</span></div>
             </div>
@@ -632,13 +694,42 @@ export default function CheckoutPage() {
         .font-semibold { font-weight: 600; }
 
         @media (max-width: 900px) {
+          .checkout-page-wrapper {
+            padding-top: 1rem;
+          }
+          .checkout-title {
+            font-size: 1.4rem;
+            margin-bottom: 1.25rem;
+          }
           .checkout-grid {
             grid-template-columns: 1fr;
+            gap: 1.25rem;
+          }
+          .checkout-form-column {
+            order: 2;
+          }
+          .checkout-summary-column {
+            order: 1;
+          }
+          .summary-card {
+            position: relative;
+            top: 0;
+            padding: 1.1rem;
+            margin-bottom: 0.5rem;
+          }
+          .checkout-form {
+            padding: 1.1rem;
           }
           .form-grid {
             grid-template-columns: 1fr;
+            gap: 0.85rem;
           }
           .span-2 { grid-column: span 1; }
+          .mini-name { font-size: 0.82rem; }
+          .mini-specs { font-size: 0.72rem; }
+          .mini-price { font-size: 0.82rem; }
+          .phone-prefix-badge { padding: 0.55rem 0.65rem; font-size: 0.82rem; }
+          .phone-number-input { padding: 0.55rem 0.65rem !important; font-size: 0.88rem !important; }
         }
       `}</style>
     </div>
