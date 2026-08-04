@@ -33,17 +33,18 @@ export default function FloatingActions() {
 
   return (
     <div className="floating-actions-wrapper">
-      {/* Prominent Floating Shopping Bag Button */}
-      {totalCount > 0 && (
-        <Link
-          href="/cart"
-          className="floating-circle-btn floating-cart-btn"
-          title="Shopping Bag"
-          aria-label="Shopping Bag"
-        >
-          <ShoppingBag size={28} />
-        </Link>
-      )}
+      {/* Prominent Floating Shopping Bag Button - always visible */}
+      <Link
+        href="/cart"
+        className="floating-circle-btn floating-cart-btn"
+        title={`Shopping Bag${totalCount > 0 ? ` (${totalCount} items)` : ''}`}
+        aria-label="Go to Shopping Bag"
+      >
+        <ShoppingBag size={28} />
+        {totalCount > 0 && (
+          <span className="floating-cart-badge">{totalCount}</span>
+        )}
+      </Link>
 
       {/* Back to Top Circular Button */}
       {showBackToTop && (
@@ -91,6 +92,25 @@ export default function FloatingActions() {
         .floating-circle-btn:hover {
           transform: translateY(-4px) scale(1.08);
           box-shadow: 0 16px 32px rgba(239, 68, 68, 0.55), 0 0 24px var(--accent-primary);
+        }
+
+        .floating-cart-badge {
+          position: absolute;
+          top: -6px;
+          right: -6px;
+          background: #ffffff;
+          color: #ef4444;
+          font-size: 0.7rem;
+          font-weight: 800;
+          min-width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid #ef4444;
+          line-height: 1;
+          padding: 0 3px;
         }
 
         /* Back to Top Button */
