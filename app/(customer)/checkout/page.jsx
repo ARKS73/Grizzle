@@ -170,8 +170,7 @@ export default function CheckoutPage() {
     setFormData((prev) => {
       const updated = { ...prev, [name]: value };
       if (name === 'state') {
-        const availableCities = INDIAN_STATES_CITIES[value] || [];
-        updated.city = availableCities[0] || '';
+        updated.city = ''; // Prompt user to select city from all available cities for selected state
         setCustomCity('');
       }
       return updated;
