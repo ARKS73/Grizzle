@@ -33,15 +33,17 @@ export default function FloatingActions() {
 
   return (
     <div className="floating-actions-wrapper">
-      {/* Prominent Floating Shopping Bag Button - Redirects to /cart with top-right count badge */}
-      <Link
-        href="/cart"
-        className="floating-circle-btn floating-cart-btn"
-        title={`Shopping Bag (${totalCount} items)`}
-      >
-        <ShoppingBag size={24} />
-        <span className="cart-count-badge">{totalCount}</span>
-      </Link>
+      {/* Prominent Floating Shopping Bag Button */}
+      {totalCount > 0 && (
+        <Link
+          href="/cart"
+          className="floating-circle-btn floating-cart-btn"
+          title="Shopping Bag"
+          aria-label="Shopping Bag"
+        >
+          <ShoppingBag size={28} />
+        </Link>
+      )}
 
       {/* Back to Top Circular Button */}
       {showBackToTop && (
@@ -68,15 +70,14 @@ export default function FloatingActions() {
           pointer-events: none;
         }
 
-        /* Large Prominent 56px x 56px Floating Circular Buttons */
         .floating-circle-btn {
           pointer-events: auto;
           position: relative;
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 56px;
-          height: 56px;
+          width: 68px;
+          height: 68px;
           border-radius: 50%;
           border: 2px solid rgba(239, 68, 68, 0.4);
           background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
@@ -90,26 +91,6 @@ export default function FloatingActions() {
         .floating-circle-btn:hover {
           transform: translateY(-4px) scale(1.08);
           box-shadow: 0 16px 32px rgba(239, 68, 68, 0.55), 0 0 24px var(--accent-primary);
-        }
-
-        /* Top-Right Corner Product Count Badge */
-        .cart-count-badge {
-          position: absolute;
-          top: -4px;
-          right: -4px;
-          background: #ffffff;
-          color: #dc2626;
-          font-size: 0.78rem;
-          font-weight: 900;
-          min-width: 24px;
-          height: 24px;
-          padding: 0 5px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-          border: 2px solid #ef4444;
         }
 
         /* Back to Top Button */
@@ -133,8 +114,8 @@ export default function FloatingActions() {
             gap: 12px;
           }
           .floating-circle-btn {
-            width: 52px;
-            height: 52px;
+            width: 60px;
+            height: 60px;
           }
         }
       `}</style>
