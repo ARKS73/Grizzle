@@ -709,11 +709,19 @@ export default function SinglePageStreetwearStore() {
           grid-template-columns: 1.1fr 0.9fr;
           gap: 3rem;
           align-items: center;
-          background: rgba(255, 255, 255, 0.72);
-          backdrop-filter: blur(24px) saturate(180%);
-          border: 1px solid rgba(186, 230, 255, 0.6);
+          backdrop-filter: blur(24px) saturate(190%);
           border-radius: 32px;
           padding: 3.5rem 3rem;
+          transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+        }
+        [data-theme='dark'] .hero-street-container {
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.16);
+          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.25);
+        }
+        [data-theme='light'] .hero-street-container {
+          background: rgba(255, 255, 255, 0.72);
+          border: 1px solid rgba(186, 230, 255, 0.6);
           box-shadow: 0 20px 50px rgba(56, 189, 248, 0.18), inset 0 1px 2px rgba(255, 255, 255, 0.9);
         }
         .hero-pill-badge {
@@ -779,10 +787,7 @@ export default function SinglePageStreetwearStore() {
           box-shadow: 0 18px 35px rgba(37, 99, 235, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.5);
         }
         .btn-street-light {
-          background: rgba(255, 255, 255, 0.85);
           backdrop-filter: blur(12px);
-          color: #1e40af;
-          border: 1.5px solid rgba(56, 189, 248, 0.5);
           padding: 0.95rem 2.2rem;
           font-weight: 800;
           font-size: 0.9rem;
@@ -790,9 +795,25 @@ export default function SinglePageStreetwearStore() {
           border-radius: 14px;
           transition: all 0.3s ease;
           text-decoration: none;
+        }
+        [data-theme='dark'] .btn-street-light {
+          background: rgba(255, 255, 255, 0.08);
+          color: var(--text-primary);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        }
+        [data-theme='dark'] .btn-street-light:hover {
+          background: rgba(255, 255, 255, 0.16);
+          transform: translateY(-3px);
+          border-color: rgba(255, 255, 255, 0.4);
+        }
+        [data-theme='light'] .btn-street-light {
+          background: rgba(255, 255, 255, 0.85);
+          color: #1e40af;
+          border: 1.5px solid rgba(56, 189, 248, 0.5);
           box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2), inset 0 1px 1px rgba(255,255,255,0.9);
         }
-        .btn-street-light:hover {
+        [data-theme='light'] .btn-street-light:hover {
           background: #eff6ff;
           transform: translateY(-3px);
           border-color: #2563eb;
@@ -807,30 +828,42 @@ export default function SinglePageStreetwearStore() {
         }
         .ambient-glow-orb {
           position: absolute;
-          width: 340px;
-          height: 340px;
+          width: 340px; height: 340px;
+          filter: blur(50px); z-index: 1;
+        }
+        [data-theme='dark'] .ambient-glow-orb {
+          background: radial-gradient(circle, rgba(236, 72, 153, 0.35) 0%, rgba(99, 102, 241, 0.25) 60%, transparent 80%);
+        }
+        [data-theme='light'] .ambient-glow-orb {
           background: radial-gradient(circle, rgba(147, 210, 255, 0.5) 0%, rgba(196, 221, 255, 0.35) 60%, transparent 80%);
-          filter: blur(50px);
-          z-index: 1;
         }
         .polaroid-frame-card {
-          position: relative;
-          z-index: 2;
-          background: rgba(255, 255, 255, 0.9);
+          position: relative; z-index: 2;
           backdrop-filter: blur(20px) saturate(180%);
-          border: 1px solid rgba(186, 230, 255, 0.7);
           padding: 14px 14px 45px 14px;
           border-radius: 20px;
-          box-shadow: 0 20px 50px rgba(56, 189, 248, 0.2), inset 0 1px 2px rgba(255, 255, 255, 1);
           transform: rotate(2.5deg);
-          max-width: 380px;
-          width: 100%;
+          max-width: 380px; width: 100%;
           transition: all 0.35s ease;
         }
-        .polaroid-frame-card:hover {
+        [data-theme='dark'] .polaroid-frame-card {
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.25);
+          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+        }
+        [data-theme='dark'] .polaroid-frame-card:hover {
+          border-color: rgba(255, 255, 255, 0.45);
           transform: rotate(0deg) scale(1.03);
+        }
+        [data-theme='light'] .polaroid-frame-card {
+          background: rgba(255, 255, 255, 0.9);
+          border: 1px solid rgba(186, 230, 255, 0.7);
+          box-shadow: 0 20px 50px rgba(56, 189, 248, 0.2), inset 0 1px 2px rgba(255, 255, 255, 1);
+        }
+        [data-theme='light'] .polaroid-frame-card:hover {
           border-color: rgba(56, 189, 248, 0.6);
           box-shadow: 0 28px 60px rgba(37, 99, 235, 0.2);
+          transform: rotate(0deg) scale(1.03);
         }
         .polaroid-img {
           width: 100%;
@@ -906,22 +939,29 @@ export default function SinglePageStreetwearStore() {
         }
         .filter-tab {
           padding: 0.55rem 1.1rem;
-          font-size: 0.78rem;
-          font-weight: 800;
+          font-size: 0.78rem; font-weight: 800;
           border-radius: 9999px;
-          background: rgba(255, 255, 255, 0.85);
           backdrop-filter: blur(12px);
-          color: #1e40af;
-          border: 1.5px solid rgba(56, 189, 248, 0.35);
           cursor: pointer;
           transition: all 0.25s ease;
+        }
+        [data-theme='dark'] .filter-tab {
+          background: rgba(255, 255, 255, 0.06);
+          color: var(--text-secondary);
+          border: 1px solid rgba(255, 255, 255, 0.14);
+          box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        }
+        [data-theme='light'] .filter-tab {
+          background: rgba(255, 255, 255, 0.85);
+          color: #1e40af;
+          border: 1.5px solid rgba(56, 189, 248, 0.35);
           box-shadow: 0 2px 8px rgba(56, 189, 248, 0.1);
         }
         .filter-tab:hover, .filter-tab.active {
-          background: linear-gradient(135deg, #2563eb, #7c3aed);
-          color: #ffffff;
-          border-color: transparent;
-          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+          background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+          color: #ffffff !important;
+          border-color: transparent !important;
+          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35) !important;
           transform: translateY(-2px);
         }
 
@@ -932,18 +972,27 @@ export default function SinglePageStreetwearStore() {
           gap: 1.75rem;
         }
         .pastel-card-wrapper {
-          display: flex;
-          flex-direction: column;
-          border-radius: 24px;
-          overflow: hidden;
-          background: rgba(255, 255, 255, 0.88) !important;
+          display: flex; flex-direction: column;
+          border-radius: 24px; overflow: hidden;
           backdrop-filter: blur(20px) saturate(180%) !important;
-          border: 1px solid rgba(186, 230, 255, 0.6) !important;
-          box-shadow: 0 8px 24px rgba(56, 189, 248, 0.14), inset 0 1px 1px rgba(255, 255, 255, 0.95) !important;
           transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .pastel-card-wrapper:hover {
-          transform: translateY(-8px) scale(1.02) !important;
+        .pastel-card-wrapper:hover { transform: translateY(-8px) scale(1.02) !important; }
+        [data-theme='dark'] .pastel-card-wrapper {
+          background: rgba(255, 255, 255, 0.05) !important;
+          border: 1px solid rgba(255, 255, 255, 0.15) !important;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+        }
+        [data-theme='dark'] .pastel-card-wrapper:hover {
+          border-color: rgba(99, 102, 241, 0.5) !important;
+          box-shadow: 0 30px 60px rgba(99, 102, 241, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.4) !important;
+        }
+        [data-theme='light'] .pastel-card-wrapper {
+          background: rgba(255, 255, 255, 0.88) !important;
+          border: 1px solid rgba(186, 230, 255, 0.6) !important;
+          box-shadow: 0 8px 24px rgba(56, 189, 248, 0.14), inset 0 1px 1px rgba(255, 255, 255, 0.95) !important;
+        }
+        [data-theme='light'] .pastel-card-wrapper:hover {
           border-color: rgba(37, 99, 235, 0.4) !important;
           box-shadow: 0 24px 50px rgba(37, 99, 235, 0.18), inset 0 1px 2px rgba(255, 255, 255, 0.95) !important;
         }
@@ -1328,82 +1377,84 @@ export default function SinglePageStreetwearStore() {
         .join-collective-section {
           padding: 2rem 0;
         }
+        /* ── NEWSLETTER — shared structure ── */
         .collective-banner-box {
           position: relative;
-          background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(219,238,255,0.85) 100%);
-          border: 1.5px solid rgba(56, 189, 248, 0.4);
-          border-top: 3px solid #2563eb;
           border-radius: 16px;
           padding: 4rem 2rem;
           text-align: center;
           overflow: hidden;
           color: var(--text-primary);
+          transition: background 0.35s ease, border-color 0.35s ease;
+        }
+        [data-theme='dark'] .collective-banner-box {
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-color);
+          border-top: 3px solid var(--accent-primary);
+        }
+        [data-theme='light'] .collective-banner-box {
+          background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(219,238,255,0.85) 100%);
+          border: 1.5px solid rgba(56, 189, 248, 0.4);
+          border-top: 3px solid #2563eb;
           box-shadow: 0 12px 40px rgba(56, 189, 248, 0.15);
         }
+
         .collective-watermark {
-          position: absolute;
-          bottom: -20px;
-          right: 20px;
-          font-size: 8rem;
-          font-weight: 900;
-          color: rgba(37, 99, 235, 0.05);
-          user-select: none;
-          pointer-events: none;
+          position: absolute; bottom: -20px; right: 20px;
+          font-size: 8rem; font-weight: 900;
+          user-select: none; pointer-events: none;
         }
-        .collective-content {
-          position: relative;
-          z-index: 2;
-          max-width: 600px;
-          margin: 0 auto;
-        }
-        .collective-title {
-          font-size: 2.2rem;
-          font-weight: 900;
-          letter-spacing: -0.02em;
-          margin-bottom: 0.75rem;
-          color: #0f172a;
-        }
-        .collective-subtitle {
-          font-size: 0.85rem;
-          font-weight: 700;
-          color: #475569;
-          letter-spacing: 0.05em;
-          margin-bottom: 2rem;
-        }
-        .collective-form {
-          display: flex;
-          gap: 0.5rem;
-          max-width: 480px;
-          margin: 0 auto;
-        }
+        [data-theme='dark']  .collective-watermark { color: rgba(255,255,255,0.03); }
+        [data-theme='light'] .collective-watermark { color: rgba(37, 99, 235, 0.05); }
+
+        .collective-content { position: relative; z-index: 2; max-width: 600px; margin: 0 auto; }
+        .collective-title { font-size: 2.2rem; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+        [data-theme='dark']  .collective-title { color: var(--text-primary); }
+        [data-theme='light'] .collective-title { color: #0f172a; }
+
+        .collective-subtitle { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 2rem; }
+        [data-theme='dark']  .collective-subtitle { color: #94a3b8; }
+        [data-theme='light'] .collective-subtitle { color: #475569; }
+
+        .collective-form { display: flex; gap: 0.5rem; max-width: 480px; margin: 0 auto; }
         .collective-input {
-          flex: 1;
-          padding: 0.85rem 1.2rem;
+          flex: 1; padding: 0.85rem 1.2rem; border-radius: 6px;
+          font-size: 0.85rem; font-weight: 600; outline: none;
+          transition: border-color 0.2s ease;
+        }
+        [data-theme='dark'] .collective-input {
+          background: rgba(255,255,255,0.06);
+          border: 1px solid rgba(255,255,255,0.15);
+          color: white;
+        }
+        [data-theme='light'] .collective-input {
           background: rgba(255,255,255,0.95);
           border: 1.5px solid rgba(56, 189, 248, 0.4);
-          border-radius: 6px;
           color: #0f172a;
-          font-size: 0.85rem;
-          font-weight: 600;
-          outline: none;
         }
-        .collective-input:focus {
+        [data-theme='light'] .collective-input:focus {
           border-color: #2563eb;
           box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
         }
+        .collective-input:focus { border-color: #2563eb; }
+
         .collective-submit-btn {
+          border: none; padding: 0.85rem 1.5rem;
+          font-weight: 900; font-size: 0.85rem; border-radius: 6px;
+          cursor: pointer; transition: all 0.2s ease;
+        }
+        [data-theme='dark'] .collective-submit-btn {
+          background: #ffffff; color: #0f172a;
+        }
+        [data-theme='dark'] .collective-submit-btn:hover {
+          background: #2563eb; color: white;
+        }
+        [data-theme='light'] .collective-submit-btn {
           background: linear-gradient(135deg, #2563eb, #7c3aed);
           color: #ffffff;
-          border: none;
-          padding: 0.85rem 1.5rem;
-          font-weight: 900;
-          font-size: 0.85rem;
-          border-radius: 6px;
-          cursor: pointer;
-          transition: all 0.2s ease;
           box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
         }
-        .collective-submit-btn:hover {
+        [data-theme='light'] .collective-submit-btn:hover {
           transform: translateY(-2px);
           box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45);
         }
