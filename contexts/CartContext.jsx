@@ -1,9 +1,8 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useToast } from '@/components/ui/Toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
 
 const CartContext = createContext();
 
@@ -12,60 +11,118 @@ export function CartProvider({ children }) {
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const { addToast } = useToast();
   const { user } = useAuth();
-  const router = useRouter();
 
+  // Helper to sync cart state to Database for logged-in user
+  const syncCartToDatabase = async (items) => {
+    if (!user || !user._id) return;
+    try {
+      await fetch('/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cartItems: items }),
+      });
+    } catch (e) {
+      console.error('Failed to sync cart to database:', e);
+    }
+  };
+
+  // Load cart on Mount or User Change
   useEffect(() => {
-    if (user && user._id) {
-      const savedCart = localStorage.getItem(`grizzle_cart_${user._id}`);
-      if (savedCart) {
-        try {
-          setCartItems(JSON.parse(savedCart));
-        } catch (e) {
-          console.error('Failed to parse cart JSON', e);
+    const loadCart = async () => {
+      // Read any offline guest cart items
+      let localGuestCart = [];
+      if (typeof window !== 'undefined') {
+        const savedGuest = localStorage.getItem('grizzle_guest_cart');
+        if (savedGuest) {
+          try {
+            localGuestCart = JSON.parse(savedGuest);
+          } catch (e) {}
         }
       }
-    } else {
-      setCartItems([]);
-    }
+
+      if (user && user._id) {
+        try {
+          const res = await fetch('/api/cart');
+          const data = await res.json();
+          let dbCart = (data.success && Array.isArray(data.cartItems)) ? data.cartItems : [];
+
+          // Merge guest cart items into DB cart if guest cart existed
+          if (localGuestCart.length > 0) {
+            localGuestCart.forEach((gItem) => {
+              const idx = dbCart.findIndex(
+                (dItem) => dItem.product?._id === gItem.product?._id && dItem.size === gItem.size && dItem.color === gItem.color
+              );
+              if (idx > -1) {
+                dbCart[idx].quantity += gItem.quantity;
+              } else {
+                dbCart.push(gItem);
+              }
+            });
+            if (typeof window !== 'undefined') {
+              localStorage.removeItem('grizzle_guest_cart');
+            }
+            syncCartToDatabase(dbCart);
+          }
+
+          setCartItems(dbCart);
+        } catch (err) {
+          console.error('Error loading DB cart:', err);
+        }
+      } else {
+        // Guest user cart
+        setCartItems(localGuestCart);
+      }
+    };
+
+    loadCart();
   }, [user]);
 
-  useEffect(() => {
+  // Sync to DB or localStorage whenever cart state is updated
+  const updateCartStateAndSync = (newCartItems) => {
+    setCartItems(newCartItems);
     if (user && user._id) {
-      localStorage.setItem(`grizzle_cart_${user._id}`, JSON.stringify(cartItems));
+      syncCartToDatabase(newCartItems);
+    } else if (typeof window !== 'undefined') {
+      localStorage.setItem('grizzle_guest_cart', JSON.stringify(newCartItems));
     }
-  }, [cartItems, user]);
+  };
 
   const addToCart = (product, size = 'M', color = 'Pitch Black', quantity = 1) => {
-    if (!user) {
-      if (addToast) addToast('Please sign in to add items to your shopping bag!', 'info');
-      router.push('/login?redirect=' + encodeURIComponent(window.location.pathname));
-      return;
-    }
+    if (!product || !product._id) return;
 
     setCartItems((prev) => {
       const existingIndex = prev.findIndex(
-        (item) => item.product._id === product._id && item.size === size && item.color === color
+        (item) => item.product?._id === product._id && item.size === size && item.color === color
       );
 
+      let updated;
       if (existingIndex > -1) {
-        const updated = [...prev];
+        updated = [...prev];
         updated[existingIndex].quantity += quantity;
-        return updated;
       } else {
-        return [...prev, { product, size, color, quantity }];
+        updated = [...prev, { product, size, color, quantity }];
       }
+
+      if (user && user._id) {
+        syncCartToDatabase(updated);
+      } else if (typeof window !== 'undefined') {
+        localStorage.setItem('grizzle_guest_cart', JSON.stringify(updated));
+      }
+
+      return updated;
     });
 
-    addToast(`Added "${product.name}" (${size}) to your cart`, 'success');
+    if (addToast) {
+      addToast(`Added "${product.name}" (${size}) to your cart`, 'success');
+    }
   };
 
   const removeFromCart = (productId, size, color) => {
-    setCartItems((prev) =>
-      prev.filter(
-        (item) => !(item.product._id === productId && item.size === size && item.color === color)
-      )
+    const updated = cartItems.filter(
+      (item) => !(item.product?._id === productId && item.size === size && item.color === color)
     );
-    addToast('Item removed from cart', 'info');
+    updateCartStateAndSync(updated);
+    if (addToast) addToast('Item removed from cart', 'info');
   };
 
   const updateQuantity = (productId, size, color, newQuantity) => {
@@ -73,14 +130,13 @@ export function CartProvider({ children }) {
       removeFromCart(productId, size, color);
       return;
     }
-    setCartItems((prev) =>
-      prev.map((item) => {
-        if (item.product._id === productId && item.size === size && item.color === color) {
-          return { ...item, quantity: newQuantity };
-        }
-        return item;
-      })
-    );
+    const updated = cartItems.map((item) => {
+      if (item.product?._id === productId && item.size === size && item.color === color) {
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
+    });
+    updateCartStateAndSync(updated);
   };
 
   const applyCoupon = async (code) => {
@@ -92,14 +148,14 @@ export function CartProvider({ children }) {
       if (data.success && data.coupon) {
         const subtotal = getSubtotal();
         if (subtotal < data.coupon.minPurchase) {
-          addToast(`Minimum purchase of ₹${data.coupon.minPurchase} required for this coupon`, 'error');
+          if (addToast) addToast(`Minimum purchase of ₹${data.coupon.minPurchase} required for this coupon`, 'error');
           return false;
         }
         setAppliedCoupon(data.coupon);
-        addToast(`Coupon "${data.coupon.code}" applied successfully!`, 'success');
+        if (addToast) addToast(`Coupon "${data.coupon.code}" applied successfully!`, 'success');
         return true;
       } else {
-        addToast(data.message || 'Invalid or expired coupon code', 'error');
+        if (addToast) addToast(data.message || 'Invalid or expired coupon code', 'error');
         return false;
       }
     } catch (err) {
@@ -107,20 +163,20 @@ export function CartProvider({ children }) {
       if (uppercaseCode === 'GRIZZLE100') {
         const coupon = { code: 'GRIZZLE100', discountType: 'fixed', discountValue: 100, minPurchase: 799 };
         setAppliedCoupon(coupon);
-        addToast('Coupon "GRIZZLE100" applied (₹100 OFF)!', 'success');
+        if (addToast) addToast('Coupon "GRIZZLE100" applied (₹100 OFF)!', 'success');
         return true;
       } else if (uppercaseCode === 'WELCOME20') {
         const coupon = { code: 'WELCOME20', discountType: 'percentage', discountValue: 20, minPurchase: 999 };
         setAppliedCoupon(coupon);
-        addToast('Coupon "WELCOME20" applied (20% OFF)!', 'success');
+        if (addToast) addToast('Coupon "WELCOME20" applied (20% OFF)!', 'success');
         return true;
       } else if (uppercaseCode === 'DESI50') {
         const coupon = { code: 'DESI50', discountType: 'fixed', discountValue: 50, minPurchase: 499 };
         setAppliedCoupon(coupon);
-        addToast('Coupon "DESI50" applied (₹50 OFF)!', 'success');
+        if (addToast) addToast('Coupon "DESI50" applied (₹50 OFF)!', 'success');
         return true;
       } else {
-        addToast('Invalid coupon code. Try WELCOME20, GRIZZLE100, or DESI50', 'error');
+        if (addToast) addToast('Invalid coupon code. Try WELCOME20, GRIZZLE100, or DESI50', 'error');
         return false;
       }
     }
@@ -128,16 +184,16 @@ export function CartProvider({ children }) {
 
   const removeCoupon = () => {
     setAppliedCoupon(null);
-    addToast('Coupon code removed', 'info');
+    if (addToast) addToast('Coupon code removed', 'info');
   };
 
   const clearCart = () => {
-    setCartItems([]);
+    updateCartStateAndSync([]);
     setAppliedCoupon(null);
   };
 
   const getSubtotal = () => {
-    return cartItems.reduce((total, item) => total + item.product.price * item.quantity, 0);
+    return cartItems.reduce((total, item) => total + (item.product?.price || 0) * item.quantity, 0);
   };
 
   const getDiscountAmount = () => {

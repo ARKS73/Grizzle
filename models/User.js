@@ -44,8 +44,20 @@ const UserSchema = new mongoose.Schema(
       city: { type: String, default: '' },
       state: { type: String, default: '' },
       postalCode: { type: String, default: '' },
-      country: { type: String, default: 'United States' },
+      country: { type: String, default: 'India' },
     },
+    cart: [
+      {
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Product',
+          required: true,
+        },
+        size: { type: String, default: 'M' },
+        color: { type: String, default: 'Default' },
+        quantity: { type: Number, default: 1 },
+      },
+    ],
     resetToken: String,
     resetTokenExpiry: Date,
     resetOtp: String,
