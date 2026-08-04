@@ -424,7 +424,118 @@ export default function QuickViewModal({ product, onClose }) {
         }
 
         @media (max-width: 768px) {
-          .quickview-grid { grid-template-columns: 1fr; }
+          .quickview-card {
+            padding: 1rem !important;
+            max-height: 88vh;
+            overflow-y: auto;
+            width: 94%;
+            margin: 0 auto;
+          }
+          .modal-close-btn {
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 30px;
+            height: 30px;
+          }
+          .quickview-grid {
+            grid-template-columns: 1fr;
+            gap: 0.85rem;
+          }
+          .main-image-box {
+            max-height: 220px;
+            aspect-ratio: 1 / 1;
+          }
+          .main-image {
+            object-fit: contain;
+          }
+          .thumbnails-row {
+            gap: 0.35rem;
+            margin-top: 0.4rem;
+          }
+          .thumb-btn {
+            width: 44px;
+            height: 44px;
+          }
+          .quickview-details {
+            gap: 0.5rem;
+          }
+          .product-title {
+            font-size: 1.1rem;
+            line-height: 1.25;
+          }
+          .rating-row {
+            gap: 0.35rem;
+          }
+          .rating-text {
+            font-size: 0.75rem;
+          }
+          .price-row {
+            gap: 0.5rem;
+            align-items: center;
+          }
+          .price-current {
+            font-size: 1.2rem;
+          }
+          .price-original {
+            font-size: 0.85rem;
+          }
+          .description {
+            font-size: 0.78rem;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+          .variant-group {
+            gap: 0.35rem;
+          }
+          .variant-label {
+            font-size: 0.78rem;
+          }
+          .color-pill {
+            padding: 0.3rem 0.55rem;
+            font-size: 0.72rem;
+            gap: 0.25rem;
+          }
+          .sizes-picker {
+            gap: 0.35rem;
+          }
+          .size-btn {
+            width: 32px;
+            height: 32px;
+            font-size: 0.75rem;
+          }
+          .action-row {
+            gap: 0.4rem;
+            margin-top: 0.35rem;
+          }
+          .quantity-control button {
+            width: 30px;
+            height: 36px;
+          }
+          .quantity-control span {
+            width: 30px;
+            font-size: 0.8rem;
+          }
+          .add-to-cart-btn {
+            font-size: 0.8rem !important;
+            padding: 0.45rem 0.65rem !important;
+            height: 36px;
+          }
+          .wishlist-btn {
+            height: 36px;
+            width: 36px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .full-details-link {
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: 0.25rem;
+          }
         }
       `}</style>
     </div>
