@@ -6,29 +6,29 @@
 
 :root,
 [data-theme='light'] {
-  /* Color Palette - Light Mode (GRIZZLE Crimson & Gold Theme) */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
+  /* Color Palette - Liquid White Glass Light Mode */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
   --bg-tertiary: #f1f5f9;
   --bg-elevated: #ffffff;
-  --bg-glass: rgba(255, 255, 255, 0.92);
+  --bg-glass: rgba(255, 255, 255, 0.82);
   
   --text-primary: #0f172a;
   --text-secondary: #334155;
   --text-muted: #64748b;
   --text-inverse: #ffffff;
 
-  --border-color: #e2e8f0;
-  --border-hover: #cbd5e1;
+  --border-color: rgba(0, 0, 0, 0.08);
+  --border-hover: rgba(220, 38, 38, 0.3);
 
   --accent-primary: #dc2626;
   --accent-hover: #b91c1c;
-  --accent-light: rgba(220, 38, 38, 0.1);
+  --accent-light: rgba(220, 38, 38, 0.08);
   --accent-gradient: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
   --accent-gradient-secondary: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
 
-  --accent-gold: #f59e0b;
-  --accent-gold-light: rgba(245, 158, 11, 0.15);
+  --accent-gold: #d97706;
+  --accent-gold-light: rgba(217, 119, 6, 0.12);
 
   --danger: #dc2626;
   --danger-light: #fef2f2;
@@ -39,12 +39,12 @@
   --info: #0284c7;
   --info-light: #f0f9ff;
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.12), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-glow: 0 0 20px rgba(220, 38, 38, 0.35);
-  --shadow-gold-glow: 0 0 25px rgba(245, 158, 11, 0.4);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.08);
+  --shadow-xl: 0 20px 35px rgba(15, 23, 42, 0.1);
+  --shadow-glow: 0 0 25px rgba(220, 38, 38, 0.25);
+  --shadow-gold-glow: 0 0 25px rgba(245, 158, 11, 0.3);
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -161,10 +161,28 @@ img {
 
 .glass-panel {
   background: var(--bg-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+[data-theme='light'] .glass-panel {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.9) !important;
+}
+
+[data-theme='dark'] .glass-panel {
+  background: rgba(18, 18, 21, 0.85) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
 }
 
 .btn {

@@ -135,7 +135,7 @@ export default function GlobalScrollCanvas() {
           z-index: 0;
           pointer-events: none;
           overflow: hidden;
-          background: #070709;
+          background: var(--bg-primary);
         }
 
         .bg-liquid-glow-orb-1 {

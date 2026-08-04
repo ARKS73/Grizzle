@@ -982,20 +982,22 @@ export default function SinglePageStreetwearStore() {
           position: absolute;
           bottom: 10px;
           left: 10px;
-          background: #0f172a;
-          color: white;
+          background: var(--bg-tertiary);
+          color: var(--text-primary);
+          border: 1px solid var(--border-color);
           font-size: 0.65rem;
           font-weight: 800;
           padding: 0.25rem 0.5rem;
           border-radius: 4px;
           letter-spacing: 0.05em;
         }
-        .badge-trending { background: #f43f5e; }
+        .badge-trending { background: #f43f5e; color: white; }
 
         .pastel-card-info {
           padding: 1rem;
-          background: #0f172a;
-          color: #ffffff;
+          background: var(--bg-secondary);
+          color: var(--text-primary);
+          border-top: 1px solid var(--border-color);
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -1009,7 +1011,7 @@ export default function SinglePageStreetwearStore() {
         .pastel-card-title {
           font-size: 0.85rem;
           font-weight: 800;
-          color: #ffffff;
+          color: var(--text-primary);
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -1018,15 +1020,15 @@ export default function SinglePageStreetwearStore() {
         .pastel-card-price {
           font-size: 0.8rem;
           font-weight: 700;
-          color: #94a3b8;
+          color: var(--text-muted);
         }
         .pastel-add-btn {
           width: 36px;
           height: 36px;
           border-radius: 6px;
-          background: #ffffff;
-          color: #0f172a;
-          border: none;
+          background: var(--bg-tertiary);
+          color: var(--text-primary);
+          border: 1px solid var(--border-color);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1035,15 +1037,15 @@ export default function SinglePageStreetwearStore() {
           transition: background 0.2s ease;
         }
         .pastel-add-btn:hover {
-          background: #38bdf8;
+          background: var(--accent-primary);
           color: #ffffff;
         }
 
         /* ------------------ CULTURE ARCHIVE SECTION ------------------ */
         .culture-archive-section {
           position: relative;
-          background: #090d16;
-          color: #ffffff;
+          background: var(--bg-primary);
+          color: var(--text-primary);
           padding: 6rem 0;
           overflow: hidden;
         }
@@ -1231,13 +1233,13 @@ export default function SinglePageStreetwearStore() {
         .bento-sub-desc { font-size: 0.7rem; color: #fde68a; font-weight: 700; }
 
         .bento-sale {
-          background: #0f172a;
-          border: 1px solid #1e293b;
+          background: var(--bg-tertiary);
+          border: 1px solid var(--border-color);
         }
         .sale-header { display: flex; flex-direction: column; }
-        .sale-text-large { font-size: 2rem; font-weight: 900; color: #ffffff; line-height: 1; }
-        .sale-percent { font-size: 0.8rem; font-weight: 800; color: #38bdf8; }
-        .bento-link-blue { font-size: 0.75rem; font-weight: 800; color: #38bdf8; margin-top: 0.5rem; }
+        .sale-text-large { font-size: 2rem; font-weight: 900; color: var(--text-primary); line-height: 1; }
+        .sale-percent { font-size: 0.8rem; font-weight: 800; color: var(--accent-primary); }
+        .bento-link-blue { font-size: 0.75rem; font-weight: 800; color: var(--accent-primary); margin-top: 0.5rem; }
 
         /* ------------------ LOOKBOOK ------------------ */
         .lookbook-section {
@@ -1289,16 +1291,16 @@ export default function SinglePageStreetwearStore() {
           display: flex;
           align-items: center;
           gap: 0.75rem;
-          background: rgba(15, 23, 42, 0.85);
-          backdrop-filter: blur(8px);
+          background: var(--bg-glass);
+          backdrop-filter: blur(12px);
           padding: 0.6rem 1rem;
           border-radius: 8px;
-          border: 1px solid rgba(255,255,255,0.15);
+          border: 1px solid var(--border-color);
         }
         .look-badge {
           font-size: 0.75rem;
           font-weight: 800;
-          color: #ffffff;
+          color: var(--text-primary);
         }
         .shop-this-look-btn {
           background: #f43f5e;
@@ -1317,13 +1319,14 @@ export default function SinglePageStreetwearStore() {
         }
         .collective-banner-box {
           position: relative;
-          background: #090d16;
-          border-top: 3px solid #2563eb;
-          border-radius: 12px;
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-color);
+          border-top: 3px solid var(--accent-primary);
+          border-radius: 16px;
           padding: 4rem 2rem;
           text-align: center;
           overflow: hidden;
-          color: white;
+          color: var(--text-primary);
         }
         .collective-watermark {
           position: absolute;

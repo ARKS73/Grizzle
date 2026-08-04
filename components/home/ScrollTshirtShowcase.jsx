@@ -214,7 +214,7 @@ export default function ScrollTshirtShowcase() {
         .scroll-showcase-track {
           height: 320vh;
           position: relative;
-          background: #09090b;
+          background: var(--bg-primary);
         }
 
         .sticky-canvas-container {
@@ -239,7 +239,7 @@ export default function ScrollTshirtShowcase() {
         .showcase-loader-overlay {
           position: absolute;
           inset: 0;
-          background: #09090b;
+          background: var(--bg-primary);
           display: flex;
           flex-direction: column;
           align-items: center;
