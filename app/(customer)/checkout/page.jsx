@@ -179,8 +179,8 @@ export default function CheckoutPage() {
     });
   };
 
-  const currentCities = INDIAN_STATES_CITIES[formData.state] || [];
-  const filteredCities = currentCities.filter((ct) =>
+  const stateCityList = INDIAN_STATES_CITIES[formData.state] || [];
+  const filteredCities = stateCityList.filter((ct) =>
     ct.toLowerCase().includes(citySearch.trim().toLowerCase())
   );
 
@@ -384,7 +384,7 @@ export default function CheckoutPage() {
               {/* City Selection dropdown with Live Search Filter */}
               <div className="form-group span-2">
                 <label className="form-label d-flex justify-content-between align-items-center">
-                  <span>City * ({currentCities.length} Cities in {formData.state})</span>
+                  <span>City * ({stateCityList.length} Cities in {formData.state})</span>
                   {formData.city && <span className="text-success font-bold" style={{ fontSize: '0.8rem' }}>✓ Selected: {formData.city}</span>}
                 </label>
 
@@ -429,7 +429,7 @@ export default function CheckoutPage() {
                   ))}
                 </select>
                 <small className="subtext mt-1 d-block">
-                  {citySearch ? `Showing ${filteredCities.length} of ${currentCities.length} cities.` : 'Type in search box above to instantly find your city name.'}
+                  {citySearch ? `Showing ${filteredCities.length} of ${stateCityList.length} cities.` : 'Type in search box above to instantly find your city name.'}
                 </small>
               </div>
 
