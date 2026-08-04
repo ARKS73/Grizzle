@@ -690,7 +690,7 @@ export default function SinglePageStreetwearStore() {
           flex-direction: column;
           gap: 4rem;
           padding-bottom: 3rem;
-          background-color: var(--bg-primary);
+          background: transparent;
         }
 
         /* ------------------ LIQUID GLASS HERO SECTION ------------------ */
@@ -703,12 +703,12 @@ export default function SinglePageStreetwearStore() {
           grid-template-columns: 1.1fr 0.9fr;
           gap: 3rem;
           align-items: center;
-          background: rgba(255, 255, 255, 0.04);
-          backdrop-filter: blur(24px) saturate(190%);
-          border: 1px solid rgba(255, 255, 255, 0.16);
+          background: rgba(255, 255, 255, 0.72);
+          backdrop-filter: blur(24px) saturate(180%);
+          border: 1px solid rgba(186, 230, 255, 0.6);
           border-radius: 32px;
           padding: 3.5rem 3rem;
-          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.25);
+          box-shadow: 0 20px 50px rgba(56, 189, 248, 0.18), inset 0 1px 2px rgba(255, 255, 255, 0.9);
         }
         .hero-pill-badge {
           display: inline-flex;
@@ -773,10 +773,10 @@ export default function SinglePageStreetwearStore() {
           box-shadow: 0 18px 35px rgba(37, 99, 235, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.5);
         }
         .btn-street-light {
-          background: rgba(255, 255, 255, 0.08);
+          background: rgba(255, 255, 255, 0.85);
           backdrop-filter: blur(12px);
-          color: var(--text-primary);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          color: #1e40af;
+          border: 1.5px solid rgba(56, 189, 248, 0.5);
           padding: 0.95rem 2.2rem;
           font-weight: 800;
           font-size: 0.9rem;
@@ -784,12 +784,13 @@ export default function SinglePageStreetwearStore() {
           border-radius: 14px;
           transition: all 0.3s ease;
           text-decoration: none;
-          box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+          box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2), inset 0 1px 1px rgba(255,255,255,0.9);
         }
         .btn-street-light:hover {
-          background: rgba(255, 255, 255, 0.16);
+          background: #eff6ff;
           transform: translateY(-3px);
-          border-color: rgba(255, 255, 255, 0.4);
+          border-color: #2563eb;
+          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
         }
 
         /* Hero Visual Frame */
@@ -802,19 +803,19 @@ export default function SinglePageStreetwearStore() {
           position: absolute;
           width: 340px;
           height: 340px;
-          background: radial-gradient(circle, rgba(236, 72, 153, 0.35) 0%, rgba(99, 102, 241, 0.25) 60%, transparent 80%);
+          background: radial-gradient(circle, rgba(147, 210, 255, 0.5) 0%, rgba(196, 221, 255, 0.35) 60%, transparent 80%);
           filter: blur(50px);
           z-index: 1;
         }
         .polaroid-frame-card {
           position: relative;
           z-index: 2;
-          background: rgba(255, 255, 255, 0.08);
+          background: rgba(255, 255, 255, 0.9);
           backdrop-filter: blur(20px) saturate(180%);
-          border: 1px solid rgba(255, 255, 255, 0.25);
+          border: 1px solid rgba(186, 230, 255, 0.7);
           padding: 14px 14px 45px 14px;
           border-radius: 20px;
-          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+          box-shadow: 0 20px 50px rgba(56, 189, 248, 0.2), inset 0 1px 2px rgba(255, 255, 255, 1);
           transform: rotate(2.5deg);
           max-width: 380px;
           width: 100%;
@@ -822,7 +823,8 @@ export default function SinglePageStreetwearStore() {
         }
         .polaroid-frame-card:hover {
           transform: rotate(0deg) scale(1.03);
-          border-color: rgba(255, 255, 255, 0.45);
+          border-color: rgba(56, 189, 248, 0.6);
+          box-shadow: 0 28px 60px rgba(37, 99, 235, 0.2);
         }
         .polaroid-img {
           width: 100%;
@@ -901,19 +903,19 @@ export default function SinglePageStreetwearStore() {
           font-size: 0.78rem;
           font-weight: 800;
           border-radius: 9999px;
-          background: rgba(255, 255, 255, 0.06);
+          background: rgba(255, 255, 255, 0.85);
           backdrop-filter: blur(12px);
-          color: var(--text-secondary);
-          border: 1px solid rgba(255, 255, 255, 0.14);
+          color: #1e40af;
+          border: 1.5px solid rgba(56, 189, 248, 0.35);
           cursor: pointer;
           transition: all 0.25s ease;
-          box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+          box-shadow: 0 2px 8px rgba(56, 189, 248, 0.1);
         }
         .filter-tab:hover, .filter-tab.active {
-          background: linear-gradient(135deg, #2563eb, #ec4899);
+          background: linear-gradient(135deg, #2563eb, #7c3aed);
           color: #ffffff;
-          border-color: rgba(255, 255, 255, 0.4);
-          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+          border-color: transparent;
+          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
           transform: translateY(-2px);
         }
 
@@ -928,16 +930,16 @@ export default function SinglePageStreetwearStore() {
           flex-direction: column;
           border-radius: 24px;
           overflow: hidden;
-          background: rgba(255, 255, 255, 0.05) !important;
+          background: rgba(255, 255, 255, 0.88) !important;
           backdrop-filter: blur(20px) saturate(180%) !important;
-          border: 1px solid rgba(255, 255, 255, 0.15) !important;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+          border: 1px solid rgba(186, 230, 255, 0.6) !important;
+          box-shadow: 0 8px 24px rgba(56, 189, 248, 0.14), inset 0 1px 1px rgba(255, 255, 255, 0.95) !important;
           transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .pastel-card-wrapper:hover {
           transform: translateY(-8px) scale(1.02) !important;
-          border-color: rgba(99, 102, 241, 0.5) !important;
-          box-shadow: 0 30px 60px rgba(99, 102, 241, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.4) !important;
+          border-color: rgba(37, 99, 235, 0.4) !important;
+          box-shadow: 0 24px 50px rgba(37, 99, 235, 0.18), inset 0 1px 2px rgba(255, 255, 255, 0.95) !important;
         }
         .pastel-image-block {
           position: relative;
@@ -1322,14 +1324,15 @@ export default function SinglePageStreetwearStore() {
         }
         .collective-banner-box {
           position: relative;
-          background: var(--bg-secondary);
-          border: 1px solid var(--border-color);
-          border-top: 3px solid var(--accent-primary);
+          background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(219,238,255,0.85) 100%);
+          border: 1.5px solid rgba(56, 189, 248, 0.4);
+          border-top: 3px solid #2563eb;
           border-radius: 16px;
           padding: 4rem 2rem;
           text-align: center;
           overflow: hidden;
           color: var(--text-primary);
+          box-shadow: 0 12px 40px rgba(56, 189, 248, 0.15);
         }
         .collective-watermark {
           position: absolute;
@@ -1337,7 +1340,7 @@ export default function SinglePageStreetwearStore() {
           right: 20px;
           font-size: 8rem;
           font-weight: 900;
-          color: rgba(255,255,255,0.03);
+          color: rgba(37, 99, 235, 0.05);
           user-select: none;
           pointer-events: none;
         }
@@ -1352,11 +1355,12 @@ export default function SinglePageStreetwearStore() {
           font-weight: 900;
           letter-spacing: -0.02em;
           margin-bottom: 0.75rem;
+          color: #0f172a;
         }
         .collective-subtitle {
           font-size: 0.85rem;
           font-weight: 700;
-          color: #94a3b8;
+          color: #475569;
           letter-spacing: 0.05em;
           margin-bottom: 2rem;
         }
@@ -1369,31 +1373,33 @@ export default function SinglePageStreetwearStore() {
         .collective-input {
           flex: 1;
           padding: 0.85rem 1.2rem;
-          background: rgba(255,255,255,0.06);
-          border: 1px solid rgba(255,255,255,0.15);
+          background: rgba(255,255,255,0.95);
+          border: 1.5px solid rgba(56, 189, 248, 0.4);
           border-radius: 6px;
-          color: white;
+          color: #0f172a;
           font-size: 0.85rem;
           font-weight: 600;
           outline: none;
         }
         .collective-input:focus {
           border-color: #2563eb;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
         }
         .collective-submit-btn {
-          background: #ffffff;
-          color: #0f172a;
+          background: linear-gradient(135deg, #2563eb, #7c3aed);
+          color: #ffffff;
           border: none;
           padding: 0.85rem 1.5rem;
           font-weight: 900;
           font-size: 0.85rem;
           border-radius: 6px;
           cursor: pointer;
-          transition: background 0.2s ease;
+          transition: all 0.2s ease;
+          box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
         }
         .collective-submit-btn:hover {
-          background: #2563eb;
-          color: white;
+          transform: translateY(-2px);
+          box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45);
         }
 
         /* Modals */

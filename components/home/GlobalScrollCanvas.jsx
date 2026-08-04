@@ -1,128 +1,21 @@
 'use client';
 
-import React, { useRef, useEffect, useState } from 'react';
-
-const TOTAL_FRAMES = 240;
-
-const getFramePath = (index) => {
-  const paddedIndex = String(index).padStart(3, '0');
-  return `/scrool/ezgif-frame-${paddedIndex}.jpg`;
-};
+import React from 'react';
 
 export default function GlobalScrollCanvas() {
-  const canvasRef = useRef(null);
-  const imagesRef = useRef([]);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
-
-  // Preload 240 frames
-  useEffect(() => {
-    let loadedCount = 0;
-    const loadedImages = [];
-
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
-      const img = new Image();
-      img.src = getFramePath(i);
-      img.onload = () => {
-        loadedCount++;
-        if (loadedCount === TOTAL_FRAMES) setImagesLoaded(true);
-      };
-      img.onerror = () => {
-        loadedCount++;
-        if (loadedCount === TOTAL_FRAMES) setImagesLoaded(true);
-      };
-      loadedImages.push(img);
-    }
-
-    imagesRef.current = loadedImages;
-  }, []);
-
-  // Draw current frame to canvas
-  const renderFrame = (index) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    const img = imagesRef.current[index - 1];
-
-    if (img && img.complete && img.naturalWidth > 0) {
-      const dpr = window.devicePixelRatio || 1;
-      const width = window.innerWidth * dpr;
-      const height = window.innerHeight * dpr;
-
-      if (canvas.width !== width || canvas.height !== height) {
-        canvas.width = width;
-        canvas.height = height;
-      }
-
-      ctx.clearRect(0, 0, width, height);
-
-      // Object fit contain with scaling
-      const hRatio = width / img.width;
-      const vRatio = height / img.height;
-      const ratio = Math.min(hRatio, vRatio) * 0.9; // 90% scale for sleek framing
-
-      const centerShift_x = (width - img.width * ratio) / 2;
-      const centerShift_y = (height - img.height * ratio) / 2;
-
-      ctx.drawImage(
-        img,
-        0,
-        0,
-        img.width,
-        img.height,
-        centerShift_x,
-        centerShift_y,
-        img.width * ratio,
-        img.height * ratio
-      );
-    }
-  };
-
-  // Scroll handler tracking overall page scroll
-  useEffect(() => {
-    let animationFrameId;
-
-    const handleScroll = () => {
-      animationFrameId = requestAnimationFrame(() => {
-        const scrollTop = window.scrollY || document.documentElement.scrollTop;
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-
-        if (maxScroll <= 0) return;
-
-        const progress = Math.min(1, Math.max(0, scrollTop / maxScroll));
-        const frameIndex = Math.min(
-          TOTAL_FRAMES,
-          Math.max(1, Math.floor(progress * (TOTAL_FRAMES - 1)) + 1)
-        );
-
-        renderFrame(frameIndex);
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll, { passive: true });
-    handleScroll();
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
-    };
-  }, [imagesLoaded]);
-
-  useEffect(() => {
-    if (imagesLoaded) {
-      renderFrame(1);
-    }
-  }, [imagesLoaded]);
-
   return (
     <>
       <div className="global-canvas-background-fixed">
-        <div className="bg-liquid-glow-orb-1"></div>
-        <div className="bg-liquid-glow-orb-2"></div>
-        <canvas ref={canvasRef} className="bg-canvas-element" />
-        <div className="bg-vignette-overlay"></div>
+        {/* Soft pastel blue gradient orbs */}
+        <div className="bg-orb bg-orb-1" />
+        <div className="bg-orb bg-orb-2" />
+        <div className="bg-orb bg-orb-3" />
+
+        {/* Subtle grid pattern overlay */}
+        <div className="bg-grid-overlay" />
+
+        {/* Top highlight shimmer */}
+        <div className="bg-top-shimmer" />
       </div>
 
       <style jsx global>{`
@@ -135,57 +28,102 @@ export default function GlobalScrollCanvas() {
           z-index: 0;
           pointer-events: none;
           overflow: hidden;
-          background: var(--bg-primary);
+          background: linear-gradient(
+            160deg,
+            #ffffff 0%,
+            #e8f4ff 30%,
+            #dbeeff 60%,
+            #f0f9ff 100%
+          );
         }
 
-        .bg-liquid-glow-orb-1 {
+        /* --- Floating colour orbs --- */
+        .bg-orb {
           position: absolute;
-          top: -10%;
-          left: 15%;
-          width: 550px;
-          height: 550px;
-          background: radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(236, 72, 153, 0.12) 50%, transparent 70%);
+          border-radius: 50%;
           filter: blur(80px);
-          animation: floatOrb 18s ease-in-out infinite alternate;
+          opacity: 0.55;
         }
 
-        .bg-liquid-glow-orb-2 {
-          position: absolute;
-          bottom: -10%;
-          right: 15%;
-          width: 600px;
-          height: 600px;
-          background: radial-gradient(circle, rgba(37, 99, 235, 0.25) 0%, rgba(168, 85, 247, 0.15) 50%, transparent 70%);
-          filter: blur(90px);
-          animation: floatOrb 22s ease-in-out infinite alternate-reverse;
+        /* Sky-blue large orb — top left */
+        .bg-orb-1 {
+          width: 620px;
+          height: 620px;
+          top: -120px;
+          left: -80px;
+          background: radial-gradient(
+            circle,
+            rgba(186, 230, 255, 0.9) 0%,
+            rgba(147, 210, 255, 0.6) 45%,
+            transparent 75%
+          );
+          animation: floatOrb 20s ease-in-out infinite alternate;
+        }
+
+        /* Periwinkle / indigo accent — bottom right */
+        .bg-orb-2 {
+          width: 700px;
+          height: 700px;
+          bottom: -180px;
+          right: -120px;
+          background: radial-gradient(
+            circle,
+            rgba(196, 221, 255, 0.85) 0%,
+            rgba(165, 196, 255, 0.55) 40%,
+            transparent 70%
+          );
+          animation: floatOrb 26s ease-in-out infinite alternate-reverse;
+        }
+
+        /* Soft mint — centre */
+        .bg-orb-3 {
+          width: 480px;
+          height: 480px;
+          top: 35%;
+          left: 40%;
+          transform: translateX(-50%);
+          background: radial-gradient(
+            circle,
+            rgba(224, 242, 254, 0.75) 0%,
+            rgba(186, 230, 255, 0.45) 55%,
+            transparent 75%
+          );
+          animation: floatOrb 16s ease-in-out infinite alternate;
+          animation-delay: -8s;
         }
 
         @keyframes floatOrb {
-          0% { transform: translate(0, 0) scale(1); }
-          100% { transform: translate(40px, 30px) scale(1.1); }
+          0%   { transform: translate(0, 0) scale(1); }
+          100% { transform: translate(35px, 28px) scale(1.08); }
         }
 
-        .bg-canvas-element {
-          width: 100vw;
-          height: 100vh;
-          object-fit: contain;
-          opacity: 0.65;
-          filter: contrast(1.15) brightness(0.95);
-        }
-
-        .bg-vignette-overlay {
+        /* --- Subtle dot grid --- */
+        .bg-grid-overlay {
           position: absolute;
           inset: 0;
-          background: radial-gradient(
-            circle at center,
-            rgba(7, 7, 9, 0.15) 0%,
-            rgba(7, 7, 9, 0.65) 60%,
-            rgba(7, 7, 9, 0.92) 100%
+          background-image: radial-gradient(
+            circle,
+            rgba(56, 189, 248, 0.18) 1px,
+            transparent 1px
           );
-          pointer-events: none;
+          background-size: 36px 36px;
         }
 
-        /* LIQUID GLASS SECTION OVERRIDES */
+        /* --- Top edge shimmer --- */
+        .bg-top-shimmer {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 220px;
+          background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.9) 0%,
+            transparent 100%
+          );
+        }
+
+        /* ====== OVERRIDE: ensure all page sections are transparent ====== */
         .single-page-wrapper {
           position: relative;
           z-index: 1;
@@ -197,30 +135,30 @@ export default function GlobalScrollCanvas() {
         }
 
         .latest-drops-section {
-          background: rgba(18, 18, 24, 0.45) !important;
-          backdrop-filter: blur(20px) saturate(180%);
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.55) !important;
+          backdrop-filter: blur(18px) saturate(160%);
+          border-top: 1px solid rgba(56, 189, 248, 0.2);
+          border-bottom: 1px solid rgba(56, 189, 248, 0.2);
         }
 
         .mens-collection-section {
-          background: rgba(15, 23, 42, 0.5) !important;
-          backdrop-filter: blur(20px) saturate(180%);
+          background: rgba(240, 249, 255, 0.6) !important;
+          backdrop-filter: blur(18px) saturate(160%);
         }
 
         .womens-collection-section {
-          background: rgba(24, 18, 28, 0.5) !important;
-          backdrop-filter: blur(20px) saturate(180%);
+          background: rgba(248, 250, 255, 0.65) !important;
+          backdrop-filter: blur(18px) saturate(160%);
         }
 
         .all-collections-section {
-          background: rgba(18, 18, 24, 0.55) !important;
-          backdrop-filter: blur(24px) saturate(190%);
+          background: rgba(255, 255, 255, 0.5) !important;
+          backdrop-filter: blur(20px) saturate(170%);
         }
 
         .join-collective-section {
-          background: rgba(18, 18, 24, 0.65) !important;
-          backdrop-filter: blur(24px) saturate(190%);
+          background: rgba(224, 242, 254, 0.55) !important;
+          backdrop-filter: blur(22px) saturate(180%);
         }
       `}</style>
     </>
