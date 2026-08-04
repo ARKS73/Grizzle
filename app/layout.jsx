@@ -6,6 +6,7 @@ import { CartProvider } from '@/contexts/CartContext';
 import { WishlistProvider } from '@/contexts/WishlistContext';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import FloatingActions from '@/components/ui/FloatingActions';
 
 export const metadata = {
   title: 'Grizzle | Premium DTF Printing & Custom Printed Apparel',
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
                   <Navbar />
                   <main className="main-layout">{children}</main>
                   <Footer />
+                  <FloatingActions />
                 </ThemeProvider>
               </WishlistProvider>
             </CartProvider>

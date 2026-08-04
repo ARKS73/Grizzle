@@ -9,10 +9,11 @@ import { useWishlist } from '@/contexts/WishlistContext';
 import { getOptimizedImageUrl } from '@/utils/imageOptimizer';
 
 export default function ProductCard({ product, onQuickView }) {
-  const { addToCart } = useCart();
+  const { addToCart, cartItems } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || 'M');
   const isSaved = isInWishlist(product._id);
+  const isInCart = cartItems?.some((item) => item.product?._id === product._id);
 
   return (
     <div className="product-card glass-panel">
@@ -98,7 +99,7 @@ export default function ProductCard({ product, onQuickView }) {
           ))}
         </div>
 
-        {/* Price & Add to Cart Action */}
+        {/* Price & Add to Cart / View Bag Action */}
         <div className="card-footer">
           <div className="price-box">
             <span className="price-current">₹{product.price?.toFixed(0)}</span>
@@ -107,12 +108,18 @@ export default function ProductCard({ product, onQuickView }) {
             )}
           </div>
 
-          <button
-            onClick={() => addToCart(product, selectedSize, product.colors?.[0]?.name || 'Default', 1)}
-            className="btn btn-primary card-add-btn"
-          >
-            <ShoppingBag size={16} /> Add
-          </button>
+          {isInCart ? (
+            <Link href="/cart" className="btn btn-outline-success card-add-btn font-bold">
+              <ShoppingBag size={16} /> View Bag
+            </Link>
+          ) : (
+            <button
+              onClick={() => addToCart(product, selectedSize, product.colors?.[0]?.name || 'Default', 1)}
+              className="btn btn-primary card-add-btn"
+            >
+              <ShoppingBag size={16} /> Add
+            </button>
+          )}
         </div>
       </div>
 

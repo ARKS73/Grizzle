@@ -64,7 +64,11 @@ export default function RegisterPage() {
       if (data.success) {
         setServerOtp(data.otp);
         setStep('OTP');
-        addToast(`🔐 Your Email OTP is: ${data.otp}`, 'success', 10000);
+        if (data.emailSent) {
+          addToast(`📩 Verification OTP sent to ${email}. Please check your email inbox!`, 'success', 8000);
+        } else {
+          addToast(`🔐 Your Email OTP Code is: ${data.otp}`, 'info', 12000);
+        }
       } else {
         addToast(data.message || 'Failed to send OTP', 'error');
       }
