@@ -6,7 +6,7 @@ import { ArrowUp, ShoppingBag, ChevronUp } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 
 export default function FloatingActions() {
-  const { cartItems, getTotalCount, getTotalPrice } = useCart();
+  const { getTotalCount } = useCart();
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
@@ -30,21 +30,13 @@ export default function FloatingActions() {
   };
 
   const totalCount = getTotalCount();
-  const totalPrice = getTotalPrice();
 
   return (
     <div className="floating-actions-wrapper">
       {/* Floating View Cart / Bag Button */}
       {totalCount > 0 && (
         <Link href="/cart" className="floating-btn floating-cart-btn glass-panel" title="View Shopping Bag">
-          <div className="cart-btn-icon">
-            <ShoppingBag size={20} />
-            <span className="cart-badge-count">{totalCount}</span>
-          </div>
-          <div className="cart-btn-text">
-            <span className="btn-label">View Bag</span>
-            <span className="btn-price">₹{totalPrice.toFixed(0)}</span>
-          </div>
+          <ShoppingBag size={20} />
         </Link>
       )}
 
@@ -77,8 +69,10 @@ export default function FloatingActions() {
           pointer-events: auto;
           display: flex;
           align-items: center;
-          gap: 10px;
-          padding: 10px 16px;
+          justify-content: center;
+          width: 46px;
+          height: 46px;
+          padding: 0;
           border-radius: 9999px;
           border: 1.5px solid var(--border-color);
           background: rgba(15, 23, 42, 0.85);
@@ -105,49 +99,6 @@ export default function FloatingActions() {
         @keyframes floatBounce {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-4px); }
-        }
-
-        .cart-btn-icon {
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .cart-badge-count {
-          position: absolute;
-          top: -8px;
-          right: -10px;
-          background: #ffffff;
-          color: #dc2626;
-          font-size: 0.7rem;
-          font-weight: 900;
-          width: 18px;
-          height: 18px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        .cart-btn-text {
-          display: flex;
-          flex-direction: column;
-          line-height: 1.1;
-        }
-
-        .btn-label {
-          font-size: 0.8rem;
-          font-weight: 800;
-          letter-spacing: 0.03em;
-          text-transform: uppercase;
-        }
-
-        .btn-price {
-          font-size: 0.75rem;
-          opacity: 0.9;
-          font-weight: 700;
         }
 
         /* Back to Top Floating Button */
