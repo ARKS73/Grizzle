@@ -4,21 +4,22 @@
    Grizzle Modern Apparel CSS Design System & Theme Variables
    ========================================================================== */
 
-:root {
+:root,
+[data-theme='light'] {
   /* Color Palette - Light Mode (GRIZZLE Crimson & Gold Theme) */
-  --bg-primary: #fafafa;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f4f4f5;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
   --bg-elevated: #ffffff;
-  --bg-glass: rgba(255, 255, 255, 0.85);
+  --bg-glass: rgba(255, 255, 255, 0.92);
   
-  --text-primary: #09090b;
-  --text-secondary: #3f3f46;
-  --text-muted: #71717a;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
   --text-inverse: #ffffff;
 
-  --border-color: #e4e4e7;
-  --border-hover: #d4d4d8;
+  --border-color: #e2e8f0;
+  --border-hover: #cbd5e1;
 
   --accent-primary: #dc2626;
   --accent-hover: #b91c1c;

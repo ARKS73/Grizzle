@@ -16,6 +16,7 @@ import {
   LogOut, 
   PackageCheck, 
   ChevronDown,
+  ChevronRight,
   Sparkles,
   Tag,
   Flame,
@@ -32,53 +33,7 @@ import { useWishlist } from '@/contexts/WishlistContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import GrizzleLogo from '@/components/ui/GrizzleLogo';
 
-const tshirtCategories = [
-  {
-    name: 'Oversized Printed Tees',
-    slug: 'Oversized Printed Tees',
-    image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=400&q=80',
-    description: '240 GSM bio-washed heavy cotton boxy fits',
-    badge: 'HOT',
-    badgeClass: 'badge-hot',
-    price: 'From ₹699'
-  },
-  {
-    name: 'Desi Vibe Typography',
-    slug: 'Desi Vibe Typography',
-    image: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80',
-    description: 'Quirky desi & Hindi typography DTF prints',
-    badge: 'TRENDING',
-    badgeClass: 'badge-trending',
-    price: 'From ₹599'
-  },
-  {
-    name: 'Anime & Pop Culture',
-    slug: 'Anime & Pop Culture',
-    image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=400&q=80',
-    description: 'Handcrafted Otaku & Japanese manga prints',
-    badge: 'BESTSELLER',
-    badgeClass: 'badge-bestseller',
-    price: 'From ₹749'
-  },
-  {
-    name: 'Minimalist Line Art',
-    slug: 'Minimalist Line Art',
-    image: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=400&q=80',
-    description: 'Clean geometric vector art & subtle aesthetics',
-    badge: 'AESTHETIC',
-    badgeClass: 'badge-aesthetic',
-    price: 'From ₹649'
-  },
-  {
-    name: 'Self-Made Artist Drops',
-    slug: 'Self-Made Artist Drops',
-    image: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?auto=format&fit=crop&w=400&q=80',
-    description: 'Numbered limited batch handcrafted designs',
-    badge: 'LIMITED',
-    badgeClass: 'badge-limited',
-    price: 'From ₹799'
-  }
-];
+
 
 const featuredTshirt = {
   name: 'Cyberpunk Neon Oversized Tee',
@@ -526,65 +481,78 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Drawer Menu with Photos & Categories */}
+      {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="mobile-drawer glass-panel">
+          {/* Mobile Search Bar */}
           <div className="mobile-search-box">
-            <form onSubmit={handleSearchSubmit}>
+            <form onSubmit={handleSearchSubmit} className="search-form">
+              <Search className="search-icon" size={18} />
               <input
                 type="text"
                 placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="form-input"
+                className="search-input"
               />
             </form>
           </div>
 
-          {/* Mobile Product Categories with Photos */}
-          <div className="mobile-section-title">
-            <Shirt size={16} /> T-SHIRT CATEGORIES & DROPS
+          {/* Primary Navigation Links */}
+          <div className="mobile-primary-nav">
+            <Link href="/" onClick={closeAllMenus} className="mobile-nav-btn">
+              <span>🏠 HOME</span>
+              <ChevronRight size={18} />
+            </Link>
+            <Link href="/products?gender=Men" onClick={closeAllMenus} className="mobile-nav-btn">
+              <span>👕 MEN</span>
+              <ChevronRight size={18} />
+            </Link>
+            <Link href="/products?gender=Women" onClick={closeAllMenus} className="mobile-nav-btn">
+              <span>👗 WOMEN</span>
+              <ChevronRight size={18} />
+            </Link>
+            <Link href="/products" onClick={closeAllMenus} className="mobile-nav-btn mobile-nav-btn-highlight">
+              <span>🛍️ ALL COLLECTIONS</span>
+              <ChevronRight size={18} />
+            </Link>
           </div>
 
-          <div className="mobile-categories-list">
-            {tshirtCategories.map((cat, idx) => (
-              <Link
-                key={idx}
-                href={`/products?category=${encodeURIComponent(cat.slug)}`}
-                onClick={closeAllMenus}
-                className="mobile-cat-item"
-              >
-                <img src={cat.image} alt={cat.name} className="mobile-cat-img" />
-                <div className="mobile-cat-info">
-                  <div className="mobile-cat-name-row">
-                    <span className="mobile-cat-name">{cat.name}</span>
-                    <span className={`cat-badge ${cat.badgeClass}`}>{cat.badge}</span>
-                  </div>
-                  <span className="mobile-cat-desc">{cat.description}</span>
-                  <span className="mobile-cat-price">{cat.price}</span>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <div className="mobile-nav-divider" />
 
-          <nav className="mobile-nav-links">
-            <Link href="/" onClick={closeAllMenus}>Home</Link>
-            <Link href="/products" onClick={closeAllMenus}>Shop All Products</Link>
-            <Link href="/products?sort=newest" onClick={closeAllMenus}>New Arrivals (240 GSM)</Link>
-            <Link href="/products?sort=price_asc" onClick={closeAllMenus}>Sale & Special Offers</Link>
-            <Link href="/wishlist" onClick={closeAllMenus}>Wishlist ({wishlistItems.length})</Link>
-            <Link href="/cart" onClick={closeAllMenus}>Cart ({getTotalCount()})</Link>
+          {/* Account & Quick Action Links */}
+          <nav className="mobile-secondary-nav">
+            <Link href="/products?sort=newest" onClick={closeAllMenus} className="mobile-sub-link">
+              <Sparkles size={16} /> New Arrivals
+            </Link>
+            <Link href="/wishlist" onClick={closeAllMenus} className="mobile-sub-link">
+              <Heart size={16} /> Wishlist ({wishlistItems.length})
+            </Link>
+            <Link href="/cart" onClick={closeAllMenus} className="mobile-sub-link">
+              <ShoppingBag size={16} /> Shopping Bag ({getTotalCount()})
+            </Link>
+
             {user ? (
               <>
-                <Link href="/profile" onClick={closeAllMenus}>Profile & Address</Link>
-                <Link href="/orders" onClick={closeAllMenus}>My Orders</Link>
+                <Link href="/orders" onClick={closeAllMenus} className="mobile-sub-link">
+                  <PackageCheck size={16} /> My Orders
+                </Link>
+                <Link href="/profile" onClick={closeAllMenus} className="mobile-sub-link">
+                  <User size={16} /> My Profile & Address
+                </Link>
                 {user.role === 'admin' && (
-                  <Link href="/admin" onClick={closeAllMenus} className="mobile-admin-link">Admin Panel</Link>
+                  <Link href="/admin" onClick={closeAllMenus} className="mobile-sub-link mobile-admin-link">
+                    <ShieldAlert size={16} /> Admin Panel
+                  </Link>
                 )}
-                <button onClick={() => { logout(); closeAllMenus(); }} className="mobile-logout-btn">Logout</button>
+                <button onClick={() => { logout(); closeAllMenus(); }} className="mobile-logout-btn">
+                  <LogOut size={16} /> Logout
+                </button>
               </>
             ) : (
-              <Link href="/login" onClick={closeAllMenus} className="btn btn-primary mt-2">Sign In</Link>
+              <Link href="/login" onClick={closeAllMenus} className="btn btn-primary w-full mt-2 text-center">
+                <User size={16} /> Sign In / Register
+              </Link>
             )}
           </nav>
         </div>
@@ -1408,95 +1376,101 @@ export default function Navbar() {
 
         .mobile-toggle { display: none; }
 
-        /* MOBILE DRAWER WITH PHOTOS & LABELS */
+        /* MOBILE DRAWER STYLING */
         .mobile-drawer {
           padding: 1.25rem;
           border-top: 1px solid var(--border-color);
           max-height: calc(85vh - 72px);
           overflow-y: auto;
+          background: var(--bg-elevated) !important;
+          color: var(--text-primary) !important;
+          box-shadow: var(--shadow-xl);
         }
-        .mobile-section-title {
-          font-size: 0.78rem;
-          font-weight: 800;
-          color: var(--text-muted);
-          letter-spacing: 0.5px;
-          margin: 1.25rem 0 0.75rem 0;
-          display: flex;
-          align-items: center;
-          gap: 0.4rem;
+
+        .mobile-search-box {
+          margin-bottom: 1rem;
         }
-        .mobile-categories-list {
+
+        .mobile-primary-nav {
           display: flex;
           flex-direction: column;
           gap: 0.65rem;
         }
-        .mobile-cat-item {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          padding: 0.6rem;
-          border-radius: var(--radius-md);
-          background: var(--bg-secondary);
-          border: 1px solid var(--border-color);
-          text-decoration: none;
-        }
-        .mobile-cat-img {
-          width: 48px;
-          height: 48px;
-          border-radius: var(--radius-sm);
-          object-fit: cover;
-          flex-shrink: 0;
-        }
-        .mobile-cat-info {
-          display: flex;
-          flex-direction: column;
-          gap: 0.1rem;
-          flex: 1;
-        }
-        .mobile-cat-name-row {
+
+        .mobile-nav-btn {
           display: flex;
           align-items: center;
           justify-content: space-between;
-        }
-        .mobile-cat-name {
-          font-size: 0.85rem;
-          font-weight: 700;
+          padding: 0.85rem 1.1rem;
+          border-radius: var(--radius-md);
+          background: var(--bg-tertiary);
           color: var(--text-primary);
-        }
-        .mobile-cat-desc {
-          font-size: 0.72rem;
-          color: var(--text-muted);
-        }
-        .mobile-cat-price {
-          font-size: 0.75rem;
           font-weight: 800;
+          font-size: 0.95rem;
+          letter-spacing: 0.5px;
+          border: 1px solid var(--border-color);
+          text-decoration: none;
+          transition: all var(--transition-fast);
+        }
+
+        .mobile-nav-btn:hover, .mobile-nav-btn:active {
+          background: var(--accent-light);
+          color: var(--accent-primary);
+          border-color: var(--accent-primary);
+        }
+
+        .mobile-nav-btn-highlight {
+          background: var(--accent-gradient);
+          color: #ffffff !important;
+          border: none;
+          box-shadow: var(--shadow-glow);
+        }
+
+        .mobile-nav-divider {
+          height: 1px;
+          background: var(--border-color);
+          margin: 1.25rem 0;
+        }
+
+        .mobile-secondary-nav {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .mobile-sub-link {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          font-size: 0.92rem;
+          font-weight: 600;
+          color: var(--text-primary);
+          text-decoration: none;
+          padding: 0.4rem 0.25rem;
+          transition: color var(--transition-fast);
+        }
+
+        .mobile-sub-link:hover {
           color: var(--accent-primary);
         }
 
-        .mobile-nav-links {
-          display: flex;
-          flex-direction: column;
-          gap: 0.85rem;
-          margin-top: 1.25rem;
-          padding-top: 1rem;
-          border-top: 1px solid var(--border-color);
+        .mobile-admin-link {
+          color: var(--accent-primary) !important;
           font-weight: 700;
-          font-size: 0.95rem;
         }
-        .mobile-nav-links a {
-          color: var(--text-primary);
-          text-decoration: none;
-        }
-        .mobile-admin-link { color: var(--accent-primary); }
+
         .mobile-logout-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
           background: none;
           border: none;
           color: var(--danger);
           font-weight: 700;
-          text-align: left;
+          font-size: 0.92rem;
           cursor: pointer;
-          padding: 0;
-          font-size: 0.95rem;
+          padding: 0.4rem 0.25rem;
+          text-align: left;
         }
 
         @media (max-width: 1100px) {
