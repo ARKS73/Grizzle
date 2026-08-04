@@ -685,6 +685,12 @@ export default function SinglePageStreetwearStore() {
          STYLES FOR SINGLE PAGE STREETWEAR APP
          ========================================================================= */}
       <style jsx>{`
+        /* ================================================================
+           GRIZZLE LANDING PAGE — DUAL-THEME STYLES
+           [data-theme='dark']  → original dark glass / neon pattern
+           [data-theme='light'] → white & sky-blue liquid glass pattern
+           ================================================================ */
+
         .single-page-wrapper {
           display: flex;
           flex-direction: column;
