@@ -228,8 +228,8 @@ export default function Navbar() {
           <Link href="/products?gender=Women" className="nav-link">
             WOMEN
           </Link>
-          <Link href="/products" className="nav-link nav-highlight">
-            <Shirt size={15} /> ALL COLLECTIONS
+          <Link href="/products?gender=Unisex" className="nav-link nav-highlight">
+            <Shirt size={15} /> UNISEX
           </Link>
         </nav>
 
@@ -512,8 +512,8 @@ export default function Navbar() {
               <span>👗 WOMEN</span>
               <ChevronRight size={18} />
             </Link>
-            <Link href="/products" onClick={closeAllMenus} className="mobile-nav-btn mobile-nav-btn-highlight">
-              <span>🛍️ ALL COLLECTIONS</span>
+            <Link href="/products?gender=Unisex" onClick={closeAllMenus} className="mobile-nav-btn mobile-nav-btn-highlight">
+              <span>👫 UNISEX</span>
               <ChevronRight size={18} />
             </Link>
           </div>
