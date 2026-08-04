@@ -490,22 +490,46 @@ export default function ProductDetailPage() {
           font-weight: 600;
           cursor: pointer;
         }
-        .sizes-grid { display: flex; gap: 0.65rem; }
+        .sizes-grid { display: flex; gap: 0.65rem; flex-wrap: wrap; }
         .size-card {
-          width: 48px;
-          height: 48px;
+          min-width: 52px;
+          height: 52px;
+          padding: 0.2rem 0.4rem;
           border-radius: var(--radius-md);
-          border: 1px solid var(--border-color);
+          border: 1.5px solid var(--border-color);
           background: var(--bg-secondary);
           color: var(--text-primary);
-          font-weight: 700;
+          font-weight: 800;
           cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          transition: all 0.2s ease;
         }
         .size-card.active {
           border-color: var(--accent-primary);
           color: var(--accent-primary);
           background: var(--accent-light);
         }
+        .size-card.out-of-stock {
+          opacity: 0.45;
+          cursor: not-allowed;
+          background: rgba(239, 68, 68, 0.05);
+          border-color: rgba(239, 68, 68, 0.3);
+          text-decoration: line-through;
+        }
+        .size-text { font-size: 0.95rem; font-weight: 800; line-height: 1; }
+        .size-subtag {
+          font-size: 0.6rem;
+          font-weight: 800;
+          line-height: 1;
+          margin-top: 3px;
+          text-transform: uppercase;
+        }
+        .size-subtag.out { color: var(--danger); }
+        .size-subtag.low { color: var(--warning); }
 
         .cta-box {
           display: flex;
