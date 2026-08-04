@@ -26,6 +26,7 @@ import GlobalScrollCanvas from '@/components/home/GlobalScrollCanvas';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useToast } from '@/components/ui/Toast';
+import { getOptimizedImageUrl } from '@/utils/imageOptimizer';
 
 export default function SinglePageStreetwearStore() {
   const [categories, setCategories] = useState([]);
