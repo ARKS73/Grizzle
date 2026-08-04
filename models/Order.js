@@ -26,10 +26,11 @@ const OrderSchema = new mongoose.Schema(
       fullName: { type: String, required: true },
       phone: { type: String, required: true },
       street: { type: String, required: true },
+      landmark: { type: String, default: '' },
       city: { type: String, required: true },
       state: { type: String, required: true },
       postalCode: { type: String, required: true },
-      country: { type: String, default: 'United States' },
+      country: { type: String, default: 'India' },
     },
     paymentMethod: {
       type: String,
