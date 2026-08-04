@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Star, Heart, ShoppingBag, Truck, ShieldCheck, RotateCcw, Check, Sparkles } from 'lucide-react';
+import { Star, Heart, ShoppingBag, Check } from 'lucide-react';
 import ProductCard from '@/components/products/ProductCard';
 import ReviewSection from '@/components/products/ReviewSection';
 import { useCart } from '@/contexts/CartContext';
@@ -21,7 +21,6 @@ export default function ProductDetailPage() {
   const [selectedSize, setSelectedSize] = useState('M');
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState('description');
   const [loading, setLoading] = useState(true);
 
   const fetchProductData = async () => {
@@ -81,6 +80,11 @@ export default function ProductDetailPage() {
 
   const isSaved = isInWishlist(product._id);
 
+  const totalReviews = reviews.length;
+  const avgRating = totalReviews > 0
+    ? (reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / totalReviews).toFixed(1)
+    : (product.ratings ? Number(product.ratings).toFixed(1) : '0.0');
+
   const activeColorObj = product?.colors?.find((c) => c.name === selectedColor);
   const activeColorImg = activeColorObj?.image;
   const displayedThumbnails = (selectedColor && activeColorImg) ? [activeColorImg] : (product?.images || []);
@@ -122,20 +126,22 @@ export default function ProductDetailPage() {
           <span className="badge badge-primary">{product.category}</span>
           <h1 className="product-name">{product.name}</h1>
 
-          {/* Rating */}
+          {/* Dynamic Rating */}
           <div className="ratings-box">
             <div className="stars">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
                   size={16}
-                  fill={i < Math.floor(product.ratings || 4.8) ? '#f59e0b' : 'none'}
+                  fill={i < Math.round(Number(avgRating)) ? '#f59e0b' : 'none'}
                   color="#f59e0b"
                 />
               ))}
             </div>
-            <span className="rating-score">{product.ratings || 4.8}</span>
-            <span className="reviews-link">({reviews.length || product.numReviews || 12} Verified Reviews)</span>
+            <span className="rating-score">{avgRating}</span>
+            <span className="reviews-link">
+              ({totalReviews > 0 ? `${totalReviews} Verified ${totalReviews === 1 ? 'Review' : 'Reviews'}` : `${product.numReviews || 0} Verified Reviews`})
+            </span>
           </div>
 
           {/* Price */}
@@ -206,8 +212,6 @@ export default function ProductDetailPage() {
             </div>
           )}
 
-
-
           {/* Sizes Selection */}
           {product.sizes?.length > 0 && (
             <div className="variant-box">
@@ -252,89 +256,26 @@ export default function ProductDetailPage() {
               <Heart size={20} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : 'currentColor'} />
             </button>
           </div>
+        </div>
+      </div>
 
-          {/* Guarantee Badges */}
-          <div className="guarantees-grid glass-panel">
-            <div className="g-item">
-              <Truck size={18} className="text-primary" />
-              <div>
-                <strong>Pan-India Express Shipping</strong>
-                <span>Free delivery on orders ₹999+</span>
-              </div>
-            </div>
-            <div className="g-item">
-              <RotateCcw size={18} className="text-primary" />
-              <div>
-                <strong>Cash on Delivery (COD)</strong>
-                <span>Pay at doorstep anywhere in India</span>
-              </div>
-            </div>
-            <div className="g-item">
-              <ShieldCheck size={18} className="text-primary" />
-              <div>
-                <strong>100% Bio-Washed Cotton</strong>
-                <span>Durable high-density DTF prints</span>
-              </div>
+      {/* Optional Fabric & Fit Details - Only shown if written by Admin */}
+      {product.fabricFit && product.fabricFit.trim() && (
+        <div className="tabs-container glass-panel mb-4">
+          <div className="tabs-header">
+            <button className="tab-btn active">
+              Fabric & Fit Details
+            </button>
+          </div>
+          <div className="tab-content">
+            <div className="tab-pane">
+              <p style={{ whiteSpace: 'pre-line', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+                {product.fabricFit}
+              </p>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Tabs: Specifications & Fabric Care */}
-      <div className="tabs-container glass-panel">
-        <div className="tabs-header">
-          <button
-            onClick={() => setActiveTab('description')}
-            className={`tab-btn ${activeTab === 'description' ? 'active' : ''}`}
-          >
-            Fabric & Fit Details
-          </button>
-          <button
-            onClick={() => setActiveTab('care')}
-            className={`tab-btn ${activeTab === 'care' ? 'active' : ''}`}
-          >
-            Care Instructions
-          </button>
-          <button
-            onClick={() => setActiveTab('shipping')}
-            className={`tab-btn ${activeTab === 'shipping' ? 'active' : ''}`}
-          >
-            Shipping & Returns
-          </button>
-        </div>
-
-        <div className="tab-content">
-          {activeTab === 'description' && (
-            <div className="tab-pane">
-              <h3>Signature Organic Cotton Construction</h3>
-              <p>{product.description}</p>
-              <ul>
-                <li><strong>Material:</strong> 100% Organic Combed Heavyweight Cotton (240 GSM)</li>
-                <li><strong>Fit:</strong> Dropped shoulder relaxed boxy silhouette</li>
-                <li><strong>Stitching:</strong> Double-needle reinforced seams and heavy collar ribbing</li>
-                <li><strong>Pre-shrunk:</strong> Garment washed to eliminate shrinkage after home washing</li>
-              </ul>
-            </div>
-          )}
-          {activeTab === 'care' && (
-            <div className="tab-pane">
-              <h3>How to Preserve Your Garment Quality</h3>
-              <ul>
-                <li>Machine wash cold inside out with like colors</li>
-                <li>Use mild detergent; do not bleach or use fabric softeners</li>
-                <li>Tumble dry low or line dry in shade for best longevity</li>
-                <li>Cool iron inside out if needed; do not iron directly over graphics</li>
-              </ul>
-            </div>
-          )}
-          {activeTab === 'shipping' && (
-            <div className="tab-pane">
-              <h3>Shipping Information</h3>
-              <p>All orders are processed within 1 business day. Standard delivery takes 3-5 business days. Free express shipping on orders over $100.</p>
-            </div>
-          )}
-        </div>
-      </div>
+      )}
 
       {/* Reviews Section */}
       <ReviewSection

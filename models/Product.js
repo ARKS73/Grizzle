@@ -68,6 +68,10 @@ const ProductSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    fabricFit: {
+      type: String,
+      default: '',
+    },
     isFeatured: {
       type: Boolean,
       default: false,

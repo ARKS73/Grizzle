@@ -79,6 +79,7 @@ export default function AdminProductsPage() {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
+    fabricFit: '',
     category: '',
     gender: 'Men',
     price: '',
@@ -122,6 +123,7 @@ export default function AdminProductsPage() {
     setFormData({
       name: '',
       description: '',
+      fabricFit: '',
       category: categories[0]?.name || 'T-Shirts',
       gender: 'Men',
       price: '',
@@ -142,6 +144,7 @@ export default function AdminProductsPage() {
     setFormData({
       name: product.name,
       description: product.description,
+      fabricFit: product.fabricFit || '',
       category: product.category,
       gender: product.gender || 'Men',
       price: product.price.toString(),
@@ -633,7 +636,18 @@ export default function AdminProductsPage() {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   required
-                  placeholder="Fabric details, GSM weight, fit silhouette..."
+                  placeholder="Product overview and summary..."
+                  className="form-textarea"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Fabric & Fit Details (Optional - shown only if written)</label>
+                <textarea
+                  rows={3}
+                  value={formData.fabricFit || ''}
+                  onChange={(e) => setFormData({ ...formData, fabricFit: e.target.value })}
+                  placeholder="e.g. 100% Organic Combed Heavyweight Cotton (240 GSM), Boxy Fit, Double-needle reinforced seams..."
                   className="form-textarea"
                 />
               </div>
