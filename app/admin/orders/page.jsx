@@ -78,15 +78,17 @@ export default function AdminOrdersPage() {
             ) : (
               orders.map((order) => (
                 <tr key={order._id}>
-                  <td><strong>#{order.invoiceNumber || order._id.slice(-6)}</strong></td>
-                  <td>
-                    <strong>{order.user?.name || order.shippingAddress?.fullName}</strong>
-                    <span className="subtext d-block">{order.user?.email}</span>
+                  <td data-label="Invoice"><strong>#{order.invoiceNumber || order._id.slice(-6)}</strong></td>
+                  <td data-label="Customer">
+                    <div>
+                      <strong>{order.user?.name || order.shippingAddress?.fullName}</strong>
+                      <span className="subtext d-block">{order.user?.email}</span>
+                    </div>
                   </td>
-                  <td>{new Date(order.createdAt).toLocaleDateString()}</td>
-                  <td>{order.orderItems?.length} item(s)</td>
-                  <td><strong>₹{order.totalPrice?.toFixed(0)}</strong></td>
-                  <td>
+                  <td data-label="Date">{new Date(order.createdAt).toLocaleDateString()}</td>
+                  <td data-label="Items">{order.orderItems?.length} item(s)</td>
+                  <td data-label="Total"><strong>₹{order.totalPrice?.toFixed(0)}</strong></td>
+                  <td data-label="Status">
                     <select
                       value={order.status}
                       onChange={(e) => handleStatusChange(order._id, e.target.value)}
@@ -99,9 +101,9 @@ export default function AdminOrdersPage() {
                       <option value="Cancelled">Cancelled</option>
                     </select>
                   </td>
-                  <td>
+                  <td data-label="Invoice">
                     <Link href={`/orders/${order._id}`} className="btn btn-secondary btn-xs">
-                      View Invoice
+                      View
                     </Link>
                   </td>
                 </tr>

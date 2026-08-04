@@ -235,28 +235,27 @@ export default function AdminUsersPage() {
       )}
 
       {/* Stats Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
-        <div className="glass-panel" style={{ padding: '1.25rem', borderRadius: '12px', textAlign: 'center' }}>
-          <div style={{ fontSize: '2rem', fontWeight: 900 }}>{users.length}</div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Total in MongoDB</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', marginBottom: '1.5rem' }}>
+        <div className="glass-panel" style={{ padding: '1rem', borderRadius: '12px', textAlign: 'center' }}>
+          <div style={{ fontSize: 'clamp(1.4rem, 5vw, 2rem)', fontWeight: 900 }}>{users.length}</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Total Users</div>
         </div>
-        <div className="glass-panel" style={{ padding: '1.25rem', borderRadius: '12px', textAlign: 'center' }}>
-          <div style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--accent-primary)' }}>{admins.length}</div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Admin Accounts</div>
+        <div className="glass-panel" style={{ padding: '1rem', borderRadius: '12px', textAlign: 'center' }}>
+          <div style={{ fontSize: 'clamp(1.4rem, 5vw, 2rem)', fontWeight: 900, color: 'var(--accent-primary)' }}>{admins.length}</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Admins</div>
         </div>
-        <div className="glass-panel" style={{ padding: '1.25rem', borderRadius: '12px', textAlign: 'center' }}>
-          <div style={{ fontSize: '2rem', fontWeight: 900 }}>{customers.length}</div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Customers</div>
+        <div className="glass-panel" style={{ padding: '1rem', borderRadius: '12px', textAlign: 'center' }}>
+          <div style={{ fontSize: 'clamp(1.4rem, 5vw, 2rem)', fontWeight: 900 }}>{customers.length}</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Customers</div>
         </div>
       </div>
 
       {/* Users Table */}
       <div className="table-card glass-panel">
         <h3 style={{ marginBottom: '1rem', fontSize: '1rem', fontWeight: 800 }}>
-          All Users — Live from MongoDB ({users.length})
+          All Users ({users.length})
         </h3>
-        <div style={{ overflowX: 'auto' }}>
-          <table className="admin-table">
+        <table className="admin-table">
             <thead>
               <tr>
                 <th>User</th>
@@ -288,27 +287,27 @@ export default function AdminUsersPage() {
               ) : (
                 users.map((user) => (
                   <tr key={user._id} style={{ background: user.role === 'admin' ? 'rgba(255,200,0,0.04)' : 'transparent' }}>
-                    <td>
+                    <td data-label="User">
                       <div className="user-cell">
                         <div className="avatar-circle" style={{
-                          width: 36, height: 36, borderRadius: '50%',
+                          width: 34, height: 34, borderRadius: '50%',
                           background: user.role === 'admin'
                             ? 'linear-gradient(135deg, #f59e0b, #ef4444)'
                             : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: '0.9rem', fontWeight: 800, color: '#fff', flexShrink: 0,
+                          fontSize: '0.85rem', fontWeight: 800, color: '#fff', flexShrink: 0,
                         }}>
                           {user.name?.charAt(0)?.toUpperCase() || '?'}
                         </div>
                         <div>
                           <strong style={{ display: 'block' }}>{user.name}</strong>
-                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>ID: {user._id?.slice(-6)}</span>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>#{user._id?.slice(-6)}</span>
                         </div>
                       </div>
                     </td>
-                    <td style={{ fontSize: '0.83rem' }}>{user.email}</td>
-                    <td style={{ fontSize: '0.83rem' }}>{user.phone || <span style={{ color: 'var(--text-muted)' }}>—</span>}</td>
-                    <td>
+                    <td data-label="Email" style={{ fontSize: '0.83rem' }}>{user.email}</td>
+                    <td data-label="Phone" style={{ fontSize: '0.83rem' }}>{user.phone || <span style={{ color: 'var(--text-muted)' }}>—</span>}</td>
+                    <td data-label="Role">
                       <button
                         onClick={() => handleToggleRole(user._id, user.role, user.name)}
                         className={`badge ${user.role === 'admin' ? 'badge-primary' : 'badge-secondary'}`}
@@ -318,10 +317,10 @@ export default function AdminUsersPage() {
                         {user.role === 'admin' ? '👑 ADMIN' : '👤 CUSTOMER'}
                       </button>
                     </td>
-                    <td style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    <td data-label="Joined" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                       {user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-IN') : '—'}
                     </td>
-                    <td>
+                    <td data-label="Status">
                       {user.isBlocked ? (
                         <span className="badge badge-danger" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                           <AlertOctagon size={11} /> Blocked
@@ -332,7 +331,7 @@ export default function AdminUsersPage() {
                         </span>
                       )}
                     </td>
-                    <td>
+                    <td data-label="Actions">
                       <div className="action-btns" style={{ justifyContent: 'flex-end' }}>
                         <button
                           onClick={() => handleToggleBlock(user._id, user.isBlocked, user.name)}
@@ -357,7 +356,6 @@ export default function AdminUsersPage() {
             </tbody>
           </table>
         </div>
-      </div>
 
       <style jsx>{`
         .table-card { padding: 1.5rem; border-radius: var(--radius-lg); }

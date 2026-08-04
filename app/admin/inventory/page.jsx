@@ -83,7 +83,7 @@ export default function AdminInventoryPage() {
             ) : (
               products.map((product) => (
                 <tr key={product._id}>
-                  <td>
+                  <td data-label="Product">
                     <div className="product-cell">
                       <img src={product.images?.[0]} alt={product.name} className="table-img" />
                       <div>
@@ -92,44 +92,24 @@ export default function AdminInventoryPage() {
                       </div>
                     </div>
                   </td>
-                  <td><span className="badge badge-secondary">{product.category}</span></td>
-                  <td><strong>₹{product.price?.toFixed(0)}</strong></td>
-                  <td>
+                  <td data-label="Category"><span className="badge badge-secondary">{product.category}</span></td>
+                  <td data-label="Price"><strong>₹{product.price?.toFixed(0)}</strong></td>
+                  <td data-label="Status">
                     {product.stock <= 10 ? (
                       <span className="badge badge-danger">
-                        <AlertTriangle size={12} /> Low Stock ({product.stock})
+                        <AlertTriangle size={12} /> Low ({product.stock})
                       </span>
                     ) : (
                       <span className="badge badge-success">In Stock ({product.stock})</span>
                     )}
                   </td>
-                  <td>
+                  <td data-label="Adjust Stock">
                     <div className="stock-adjuster">
-                      <button
-                        onClick={() => handleStockUpdate(product._id, Math.max(0, product.stock - 5))}
-                        className="btn btn-secondary btn-xs"
-                      >
-                        -5
-                      </button>
-                      <button
-                        onClick={() => handleStockUpdate(product._id, Math.max(0, product.stock - 1))}
-                        className="btn btn-secondary btn-xs"
-                      >
-                        -1
-                      </button>
+                      <button onClick={() => handleStockUpdate(product._id, Math.max(0, product.stock - 5))} className="btn btn-secondary btn-xs">-5</button>
+                      <button onClick={() => handleStockUpdate(product._id, Math.max(0, product.stock - 1))} className="btn btn-secondary btn-xs">-1</button>
                       <span className="stock-num">{product.stock}</span>
-                      <button
-                        onClick={() => handleStockUpdate(product._id, product.stock + 1)}
-                        className="btn btn-secondary btn-xs"
-                      >
-                        +1
-                      </button>
-                      <button
-                        onClick={() => handleStockUpdate(product._id, product.stock + 10)}
-                        className="btn btn-secondary btn-xs"
-                      >
-                        +10
-                      </button>
+                      <button onClick={() => handleStockUpdate(product._id, product.stock + 1)} className="btn btn-secondary btn-xs">+1</button>
+                      <button onClick={() => handleStockUpdate(product._id, product.stock + 10)} className="btn btn-secondary btn-xs">+10</button>
                     </div>
                   </td>
                 </tr>

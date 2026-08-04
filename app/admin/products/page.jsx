@@ -318,16 +318,16 @@ export default function AdminProductsPage() {
             ) : (
               products.map((p) => (
                 <tr key={p._id}>
-                  <td>
+                  <td data-label="Image">
                     <img src={p.images?.[0]} alt={p.name} className="product-table-img" />
                   </td>
-                  <td>
+                  <td data-label="Name">
                     <strong>{p.name}</strong>
                   </td>
-                  <td>
+                  <td data-label="Gender">
                     <span className="badge badge-info">{p.gender || 'Unisex'}</span>
                   </td>
-                  <td><span className="badge badge-secondary">{p.category}</span></td>
+                  <td data-label="Category"><span className="badge badge-secondary">{p.category}</span></td>
                   <td>
                     <div className="colors-swatch-list">
                       {p.colors && p.colors.length > 0 ? (
@@ -353,15 +353,15 @@ export default function AdminProductsPage() {
                       )}
                     </div>
                   </td>
-                  <td><strong>₹{p.price?.toFixed(0)}</strong></td>
-                  <td>
+                  <td data-label="Price"><strong>₹{p.price?.toFixed(0)}</strong></td>
+                  <td data-label="Stock">
                     {p.stock <= 10 ? (
                       <span className="badge badge-danger">{p.stock} (Low)</span>
                     ) : (
                       <span className="badge badge-success">{p.stock} in stock</span>
                     )}
                   </td>
-                  <td>
+                  <td data-label="Actions">
                     <div className="action-btns">
                       <button onClick={() => handleOpenEditModal(p)} className="btn btn-secondary btn-xs" title="Edit">
                         <Edit size={14} />

@@ -1,5 +1,6 @@
 'use client';
 
+import '@/app/admin/admin-mobile.css';
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

@@ -1,0 +1,334 @@
+/**
+ * admin-mobile.css
+ * Global mobile-responsive overrides for ALL admin pages.
+ * Injected via app/admin/layout.jsx — applies to every admin route.
+ *
+ * Strategy: tables become card-stacks on mobile, grids collapse,
+ * fonts shrink slightly, touch targets stay ≥ 44px.
+ */
+
+/* ────────────────────────────────────────────────────────────
+   BASE OVERRIDES (applied at all sizes, clean up desktop too)
+   ──────────────────────────────────────────────────────────── */
+
+/* Page header — always flex, wraps gracefully */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+.page-header h1,
+.page-header h2 {
+  font-size: clamp(1.2rem, 4vw, 1.75rem);
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* Cards */
+.table-card,
+.add-category-card,
+.add-card,
+.chart-card {
+  padding: clamp(0.85rem, 3vw, 1.5rem);
+  border-radius: var(--radius-lg);
+}
+
+/* Section labels */
+.section-title,
+.kpi-label {
+  font-size: clamp(0.7rem, 2vw, 0.8rem);
+}
+
+/* KPI value scaling */
+.kpi-value {
+  font-size: clamp(1.3rem, 5vw, 1.8rem);
+}
+
+/* Buttons — ensure min touch target */
+.btn {
+  min-height: 36px;
+}
+.btn-sm {
+  min-height: 32px;
+  font-size: 0.8rem;
+}
+.btn-xs {
+  min-height: 28px;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.75rem;
+}
+
+/* Form inputs — prevent iOS zoom (font-size ≥ 16px on inputs) */
+.form-input,
+.form-select,
+.form-textarea,
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="password"],
+select,
+textarea {
+  font-size: max(16px, 0.875rem) !important;
+}
+
+/* ────────────────────────────────────────────────────────────
+   TABLET  ≤ 900px
+   ──────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+
+  /* Two-col side-by-side grids → stacked */
+  .categories-grid,
+  .coupons-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Dashboard two-col tables → stacked */
+  .dashboard-tables-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* KPI metrics: 2-col on tablet */
+  .kpi-grid,
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Hero editor grid */
+  .hero-editor-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .form-grid-2,
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Admin table: allow horizontal scroll on tablet */
+  .table-card {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-table {
+    min-width: 520px;
+  }
+
+  /* Modal: full screen on tablet */
+  .product-modal,
+  .modal-content {
+    max-width: 96vw !important;
+    margin: 1rem auto !important;
+    padding: 1.25rem !important;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────
+   MOBILE  ≤ 600px  — Card-style table rows
+   ──────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+
+  /* KPI: 2-col on phone */
+  .kpi-grid,
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.6rem !important;
+  }
+  .kpi-card {
+    padding: 0.9rem 0.75rem !important;
+    gap: 0.6rem !important;
+  }
+  .kpi-icon {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  /* Page header: stack title and button */
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+  }
+  .page-header .btn,
+  .page-header button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* ── TABLE → CARD STACK ──
+     Hide column headers, each <tr> becomes a card */
+  .admin-table {
+    min-width: unset !important;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+  }
+
+  /* Hide thead on mobile */
+  .admin-table thead {
+    display: none;
+  }
+
+  /* Each row = a card */
+  .admin-table tbody tr {
+    display: block;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 0.75rem;
+    margin-bottom: 0.6rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Each cell = labeled row within the card */
+  .admin-table tbody td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.82rem;
+    gap: 0.5rem;
+    min-height: 36px;
+    flex-wrap: wrap;
+  }
+  .admin-table tbody td:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  /* Label injected via data-label attribute */
+  .admin-table tbody td::before {
+    content: attr(data-label);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+    min-width: 90px;
+  }
+
+  /* Action buttons: side by side */
+  .action-btns {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  /* Overflow-x auto for table-card — not needed anymore */
+  .table-card {
+    overflow-x: visible;
+  }
+
+  /* Bar chart: shorter on phone */
+  .bar-chart-container {
+    height: 140px !important;
+    gap: 0.4rem !important;
+    margin-top: 1rem !important;
+  }
+  .bar-label {
+    font-size: 0.65rem !important;
+  }
+  .bar-val {
+    font-size: 0.65rem !important;
+  }
+
+  /* Modal: nearly full screen */
+  .modal-overlay {
+    padding: 0 !important;
+    align-items: flex-end !important;
+  }
+  .product-modal,
+  .modal-content {
+    max-width: 100vw !important;
+    width: 100vw !important;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+    max-height: 92vh !important;
+    overflow-y: auto !important;
+    padding: 1.1rem !important;
+    margin: 0 !important;
+  }
+
+  /* Form grid: single col */
+  .form-grid,
+  .form-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Inventory stock controls */
+  .stock-control {
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+  .stock-num {
+    min-width: 28px !important;
+  }
+
+  /* Search bar: full width */
+  .search-box {
+    width: 100%;
+  }
+  .search-box input {
+    width: 100%;
+  }
+
+  /* Toolbar: stack on mobile */
+  .toolbar-row,
+  .toolbar-card {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Checkbox row: wrap */
+  .checkbox-row {
+    flex-wrap: wrap;
+    gap: 0.75rem !important;
+  }
+
+  /* Color variants: compact */
+  .color-card-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.4rem !important;
+  }
+  .col-name-input {
+    width: 100% !important;
+  }
+  .color-photo-upload-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  /* Image upload box: stack */
+  .image-upload-box {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.5rem !important;
+  }
+  .image-upload-box .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Size toggles: wrap */
+  .sizes-checkbox-grid {
+    flex-wrap: wrap !important;
+  }
+  .size-toggle-btn {
+    flex: none !important;
+    min-width: 48px;
+    padding: 0.5rem 0.75rem !important;
+  }
+
+  /* Table-card header */
+  .table-card-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.4rem !important;
+  }
+}
