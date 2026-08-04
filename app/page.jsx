@@ -147,9 +147,11 @@ export default function SinglePageStreetwearStore() {
               <div className="badge-hot-pink">HOT</div>
               {heroSettings.heroImage ? (
                 <img
-                  src={heroSettings.heroImage}
+                  src={getOptimizedImageUrl(heroSettings.heroImage, 800, 80)}
                   alt={heroSettings.heroTitle}
                   className="polaroid-img"
+                  loading="eager"
+                  fetchPriority="high"
                 />
               ) : (
                 <div 

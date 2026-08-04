@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Mail, ArrowRight, ShieldCheck, Truck, RotateCcw, Github, Twitter, Instagram } from 'lucide-react';
@@ -10,7 +10,23 @@ import GrizzleLogo from '@/components/ui/GrizzleLogo';
 export default function Footer() {
   const pathname = usePathname();
   const [email, setEmail] = useState('');
+  const [categories, setCategories] = useState([]);
   const { addToast } = useToast();
+
+  useEffect(() => {
+    async function fetchFooterCategories() {
+      try {
+        const res = await fetch('/api/categories');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.categories)) {
+          setCategories(data.categories);
+        }
+      } catch (e) {
+        console.error('Fetch footer categories error:', e);
+      }
+    }
+    fetchFooterCategories();
+  }, []);
 
   if (pathname?.startsWith('/admin')) {
     return null;
@@ -36,7 +52,6 @@ export default function Footer() {
               <p>Pay at your doorstep anywhere in India</p>
             </div>
           </div>
-          
         </div>
       </div>
 
@@ -54,14 +69,16 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="footer-links-group">
-          <h4>Shop Printed Tees</h4>
-          <Link href="/products?category=Oversized+Printed+Tees">Oversized Printed Tees</Link>
-          <Link href="/products?category=Desi+Vibe+Typography">Desi Vibe Typography</Link>
-          <Link href="/products?category=Anime+%26+Pop+Culture">Anime & Pop Culture</Link>
-          <Link href="/products?category=Minimalist+Line+Art">Minimalist Line Art</Link>
-          <Link href="/products?category=Self-Made+Artist+Drops">Self-Made Artist Drops</Link>
-        </div>
+        {categories.length > 0 && (
+          <div className="footer-links-group">
+            <h4>Shop Categories</h4>
+            {categories.map((cat) => (
+              <Link key={cat._id} href={`/products?category=${encodeURIComponent(cat.name)}`}>
+                {cat.name}
+              </Link>
+            ))}
+          </div>
+        )}
 
         <div className="footer-links-group">
           <h4>Customer Care</h4>

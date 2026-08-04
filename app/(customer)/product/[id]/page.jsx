@@ -9,6 +9,8 @@ import ReviewSection from '@/components/products/ReviewSection';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 
+import { getOptimizedImageUrl } from '@/utils/imageOptimizer';
+
 export default function ProductDetailPage() {
   const { id } = useParams();
   const { addToCart } = useCart();
@@ -97,9 +99,12 @@ export default function ProductDetailPage() {
         <div className="product-gallery-box">
           <div className="main-image-container glass-panel">
             <img
-              src={selectedImage || displayedThumbnails[0] || '/placeholder.png'}
+              src={getOptimizedImageUrl(selectedImage || displayedThumbnails[0] || '/placeholder.png', 800, 85)}
               alt={product.name}
               className="main-product-img"
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
             />
             {product.discountPercentage > 0 && (
               <span className="badge-discount">-{product.discountPercentage}%</span>

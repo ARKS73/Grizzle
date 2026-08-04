@@ -6,6 +6,8 @@ import { Star, Heart, Eye, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 
+import { getOptimizedImageUrl } from '@/utils/imageOptimizer';
+
 export default function ProductCard({ product, onQuickView }) {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
@@ -22,9 +24,12 @@ export default function ProductCard({ product, onQuickView }) {
         title="Click to view product details"
       >
         <img
-          src={product.images?.[0] || '/logo2.png'}
+          src={getOptimizedImageUrl(product.images?.[0] || '/logo2.png', 500, 80)}
           alt={product.name}
           className="card-img"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
         />
 
         {/* Badges Overlay */}

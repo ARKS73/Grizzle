@@ -1,16 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { SlidersHorizontal, RotateCcw, Star, Check } from 'lucide-react';
-
-const CATEGORIES = [
-  'All',
-  'Oversized Printed Tees',
-  'Desi Vibe Typography',
-  'Anime & Pop Culture',
-  'Minimalist Line Art',
-  'Self-Made Artist Drops',
-];
 
 const GENDERS = ['All', 'Men', 'Women', 'Unisex'];
 
@@ -26,6 +17,23 @@ const COLORS = [
 ];
 
 export default function ProductFilter({ filters, setFilters, onReset }) {
+  const [categoriesList, setCategoriesList] = useState([]);
+
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const res = await fetch('/api/categories');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.categories)) {
+          setCategoriesList(data.categories.map((c) => c.name));
+        }
+      } catch (err) {
+        console.error('Failed to load filter categories:', err);
+      }
+    }
+    loadCategories();
+  }, []);
+
   const handleCategoryChange = (cat) => {
     setFilters((prev) => ({ ...prev, category: cat === 'All' ? '' : cat }));
   };
@@ -80,25 +88,34 @@ export default function ProductFilter({ filters, setFilters, onReset }) {
         </div>
       </div>
 
-      {/* Category Section */}
-      <div className="filter-group">
-        <h4>T-Shirt Style</h4>
-        <div className="category-list">
-          {CATEGORIES.map((cat) => {
-            const isSelected = (!filters.category && cat === 'All') || filters.category === cat;
-            return (
-              <button
-                key={cat}
-                onClick={() => handleCategoryChange(cat)}
-                className={`category-item ${isSelected ? 'active' : ''}`}
-              >
-                <span>{cat}</span>
-                {isSelected && <Check size={14} />}
-              </button>
-            );
-          })}
+      {/* Dynamic Category Section - ONLY rendered if admin has added categories */}
+      {categoriesList.length > 0 && (
+        <div className="filter-group">
+          <h4>Category</h4>
+          <div className="category-list">
+            <button
+              onClick={() => handleCategoryChange('All')}
+              className={`category-item ${!filters.category ? 'active' : ''}`}
+            >
+              <span>All Categories</span>
+              {!filters.category && <Check size={14} />}
+            </button>
+            {categoriesList.map((catName) => {
+              const isSelected = filters.category === catName;
+              return (
+                <button
+                  key={catName}
+                  onClick={() => handleCategoryChange(catName)}
+                  className={`category-item ${isSelected ? 'active' : ''}`}
+                >
+                  <span>{catName}</span>
+                  {isSelected && <Check size={14} />}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Price Range Slider */}
       <div className="filter-group">
