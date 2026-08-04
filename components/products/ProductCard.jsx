@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Star, Heart, Eye, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
@@ -9,6 +10,7 @@ import { useWishlist } from '@/contexts/WishlistContext';
 import { getOptimizedImageUrl } from '@/utils/imageOptimizer';
 
 export default function ProductCard({ product, onQuickView }) {
+  const router = useRouter();
   const { addToCart, cartItems } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || 'M');
@@ -18,14 +20,49 @@ export default function ProductCard({ product, onQuickView }) {
   const cartItemForProduct = cartItems?.find((item) => item.product?._id === product._id);
   const itemCountInCart = cartItemForProduct ? cartItemForProduct.quantity : 1;
 
+  const pressTimerRef = useRef(null);
+  const isLongPressRef = useRef(false);
+
+  const startPressTimer = () => {
+    isLongPressRef.current = false;
+    if (pressTimerRef.current) clearTimeout(pressTimerRef.current);
+    pressTimerRef.current = setTimeout(() => {
+      isLongPressRef.current = true;
+      if (onQuickView) {
+        onQuickView(product);
+      }
+    }, 1200);
+  };
+
+  const clearPressTimer = () => {
+    if (pressTimerRef.current) {
+      clearTimeout(pressTimerRef.current);
+      pressTimerRef.current = null;
+    }
+  };
+
+  const handleMediaClick = (e) => {
+    if (isLongPressRef.current) {
+      isLongPressRef.current = false;
+      return;
+    }
+    router.push(`/product/${product._id}`);
+  };
+
   return (
     <div className="product-card glass-panel">
       {/* Image & Overlay Actions */}
       <div
         className="card-media"
-        onClick={() => onQuickView && onQuickView(product)}
+        onMouseDown={startPressTimer}
+        onMouseUp={clearPressTimer}
+        onMouseLeave={clearPressTimer}
+        onTouchStart={startPressTimer}
+        onTouchEnd={clearPressTimer}
+        onTouchCancel={clearPressTimer}
+        onClick={handleMediaClick}
         style={{ cursor: 'pointer' }}
-        title="Click to view product details"
+        title="Tap to view full details • Hold for quick preview"
       >
         <img
           src={getOptimizedImageUrl(product.images?.[0] || '/logo2.png', 500, 80)}
