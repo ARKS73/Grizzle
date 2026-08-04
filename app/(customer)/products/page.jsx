@@ -73,6 +73,30 @@ function ProductsCatalogContent() {
     }
   }, [filters]);
 
+  // Scroll Position Restoration for products page
+  useEffect(() => {
+    const handleScroll = () => {
+      sessionStorage.setItem('scroll_pos_products', window.scrollY.toString());
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    const savedPos = sessionStorage.getItem('scroll_pos_products');
+    if (savedPos && parseInt(savedPos, 10) > 0) {
+      const pos = parseInt(savedPos, 10);
+      const timer1 = setTimeout(() => window.scrollTo(0, pos), 100);
+      const timer2 = setTimeout(() => window.scrollTo(0, pos), 400);
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);

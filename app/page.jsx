@@ -52,6 +52,29 @@ export default function SinglePageStreetwearStore() {
   const { addToast } = useToast();
 
   useEffect(() => {
+    const handleScroll = () => {
+      sessionStorage.setItem('scroll_pos_home', window.scrollY.toString());
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    const savedPos = sessionStorage.getItem('scroll_pos_home');
+    if (savedPos && parseInt(savedPos, 10) > 0) {
+      const pos = parseInt(savedPos, 10);
+      const timer1 = setTimeout(() => window.scrollTo(0, pos), 100);
+      const timer2 = setTimeout(() => window.scrollTo(0, pos), 400);
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
     async function fetchData() {
       try {
         setLoadingProducts(true);
@@ -1484,7 +1507,7 @@ export default function SinglePageStreetwearStore() {
           .hero-visual-wrapper { margin-top: 1.5rem; }
           .culture-container { grid-template-columns: 1fr; }
           .culture-photos-stacked { height: 280px; }
-          .pastel-products-grid { grid-template-columns: 1fr; }
+          .pastel-products-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.75rem !important; }
           .vibe-bento-grid { grid-template-columns: 1fr; }
           .lookbook-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
           .collective-form { flex-direction: column; }

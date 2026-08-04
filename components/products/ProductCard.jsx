@@ -294,6 +294,62 @@ export default function ProductCard({ product, onQuickView }) {
           padding: 0.45rem 0.85rem;
           font-size: 0.85rem;
         }
+
+        @media (max-width: 640px) {
+          .card-content {
+            padding: 0.75rem;
+          }
+          .card-badges {
+            top: 6px;
+            left: 6px;
+            gap: 4px;
+          }
+          .card-badges .badge {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+          }
+          .card-title {
+            font-size: 0.85rem;
+            margin-bottom: 0.35rem;
+          }
+          .card-rating {
+            margin-bottom: 0.5rem;
+            gap: 0.2rem;
+          }
+          .rating-num { font-size: 0.75rem; }
+          .review-count { font-size: 0.7rem; }
+          .sizes-row {
+            margin-bottom: 0.6rem;
+            gap: 3px;
+            flex-wrap: wrap;
+          }
+          .size-pill {
+            padding: 2px 5px;
+            font-size: 0.65rem;
+          }
+          .card-footer {
+            padding-top: 0.5rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+          }
+          .price-box {
+            width: 100%;
+            justify-content: space-between;
+          }
+          .price-current {
+            font-size: 1rem;
+          }
+          .price-original {
+            font-size: 0.75rem;
+          }
+          .card-add-btn {
+            width: 100%;
+            justify-content: center;
+            padding: 0.4rem 0.5rem;
+            font-size: 0.75rem;
+          }
+        }
       `}</style>
     </div>
   );

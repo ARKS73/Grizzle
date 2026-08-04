@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Star, Heart, ShoppingBag, Check, ArrowRight } from 'lucide-react';
+import { Star, Heart, ShoppingBag, Check, ArrowRight, ArrowLeft } from 'lucide-react';
 import ProductCard from '@/components/products/ProductCard';
 import ReviewSection from '@/components/products/ReviewSection';
 import { useCart } from '@/contexts/CartContext';
@@ -93,8 +93,19 @@ export default function ProductDetailPage() {
   const activeColorImg = activeColorObj?.image;
   const displayedThumbnails = (selectedColor && activeColorImg) ? [activeColorImg] : (product?.images || []);
 
+  const handleBack = () => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push('/products');
+    }
+  };
+
   return (
     <div className="container product-detail-wrapper">
+      <button onClick={handleBack} className="btn-back-link mb-3">
+        <ArrowLeft size={16} /> Back
+      </button>
       <div className="product-layout-grid">
         {/* Gallery */}
         <div className="product-gallery-box">
@@ -708,6 +719,25 @@ export default function ProductDetailPage() {
           }
           .tabs-container {
             padding: 1.1rem;
+          }
+          .btn-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--bg-tertiary, rgba(255, 255, 255, 0.08));
+            color: var(--text-primary, #ffffff);
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
+            padding: 0.45rem 0.9rem;
+            border-radius: var(--radius-md, 8px);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+          }
+          .btn-back-link:hover {
+            background: var(--accent-primary, #ef4444);
+            color: #ffffff;
+            border-color: var(--accent-primary, #ef4444);
           }
         }
       `}</style>
