@@ -359,7 +359,43 @@ export default function ProductFilter({ filters, setFilters, onReset }) {
           background: var(--accent-light);
           border-color: var(--accent-primary);
         }
-        .stars { display: flex; gap: 2px; }
+        @media (max-width: 768px) {
+          .filter-sidebar {
+            padding: 1rem;
+            gap: 1rem;
+          }
+          .filter-header {
+            padding-bottom: 0.6rem;
+          }
+          .filter-header h3 {
+            font-size: 1rem;
+          }
+          .filter-group h4 {
+            font-size: 0.8rem;
+            margin-bottom: 0.4rem;
+          }
+          .category-list {
+            gap: 0.25rem;
+          }
+          .category-item {
+            padding: 0.35rem 0.6rem;
+            font-size: 0.78rem;
+          }
+          .size-btn {
+            min-width: 32px;
+            height: 32px;
+            font-size: 0.75rem;
+            border-radius: 6px;
+          }
+          .color-swatch {
+            width: 24px;
+            height: 24px;
+          }
+          .rating-item {
+            padding: 0.3rem 0.5rem;
+            font-size: 0.75rem;
+          }
+        }
       `}</style>
     </div>
   );

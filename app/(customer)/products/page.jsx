@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/products/ProductCard';
 import ProductFilter from '@/components/products/ProductFilter';
 import QuickViewModal from '@/components/products/QuickViewModal';
-import { Search, SlidersHorizontal, ArrowUpDown, RefreshCw } from 'lucide-react';
+import { Search, SlidersHorizontal, ArrowUpDown, RefreshCw, X } from 'lucide-react';
 
 function ProductsCatalogContent() {
   const searchParams = useSearchParams();
@@ -141,11 +141,31 @@ function ProductsCatalogContent() {
       <div className="catalog-layout">
         {/* Filter Sidebar */}
         <aside className={`sidebar-box ${mobileFilterOpen ? 'open' : ''}`}>
+          {mobileFilterOpen && (
+            <div className="mobile-drawer-header mb-3 d-flex justify-content-between align-items-center">
+              <span className="font-bold">Filters & Refinements</span>
+              <button
+                onClick={() => setMobileFilterOpen(false)}
+                className="btn btn-secondary btn-sm d-flex align-items-center gap-1"
+              >
+                <X size={16} /> Close
+              </button>
+            </div>
+          )}
           <ProductFilter
             filters={filters}
             setFilters={setFilters}
             onReset={handleResetFilters}
           />
+          {mobileFilterOpen && (
+            <button
+              onClick={() => setMobileFilterOpen(false)}
+              className="btn btn-primary w-100 mt-3 font-bold"
+              style={{ padding: '0.6rem' }}
+            >
+              Show {products.length} Products
+            </button>
+          )}
         </aside>
 
         {/* Main Products Grid & Toolbar */}
@@ -312,11 +332,82 @@ function ProductsCatalogContent() {
         }
         .page-indicator { font-size: 0.9rem; font-weight: 600; }
 
-        @media (max-width: 900px) {
-          .catalog-layout { grid-template-columns: 1fr; }
-          .sidebar-box { display: none; }
-          .sidebar-box.open { display: block; }
-          .mobile-filter-btn { display: flex; }
+        @media (max-width: 768px) {
+          .products-page-wrapper {
+            padding-top: 1rem;
+          }
+          .page-header {
+            padding: 1rem 1.25rem;
+            margin-bottom: 1rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+          }
+          .page-header h1 {
+            font-size: 1.3rem;
+            line-height: 1.2;
+          }
+          .page-header p {
+            font-size: 0.78rem;
+          }
+          .mobile-filter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.4rem 0.75rem;
+            font-size: 0.78rem;
+            align-self: flex-start;
+          }
+          .catalog-layout {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+          .sidebar-box {
+            display: none;
+          }
+          .sidebar-box.open {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 99999;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 1.25rem;
+            overflow-y: auto;
+          }
+          .controls-bar {
+            padding: 0.6rem 0.85rem;
+            margin-bottom: 0.85rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+          }
+          .results-count {
+            font-size: 0.78rem;
+          }
+          .sort-box {
+            gap: 0.35rem;
+          }
+          .sort-select {
+            padding: 0.3rem 0.5rem;
+            font-size: 0.75rem;
+          }
+          .active-filters-row {
+            gap: 0.35rem;
+            margin-bottom: 0.75rem;
+          }
+          .clear-all-btn {
+            font-size: 0.75rem;
+          }
+          .pagination {
+            margin-top: 1.5rem;
+            gap: 0.5rem;
+          }
+          .page-indicator {
+            font-size: 0.8rem;
+          }
         }
       `}</style>
     </div>
