@@ -5,10 +5,10 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState('dark'); // Default to sleek dark mode
+  const [theme, setTheme] = useState('light'); // Default to light mode
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('grizzle_theme') || 'dark';
+    const savedTheme = localStorage.getItem('grizzle_theme') || 'light';
     setTheme(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
   }, []);
