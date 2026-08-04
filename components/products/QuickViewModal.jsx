@@ -300,16 +300,23 @@ export default function QuickViewModal({ product, onClose }) {
           display: flex;
           align-items: center;
           gap: 0.35rem;
-          padding: 0.35rem 0.65rem;
+          padding: 0.45rem 0.75rem;
           border-radius: var(--radius-md);
-          border: 1px solid var(--border-color);
+          border: 1.5px solid var(--border-color);
           background: var(--bg-secondary);
-          font-size: 0.8rem;
+          font-size: 0.82rem;
+          font-weight: 700;
           cursor: pointer;
+          touch-action: manipulation;
+          -webkit-tap-highlight-color: transparent;
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        .color-pill:active { transform: scale(0.96); }
         .color-pill.active {
           border-color: var(--accent-primary);
           background: var(--accent-light);
+          box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+          transform: scale(1.02);
         }
         .color-dot {
           width: 12px;
