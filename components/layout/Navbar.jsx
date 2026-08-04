@@ -525,15 +525,15 @@ export default function Navbar() {
             <Link href="/products?sort=newest" onClick={closeAllMenus} className="mobile-sub-link">
               <Sparkles size={16} /> New Arrivals
             </Link>
-            <Link href="/wishlist" onClick={closeAllMenus} className="mobile-sub-link">
-              <Heart size={16} /> Wishlist ({wishlistItems.length})
-            </Link>
-            <Link href="/cart" onClick={closeAllMenus} className="mobile-sub-link">
-              <ShoppingBag size={16} /> Shopping Bag ({getTotalCount()})
-            </Link>
 
             {user ? (
               <>
+                <Link href="/wishlist" onClick={closeAllMenus} className="mobile-sub-link">
+                  <Heart size={16} /> Wishlist ({wishlistItems.length})
+                </Link>
+                <Link href="/cart" onClick={closeAllMenus} className="mobile-sub-link">
+                  <ShoppingBag size={16} /> Shopping Bag ({getTotalCount()})
+                </Link>
                 <Link href="/orders" onClick={closeAllMenus} className="mobile-sub-link">
                   <PackageCheck size={16} /> My Orders
                 </Link>

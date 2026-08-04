@@ -6,26 +6,26 @@
 
 :root,
 [data-theme='light'] {
-  /* Color Palette - Liquid White Glass Light Mode */
-  --bg-primary: #f8fafc;
+  /* Color Palette - Liquid White & Sky Light Blue Theme */
+  --bg-primary: #f0f7ff;
   --bg-secondary: #ffffff;
-  --bg-tertiary: #f1f5f9;
+  --bg-tertiary: #e2f0fe;
   --bg-elevated: #ffffff;
-  --bg-glass: rgba(255, 255, 255, 0.82);
+  --bg-glass: rgba(255, 255, 255, 0.88);
   
   --text-primary: #0f172a;
   --text-secondary: #334155;
   --text-muted: #64748b;
   --text-inverse: #ffffff;
 
-  --border-color: rgba(0, 0, 0, 0.08);
-  --border-hover: rgba(220, 38, 38, 0.3);
+  --border-color: rgba(56, 189, 248, 0.25);
+  --border-hover: rgba(37, 99, 235, 0.4);
 
   --accent-primary: #dc2626;
   --accent-hover: #b91c1c;
   --accent-light: rgba(220, 38, 38, 0.08);
   --accent-gradient: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
-  --accent-gradient-secondary: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+  --accent-gradient-secondary: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
 
   --accent-gold: #d97706;
   --accent-gold-light: rgba(217, 119, 6, 0.12);
@@ -39,7 +39,7 @@
   --info: #0284c7;
   --info-light: #f0f9ff;
 
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.04);
   --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
   --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.08);
   --shadow-xl: 0 20px 35px rgba(15, 23, 42, 0.1);
@@ -119,6 +119,11 @@ html, body {
   overflow-x: hidden;
 }
 
+[data-theme='light'] body {
+  background: linear-gradient(180deg, #ffffff 0%, #e0f2fe 35%, #f0f9ff 100%) !important;
+  background-attachment: fixed !important;
+}
+
 .main-layout {
   flex: 1;
   display: flex;
@@ -170,11 +175,11 @@ img {
 }
 
 [data-theme='light'] .glass-panel {
-  background: rgba(255, 255, 255, 0.85) !important;
+  background: rgba(255, 255, 255, 0.88) !important;
   backdrop-filter: blur(20px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.9) !important;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 12px 40px rgba(56, 189, 248, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.95) !important;
 }
 
 [data-theme='dark'] .glass-panel {

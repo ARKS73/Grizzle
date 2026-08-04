@@ -81,9 +81,10 @@ export default function ProductDetailPage() {
   const isSaved = isInWishlist(product._id);
 
   const totalReviews = reviews.length;
+  const hasRealReviews = totalReviews > 0 || (product.numReviews > 0);
   const avgRating = totalReviews > 0
     ? (reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / totalReviews).toFixed(1)
-    : (product.ratings ? Number(product.ratings).toFixed(1) : '0.0');
+    : (product.numReviews > 0 && product.ratings ? Number(product.ratings).toFixed(1) : '0.0');
 
   const activeColorObj = product?.colors?.find((c) => c.name === selectedColor);
   const activeColorImg = activeColorObj?.image;
@@ -91,40 +92,39 @@ export default function ProductDetailPage() {
 
   return (
     <div className="container product-detail-wrapper">
-      {/* Breadcrumb */}
-      <div className="breadcrumb">
-        <Link href="/">Home</Link> &gt; <Link href="/products">Shop</Link> &gt; <Link href={`/products?category=${encodeURIComponent(product.category)}`}>{product.category}</Link> &gt; <span>{product.name}</span>
-      </div>
-
-      {/* Main Grid */}
-      <div className="detail-grid">
+      <div className="product-layout-grid">
         {/* Gallery */}
-        <div className="gallery-section">
+        <div className="product-gallery-box">
           <div className="main-image-container glass-panel">
-            <img src={selectedImage || activeColorImg || product.images?.[0]} alt={product.name} className="main-image" />
+            <img
+              src={selectedImage || displayedThumbnails[0] || '/placeholder.png'}
+              alt={product.name}
+              className="main-product-img"
+            />
             {product.discountPercentage > 0 && (
-              <span className="badge badge-danger discount-tag">Save {product.discountPercentage}%</span>
+              <span className="badge-discount">-{product.discountPercentage}%</span>
             )}
           </div>
+
           {displayedThumbnails.length > 1 && (
             <div className="thumbnails-grid">
               {displayedThumbnails.map((img, idx) => (
-                <button
+                <div
                   key={idx}
                   onClick={() => setSelectedImage(img)}
                   className={`thumbnail-card ${selectedImage === img ? 'active' : ''}`}
                 >
-                  <img src={img} alt={`thumb-${idx}`} />
-                </button>
+                  <img src={img} alt={`Thumb ${idx}`} />
+                </div>
               ))}
             </div>
           )}
         </div>
 
-        {/* Product Information */}
-        <div className="info-section">
-          <span className="badge badge-primary">{product.category}</span>
-          <h1 className="product-name">{product.name}</h1>
+        {/* Info Column */}
+        <div className="product-info-box">
+          <span className="category-pill">{product.category}</span>
+          <h1 className="product-title-large">{product.name}</h1>
 
           {/* Dynamic Rating */}
           <div className="ratings-box">
@@ -133,14 +133,14 @@ export default function ProductDetailPage() {
                 <Star
                   key={i}
                   size={16}
-                  fill={i < Math.round(Number(avgRating)) ? '#f59e0b' : 'none'}
+                  fill={hasRealReviews && i < Math.round(Number(avgRating)) ? '#f59e0b' : 'none'}
                   color="#f59e0b"
                 />
               ))}
             </div>
             <span className="rating-score">{avgRating}</span>
             <span className="reviews-link">
-              ({totalReviews > 0 ? `${totalReviews} Verified ${totalReviews === 1 ? 'Review' : 'Reviews'}` : `${product.numReviews || 0} Verified Reviews`})
+              ({hasRealReviews ? `${totalReviews || product.numReviews} Verified ${totalReviews === 1 ? 'Review' : 'Reviews'}` : '0 Verified Reviews'})
             </span>
           </div>
 

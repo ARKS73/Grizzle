@@ -107,11 +107,12 @@ export default function Footer() {
         .footer-wrapper {
           position: relative;
           z-index: 10;
-          background: rgba(18, 18, 24, 0.75) !important;
+          background: var(--bg-glass);
           backdrop-filter: blur(24px) saturate(190%);
-          border-top: 1px solid rgba(255, 255, 255, 0.15);
-          box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+          border-top: 1px solid var(--border-color);
+          box-shadow: var(--shadow-xl);
           margin-top: 5rem;
+          color: var(--text-primary);
         }
         .features-bar {
           border-radius: 0;
@@ -119,9 +120,9 @@ export default function Footer() {
           border-right: none;
           border-top: none;
           padding: 2.2rem 0;
-          background: rgba(255, 255, 255, 0.04);
+          background: var(--bg-tertiary);
           backdrop-filter: blur(16px);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          border-bottom: 1px solid var(--border-color);
         }
         .features-grid {
           display: grid;
