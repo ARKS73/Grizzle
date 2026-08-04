@@ -11,7 +11,7 @@ export default function FloatingActions() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 200) {
+      if (window.scrollY > 180) {
         setShowBackToTop(true);
       } else {
         setShowBackToTop(false);
@@ -33,13 +33,15 @@ export default function FloatingActions() {
 
   return (
     <div className="floating-actions-wrapper">
-      {/* View Cart Circular Button - Identical size to Back-to-Top with Product Count Badge */}
-      {totalCount > 0 && (
-        <Link href="/cart" className="floating-circle-btn floating-cart-btn" title={`View Cart (${totalCount} items)`}>
-          <ShoppingBag size={22} />
-          <span className="cart-count-badge">{totalCount}</span>
-        </Link>
-      )}
+      {/* Prominent Floating Shopping Bag Button - Redirects to /cart with top-right count badge */}
+      <Link
+        href="/cart"
+        className="floating-circle-btn floating-cart-btn"
+        title={`Shopping Bag (${totalCount} items)`}
+      >
+        <ShoppingBag size={24} />
+        <span className="cart-count-badge">{totalCount}</span>
+      </Link>
 
       {/* Back to Top Circular Button */}
       {showBackToTop && (
@@ -49,7 +51,7 @@ export default function FloatingActions() {
           title="Back to Top"
           aria-label="Back to Top"
         >
-          <ChevronUp size={24} />
+          <ChevronUp size={26} />
         </button>
       )}
 
@@ -62,83 +64,77 @@ export default function FloatingActions() {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 12px;
+          gap: 14px;
           pointer-events: none;
         }
 
-        /* Standardized Identical Circular Button Size (52px x 52px) */
+        /* Large Prominent 56px x 56px Floating Circular Buttons */
         .floating-circle-btn {
           pointer-events: auto;
           position: relative;
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 52px;
-          height: 52px;
+          width: 56px;
+          height: 56px;
           border-radius: 50%;
-          border: 2px solid var(--border-color);
-          background: rgba(15, 23, 42, 0.92);
-          backdrop-filter: blur(12px);
+          border: 2px solid rgba(239, 68, 68, 0.4);
+          background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
           color: #ffffff;
           text-decoration: none;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35), 0 0 15px rgba(239, 68, 68, 0.25);
+          box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4), 0 4px 12px rgba(0, 0, 0, 0.25);
           transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
           cursor: pointer;
         }
 
         .floating-circle-btn:hover {
           transform: translateY(-4px) scale(1.08);
-          border-color: var(--accent-primary);
-          box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45), 0 0 22px var(--accent-primary);
+          box-shadow: 0 16px 32px rgba(239, 68, 68, 0.55), 0 0 24px var(--accent-primary);
         }
 
-        /* View Cart Button Styling */
-        .floating-cart-btn {
-          background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-          border-color: rgba(255, 255, 255, 0.35);
-        }
-
-        /* Product Count Badge on View Cart Button */
+        /* Top-Right Corner Product Count Badge */
         .cart-count-badge {
           position: absolute;
           top: -4px;
           right: -4px;
           background: #ffffff;
           color: #dc2626;
-          font-size: 0.75rem;
+          font-size: 0.78rem;
           font-weight: 900;
-          min-width: 22px;
-          height: 22px;
-          padding: 0 4px;
+          min-width: 24px;
+          height: 24px;
+          padding: 0 5px;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
           border: 2px solid #ef4444;
         }
 
-        /* Back to Top Button Styling */
+        /* Back to Top Button */
         .back-to-top-btn {
           background: var(--bg-secondary);
           color: var(--text-primary);
-          border-color: var(--border-color);
+          border: 2px solid var(--border-color);
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
         .back-to-top-btn:hover {
           background: var(--accent-primary);
           color: #ffffff;
+          border-color: var(--accent-primary);
         }
 
         @media (max-width: 768px) {
           .floating-actions-wrapper {
             bottom: 80px;
             right: 16px;
-            gap: 10px;
+            gap: 12px;
           }
           .floating-circle-btn {
-            width: 48px;
-            height: 48px;
+            width: 52px;
+            height: 52px;
           }
         }
       `}</style>
