@@ -47,6 +47,10 @@ const ProductSchema = new mongoose.Schema(
       default: ['S', 'M', 'L', 'XL'],
     },
     colors: [ColorSchema],
+    sizeStock: {
+      type: Object,
+      default: {},
+    },
     stock: {
       type: Number,
       required: [true, 'Stock count is required'],

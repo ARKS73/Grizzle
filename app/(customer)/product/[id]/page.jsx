@@ -156,11 +156,18 @@ export default function ProductDetailPage() {
               <span className="price-compare">₹{product.originalPrice?.toFixed(0)}</span>
             )}
             <span className="stock-status">
-              {product.stock > 0 ? (
-                <span className="text-success"><Check size={14} /> In Stock ({product.stock} units)</span>
-              ) : (
-                <span className="text-danger">Out of Stock</span>
-              )}
+              {(() => {
+                if (selectedSize && product.sizeStock && product.sizeStock[selectedSize] !== undefined) {
+                  const sizeQty = Number(product.sizeStock[selectedSize]);
+                  if (sizeQty <= 0) return <span className="text-danger">Size {selectedSize}: Out of Stock</span>;
+                  return <span className="text-success"><Check size={14} /> Size {selectedSize}: In Stock ({sizeQty} left)</span>;
+                }
+                return product.stock > 0 ? (
+                  <span className="text-success"><Check size={14} /> In Stock ({product.stock} total)</span>
+                ) : (
+                  <span className="text-danger">Out of Stock</span>
+                );
+              })()}
             </span>
           </div>
 
@@ -221,19 +228,33 @@ export default function ProductDetailPage() {
           {product.sizes?.length > 0 && (
             <div className="variant-box">
               <div className="size-header">
-                <label className="variant-title">Select Size:</label>
+                <label className="variant-title">
+                  Select Size: {selectedSize && <span className="selected-color-name">{selectedSize}</span>}
+                </label>
                 <button className="size-guide-link">Size Guide</button>
               </div>
               <div className="sizes-grid">
-                {product.sizes.map((sz) => (
-                  <button
-                    key={sz}
-                    onClick={() => setSelectedSize(sz)}
-                    className={`size-card ${selectedSize === sz ? 'active' : ''}`}
-                  >
-                    {sz}
-                  </button>
-                ))}
+                {product.sizes.map((sz) => {
+                  const sizeQty = (product.sizeStock && product.sizeStock[sz] !== undefined)
+                    ? Number(product.sizeStock[sz])
+                    : Math.max(0, Math.floor((product.stock || 0) / product.sizes.length));
+                  const isOut = sizeQty <= 0;
+                  const isLow = sizeQty > 0 && sizeQty <= 3;
+
+                  return (
+                    <button
+                      key={sz}
+                      onClick={() => !isOut && setSelectedSize(sz)}
+                      disabled={isOut}
+                      className={`size-card ${selectedSize === sz ? 'active' : ''} ${isOut ? 'out-of-stock' : ''}`}
+                      title={isOut ? `Size ${sz} is Out of Stock` : `Size ${sz}: ${sizeQty} available`}
+                    >
+                      <span className="size-text">{sz}</span>
+                      {isOut && <span className="size-subtag out">Out</span>}
+                      {isLow && !isOut && <span className="size-subtag low">{sizeQty} left</span>}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}

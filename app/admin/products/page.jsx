@@ -85,6 +85,7 @@ export default function AdminProductsPage() {
     price: '',
     originalPrice: '',
     stock: '25',
+    sizeStock: { S: 5, M: 5, L: 5, XL: 5, XXL: 5 },
     images: [],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     colors: [],
@@ -124,14 +125,15 @@ export default function AdminProductsPage() {
       name: '',
       description: '',
       fabricFit: '',
-      category: categories[0]?.name || 'T-Shirts',
+      category: categories[0]?.name || '',
       gender: 'Men',
       price: '',
       originalPrice: '',
       stock: '25',
+      sizeStock: { S: 5, M: 5, L: 5, XL: 5, XXL: 5 },
       images: [],
       sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-      colors: [],
+      colors: PRESET_COLOR_VARIANTS.slice(0, 2),
       isFeatured: false,
       isTrending: false,
       isBestSeller: false,
@@ -141,6 +143,14 @@ export default function AdminProductsPage() {
 
   const handleOpenEditModal = (product) => {
     setEditingId(product._id);
+    const sizes = product.sizes || ['S', 'M', 'L', 'XL'];
+    const existingSizeStock = product.sizeStock || {};
+    sizes.forEach((sz) => {
+      if (existingSizeStock[sz] === undefined) {
+        existingSizeStock[sz] = Math.floor((product.stock || 20) / sizes.length);
+      }
+    });
+
     setFormData({
       name: product.name,
       description: product.description,
@@ -149,9 +159,10 @@ export default function AdminProductsPage() {
       gender: product.gender || 'Men',
       price: product.price.toString(),
       originalPrice: product.originalPrice ? product.originalPrice.toString() : '',
-      stock: product.stock.toString(),
+      stock: product.stock ? product.stock.toString() : '20',
+      sizeStock: existingSizeStock,
       images: product.images && product.images.length > 0 ? product.images : [],
-      sizes: product.sizes || ['S', 'M', 'L', 'XL'],
+      sizes,
       colors: product.colors && product.colors.length > 0 ? product.colors : [],
       isFeatured: product.isFeatured || false,
       isTrending: product.isTrending || false,
@@ -246,6 +257,7 @@ export default function AdminProductsPage() {
           price: parseFloat(formData.price),
           originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : parseFloat(formData.price),
           stock: parseInt(formData.stock, 10),
+          sizeStock: formData.sizeStock || {},
         }),
       });
 
@@ -462,10 +474,10 @@ export default function AdminProductsPage() {
                 </div>
               </div>
 
-              {/* Sizes Multi-Select Checkboxes */}
-              <div className="form-group">
-                <label className="form-label">Available Sizes * (Select all that apply)</label>
-                <div className="sizes-checkbox-grid">
+              {/* Sizes Multi-Select & Size-Wise Stock Inputs */}
+              <div className="form-group glass-panel p-3 border-radius-lg">
+                <label className="form-label font-bold text-md">Available Sizes & Stock Breakdown *</label>
+                <div className="sizes-checkbox-grid mb-3">
                   {ALL_AVAILABLE_SIZES.map((sz) => {
                     const isChecked = (formData.sizes || []).includes(sz);
                     return (
@@ -480,6 +492,46 @@ export default function AdminProductsPage() {
                     );
                   })}
                 </div>
+
+                {(formData.sizes || []).length > 0 && (
+                  <div className="size-stock-breakdown-box bg-secondary p-3 rounded">
+                    <label className="subtext font-semibold d-block mb-2">
+                      Enter Stock for Each Selected Size:
+                    </label>
+                    <div className="d-flex flex-wrap gap-2">
+                      {(formData.sizes || []).map((sz) => {
+                        const currentSizeQty = formData.sizeStock?.[sz] !== undefined ? formData.sizeStock[sz] : 5;
+                        return (
+                          <div key={sz} className="d-flex align-items-center gap-1 bg-tertiary p-2 rounded border">
+                            <span className="badge badge-info font-bold" style={{ minWidth: '24px', textAlign: 'center' }}>{sz}</span>
+                            <input
+                              type="number"
+                              min="0"
+                              value={currentSizeQty}
+                              onChange={(e) => {
+                                const val = Math.max(0, parseInt(e.target.value, 10) || 0);
+                                const updatedSizeStock = { ...(formData.sizeStock || {}), [sz]: val };
+                                const newTotalStock = Object.entries(updatedSizeStock)
+                                  .filter(([s]) => (formData.sizes || []).includes(s))
+                                  .reduce((sum, [, q]) => sum + (parseInt(q, 10) || 0), 0);
+                                setFormData({
+                                  ...formData,
+                                  sizeStock: updatedSizeStock,
+                                  stock: newTotalStock.toString(),
+                                });
+                              }}
+                              className="form-input form-input-sm"
+                              style={{ width: '64px', textAlign: 'center', padding: '0.2rem 0.4rem' }}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div className="subtext mt-2">
+                      Total Calculated Stock: <strong>{formData.stock} units</strong>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Color-wise T-Shirt Variants Manager */}
