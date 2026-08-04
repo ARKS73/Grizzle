@@ -100,7 +100,7 @@ const INDIAN_STATES_CITIES = {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const { cartItems, getSubtotal, getDiscountAmount, getTotalPrice, clearCart } = useCart();
   const { addToast } = useToast();
 
@@ -259,8 +259,9 @@ export default function CheckoutPage() {
 
       const data = await res.json();
       if (data.success && data.order) {
-        addToast('Order placed successfully! Redirecting to confirmation...', 'success');
+        addToast('Order placed successfully! Delivery details saved to your profile.', 'success');
         clearCart();
+        if (refreshUser) refreshUser();
         router.push(`/orders/${data.order._id}`);
       } else {
         addToast(data.message || 'Failed to place order', 'error');

@@ -74,7 +74,7 @@ export default function ProfilePage() {
         city: user.address?.city || '',
         state: user.address?.state || '',
         postalCode: user.address?.postalCode || '',
-        country: user.address?.country || 'United States',
+        country: user.address?.country || 'India',
       });
     }
   }, [user]);

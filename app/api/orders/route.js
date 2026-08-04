@@ -120,6 +120,26 @@ export async function POST(request) {
       invoiceNumber: `INV-${Math.floor(100000 + Math.random() * 900000)}`,
     });
 
+    // Auto-update User profile in MongoDB with latest checkout delivery address & phone number
+    if (authUser && (authUser.userId || authUser._id)) {
+      try {
+        const targetUserId = authUser.userId || authUser._id;
+        const UserModel = (await import('@/models/User')).default;
+        await UserModel.findByIdAndUpdate(targetUserId, {
+          ...(shippingAddress.phone ? { phone: shippingAddress.phone } : {}),
+          address: {
+            street: shippingAddress.street || '',
+            city: shippingAddress.city || '',
+            state: shippingAddress.state || '',
+            postalCode: shippingAddress.postalCode || '',
+            country: shippingAddress.country || 'India',
+          },
+        });
+      } catch (userUpdErr) {
+        console.error('Failed to update User profile address from order:', userUpdErr);
+      }
+    }
+
     // Send order details to Google Sheet if Webhook URL is configured
     if (process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
       try {

@@ -51,6 +51,7 @@ export async function POST(request) {
         _id: newUser._id,
         name: newUser.name,
         email: newUser.email,
+        phone: newUser.phone,
         role: newUser.role,
         profileImage: newUser.profileImage,
         address: newUser.address,
