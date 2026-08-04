@@ -128,9 +128,13 @@ export async function POST(request) {
       isBestSeller,
     } = body;
 
-    if (!name || !description || !category || !price || !images || images.length === 0) {
+    const finalCategory = (category && category.trim()) ? category : 'T-Shirts';
+    const validImages = (images && Array.isArray(images)) ? images.filter(Boolean) : [];
+    const finalImages = validImages.length > 0 ? validImages : ['/logo2.png'];
+
+    if (!name || !description || !price) {
       return NextResponse.json(
-        { success: false, message: 'Please provide all required product details and at least one image' },
+        { success: false, message: 'Please enter Product Name, Description, and Price' },
         { status: 400 }
       );
     }
@@ -142,7 +146,7 @@ export async function POST(request) {
       name,
       slug: `${slug}-${Date.now().toString().slice(-4)}`,
       description,
-      category,
+      category: finalCategory,
       gender: gender || 'Unisex',
       price: parseFloat(price),
       originalPrice: originalPrice ? parseFloat(originalPrice) : parseFloat(price),
@@ -150,7 +154,7 @@ export async function POST(request) {
       colors: colors || [{ name: 'Black', hex: '#000000' }],
       sizeStock: sizeStock || {},
       stock: parseInt(stock || '20', 10),
-      images,
+      images: finalImages,
       discountPercentage: discountPercentage ? parseInt(discountPercentage, 10) : 0,
       fabricFit: fabricFit || '',
       isFeatured: Boolean(isFeatured),

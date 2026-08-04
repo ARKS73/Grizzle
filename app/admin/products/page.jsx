@@ -123,15 +123,15 @@ export default function AdminProductsPage() {
     setEditingId(null);
     setFormData({
       name: '',
-      description: '',
+      description: 'High-quality 240 GSM bio-washed combed cotton t-shirt with durable DTF print.',
       fabricFit: '',
-      category: categories[0]?.name || '',
+      category: categories[0]?.name || 'T-Shirts',
       gender: 'Men',
-      price: '',
-      originalPrice: '',
+      price: '699',
+      originalPrice: '999',
       stock: '25',
       sizeStock: { S: 5, M: 5, L: 5, XL: 5, XXL: 5 },
-      images: [],
+      images: ['/logo2.png'],
       sizes: ['S', 'M', 'L', 'XL', 'XXL'],
       colors: PRESET_COLOR_VARIANTS.slice(0, 2),
       isFeatured: false,
@@ -234,6 +234,14 @@ export default function AdminProductsPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.name || !formData.name.trim()) {
+      addToast('Please enter a Product Name', 'error');
+      return;
+    }
+    if (!formData.price || parseFloat(formData.price) <= 0) {
+      addToast('Please enter a valid Price', 'error');
+      return;
+    }
     if (!formData.sizes || formData.sizes.length === 0) {
       addToast('Please select at least one size (e.g. S, M, L, XL)', 'error');
       return;
@@ -246,17 +254,23 @@ export default function AdminProductsPage() {
 
       // Gather all color-specific t-shirt images into main product images list
       const colorImages = (formData.colors || []).map(c => c.image).filter(Boolean);
-      const combinedImages = Array.from(new Set([...colorImages, ...formData.images])).filter(Boolean);
+      const userImages = (formData.images || []).filter(Boolean);
+      let combinedImages = Array.from(new Set([...userImages, ...colorImages])).filter(Boolean);
+
+      if (combinedImages.length === 0) {
+        combinedImages = ['/logo2.png'];
+      }
 
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          images: combinedImages.length > 0 ? combinedImages : [],
+          category: formData.category || categories[0]?.name || 'T-Shirts',
+          images: combinedImages,
           price: parseFloat(formData.price),
           originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : parseFloat(formData.price),
-          stock: parseInt(formData.stock, 10),
+          stock: parseInt(formData.stock, 10) || 20,
           sizeStock: formData.sizeStock || {},
         }),
       });

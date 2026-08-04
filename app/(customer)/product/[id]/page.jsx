@@ -334,7 +334,7 @@ export default function ProductDetailPage() {
         .breadcrumb a { color: var(--text-secondary); }
         .breadcrumb a:hover { color: var(--accent-primary); }
 
-        .detail-grid {
+        .product-layout-grid {
           display: grid;
           grid-template-columns: 1fr 1.1fr;
           gap: 3rem;
@@ -347,15 +347,23 @@ export default function ProductDetailPage() {
           border-radius: var(--radius-lg);
           overflow: hidden;
         }
-        .main-image {
+        .main-product-img {
           width: 100%;
           height: 100%;
           object-fit: cover;
         }
-        .discount-tag {
+        .badge-discount {
           position: absolute;
           top: 16px;
           left: 16px;
+          background: #ef4444;
+          color: white;
+          font-weight: 800;
+          font-size: 0.75rem;
+          padding: 0.25rem 0.65rem;
+          border-radius: 6px;
+          z-index: 2;
+          letter-spacing: 0.05em;
         }
 
         .thumbnails-grid {
@@ -381,14 +389,31 @@ export default function ProductDetailPage() {
           object-fit: cover;
         }
 
-        .info-section {
+        .product-info-box {
           display: flex;
           flex-direction: column;
           gap: 1.25rem;
         }
-        .product-name {
+        .category-pill {
+          display: inline-block;
+          width: fit-content;
+          background: var(--accent-light);
+          color: var(--accent-primary);
+          font-weight: 800;
+          font-size: 0.75rem;
+          padding: 0.3rem 0.75rem;
+          border-radius: 9999px;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+        .product-title-large {
           font-size: 2.2rem;
           line-height: 1.2;
+          font-weight: 900;
+          font-family: 'Outfit', sans-serif;
+          letter-spacing: -0.02em;
+          color: var(--text-primary);
+          text-transform: uppercase;
         }
 
         .ratings-box {
@@ -605,7 +630,7 @@ export default function ProductDetailPage() {
         .related-section { margin-top: 4rem; }
 
         @media (max-width: 900px) {
-          .detail-grid { grid-template-columns: 1fr; }
+          .product-layout-grid { grid-template-columns: 1fr; gap: 1.5rem; }
           .guarantees-grid { grid-template-columns: 1fr; }
         }
       `}</style>
