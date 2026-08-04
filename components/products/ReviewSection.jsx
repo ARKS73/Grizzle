@@ -60,7 +60,7 @@ export default function ReviewSection({ productId, reviews = [], onReviewAdded }
 
   const avgRating = reviews.length > 0
     ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
-    : 4.8;
+    : '0.0';
 
   return (
     <div className="reviews-section glass-panel">

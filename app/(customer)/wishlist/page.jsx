@@ -139,12 +139,14 @@ export default function WishlistPage() {
                       <Star
                         key={i}
                         size={13}
-                        fill={i < Math.floor(product.ratings || 4.8) ? '#f59e0b' : 'none'}
+                        fill={i < Math.round(product.ratings || 0) ? '#f59e0b' : 'none'}
                         color="#f59e0b"
                       />
                     ))}
                   </div>
-                  <span className="rating-val">{product.ratings || 4.8}</span>
+                  <span className="rating-val">
+                    {product.numReviews > 0 ? Number(product.ratings || 0).toFixed(1) : '0.0'}
+                  </span>
                 </div>
 
                 {/* Price Display */}

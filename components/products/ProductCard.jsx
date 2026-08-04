@@ -62,20 +62,22 @@ export default function ProductCard({ product, onQuickView }) {
           {product.name}
         </Link>
 
-        {/* Rating Breakdown */}
+        {/* Dynamic Rating Breakdown */}
         <div className="card-rating">
           <div className="stars">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
                 size={14}
-                fill={i < Math.floor(product.ratings || 4.8) ? '#f59e0b' : 'none'}
+                fill={i < Math.round(product.ratings || 0) ? '#f59e0b' : 'none'}
                 color="#f59e0b"
               />
             ))}
           </div>
-          <span className="rating-num">{product.ratings || 4.8}</span>
-          <span className="review-count">({product.numReviews || 12})</span>
+          <span className="rating-num">
+            {product.numReviews > 0 ? Number(product.ratings || 0).toFixed(1) : '0.0'}
+          </span>
+          <span className="review-count">({product.numReviews || 0})</span>
         </div>
 
         {/* Sizes Pills */}

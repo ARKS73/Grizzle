@@ -54,7 +54,7 @@ const ProductSchema = new mongoose.Schema(
     },
     ratings: {
       type: Number,
-      default: 4.8,
+      default: 0,
     },
     numReviews: {
       type: Number,

@@ -59,10 +59,14 @@ export default function QuickViewModal({ product, onClose }) {
             <div className="rating-row">
               <div className="stars">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={16} fill={i < Math.floor(product.ratings || 4.8) ? '#f59e0b' : 'none'} color="#f59e0b" />
+                  <Star key={i} size={16} fill={i < Math.round(product.ratings || 0) ? '#f59e0b' : 'none'} color="#f59e0b" />
                 ))}
               </div>
-              <span className="rating-text">{product.ratings || 4.8} ({product.numReviews || 12} reviews)</span>
+              <span className="rating-text">
+                {product.numReviews > 0
+                  ? `${Number(product.ratings || 0).toFixed(1)} (${product.numReviews} ${product.numReviews === 1 ? 'review' : 'reviews'})`
+                  : '0.0 (0 reviews)'}
+              </span>
             </div>
 
             <div className="price-row">
@@ -171,12 +175,7 @@ export default function QuickViewModal({ product, onClose }) {
               </button>
             </div>
 
-            <div className="perks-row">
-              <span><Truck size={16} /> Free Express Delivery in India on orders ₹999+</span>
-              <span><ShieldCheck size={16} /> Cash on Delivery (COD) Available Pan-India</span>
-            </div>
-
-            <Link href={`/product/${product._id}`} onClick={onClose} className="full-details-link">
+            <Link href={`/product/${product._id}`} onClick={onClose} className="full-details-link mt-2">
               View Full Product Page & Verified Reviews &rarr;
             </Link>
           </div>
