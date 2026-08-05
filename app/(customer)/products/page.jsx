@@ -7,6 +7,8 @@ import ProductFilter from '@/components/products/ProductFilter';
 import QuickViewModal from '@/components/products/QuickViewModal';
 import { Search, SlidersHorizontal, ArrowUpDown, RefreshCw, X, RotateCcw, CheckCircle2 } from 'lucide-react';
 
+const productsQueryCache = new Map();
+
 function ProductsCatalogContent() {
   const searchParams = useSearchParams();
 
@@ -52,29 +54,46 @@ function ProductsCatalogContent() {
   ].filter(Boolean).length;
 
   const fetchProducts = useCallback(async () => {
-    try {
-      setLoading(true);
-      const query = new URLSearchParams({
-        search: filters.search,
-        category: filters.category,
-        gender: filters.gender,
-        minPrice: filters.minPrice.toString(),
-        maxPrice: filters.maxPrice.toString(),
-        size: filters.size,
-        color: filters.color,
-        rating: filters.rating.toString(),
-        sort: filters.sort,
-        page: filters.page.toString(),
-        limit: '9',
-      });
+    const query = new URLSearchParams({
+      search: filters.search,
+      category: filters.category,
+      gender: filters.gender,
+      minPrice: filters.minPrice.toString(),
+      maxPrice: filters.maxPrice.toString(),
+      size: filters.size,
+      color: filters.color,
+      rating: filters.rating.toString(),
+      sort: filters.sort,
+      page: filters.page.toString(),
+      limit: '9',
+    });
 
-      const res = await fetch(`/api/products?${query.toString()}`);
+    const queryString = query.toString();
+    const cached = productsQueryCache.get(queryString);
+
+    // Instant 0ms load if query has been fetched previously
+    if (cached) {
+      setProducts(cached.products);
+      setTotalProducts(cached.totalProducts);
+      setTotalPages(cached.totalPages);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+
+    try {
+      const res = await fetch(`/api/products?${queryString}`);
       const data = await res.json();
 
       if (data.success) {
         setProducts(data.products || []);
         setTotalProducts(data.totalProducts || 0);
         setTotalPages(data.totalPages || 1);
+        productsQueryCache.set(queryString, {
+          products: data.products || [],
+          totalProducts: data.totalProducts || 0,
+          totalPages: data.totalPages || 1,
+        });
       }
     } catch (e) {
       console.error('Failed to fetch products:', e);

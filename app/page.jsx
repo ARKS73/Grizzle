@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import {
   Sparkles,
@@ -28,22 +28,32 @@ import { useWishlist } from '@/contexts/WishlistContext';
 import { useToast } from '@/components/ui/Toast';
 import { getOptimizedImageUrl } from '@/utils/imageOptimizer';
 
+// Module-level global memory cache for 0ms instant landing page load & tab switching
+const globalPageCache = {
+  categories: [],
+  allProducts: [],
+  heroSettings: null,
+  isInitialized: false,
+};
+
 export default function SinglePageStreetwearStore() {
-  const [categories, setCategories] = useState([]);
-  const [allProducts, setAllProducts] = useState([]);
-  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [categories, setCategories] = useState(globalPageCache.categories);
+  const [allProducts, setAllProducts] = useState(globalPageCache.allProducts);
+  const [loadingProducts, setLoadingProducts] = useState(!globalPageCache.isInitialized);
   const [activeCategory, setActiveCategory] = useState('ALL');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [manifestoOpen, setManifestoOpen] = useState(false);
   const [lookbookModalOpen, setLookbookModalOpen] = useState(false);
-  const [heroSettings, setHeroSettings] = useState({
-    heroImage: '',
-    heroBadge: 'NEW DROP | SEASON 2026',
-    heroTitle: 'HIGH-DENSITY DTF PRINTS',
-    heroAccentTitle: 'YOU CAN WEAR',
-    heroDesc: 'Merging high-fidelity DTF printing with 240 GSM bio-washed heavy cotton. Vibrant prints built to last for 50+ washes.',
-    heroTapeNote: 'LIMITED TO 100 PIECES GLOBALLY',
-  });
+  const [heroSettings, setHeroSettings] = useState(
+    globalPageCache.heroSettings || {
+      heroImage: '',
+      heroBadge: 'NEW DROP | SEASON 2026',
+      heroTitle: 'HIGH-DENSITY DTF PRINTS',
+      heroAccentTitle: 'YOU CAN WEAR',
+      heroDesc: 'Merging high-fidelity DTF printing with 240 GSM bio-washed heavy cotton. Vibrant prints built to last for 50+ washes.',
+      heroTapeNote: 'LIMITED TO 100 PIECES GLOBALLY',
+    }
+  );
 
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
@@ -58,8 +68,8 @@ export default function SinglePageStreetwearStore() {
     const savedPos = sessionStorage.getItem('scroll_pos_home');
     if (savedPos && parseInt(savedPos, 10) > 0) {
       const pos = parseInt(savedPos, 10);
-      const timer1 = setTimeout(() => window.scrollTo(0, pos), 100);
-      const timer2 = setTimeout(() => window.scrollTo(0, pos), 400);
+      const timer1 = setTimeout(() => window.scrollTo(0, pos), 50);
+      const timer2 = setTimeout(() => window.scrollTo(0, pos), 200);
       return () => {
         clearTimeout(timer1);
         clearTimeout(timer2);
@@ -74,23 +84,39 @@ export default function SinglePageStreetwearStore() {
 
   useEffect(() => {
     async function fetchData() {
-      try {
+      // If we don't have cached data yet, show loading skeleton
+      if (!globalPageCache.isInitialized) {
         setLoadingProducts(true);
+      }
+
+      try {
         const [catRes, prodRes, settingsRes] = await Promise.all([
           fetch('/api/categories').then((r) => r.json()).catch(() => null),
-          fetch('/api/products?limit=20').then((r) => r.json()).catch(() => null),
+          fetch('/api/products?limit=30').then((r) => r.json()).catch(() => null),
           fetch('/api/admin/settings').then((r) => r.json()).catch(() => null),
         ]);
 
         if (catRes?.success && Array.isArray(catRes.categories)) {
           setCategories(catRes.categories);
+          globalPageCache.categories = catRes.categories;
         }
         if (prodRes?.success && Array.isArray(prodRes.products)) {
           setAllProducts(prodRes.products);
+          globalPageCache.allProducts = prodRes.products;
+
+          // Preload product image thumbnails into browser cache for 0ms render
+          prodRes.products.forEach((p) => {
+            if (p.images?.[0] && typeof window !== 'undefined') {
+              const img = new window.Image();
+              img.src = p.images[0];
+            }
+          });
         }
         if (settingsRes?.success && settingsRes.settings) {
           setHeroSettings(settingsRes.settings);
+          globalPageCache.heroSettings = settingsRes.settings;
         }
+        globalPageCache.isInitialized = true;
       } catch (e) {
         console.error('Failed to fetch store data:', e);
       } finally {
@@ -100,13 +126,35 @@ export default function SinglePageStreetwearStore() {
     fetchData();
   }, []);
 
-  // Filter products by active category
-  const filteredProducts = activeCategory === 'ALL'
-    ? allProducts
-    : allProducts.filter(p => p.category?.toLowerCase() === activeCategory.toLowerCase() || (activeCategory === 'MEN' && p.category?.includes('Oversized')) || (activeCategory === 'WOMEN' && p.category?.includes('Line')));
+  // Filter products by active category with instant useMemo (0ms computation)
+  const filteredProducts = useMemo(() => {
+    if (activeCategory === 'ALL') return allProducts;
+    return allProducts.filter(
+      (p) =>
+        p.category?.toLowerCase() === activeCategory.toLowerCase() ||
+        (activeCategory === 'MEN' && p.category?.includes('Oversized')) ||
+        (activeCategory === 'WOMEN' && p.category?.includes('Line'))
+    );
+  }, [allProducts, activeCategory]);
 
-  const mensProducts = allProducts.filter(p => p.gender === 'Men' || p.category?.includes('Oversized') || p.category?.includes('Desi') || p.category?.includes('Anime'));
-  const womensProducts = allProducts.filter(p => p.gender === 'Women' || p.category?.includes('Minimalist') || p.category?.includes('Artist'));
+  const mensProducts = useMemo(() => {
+    return allProducts.filter(
+      (p) =>
+        p.gender === 'Men' ||
+        p.category?.includes('Oversized') ||
+        p.category?.includes('Desi') ||
+        p.category?.includes('Anime')
+    );
+  }, [allProducts]);
+
+  const womensProducts = useMemo(() => {
+    return allProducts.filter(
+      (p) =>
+        p.gender === 'Women' ||
+        p.category?.includes('Minimalist') ||
+        p.category?.includes('Artist')
+    );
+  }, [allProducts]);
 
   const pastelColors = [
     '#d8d8fa', // Pastel Purple/Lavender
