@@ -647,30 +647,47 @@ export default function SinglePageStreetwearStore() {
 
         /* ------------------ LIQUID GLASS HERO SECTION ------------------ */
         .hero-section-street {
-          padding: 3rem 0 2rem 0;
+          padding: 4rem 0 3rem 0;
           position: relative;
+          background: url('/hero-bg-athlete.jpg') center center / cover no-repeat;
+          border-radius: 32px;
+          overflow: hidden;
+          box-shadow: var(--shadow-xl);
+        }
+        .hero-section-street::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(180deg, rgba(9, 9, 11, 0.45) 0%, rgba(9, 9, 11, 0.72) 100%);
+          z-index: 1;
+        }
+        [data-theme='light'] .hero-section-street::before {
+          background: linear-gradient(180deg, rgba(240, 249, 255, 0.4) 0%, rgba(224, 242, 254, 0.75) 100%);
         }
         .hero-street-container {
+          position: relative;
+          z-index: 2;
           display: flex;
           flex-direction: column;
           align-items: center;
           text-align: center;
-          max-width: 920px;
+          max-width: 880px;
           margin: 0 auto;
-          backdrop-filter: blur(24px) saturate(190%);
-          border-radius: 32px;
-          padding: 3.5rem 3rem;
+          backdrop-filter: blur(28px) saturate(200%);
+          -webkit-backdrop-filter: blur(28px) saturate(200%);
+          border-radius: 28px;
+          padding: 3.5rem 2.5rem;
           transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
         }
         [data-theme='dark'] .hero-street-container {
-          background: rgba(255, 255, 255, 0.04);
-          border: 1px solid rgba(255, 255, 255, 0.16);
-          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.25);
+          background: rgba(18, 18, 21, 0.72);
+          border: 1px solid rgba(255, 255, 255, 0.18);
+          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.2);
         }
         [data-theme='light'] .hero-street-container {
-          background: rgba(255, 255, 255, 0.72);
-          border: 1px solid rgba(186, 230, 255, 0.6);
-          box-shadow: 0 20px 50px rgba(56, 189, 248, 0.18), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+          background: rgba(255, 255, 255, 0.82);
+          border: 1px solid rgba(186, 230, 255, 0.8);
+          box-shadow: 0 20px 50px rgba(56, 189, 248, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.95);
         }
         .hero-pill-badge {
           display: inline-flex;
