@@ -385,14 +385,12 @@ export default function AdminUsersPage() {
                     <td data-label="Email" style={{ fontSize: '0.83rem' }}>{user.email}</td>
                     <td data-label="Phone" style={{ fontSize: '0.83rem' }}>{user.phone || <span style={{ color: 'var(--text-muted)' }}>—</span>}</td>
                     <td data-label="Role">
-                      <button
-                        onClick={() => handleToggleRole(user._id, user.role, user.name)}
+                      <span
                         className={`badge ${user.role === 'admin' ? 'badge-primary' : 'badge-secondary'}`}
-                        style={{ cursor: 'pointer', border: 'none', fontWeight: 800 }}
-                        title="Click to toggle role"
+                        style={{ fontWeight: 800 }}
                       >
                         {user.role === 'admin' ? '👑 ADMIN' : '👤 CUSTOMER'}
-                      </button>
+                      </span>
                     </td>
                     <td data-label="Joined" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                       {user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-IN') : '—'}

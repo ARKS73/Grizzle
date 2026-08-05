@@ -31,13 +31,15 @@ export async function GET(request) {
       );
     }
 
+    const effectiveRole = user.email?.toLowerCase() === 'grizzlein@gmail.com' ? 'admin' : 'customer';
+
     return NextResponse.json({
       success: true,
       user: {
         _id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,
+        role: effectiveRole,
         profileImage: user.profileImage,
         phone: user.phone,
         address: user.address,

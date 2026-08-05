@@ -98,7 +98,9 @@ export async function PATCH(request) {
     }
 
     if (isBlocked !== undefined) user.isBlocked = isBlocked;
-    if (role) user.role = role;
+    if (role && role !== user.role) {
+      return NextResponse.json({ success: false, message: 'Role switching disabled. grizzlein@gmail.com is locked as the sole Admin.' }, { status: 400 });
+    }
 
     await user.save();
 

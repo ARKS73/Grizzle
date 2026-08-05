@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   LogOut,
   ShieldCheck,
+  ShieldAlert,
   X,
   ChevronRight,
 } from 'lucide-react';
@@ -36,8 +37,25 @@ const bottomTabs = navLinks.slice(0, 5);
 
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+  const isSoleAdmin = user && user.email?.toLowerCase() === 'grizzlein@gmail.com';
+
+  if (!loading && !isSoleAdmin) {
+    return (
+      <div className="container py-5 text-center" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="glass-panel p-5" style={{ borderRadius: '24px', maxWidth: '540px', margin: '0 auto' }}>
+          <ShieldAlert size={52} className="text-danger mb-3 mx-auto" />
+          <h2 className="text-danger mb-2">403 Access Denied</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+            Only the primary store administrator (<code>grizzlein@gmail.com</code>) is authorized to access the Admin Management Console.
+          </p>
+          <Link href="/" className="btn btn-primary">Return to Storefront</Link>
+        </div>
+      </div>
+    );
+  }
 
   const currentPage = navLinks.find((l) => l.href === pathname)?.name || 'Admin';
 
