@@ -126,6 +126,14 @@ export default function SinglePageStreetwearStore() {
          SECTION 1: HERO BANNER (Matching Image Section 1)
          ========================================================================= */}
       <section className="hero-section-street" id="hero">
+        {/* Athlete Model Background Image */}
+        <img
+          src="/hero-bg-athlete.jpg"
+          alt="Grizzle Athlete Model"
+          className="hero-athlete-bg-img"
+        />
+        <div className="hero-fade-overlay" />
+
         <div className="container hero-street-container">
           <div className="hero-text-content">
             <div className="hero-pill-badge">
@@ -649,35 +657,46 @@ export default function SinglePageStreetwearStore() {
         .hero-section-street {
           padding: 4.5rem 2rem 4.5rem 3.5rem;
           position: relative;
-          background-image: url('/hero-bg-athlete.jpg');
-          background-size: cover;
-          background-position: center right;
-          background-repeat: no-repeat;
+          background: #09090b;
           border-radius: 32px;
           overflow: hidden;
-          box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+          box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
           min-height: 480px;
           display: flex;
           align-items: center;
         }
-        .hero-section-street::before {
-          content: '';
+        [data-theme='light'] .hero-section-street {
+          background: #f0f9ff;
+          box-shadow: 0 20px 50px rgba(56, 189, 248, 0.2);
+        }
+        .hero-athlete-bg-img {
           position: absolute;
-          inset: 0;
-          background: linear-gradient(90deg, rgba(9, 9, 11, 0.88) 0%, rgba(9, 9, 11, 0.65) 45%, rgba(9, 9, 11, 0.1) 100%);
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 58%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center top;
           z-index: 1;
         }
-        [data-theme='light'] .hero-section-street::before {
-          background: linear-gradient(90deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.7) 48%, rgba(255, 255, 255, 0.15) 100%);
+        .hero-fade-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(90deg, #09090b 32%, rgba(9, 9, 11, 0.75) 55%, rgba(9, 9, 11, 0) 100%);
+          z-index: 2;
+        }
+        [data-theme='light'] .hero-fade-overlay {
+          background: linear-gradient(90deg, #f0f9ff 32%, rgba(240, 249, 255, 0.78) 55%, rgba(240, 249, 255, 0) 100%);
         }
         .hero-street-container {
           position: relative;
-          z-index: 2;
+          z-index: 3;
           display: flex;
           flex-direction: column;
           align-items: flex-start;
           text-align: left;
-          max-width: 580px;
+          max-width: 560px;
           margin: 0;
           padding: 0;
           background: transparent !important;

@@ -13,7 +13,7 @@ export default function GrizzleLogo({ size = 'medium', href = '/' }) {
   const logoContent = (
     <div className={`grizzle-brand-logo-container size-${size}`}>
       <img
-        src="/grizzle-logo-outline.png"
+        src="/placeholder.png"
         alt="GRIZZLE"
         style={{
           height: logoHeights,
