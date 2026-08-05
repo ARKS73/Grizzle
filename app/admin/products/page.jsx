@@ -18,9 +18,9 @@ const PRESET_COLOR_VARIANTS = [
   { name: 'Green', hex: '#10b981', image: '' },
 ];
 
-const SAMPLE_PRESET_IMAGES = [
-  { name: 'Sample 1', url: 'https://example.com/sample1.jpg' },
-  { name: 'Sample 2', url: 'https://example.com/sample2.jpg' },
+const PRESET_TSHIRT_IMAGES = [
+  { name: 'Oversized Black Tee', url: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Vintage Acid Wash Tee', url: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80' },
 ];
 // Helper to compress local uploaded image files before sending to server (prevents 413 Payload Too Large)
 const compressImage = (file, maxWidth = 800, maxHeight = 1000, quality = 0.75) => {
@@ -737,8 +737,8 @@ export default function AdminProductsPage() {
 
                 {/* Preset stock image selector chips */}
                 <div className="preset-images-list mt-2">
-                  <span className="preset-title">Or pick sample photo:</span>
-                  {SAMPLE_PRESET_IMAGES.map((preset, idx) => (
+                  <span className="preset-title">Or pick preset photo:</span>
+                  {PRESET_TSHIRT_IMAGES.map((preset, idx) => (
                     <button
                       key={idx}
                       type="button"

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Printer, CheckCircle2, Clock, Truck, Package, XCircle, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Printer, CheckCircle2, Clock, Truck, Package, XCircle, ArrowLeft, ShieldCheck, Download } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 
 export default function OrderInvoicePage() {
@@ -83,7 +83,7 @@ export default function OrderInvoicePage() {
         <div className="actions">
           {order.status === 'Delivered' ? (
             <button onClick={handlePrint} className="btn btn-primary btn-sm">
-              <Printer size={16} /> Print / Download Invoice
+              <Download size={16} /> Download Invoice (PDF)
             </button>
           ) : (
             <span
@@ -91,7 +91,7 @@ export default function OrderInvoicePage() {
               style={{ opacity: 0.7, cursor: 'not-allowed' }}
               title="Tax invoice will be downloadable once package is Delivered"
             >
-              <Printer size={16} /> Invoice (Delivered Only)
+              <Download size={16} /> Invoice (Delivered Only)
             </span>
           )}
         </div>
@@ -153,28 +153,30 @@ export default function OrderInvoicePage() {
         </div>
 
         {/* Invoice Items Table */}
-        <table className="invoice-table">
-          <thead>
-            <tr>
-              <th>Product Name</th>
-              <th>Variant</th>
-              <th>Price</th>
-              <th>Qty</th>
-              <th className="text-right">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {order.orderItems?.map((item, idx) => (
-              <tr key={idx}>
-                <td><strong>{item.name}</strong></td>
-                <td>Size {item.size} • {item.color}</td>
-                <td>₹{item.price?.toFixed(0)}</td>
-                <td>{item.quantity}</td>
-                <td className="text-right">₹{(item.price * item.quantity).toFixed(0)}</td>
+        <div className="invoice-table-wrapper">
+          <table className="invoice-table">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Variant</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th className="text-right">Total</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {order.orderItems?.map((item, idx) => (
+                <tr key={idx}>
+                  <td><strong>{item.name}</strong></td>
+                  <td>Size {item.size} • {item.color}</td>
+                  <td>₹{item.price?.toFixed(0)}</td>
+                  <td>{item.quantity}</td>
+                  <td className="text-right">₹{(item.price * item.quantity).toFixed(0)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {/* Invoice Summary Totals */}
         <div className="invoice-totals">
@@ -329,13 +331,43 @@ export default function OrderInvoicePage() {
         .divider { height: 1px; background: var(--border-color); margin: 0.5rem 0; }
         .grand-total { font-size: 1.2rem; font-weight: 800; }
 
-        .invoice-footer-note {
-          margin-top: 3rem;
-          padding-top: 1.5rem;
-          border-top: 1px solid var(--border-color);
-          font-size: 0.8rem;
-          color: var(--text-muted);
-          text-align: center;
+        .invoice-table-wrapper {
+          width: 100%;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        @media (max-width: 768px) {
+          .invoice-card {
+            padding: 1.25rem !important;
+          }
+          .invoice-header {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 1rem !important;
+          }
+          .invoice-meta {
+            text-align: left !important;
+          }
+          .invoice-billing-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1.25rem !important;
+            padding: 1.25rem 0 !important;
+          }
+          .billing-box.text-right {
+            text-align: left !important;
+          }
+          .totals-box {
+            width: 100% !important;
+          }
+          .invoice-totals {
+            width: 100% !important;
+            justify-content: stretch !important;
+          }
+          .invoice-table th, .invoice-table td {
+            padding: 0.65rem 0.5rem !important;
+            font-size: 0.8rem !important;
+          }
         }
 
         @media print {
