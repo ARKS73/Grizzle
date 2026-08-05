@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Product from '@/models/Product';
 import { getAuthUser } from '@/lib/jwt';
+import { getCachedData, setCachedData, clearStoreCache } from '@/lib/storeCache';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,6 +25,12 @@ export async function GET(request) {
     const sort = searchParams.get('sort') || 'newest';
     const page = parseInt(searchParams.get('page') || '1', 10);
     const limit = parseInt(searchParams.get('limit') || '12', 10);
+
+    const cacheKey = `products_${request.url}`;
+    const cachedResponse = getCachedData(cacheKey);
+    if (cachedResponse) {
+      return NextResponse.json(cachedResponse);
+    }
 
     await connectDB();
 
@@ -81,13 +88,17 @@ export async function GET(request) {
         .lean(),
     ]);
 
-    return NextResponse.json({
+    const responsePayload = {
       success: true,
       products,
       totalProducts,
       totalPages: Math.ceil(totalProducts / limit) || 1,
       currentPage: page,
-    });
+    };
+
+    setCachedData(cacheKey, responsePayload, 30000);
+
+    return NextResponse.json(responsePayload);
   } catch (error) {
     console.error('Fetch products error:', error);
     return NextResponse.json({
@@ -161,6 +172,8 @@ export async function POST(request) {
       isTrending: Boolean(isTrending),
       isBestSeller: Boolean(isBestSeller),
     });
+
+    clearStoreCache();
 
     return NextResponse.json({
       success: true,

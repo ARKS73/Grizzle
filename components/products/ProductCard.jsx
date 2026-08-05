@@ -54,6 +54,9 @@ export default function ProductCard({ product, onQuickView }) {
       {/* Image & Overlay Actions */}
       <div
         className="card-media"
+        onMouseEnter={() => {
+          if (product?._id) router.prefetch(`/product/${product._id}`);
+        }}
         onMouseDown={startPressTimer}
         onMouseUp={clearPressTimer}
         onMouseLeave={clearPressTimer}

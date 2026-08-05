@@ -2,12 +2,20 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Product from '@/models/Product';
 import { getAuthUser } from '@/lib/jwt';
+import { getCachedData, setCachedData, clearStoreCache } from '@/lib/storeCache';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request, { params }) {
   try {
     const { id } = params;
+    const cacheKey = `product_detail_${id}`;
+    const cachedProduct = getCachedData(cacheKey);
+
+    if (cachedProduct) {
+      return NextResponse.json({ success: true, product: cachedProduct });
+    }
+
     await connectDB();
 
     let product = null;
@@ -22,6 +30,8 @@ export async function GET(request, { params }) {
     if (!product) {
       return NextResponse.json({ success: false, message: 'Product not found' }, { status: 404 });
     }
+
+    setCachedData(cacheKey, product, 60000);
 
     return NextResponse.json({ success: true, product });
   } catch (error) {
@@ -57,6 +67,8 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ success: false, message: 'Product not found in database' }, { status: 404 });
     }
 
+    clearStoreCache();
+
     return NextResponse.json({
       success: true,
       message: 'Product updated successfully',
@@ -81,6 +93,8 @@ export async function DELETE(request, { params }) {
     if (id && id.length === 24 && /^[0-9a-fA-F]{24}$/.test(id)) {
       await Product.findByIdAndDelete(id);
     }
+
+    clearStoreCache();
 
     return NextResponse.json({
       success: true,
