@@ -396,9 +396,9 @@ export default function SinglePageStreetwearStore() {
             </div>
           )}
 
-          <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
-            <Link href="/products?gender=Men" className="btn btn-primary btn-lg" style={{ padding: '0.9rem 2.2rem', borderRadius: 'var(--radius-full)' }}>
-              VIEW MEN&apos;S COLLECTION PAGE WITH FILTERS &rarr;
+          <div className="collection-cta-wrapper">
+            <Link href="/products?gender=Men" className="collection-filter-cta-btn">
+              VIEW MEN&apos;S COLLECTION WITH FILTERS &rarr;
             </Link>
           </div>
         </div>
@@ -494,9 +494,9 @@ export default function SinglePageStreetwearStore() {
           </div>
         )}
 
-          <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
-            <Link href="/products?gender=Women" className="btn btn-secondary btn-lg" style={{ padding: '0.9rem 2.2rem', borderRadius: 'var(--radius-full)' }}>
-              VIEW WOMEN&apos;S COLLECTION PAGE WITH FILTERS &rarr;
+          <div className="collection-cta-wrapper">
+            <Link href="/products?gender=Women" className="collection-filter-cta-btn">
+              VIEW WOMEN&apos;S COLLECTION WITH FILTERS &rarr;
             </Link>
           </div>
         </div>
@@ -575,8 +575,8 @@ export default function SinglePageStreetwearStore() {
             </div>
           )}
 
-          <div style={{ textAlign: 'center' }}>
-            <Link href="/products" className="btn btn-primary btn-lg" style={{ padding: '1rem 2.5rem', fontSize: '1.1rem', borderRadius: 'var(--radius-full)' }}>
+          <div className="collection-cta-wrapper">
+            <Link href="/products" className="collection-filter-cta-btn">
               OPEN ALL COLLECTIONS & FILTERS PAGE &rarr;
             </Link>
           </div>
@@ -748,6 +748,34 @@ export default function SinglePageStreetwearStore() {
           display: flex;
           align-items: center;
           gap: 1rem;
+        }
+
+        /* Collection Filter CTA Buttons */
+        .collection-cta-wrapper {
+          text-align: center;
+          margin-top: 2.2rem;
+          padding: 0 0.5rem;
+        }
+        .collection-filter-cta-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(135deg, #ef4444, #dc2626);
+          color: #ffffff !important;
+          font-size: 0.85rem;
+          font-weight: 800;
+          letter-spacing: 0.03em;
+          padding: 0.75rem 1.8rem;
+          border-radius: var(--radius-full, 9999px);
+          text-decoration: none;
+          box-shadow: 0 8px 20px rgba(239, 68, 68, 0.35);
+          transition: all 0.25s ease;
+          max-width: 100%;
+        }
+        .collection-filter-cta-btn:hover {
+          background: linear-gradient(135deg, #dc2626, #b91c1c);
+          transform: translateY(-2px);
+          box-shadow: 0 12px 28px rgba(239, 68, 68, 0.5);
         }
         .btn-street-dark {
           background: linear-gradient(135deg, #2563eb, #7c3aed);
@@ -1468,6 +1496,19 @@ export default function SinglePageStreetwearStore() {
           .vibe-bento-grid { grid-template-columns: 1fr; }
           .lookbook-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
           .collective-form { flex-direction: column; }
+          .collection-cta-wrapper {
+            margin-top: 1.25rem;
+            width: 100%;
+          }
+          .collection-filter-cta-btn {
+            width: 100%;
+            font-size: 0.76rem;
+            padding: 0.65rem 0.8rem;
+            letter-spacing: 0.01em;
+            white-space: normal;
+            text-align: center;
+            line-height: 1.35;
+          }
         }
       `}</style>
     </div>
