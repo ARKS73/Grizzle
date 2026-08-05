@@ -554,19 +554,19 @@ export default function Navbar() {
           <div className="mobile-section-header">EXPLORE CATEGORIES</div>
           <div className="mobile-primary-nav">
             <Link href="/" onClick={closeAllMenus} className="mobile-nav-btn">
-              <span>🏠 HOME</span>
+              <span> HOME</span>
               <ChevronRight size={18} />
             </Link>
             <Link href="/products?gender=Men" onClick={closeAllMenus} className="mobile-nav-btn">
-              <span>👕 MEN</span>
+              <span> MEN</span>
               <ChevronRight size={18} />
             </Link>
             <Link href="/products?gender=Women" onClick={closeAllMenus} className="mobile-nav-btn">
-              <span>👗 WOMEN</span>
+              <span> WOMEN</span>
               <ChevronRight size={18} />
             </Link>
             <Link href="/products?gender=Unisex" onClick={closeAllMenus} className="mobile-nav-btn mobile-nav-btn-highlight">
-              <span>👫 UNISEX</span>
+              <span> UNISEX</span>
               <ChevronRight size={18} />
             </Link>
           </div>
