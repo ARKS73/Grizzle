@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithPopup, signInWithRedirect, getRedirectResult } from 'firebase/auth';
+import { signInWithPopup, getRedirectResult } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toast';
+
+const GOOGLE_CLIENT_ID = '898635454432-ncld09i6nkkn87m4k5rb6nv2s15nn9nl.apps.googleusercontent.com';
 
 export default function GoogleSignInButton({ text = 'Continue with Google', redirect = '/' }) {
   const router = useRouter();
@@ -13,10 +15,33 @@ export default function GoogleSignInButton({ text = 'Continue with Google', redi
   const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
 
-  // Handle mobile redirect authentication result on page load
+  // 1. Process Google OAuth redirect token from hash or Firebase redirect result
   useEffect(() => {
-    async function checkRedirectResult() {
+    async function processOAuthReturn() {
       try {
+        // Check standard URL hash for id_token from direct Google OAuth redirect
+        if (typeof window !== 'undefined' && window.location.hash) {
+          const params = new URLSearchParams(window.location.hash.substring(1));
+          const idToken = params.get('id_token');
+          if (idToken) {
+            setLoading(true);
+            // Clear hash from URL cleanly
+            window.history.replaceState(null, '', window.location.pathname);
+            const authRes = await loginWithGoogle(idToken);
+            if (authRes?.success) {
+              if (authRes.user?.role === 'admin') {
+                router.push('/admin');
+              } else if (redirect && redirect !== '/login' && redirect !== '/') {
+                router.push(redirect);
+              } else {
+                router.push('/');
+              }
+            }
+            return;
+          }
+        }
+
+        // Firebase redirect result fallback
         const result = await getRedirectResult(auth);
         if (result?.user) {
           setLoading(true);
@@ -34,54 +59,51 @@ export default function GoogleSignInButton({ text = 'Continue with Google', redi
         }
       } catch (error) {
         console.error('Google Redirect Sign-In Error:', error);
-        addToast('Google redirect authentication failed', 'error');
       } finally {
         setLoading(false);
       }
     }
 
-    checkRedirectResult();
+    processOAuthReturn();
   }, []);
 
   const handleGoogleClick = async () => {
     try {
       setLoading(true);
 
-      // Detect mobile user agent for seamless mobile redirect
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      // Attempt 1: Standard Firebase Popup
+      try {
+        const userCredential = await signInWithPopup(auth, googleProvider);
+        const idToken = await userCredential.user.getIdToken();
 
-      if (isMobile) {
-        await signInWithRedirect(auth, googleProvider);
-        return;
-      }
-
-      // Desktop popup flow
-      const userCredential = await signInWithPopup(auth, googleProvider);
-      const idToken = await userCredential.user.getIdToken();
-
-      const result = await loginWithGoogle(idToken);
-      if (result?.success) {
-        if (result.user?.role === 'admin') {
-          router.push('/admin');
-        } else if (redirect && redirect !== '/login' && redirect !== '/') {
-          router.push(redirect);
-        } else {
-          router.push('/');
+        const result = await loginWithGoogle(idToken);
+        if (result?.success) {
+          if (result.user?.role === 'admin') {
+            router.push('/admin');
+          } else if (redirect && redirect !== '/login' && redirect !== '/') {
+            router.push(redirect);
+          } else {
+            router.push('/');
+          }
+          return;
         }
+      } catch (popupErr) {
+        console.warn('Firebase popup flow skipped or blocked, triggering direct Google OAuth:', popupErr.message);
       }
+
+      // Attempt 2: Direct Google OAuth 2.0 Authorization URL (Bypasses handler iframe)
+      const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://www.grizzle.in';
+      const redirectUri = `${currentOrigin}/login`;
+      const nonce = Math.random().toString(36).substring(2);
+      
+      const directGoogleUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(
+        redirectUri
+      )}&response_type=id_token&scope=openid%20email%20profile&nonce=${nonce}`;
+
+      window.location.href = directGoogleUrl;
     } catch (error) {
       console.error('Google Sign-In Error:', error);
-      if (error.code === 'auth/popup-blocked' || error.code === 'auth/operation-not-supported-in-this-environment') {
-        try {
-          await signInWithRedirect(auth, googleProvider);
-          return;
-        } catch (e) {
-          addToast(e.message || 'Google Sign-In failed', 'error');
-        }
-      } else if (error.code !== 'auth/popup-closed-by-user') {
-        addToast(error.message || 'Google Sign-In failed', 'error');
-      }
-    } finally {
+      addToast(error.message || 'Google Sign-In failed', 'error');
       setLoading(false);
     }
   };
