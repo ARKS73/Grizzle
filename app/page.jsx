@@ -1491,8 +1491,63 @@ export default function SinglePageStreetwearStore() {
           .bento-mens { grid-row: span 1; }
         }
         @media (max-width: 768px) {
-          .hero-street-container { grid-template-columns: 1fr; }
-          .hero-street-title { font-size: 2.8rem; }
+          .hero-section-street {
+            padding: 2.25rem 1.25rem 2.25rem 1.25rem !important;
+            min-height: 440px !important;
+            border-radius: 20px !important;
+            border-top-left-radius: 20px !important;
+            border-top-right-radius: 20px !important;
+            border-bottom-left-radius: 20px !important;
+            border-bottom-right-radius: 20px !important;
+            margin-top: 0.25rem !important;
+            align-items: flex-end !important;
+          }
+          .hero-athlete-bg-img {
+            width: 100% !important;
+            height: 100% !important;
+            inset: 0 !important;
+            object-fit: cover !important;
+            object-position: center 15% !important;
+            opacity: 0.55 !important;
+            border-radius: 20px !important;
+          }
+          .hero-fade-overlay {
+            background: linear-gradient(180deg, rgba(9, 9, 11, 0.35) 0%, rgba(9, 9, 11, 0.82) 55%, rgba(9, 9, 11, 0.98) 100%) !important;
+          }
+          .hero-street-container {
+            width: 100% !important;
+            max-width: 100% !important;
+          }
+          .hero-pill-badge {
+            font-size: 0.68rem !important;
+            padding: 0.35rem 0.75rem !important;
+            margin-bottom: 0.85rem !important;
+          }
+          .hero-street-title {
+            font-size: 2.1rem !important;
+            line-height: 1.15 !important;
+            margin-bottom: 0.85rem !important;
+          }
+          .hero-street-desc {
+            font-size: 0.88rem !important;
+            line-height: 1.45 !important;
+            margin-bottom: 1.35rem !important;
+            max-width: 100% !important;
+          }
+          .hero-btn-group {
+            width: 100% !important;
+            flex-direction: column !important;
+            gap: 0.65rem !important;
+          }
+          .btn-street-dark, .btn-street-light {
+            width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+            padding: 0.8rem 1rem !important;
+            font-size: 0.85rem !important;
+          }
           .hero-visual-wrapper { margin-top: 1.5rem; }
           .culture-container { grid-template-columns: 1fr; }
           .culture-photos-stacked { height: 280px; }
