@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/products/ProductCard';
 import ProductFilter from '@/components/products/ProductFilter';
 import QuickViewModal from '@/components/products/QuickViewModal';
-import { Search, SlidersHorizontal, ArrowUpDown, RefreshCw, X, RotateCcw } from 'lucide-react';
+import { Search, SlidersHorizontal, ArrowUpDown, RefreshCw, X, RotateCcw, CheckCircle2 } from 'lucide-react';
 
 function ProductsCatalogContent() {
   const searchParams = useSearchParams();
@@ -40,6 +40,16 @@ function ProductsCatalogContent() {
   const [loading, setLoading] = useState(true);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [mobileSortOpen, setMobileSortOpen] = useState(false);
+
+  const activeCount = [
+    filters.category,
+    filters.gender,
+    filters.size,
+    filters.color,
+    filters.search,
+    filters.rating > 0 ? filters.rating : null,
+  ].filter(Boolean).length;
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -253,6 +263,69 @@ function ProductsCatalogContent() {
           </div>
         </div>
       )}
+
+      {/* Mobile Sort Slide-Over Sheet */}
+      {mobileSortOpen && (
+        <div className="mobile-filter-drawer-root">
+          <div className="mobile-filter-backdrop" onClick={() => setMobileSortOpen(false)} />
+          <div className="mobile-filter-sheet" style={{ height: 'auto', maxHeight: '55vh', borderTopLeftRadius: '24px', borderTopRightRadius: '24px' }}>
+            <div className="sheet-header">
+              <div className="sheet-title-box">
+                <ArrowUpDown size={18} className="sheet-title-icon" />
+                <h3 className="sheet-title">Sort Products By</h3>
+              </div>
+              <button onClick={() => setMobileSortOpen(false)} className="sheet-close-btn">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="sheet-body" style={{ padding: '1rem' }}>
+              {[
+                { label: 'Newest Arrivals', value: 'newest' },
+                { label: 'Price: Low to High', value: 'price-low' },
+                { label: 'Price: High to Low', value: 'price-high' },
+                { label: 'Highest Rated', value: 'rating' },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => {
+                    setFilters((prev) => ({ ...prev, sort: opt.value }));
+                    setMobileSortOpen(false);
+                  }}
+                  className={`sort-option-btn ${filters.sort === opt.value ? 'selected' : ''}`}
+                >
+                  <span>{opt.label}</span>
+                  {filters.sort === opt.value && <CheckCircle2 size={16} color="var(--accent-primary)" />}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Fixed Bottom Floating Filter & Sort Bar */}
+      <div className="mobile-bottom-bar-fixed">
+        <button
+          type="button"
+          onClick={() => setMobileFilterOpen(true)}
+          className="mobile-bar-btn"
+        >
+          <SlidersHorizontal size={16} />
+          <span>FILTER BY SIZE, COLOR &amp; MORE</span>
+          {activeCount > 0 && <span className="active-count-badge">{activeCount}</span>}
+        </button>
+
+        <div className="mobile-bar-divider" />
+
+        <button
+          type="button"
+          onClick={() => setMobileSortOpen(true)}
+          className="mobile-bar-btn"
+        >
+          <ArrowUpDown size={16} />
+          <span>SORT</span>
+        </button>
+      </div>
 
       {/* Quick View Modal */}
       {quickViewProduct && (
@@ -503,6 +576,91 @@ function ProductsCatalogContent() {
           display: inline-flex;
           align-items: center;
           justify-content: center;
+        }
+
+        .mobile-bottom-bar-fixed {
+          display: none;
+        }
+
+        @media (max-width: 768px) {
+          .mobile-bottom-bar-fixed {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 54px;
+            background: #0d1e30;
+            border-top: 1px solid #1e3a5f;
+            z-index: 995;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+          }
+          .mobile-bar-btn {
+            flex: 1;
+            height: 100%;
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 0 0.5rem;
+          }
+          .mobile-bar-btn:active {
+            background: rgba(255, 255, 255, 0.08);
+          }
+          .mobile-bar-divider {
+            width: 1px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.3);
+          }
+          .active-count-badge {
+            background: #ffffff;
+            color: #0d1e30;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            font-weight: 900;
+          }
+          .sort-option-btn {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-align: left;
+            cursor: pointer;
+          }
+          .sort-option-btn.selected {
+            border-color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.12);
+            font-weight: 800;
+          }
+          .products-page-wrapper {
+            padding-bottom: 70px;
+          }
+          .mobile-filter-btn {
+            display: none !important;
+          }
         }
 
         @keyframes fadeIn {

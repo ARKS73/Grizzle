@@ -49,7 +49,7 @@ export default function AdminLayout({ children }) {
           <ShieldAlert size={52} className="text-danger mb-3 mx-auto" />
           <h2 className="text-danger mb-2">403 Access Denied</h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>
-            Only the primary store administrator (<code>grizzlein@gmail.com</code>) is authorized to access the Admin Management Console.
+            Only authorized store administrators can access the Admin Management Console.
           </p>
           <Link href="/" className="btn btn-primary">Return to Storefront</Link>
         </div>

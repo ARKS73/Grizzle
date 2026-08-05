@@ -499,7 +499,7 @@ export default function CheckoutPage() {
                 <input type="radio" checked readOnly className="accent-emerald-500" />
                 <div>
                   <div className="font-bold text-sm text-emerald-400">Cash on Delivery (COD)</div>
-                  <div className="text-xs text-muted">Pay with cash when your package is delivered to your doorstep</div>
+                  <div className="text-xs text-muted">Pay with cash upon package delivery</div>
                 </div>
               </div>
             </div>

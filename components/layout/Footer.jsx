@@ -37,7 +37,7 @@ export default function Footer() {
             <RotateCcw className="feature-icon" size={22} />
             <div>
               <h4>Cash On Delivery</h4>
-              <p>Pay at your doorstep anywhere in India</p>
+              <p>Available for all eligible delivery pincodes</p>
             </div>
           </div>
         </div>
