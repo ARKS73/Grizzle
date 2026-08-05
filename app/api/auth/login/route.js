@@ -32,12 +32,54 @@ export async function POST(request) {
       );
     }
 
+    // Check if account is temporarily locked due to 5 consecutive failed attempts
+    if (user.lockUntil && user.lockUntil > new Date()) {
+      const minutesLeft = Math.ceil((new Date(user.lockUntil).getTime() - Date.now()) / (1000 * 60));
+      return NextResponse.json(
+        {
+          success: false,
+          message: `Account is temporarily locked due to 5 consecutive failed login attempts. Please try again in ${minutesLeft} minute${minutesLeft > 1 ? 's' : ''}.`,
+        },
+        { status: 429 }
+      );
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid email or password' },
-        { status: 401 }
-      );
+      const attempts = (user.failedLoginAttempts || 0) + 1;
+
+      if (attempts >= 5) {
+        user.failedLoginAttempts = 0;
+        user.lockUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes lockout
+        await user.save();
+
+        return NextResponse.json(
+          {
+            success: false,
+            message: 'Too many failed login attempts. Your account has been locked for 15 minutes for security protection.',
+          },
+          { status: 429 }
+        );
+      } else {
+        user.failedLoginAttempts = attempts;
+        await user.save();
+
+        const remaining = 5 - attempts;
+        return NextResponse.json(
+          {
+            success: false,
+            message: `Invalid email or password. ${remaining} attempt${remaining > 1 ? 's' : ''} remaining before account lockout.`,
+          },
+          { status: 401 }
+        );
+      }
+    }
+
+    // Reset lockout counters on successful password match
+    if (user.failedLoginAttempts > 0 || user.lockUntil) {
+      user.failedLoginAttempts = 0;
+      user.lockUntil = null;
+      await user.save();
     }
 
     if (user.role === 'admin' && user.isMfaEnabled) {
