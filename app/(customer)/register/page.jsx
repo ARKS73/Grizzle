@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { User, Mail, Lock, Phone, ArrowRight, ShieldCheck, KeyRound, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { User, Mail, Lock, Phone, ArrowRight, ShieldCheck, KeyRound, RefreshCw, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toast';
 import GoogleSignInButton from '@/components/ui/GoogleSignInButton';
@@ -16,6 +16,7 @@ export default function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [phoneDigits, setPhoneDigits] = useState('');
 
   // OTP Verification state
@@ -317,8 +318,25 @@ export default function RegisterPage() {
         .auth-header { text-align: center; margin-bottom: 1.5rem; }
 
         .input-icon-wrapper { position: relative; display: flex; align-items: center; }
-        .input-icon { position: absolute; left: 14px; color: var(--text-muted); }
-        .input-icon-wrapper input { padding-left: 2.6rem; }
+        .input-icon { position: absolute; left: 14px; color: var(--text-muted); pointer-events: none; }
+        .input-icon-wrapper input { padding-left: 2.6rem; padding-right: 2.6rem; }
+        .password-toggle-btn {
+          position: absolute;
+          right: 12px;
+          background: none;
+          border: none;
+          color: var(--text-muted);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4px;
+          transition: color 0.2s ease;
+          border-radius: 4px;
+        }
+        .password-toggle-btn:hover {
+          color: var(--text-primary);
+        }
 
         /* Phone input +91 prefix badge */
         .phone-input-wrapper {

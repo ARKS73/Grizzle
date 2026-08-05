@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Mail, Lock, KeyRound, ArrowRight, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, KeyRound, ArrowRight, CheckCircle2, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 
 export default function ForgotPasswordPage() {
@@ -13,6 +13,7 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   // Step 1: Request 6-digit OTP
@@ -143,7 +144,7 @@ export default function ForgotPasswordPage() {
               <div className="input-icon-wrapper">
                 <Lock size={18} className="input-icon" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="Minimum 6 characters"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
@@ -151,6 +152,15 @@ export default function ForgotPasswordPage() {
                   minLength={6}
                   className="form-input"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="password-toggle-btn"
+                  title={showPassword ? 'Hide Password' : 'Show Password'}
+                  aria-label={showPassword ? 'Hide Password' : 'Show Password'}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </div>
 
@@ -211,9 +221,28 @@ export default function ForgotPasswordPage() {
           position: absolute;
           left: 14px;
           color: var(--text-muted);
+          pointer-events: none;
         }
         .input-icon-wrapper input {
           padding-left: 2.6rem;
+          padding-right: 2.6rem;
+        }
+        .password-toggle-btn {
+          position: absolute;
+          right: 12px;
+          background: none;
+          border: none;
+          color: var(--text-muted);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4px;
+          transition: color 0.2s ease;
+          border-radius: 4px;
+        }
+        .password-toggle-btn:hover {
+          color: var(--text-primary);
         }
 
         .otp-input {

@@ -3,7 +3,7 @@
 import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Mail, Lock, ArrowRight, ShieldCheck, Key } from 'lucide-react';
+import { Mail, Lock, ArrowRight, ShieldCheck, Key, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import GoogleSignInButton from '@/components/ui/GoogleSignInButton';
 
@@ -15,6 +15,7 @@ function LoginContent() {
   const { login, verifyMfa } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   // Step 2 MFA State
@@ -186,13 +187,22 @@ function LoginContent() {
           <div className="input-icon-wrapper">
             <Lock size={18} className="input-icon" />
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               className="form-input"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="password-toggle-btn"
+              title={showPassword ? 'Hide Password' : 'Show Password'}
+              aria-label={showPassword ? 'Hide Password' : 'Show Password'}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
         </div>
 
@@ -269,9 +279,28 @@ function LoginContent() {
           position: absolute;
           left: 14px;
           color: var(--text-muted);
+          pointer-events: none;
         }
         .input-icon-wrapper input {
           padding-left: 2.6rem;
+          padding-right: 2.6rem;
+        }
+        .password-toggle-btn {
+          position: absolute;
+          right: 12px;
+          background: none;
+          border: none;
+          color: var(--text-muted);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4px;
+          transition: color 0.2s ease;
+          border-radius: 4px;
+        }
+        .password-toggle-btn:hover {
+          color: var(--text-primary);
         }
 
         .label-row {
