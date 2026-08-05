@@ -1,0 +1,42 @@
+[debug] [2026-08-05T16:29:04.533Z] ----------------------------------------------------------------------
+[debug] [2026-08-05T16:29:04.541Z] Command:       D:\node\node.exe C:\Users\Dell\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js deploy --only auth --project grizzle-ea7bb
+[debug] [2026-08-05T16:29:04.542Z] CLI Version:   15.25.1
+[debug] [2026-08-05T16:29:04.542Z] Platform:      win32
+[debug] [2026-08-05T16:29:04.543Z] Node Version:  v24.13.1
+[debug] [2026-08-05T16:29:04.543Z] Detected Agent: antigravity
+[debug] [2026-08-05T16:29:04.543Z] Time:          Wed Aug 05 2026 21:59:04 GMT+0530 (India Standard Time)
+[debug] [2026-08-05T16:29:04.544Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-05T16:30:22.379Z] Object "/auth" in "firebase.json" has unknown property: {"additionalProperty":"authorizedDomains"}
+[debug] [2026-08-05T16:30:22.394Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-08-05T16:30:22.396Z] > authorizing via signed-in user (akaass55555@gmail.com)
+[debug] [2026-08-05T16:30:22.397Z] [iam] checking project grizzle-ea7bb for permissions ["firebase.projects.get","firebase.projects.update","firebaseauth.configs.update"]
+[debug] [2026-08-05T16:30:22.478Z] Checked if tokens are valid: false, expires at: 1785922799787
+[debug] [2026-08-05T16:30:22.479Z] Checked if tokens are valid: false, expires at: 1785922799787
+[debug] [2026-08-05T16:30:22.480Z] > refreshing access token with scopes: []
+[debug] [2026-08-05T16:30:22.492Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-08-05T16:30:22.493Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-08-05T16:30:23.041Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-08-05T16:30:23.042Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-08-05T16:30:23.138Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/grizzle-ea7bb:testIamPermissions [none]
+[debug] [2026-08-05T16:30:23.139Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/grizzle-ea7bb:testIamPermissions  x-goog-user-project=grizzle-ea7bb
+[debug] [2026-08-05T16:30:23.140Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/grizzle-ea7bb:testIamPermissions {"permissions":["firebase.projects.get","firebase.projects.update","firebaseauth.configs.update"]}
+[debug] [2026-08-05T16:30:24.985Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/grizzle-ea7bb:testIamPermissions 403
+[debug] [2026-08-05T16:30:24.986Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/grizzle-ea7bb:testIamPermissions {"error":{"code":403,"message":"Caller does not have required permission to use project grizzle-ea7bb. Grant the caller the roles/serviceusage.serviceUsageConsumer role, or a custom role with the serviceusage.services.use permission, by visiting https://console.developers.google.com/iam-admin/iam?project=grizzle-ea7bb and then retry. Propagation of the new permission may take a few minutes.","status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"USER_PROJECT_DENIED","domain":"googleapis.com","metadata":{"containerInfo":"grizzle-ea7bb","service":"cloudresourcemanager.googleapis.com","consoleUrl":"https://console.developers.google.com/iam-admin/iam?project=grizzle-ea7bb","consumer":"projects/grizzle-ea7bb"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Caller does not have required permission to use project grizzle-ea7bb. Grant the caller the roles/serviceusage.serviceUsageConsumer role, or a custom role with the serviceusage.services.use permission, by visiting https://console.developers.google.com/iam-admin/iam?project=grizzle-ea7bb and then retry. Propagation of the new permission may take a few minutes."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developer console IAM admin","url":"https://console.developers.google.com/iam-admin/iam?project=grizzle-ea7bb"}]}]}}
+[debug] [2026-08-05T16:30:24.989Z] [iam] error while checking permissions, command may fail: Request to https://cloudresourcemanager.googleapis.com/v1/projects/grizzle-ea7bb:testIamPermissions had HTTP Error: 403, Caller does not have required permission to use project grizzle-ea7bb. Grant the caller the roles/serviceusage.serviceUsageConsumer role, or a custom role with the serviceusage.services.use permission, by visiting https://console.developers.google.com/iam-admin/iam?project=grizzle-ea7bb and then retry. Propagation of the new permission may take a few minutes.
+[info] 
+[info] === Deploying to 'grizzle-ea7bb'...
+[info] 
+[info] i  deploying auth 
+[debug] [2026-08-05T16:30:24.998Z] Checked if tokens are valid: true, expires at: 1785951022043
+[debug] [2026-08-05T16:30:24.998Z] Checked if tokens are valid: true, expires at: 1785951022043
+[debug] [2026-08-05T16:30:24.999Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/grizzle-ea7bb/webApps pageSize=100
+[debug] [2026-08-05T16:30:25.795Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/grizzle-ea7bb/webApps 403
+[debug] [2026-08-05T16:30:25.795Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/grizzle-ea7bb/webApps {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-08-05T16:30:25.797Z] Request to https://firebase.googleapis.com/v1beta1/projects/grizzle-ea7bb/webApps?pageSize=100 had HTTP Error: 403, The caller does not have permission
+[debug] [2026-08-05T16:30:26.220Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/grizzle-ea7bb/webApps?pageSize=100 had HTTP Error: 403, The caller does not have permission
+    at responseToError (C:\Users\Dell\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\Dell\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\apiv2.js:415:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[error] 
+[error] Error: Failed to list Firebase WEB apps. See firebase-debug.log for more info.

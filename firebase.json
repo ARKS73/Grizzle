@@ -1,0 +1,17 @@
+{
+  "auth": {
+    "authorizedDomains": [
+      "localhost",
+      "grizzle.in",
+      "www.grizzle.in",
+      "grizzle-ea7bb.firebaseapp.com"
+    ],
+    "providers": {
+      "emailPassword": true,
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "Grizzle Apparel",
+        "supportEmail": "sridepp555555@gmail.com"
+      }
+    }
+  }
+}
