@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/Toast';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -11,6 +12,7 @@ export function CartProvider({ children }) {
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const { addToast } = useToast();
   const { user } = useAuth();
+  const router = useRouter();
 
   // Helper to sync cart state to Database for logged-in user
   const syncCartToDatabase = async (items) => {
@@ -29,66 +31,43 @@ export function CartProvider({ children }) {
   // Load cart on Mount or User Change
   useEffect(() => {
     const loadCart = async () => {
-      // Read any offline guest cart items
-      let localGuestCart = [];
-      if (typeof window !== 'undefined') {
-        const savedGuest = localStorage.getItem('grizzle_guest_cart');
-        if (savedGuest) {
-          try {
-            localGuestCart = JSON.parse(savedGuest);
-          } catch (e) {}
-        }
-      }
-
       if (user && user._id) {
         try {
           const res = await fetch('/api/cart');
           const data = await res.json();
           let dbCart = (data.success && Array.isArray(data.cartItems)) ? data.cartItems : [];
-
-          // Merge guest cart items into DB cart if guest cart existed
-          if (localGuestCart.length > 0) {
-            localGuestCart.forEach((gItem) => {
-              const idx = dbCart.findIndex(
-                (dItem) => dItem.product?._id === gItem.product?._id && dItem.size === gItem.size && dItem.color === gItem.color
-              );
-              if (idx > -1) {
-                dbCart[idx].quantity += gItem.quantity;
-              } else {
-                dbCart.push(gItem);
-              }
-            });
-            if (typeof window !== 'undefined') {
-              localStorage.removeItem('grizzle_guest_cart');
-            }
-            syncCartToDatabase(dbCart);
-          }
-
           setCartItems(dbCart);
         } catch (err) {
           console.error('Error loading DB cart:', err);
         }
       } else {
-        // Guest user cart
-        setCartItems(localGuestCart);
+        // Guests cannot hold items in cart - require login
+        setCartItems([]);
       }
     };
 
     loadCart();
   }, [user]);
 
-  // Sync to DB or localStorage whenever cart state is updated
+  // Sync to DB whenever cart state is updated
   const updateCartStateAndSync = (newCartItems) => {
     setCartItems(newCartItems);
     if (user && user._id) {
       syncCartToDatabase(newCartItems);
-    } else if (typeof window !== 'undefined') {
-      localStorage.setItem('grizzle_guest_cart', JSON.stringify(newCartItems));
     }
   };
 
   const addToCart = (product, size = 'M', color = 'Pitch Black', quantity = 1) => {
     if (!product || !product._id) return;
+
+    // Strict Rule: Only logged-in users can add items to cart
+    if (!user || !user._id) {
+      if (addToast) {
+        addToast('Please login to add products to your cart', 'info');
+      }
+      router.push('/login');
+      return;
+    }
 
     setCartItems((prev) => {
       const existingIndex = prev.findIndex(
@@ -103,12 +82,7 @@ export function CartProvider({ children }) {
         updated = [...prev, { product, size, color, quantity }];
       }
 
-      if (user && user._id) {
-        syncCartToDatabase(updated);
-      } else if (typeof window !== 'undefined') {
-        localStorage.setItem('grizzle_guest_cart', JSON.stringify(updated));
-      }
-
+      syncCartToDatabase(updated);
       return updated;
     });
 
