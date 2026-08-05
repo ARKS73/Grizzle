@@ -73,43 +73,50 @@ export default function OrderInvoicePage() {
   const steps = ['Pending', 'Processing', 'Shipped', 'Delivered'];
   const currentStepIndex = order.status === 'Cancelled' ? -1 : steps.indexOf(order.status);
 
-  // 1. Mandatory requirement: Invoice is only available when order status is Delivered
-  if (order.status !== 'Delivered') {
-    return (
-      <div className="container invoice-page-wrapper">
-        <div className="top-nav-bar no-print mb-4">
-          <Link href="/orders" className="back-link">
-            <ArrowLeft size={16} /> Back to Orders
-          </Link>
-        </div>
-
-        <div className="glass-panel text-center my-4" style={{ borderRadius: '24px', maxWidth: '640px', margin: '2rem auto', padding: '3rem 2rem' }}>
-          <ShieldCheck size={52} color="#f59e0b" style={{ margin: '0 auto 1rem auto' }} />
-          <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.75rem' }}>Invoice Available After Delivery</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '1.75rem' }}>
-            Official tax invoices are generated only once your package has been successfully <strong>Delivered</strong> to your address.
-            <br />
-            Current Order Status: <strong style={{ color: 'var(--accent-primary)', textTransform: 'uppercase' }}>{order.status}</strong>
-          </p>
-          <Link href="/orders" className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-            <ArrowLeft size={16} /> Return to Order History
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="container invoice-page-wrapper">
-      <div className="top-nav-bar no-print">
+      <div className="top-nav-bar no-print mb-4">
         <Link href="/orders" className="back-link">
-          <ArrowLeft size={16} /> Back to Orders
+          <ArrowLeft size={16} /> Back to Order History
         </Link>
 
         <div className="actions">
-          <button onClick={handlePrint} className="btn btn-primary btn-sm">
-            <Printer size={16} /> Print / Download Invoice
-          </button>
+          {order.status === 'Delivered' ? (
+            <button onClick={handlePrint} className="btn btn-primary btn-sm">
+              <Printer size={16} /> Print / Download Invoice
+            </button>
+          ) : (
+            <span
+              className="btn btn-secondary btn-sm"
+              style={{ opacity: 0.7, cursor: 'not-allowed' }}
+              title="Tax invoice will be downloadable once package is Delivered"
+            >
+              <Printer size={16} /> Invoice (Delivered Only)
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Real-Time Tracking Timeline */}
+      <div className="glass-panel p-4 mb-4" style={{ borderRadius: '20px' }}>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Truck size={20} color="var(--accent-primary)" /> Order Tracking Progress: <span style={{ color: 'var(--accent-primary)', textTransform: 'uppercase' }}>{order.status}</span>
+        </h3>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', textAlign: 'center', position: 'relative' }}>
+          {steps.map((step, idx) => {
+            const isCompleted = idx <= currentStepIndex;
+            return (
+              <div key={step} style={{ padding: '0.75rem 0.5rem', borderRadius: '12px', background: isCompleted ? 'rgba(34, 197, 94, 0.12)' : 'rgba(255, 255, 255, 0.03)', border: isCompleted ? '1px solid rgba(34, 197, 94, 0.3)' : '1px solid var(--border-color)' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: isCompleted ? '#22c55e' : 'var(--border-color)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.5rem auto', fontWeight: 800, fontSize: '0.85rem' }}>
+                  {isCompleted ? <CheckCircle2 size={18} /> : idx + 1}
+                </div>
+                <div style={{ fontWeight: isCompleted ? 800 : 500, fontSize: '0.85rem', color: isCompleted ? '#22c55e' : 'var(--text-muted)' }}>
+                  {step}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 

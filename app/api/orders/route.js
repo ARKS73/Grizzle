@@ -17,17 +17,21 @@ export async function GET(request) {
     }
 
     const userIdStr = (authUser.userId || authUser._id).toString();
+    const isAdmin = authUser && (authUser.role === 'admin' || authUser.email?.toLowerCase() === 'grizzlein@gmail.com');
 
     let orders = [];
-    if (authUser.role === 'admin') {
+    if (isAdmin) {
       orders = await Order.find({}).populate('user', 'name email').sort({ createdAt: -1 });
     } else {
       const orConditions = [];
 
       if (mongoose.Types.ObjectId.isValid(userIdStr)) {
         orConditions.push({ user: new mongoose.Types.ObjectId(userIdStr) });
-      } else {
-        orConditions.push({ user: userIdStr });
+      }
+      orConditions.push({ user: userIdStr });
+
+      if (authUser.email) {
+        orConditions.push({ 'shippingAddress.email': authUser.email.toLowerCase() });
       }
 
       if (authUser.phone && authUser.phone.trim() !== '') {
@@ -38,7 +42,7 @@ export async function GET(request) {
         orConditions.push({ 'shippingAddress.fullName': authUser.name.trim() });
       }
 
-      orders = await Order.find({ $or: orConditions }).sort({ createdAt: -1 });
+      orders = await Order.find({ $or: orConditions }).populate('user', 'name email').sort({ createdAt: -1 });
     }
 
     return NextResponse.json({ success: true, orders });

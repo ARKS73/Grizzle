@@ -105,16 +105,12 @@ export default function OrderHistoryPage() {
                 <div className="action-btns">
                   {order.status === 'Delivered' ? (
                     <Link href={`/orders/${order._id}`} className="btn btn-primary btn-sm">
-                      <FileText size={16} /> View Invoice
+                      <FileText size={16} /> View Invoice & Receipt
                     </Link>
                   ) : (
-                    <span
-                      className="btn btn-secondary btn-sm"
-                      style={{ opacity: 0.65, cursor: 'not-allowed' }}
-                      title="Invoice is available once item is Delivered"
-                    >
-                      <FileText size={16} /> Invoice (Delivered Only)
-                    </span>
+                    <Link href={`/orders/${order._id}`} className="btn btn-secondary btn-sm">
+                      <Truck size={16} /> Track Shipment Details
+                    </Link>
                   )}
                 </div>
               </div>
