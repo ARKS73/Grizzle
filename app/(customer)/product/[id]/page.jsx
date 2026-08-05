@@ -38,24 +38,31 @@ export default function ProductDetailPage() {
         setSelectedImage(prod.images?.[0] || '');
         setSelectedSize(prod.sizes?.[0] || 'M');
         setSelectedColor(''); // Default: Show All Colors Mode
+        setLoading(false); // Unblock UI immediately for instant rendering
 
-        // Fetch related products
-        const relRes = await fetch(`/api/products?category=${encodeURIComponent(prod.category)}&limit=4`);
-        const relData = await relRes.json();
-        if (relData.success) {
-          setRelatedProducts((relData.products || []).filter((p) => p._id !== prod._id));
+        // Preload primary Cloudinary image in browser cache for 0ms delay
+        if (prod.images?.[0] && typeof window !== 'undefined') {
+          const imgPreload = new Image();
+          imgPreload.src = getOptimizedImageUrl(prod.images[0], 800, 80);
         }
 
-        // Fetch product reviews
-        const revRes = await fetch(`/api/reviews?productId=${prod._id}`);
-        const revData = await revRes.json();
-        if (revData.success) {
-          setReviews(revData.reviews || []);
-        }
+        // Fetch related products & reviews asynchronously in parallel background
+        Promise.all([
+          fetch(`/api/products?category=${encodeURIComponent(prod.category)}&limit=4`).then((r) => r.json()).catch(() => null),
+          fetch(`/api/reviews?productId=${prod._id}`).then((r) => r.json()).catch(() => null),
+        ]).then(([relData, revData]) => {
+          if (relData?.success) {
+            setRelatedProducts((relData.products || []).filter((p) => p._id !== prod._id));
+          }
+          if (revData?.success) {
+            setReviews(revData.reviews || []);
+          }
+        });
+      } else {
+        setLoading(false);
       }
     } catch (e) {
       console.error('Fetch product detail error:', e);
-    } finally {
       setLoading(false);
     }
   };
@@ -111,7 +118,7 @@ export default function ProductDetailPage() {
         <div className="product-gallery-box">
           <div className="main-image-container glass-panel">
             <img
-              src={getOptimizedImageUrl(selectedImage || displayedThumbnails[0] || '/placeholder.png', 800, 85)}
+              src={getOptimizedImageUrl(selectedImage || displayedThumbnails[0] || '/logo2.png', 800, 80)}
               alt={product.name}
               className="main-product-img"
               loading="eager"
@@ -131,7 +138,11 @@ export default function ProductDetailPage() {
                   onClick={() => setSelectedImage(img)}
                   className={`thumbnail-card ${selectedImage === img ? 'active' : ''}`}
                 >
-                  <img src={img} alt={`Thumb ${idx}`} />
+                  <img
+                    src={getOptimizedImageUrl(img, 180, 70)}
+                    alt={`Thumb ${idx}`}
+                    loading="lazy"
+                  />
                 </div>
               ))}
             </div>

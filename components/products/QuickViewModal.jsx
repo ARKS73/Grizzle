@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { X, Star, ShoppingBag, Heart, Check, Truck, ShieldCheck, ArrowRight } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
+import { getOptimizedImageUrl } from '@/utils/imageOptimizer';
 
 export default function QuickViewModal({ product, onClose }) {
   const router = useRouter();
@@ -36,7 +37,13 @@ export default function QuickViewModal({ product, onClose }) {
           {/* Gallery */}
           <div className="quickview-gallery">
             <div className="main-image-box">
-              <img src={selectedImage || activeColorImg || product.images?.[0]} alt={product.name} className="main-image" />
+              <img
+                src={getOptimizedImageUrl(selectedImage || activeColorImg || product.images?.[0] || '/logo2.png', 600, 80)}
+                alt={product.name}
+                className="main-image"
+                loading="eager"
+                decoding="async"
+              />
             </div>
             {displayedThumbnails.length > 1 && (
               <div className="thumbnails-row">
@@ -46,7 +53,7 @@ export default function QuickViewModal({ product, onClose }) {
                     onClick={() => setSelectedImage(img)}
                     className={`thumb-btn ${selectedImage === img ? 'active' : ''}`}
                   >
-                    <img src={img} alt={`thumb-${idx}`} />
+                    <img src={getOptimizedImageUrl(img, 150, 70)} alt={`thumb-${idx}`} loading="lazy" />
                   </button>
                 ))}
               </div>
