@@ -80,6 +80,33 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const loginWithGoogle = async (idToken) => {
+    try {
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        addToast(data.message || 'Google Sign-In failed', 'error');
+        return { success: false, message: data.message };
+      }
+
+      if (data.requiresMfa) {
+        addToast('Authenticator Security Verification Required', 'info');
+        return { success: true, requiresMfa: true, tempToken: data.tempToken };
+      }
+
+      setUser(data.user);
+      addToast(`Welcome to Grizzle, ${data.user.name.split(' ')[0]}!`, 'success');
+      return { success: true, user: data.user };
+    } catch (err) {
+      addToast('Google authentication error', 'error');
+      return { success: false, message: err.message };
+    }
+  };
+
   const register = async (name, email, password, phone) => {
     try {
       const res = await fetch('/api/auth/register', {
@@ -137,7 +164,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, verifyMfa, register, logout, updateProfile, refreshUser: fetchUser }}>
+    <AuthContext.Provider value={{ user, loading, login, loginWithGoogle, verifyMfa, register, logout, updateProfile, refreshUser: fetchUser }}>
       {children}
     </AuthContext.Provider>
   );

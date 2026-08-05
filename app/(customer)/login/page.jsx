@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Mail, Lock, ArrowRight, ShieldCheck, Key } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import GoogleSignInButton from '@/components/ui/GoogleSignInButton';
 
 function LoginContent() {
   const router = useRouter();
@@ -200,6 +201,14 @@ function LoginContent() {
         </button>
       </form>
 
+      <div className="auth-divider">
+        <span>OR</span>
+      </div>
+
+      <div className="google-btn-wrapper">
+        <GoogleSignInButton text="Continue with Google" redirect={redirect} />
+      </div>
+
       <div className="auth-footer">
         Don&apos;t have an account? <Link href="/register" className="auth-link">Create Account</Link>
       </div>
@@ -211,6 +220,26 @@ function LoginContent() {
           max-width: 440px;
           padding: 2.5rem;
           border-radius: var(--radius-lg);
+        }
+        .auth-divider {
+          display: flex;
+          align-items: center;
+          text-align: center;
+          margin: 1.25rem 0;
+          color: var(--text-muted, #64748b);
+          font-size: 0.78rem;
+          font-weight: 700;
+        }
+        .auth-divider::before, .auth-divider::after {
+          content: '';
+          flex: 1;
+          border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.1));
+        }
+        .auth-divider span {
+          padding: 0 0.75rem;
+        }
+        .google-btn-wrapper {
+          margin-bottom: 1.25rem;
         }
         .auth-header {
           text-align: center;

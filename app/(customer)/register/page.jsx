@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { User, Mail, Lock, Phone, ArrowRight, ShieldCheck, KeyRound, RefreshCw, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toast';
+import GoogleSignInButton from '@/components/ui/GoogleSignInButton';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -262,12 +263,44 @@ export default function RegisterPage() {
           </form>
         )}
 
+        {step === 'FORM' && (
+          <>
+            <div className="auth-divider">
+              <span>OR</span>
+            </div>
+
+            <div className="google-btn-wrapper">
+              <GoogleSignInButton text="Sign Up with Google" />
+            </div>
+          </>
+        )}
+
         <div className="auth-footer">
           Already registered? <Link href="/login" className="auth-link">Sign In</Link>
         </div>
       </div>
 
       <style jsx>{`
+        .auth-divider {
+          display: flex;
+          align-items: center;
+          text-align: center;
+          margin: 1.25rem 0;
+          color: var(--text-muted, #64748b);
+          font-size: 0.78rem;
+          font-weight: 700;
+        }
+        .auth-divider::before, .auth-divider::after {
+          content: '';
+          flex: 1;
+          border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.1));
+        }
+        .auth-divider span {
+          padding: 0 0.75rem;
+        }
+        .google-btn-wrapper {
+          margin-bottom: 1.25rem;
+        }
         .auth-page-wrapper {
           display: flex;
           align-items: center;
