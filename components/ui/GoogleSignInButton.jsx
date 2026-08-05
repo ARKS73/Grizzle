@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithPopup, signInWithRedirect } from 'firebase/auth';
+import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toast';
+
+const GOOGLE_CLIENT_ID = '898635454432-ncld09i6nkkn87m4k5rb6nv2s15nn9nl.apps.googleusercontent.com';
 
 export default function GoogleSignInButton({ text = 'Continue with Google', redirect = '/' }) {
   const router = useRouter();
@@ -13,12 +15,68 @@ export default function GoogleSignInButton({ text = 'Continue with Google', redi
   const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
 
+  // Load official Google Identity Services (GIS) script
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const scriptId = 'google-gsi-script';
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement('script');
+      script.id = scriptId;
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+  }, []);
+
   const handleGoogleClick = async () => {
     if (loading) return;
-    try {
-      setLoading(true);
+    setLoading(true);
 
-      // Trigger Firebase Google Sign-In Popup
+    // Try Google Identity Services (GIS) native prompt first
+    if (typeof window !== 'undefined' && window.google?.accounts?.id) {
+      try {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: async (response) => {
+            if (response.credential) {
+              const result = await loginWithGoogle(response.credential);
+              if (result?.success) {
+                if (result.user?.role === 'admin') {
+                  router.push('/admin');
+                } else if (redirect && redirect !== '/login' && redirect !== '/') {
+                  router.push(redirect);
+                } else {
+                  router.push('/');
+                }
+              } else {
+                addToast(result?.message || 'Google sign in failed', 'error');
+              }
+            }
+            setLoading(false);
+          },
+        });
+
+        // Prompt Google Account Chooser
+        window.google.accounts.id.prompt((notification) => {
+          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            // Fallback to Firebase Auth Popup if GIS prompt is skipped
+            fallbackFirebasePopup();
+          }
+        });
+        return;
+      } catch (gisErr) {
+        console.warn('GIS prompt skipped, invoking Firebase popup:', gisErr);
+      }
+    }
+
+    // Fallback: Firebase Auth Popup
+    await fallbackFirebasePopup();
+  };
+
+  const fallbackFirebasePopup = async () => {
+    try {
       const userCredential = await signInWithPopup(auth, googleProvider);
       const idToken = await userCredential.user.getIdToken();
 
@@ -37,15 +95,9 @@ export default function GoogleSignInButton({ text = 'Continue with Google', redi
     } catch (error) {
       console.error('Google Sign-In Error:', error);
       if (error.code === 'auth/popup-closed-by-user') {
-        // User closed popup
+        // Closed by user
       } else if (error.code === 'auth/unauthorized-domain') {
-        addToast('Domain not authorized! Add your current URL in Firebase Console Settings -> Authorized Domains', 'error');
-      } else if (error.code === 'auth/popup-blocked') {
-        try {
-          await signInWithRedirect(auth, googleProvider);
-        } catch (e) {
-          addToast(e.message || 'Popup blocked by browser', 'error');
-        }
+        addToast('Domain not authorized! Add your current domain in Firebase Console -> Settings -> Authorized Domains', 'error');
       } else {
         addToast(error.message || 'Google Sign-In failed', 'error');
       }
