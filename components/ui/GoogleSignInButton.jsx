@@ -67,35 +67,13 @@ export default function GoogleSignInButton({ text = 'Continue with Google', redi
     processOAuthReturn();
   }, []);
 
-  const handleGoogleClick = async () => {
+  const handleGoogleClick = () => {
     try {
       setLoading(true);
-
-      // Attempt 1: Standard Firebase Popup
-      try {
-        const userCredential = await signInWithPopup(auth, googleProvider);
-        const idToken = await userCredential.user.getIdToken();
-
-        const result = await loginWithGoogle(idToken);
-        if (result?.success) {
-          if (result.user?.role === 'admin') {
-            router.push('/admin');
-          } else if (redirect && redirect !== '/login' && redirect !== '/') {
-            router.push(redirect);
-          } else {
-            router.push('/');
-          }
-          return;
-        }
-      } catch (popupErr) {
-        console.warn('Firebase popup flow skipped or blocked, triggering direct Google OAuth:', popupErr.message);
-      }
-
-      // Attempt 2: Direct Google OAuth 2.0 Authorization URL (Bypasses handler iframe)
       const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://www.grizzle.in';
       const redirectUri = `${currentOrigin}/login`;
       const nonce = Math.random().toString(36).substring(2);
-      
+
       const directGoogleUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(
         redirectUri
       )}&response_type=id_token&scope=openid%20email%20profile&nonce=${nonce}`;
