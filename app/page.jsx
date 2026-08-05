@@ -2,20 +2,20 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { 
-  Sparkles, 
-  ArrowRight, 
-  Heart, 
-  Eye, 
-  ShoppingBag, 
-  Star, 
-  Check, 
-  Flame, 
-  Zap, 
-  X, 
-  ShieldCheck, 
-  Truck, 
-  RotateCcw, 
+import {
+  Sparkles,
+  ArrowRight,
+  Heart,
+  Eye,
+  ShoppingBag,
+  Star,
+  Check,
+  Flame,
+  Zap,
+  X,
+  ShieldCheck,
+  Truck,
+  RotateCcw,
   Headphones,
   Tag,
   Layers
@@ -121,7 +121,7 @@ export default function SinglePageStreetwearStore() {
     <div className="single-page-wrapper">
       {/* 240-Frame Interactive Global Background Scroll Canvas */}
       <GlobalScrollCanvas />
-      
+
       {/* =========================================================================
          SECTION 1: HERO BANNER (Matching Image Section 1)
          ========================================================================= */}
@@ -172,10 +172,10 @@ export default function SinglePageStreetwearStore() {
               <h2 className="drops-title">LATEST DROPS</h2>
               <p className="drops-subtitle">OFFICIAL 2026 COLLECTION / WINTER 2026</p>
             </div>
-            
+
             {/* Filter Pills */}
             <div className="category-filter-tabs">
-              <button 
+              <button
                 className={`filter-tab ${activeCategory === 'ALL' ? 'active' : ''}`}
                 onClick={() => setActiveCategory('ALL')}
               >
@@ -217,20 +217,20 @@ export default function SinglePageStreetwearStore() {
                 return (
                   <div key={product._id} className="pastel-card-wrapper">
                     {/* Uniform Image Block */}
-                    <div 
-                      className="pastel-image-block" 
+                    <div
+                      className="pastel-image-block"
                       onClick={() => setQuickViewProduct(product)}
                       title="Click to view product details"
                     >
-                      <img 
-                        src={product.images?.[0] || '/logo2.png'} 
+                      <img
+                        src={product.images?.[0] || '/logo2.png'}
                         alt={product.name}
                         className="pastel-product-img"
                       />
 
                       {/* Action Overlay */}
                       <div className="pastel-action-overlay">
-                        <button 
+                        <button
                           onClick={(e) => {
                             e.stopPropagation();
                             toggleWishlist(product);
@@ -253,7 +253,7 @@ export default function SinglePageStreetwearStore() {
 
                     {/* Bottom Dark Info Bar */}
                     <div className="pastel-card-info">
-                      <div 
+                      <div
                         className="info-text-box"
                         style={{ cursor: 'pointer' }}
                         onClick={() => setQuickViewProduct(product)}
@@ -262,7 +262,7 @@ export default function SinglePageStreetwearStore() {
                         <span className="pastel-card-price">₹{product.price?.toFixed(0)}</span>
                       </div>
 
-                      <button 
+                      <button
                         onClick={() => addToCart(product, product.sizes?.[0] || 'M', product.colors?.[0]?.name || 'Default', 1)}
                         className="pastel-add-btn"
                         title="Add to Cart"
@@ -289,7 +289,7 @@ export default function SinglePageStreetwearStore() {
               <h2 className="drops-title">MEN&apos;S COLLECTION</h2>
               <p className="drops-subtitle">240 GSM HEAVYWEIGHT TEES, OVERSIZED CUTS & DESI GRAPHICS</p>
             </div>
-            
+
             <Link href="/products?gender=Men" className="btn-street-dark">
               SHOP MEN&apos;S FILTERS &rarr;
             </Link>
@@ -317,18 +317,18 @@ export default function SinglePageStreetwearStore() {
 
                 return (
                   <div key={product._id} className="pastel-card-wrapper">
-                    <div 
-                      className="pastel-image-block" 
+                    <div
+                      className="pastel-image-block"
                       onClick={() => setQuickViewProduct(product)}
                       title="Click to view product details"
                     >
-                      <img 
-                        src={product.images?.[0] || '/logo2.png'} 
+                      <img
+                        src={product.images?.[0] || '/logo2.png'}
                         alt={product.name}
                         className="pastel-product-img"
                       />
                       <div className="pastel-action-overlay">
-                        <button 
+                        <button
                           onClick={(e) => {
                             e.stopPropagation();
                             toggleWishlist(product);
@@ -343,7 +343,7 @@ export default function SinglePageStreetwearStore() {
                     </div>
 
                     <div className="pastel-card-info">
-                      <div 
+                      <div
                         className="info-text-box"
                         style={{ cursor: 'pointer' }}
                         onClick={() => setQuickViewProduct(product)}
@@ -352,7 +352,7 @@ export default function SinglePageStreetwearStore() {
                         <span className="pastel-card-price">₹{product.price?.toFixed(0)}</span>
                       </div>
 
-                      <button 
+                      <button
                         onClick={() => addToCart(product, product.sizes?.[0] || 'M', product.colors?.[0]?.name || 'Default', 1)}
                         className="pastel-add-btn"
                         title="Add to Cart"
@@ -385,7 +385,7 @@ export default function SinglePageStreetwearStore() {
               <h2 className="drops-title">WOMEN&apos;S COLLECTION</h2>
               <p className="drops-subtitle">AESTHETIC MINIMALIST LINE ART, PASTELS & SOFT BIO-WASHED TEES</p>
             </div>
-            
+
             <Link href="/products?gender=Women" className="btn-street-light">
               SHOP WOMEN&apos;S FILTERS &rarr;
             </Link>
@@ -413,54 +413,54 @@ export default function SinglePageStreetwearStore() {
 
                 return (
                   <div key={product._id} className="pastel-card-wrapper">
-                    <div 
-                      className="pastel-image-block" 
+                    <div
+                      className="pastel-image-block"
                       onClick={() => setQuickViewProduct(product)}
                       title="Click to view product details"
                     >
-                      <img 
-                        src={product.images?.[0] || '/logo2.png'} 
+                      <img
+                        src={product.images?.[0] || '/logo2.png'}
                         alt={product.name}
                         className="pastel-product-img"
                       />
-                    <div className="pastel-action-overlay">
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleWishlist(product);
-                        }}
-                        className={`pastel-icon-btn ${isSaved ? 'saved' : ''}`}
-                        title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                      <div className="pastel-action-overlay">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleWishlist(product);
+                          }}
+                          className={`pastel-icon-btn ${isSaved ? 'saved' : ''}`}
+                          title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                        >
+                          <Heart size={16} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : '#1e293b'} />
+                        </button>
+                      </div>
+                      {product.isTrending && <span className="pastel-tag-badge badge-trending">TRENDING</span>}
+                    </div>
+
+                    <div className="pastel-card-info">
+                      <div
+                        className="info-text-box"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setQuickViewProduct(product)}
                       >
-                        <Heart size={16} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : '#1e293b'} />
+                        <h4 className="pastel-card-title">{product.name}</h4>
+                        <span className="pastel-card-price">₹{product.price?.toFixed(0)}</span>
+                      </div>
+
+                      <button
+                        onClick={() => addToCart(product, product.sizes?.[0] || 'M', product.colors?.[0]?.name || 'Default', 1)}
+                        className="pastel-add-btn"
+                        title="Add to Cart"
+                      >
+                        <ShoppingBag size={15} />
                       </button>
                     </div>
-                    {product.isTrending && <span className="pastel-tag-badge badge-trending">TRENDING</span>}
                   </div>
-
-                  <div className="pastel-card-info">
-                    <div 
-                      className="info-text-box"
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => setQuickViewProduct(product)}
-                    >
-                      <h4 className="pastel-card-title">{product.name}</h4>
-                      <span className="pastel-card-price">₹{product.price?.toFixed(0)}</span>
-                    </div>
-
-                    <button 
-                      onClick={() => addToCart(product, product.sizes?.[0] || 'M', product.colors?.[0]?.name || 'Default', 1)}
-                      className="pastel-add-btn"
-                      title="Add to Cart"
-                    >
-                      <ShoppingBag size={15} />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          )}
 
           <div className="collection-cta-wrapper">
             <Link href="/products?gender=Women" className="collection-filter-cta-btn">
@@ -494,7 +494,7 @@ export default function SinglePageStreetwearStore() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
               {categories.map((cat) => {
                 // Find all admin-added products belonging to this category
-                const catProds = allProducts.filter(p => 
+                const catProds = allProducts.filter(p =>
                   p.category?.toLowerCase() === cat.name?.toLowerCase()
                 );
 
@@ -512,8 +512,8 @@ export default function SinglePageStreetwearStore() {
                 if (!displayImg) displayImg = '/logo2.png';
 
                 return (
-                  <Link 
-                    key={cat._id || cat.slug} 
+                  <Link
+                    key={cat._id || cat.slug}
                     href={`/products?category=${encodeURIComponent(cat.name)}`}
                     className="glass-panel"
                     style={{
@@ -528,9 +528,9 @@ export default function SinglePageStreetwearStore() {
                       background: 'var(--bg-secondary)',
                     }}
                   >
-                    <img 
-                      src={displayImg} 
-                      alt={cat.name} 
+                    <img
+                      src={displayImg}
+                      alt={cat.name}
                       style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: 'var(--radius-md)' }}
                     />
                     <h4 style={{ fontSize: '1rem', fontWeight: '800' }}>{cat.name}</h4>
@@ -582,8 +582,8 @@ export default function SinglePageStreetwearStore() {
                 <p>3. High-density screen prints and custom DTF ink formulas that resist cracking for 50+ washes.</p>
                 <p>4. Direct profit sharing with independent graphic artists & street painters across India.</p>
               </div>
-              <button 
-                onClick={() => setManifestoOpen(false)} 
+              <button
+                onClick={() => setManifestoOpen(false)}
                 className="btn btn-primary btn-block"
                 style={{ marginTop: '1.5rem' }}
               >
@@ -613,7 +613,7 @@ export default function SinglePageStreetwearStore() {
                     <h4>{prod.name}</h4>
                     <span className="lookbook-item-price">₹{prod.price?.toFixed(0)}</span>
                   </div>
-                  <button 
+                  <button
                     onClick={() => {
                       addToCart(prod, 'M', 'Default', 1);
                       addToast(`Added ${prod.name} to cart!`, 'success');
@@ -808,9 +808,9 @@ export default function SinglePageStreetwearStore() {
         .btn-street-light,
         [data-theme='light'] a.btn-street-light,
         [data-theme='dark'] a.btn-street-light {
-          background: rgba(255, 255, 255, 0.18) !important;
+          background: rgba(255, 255, 255, 1) !important;
           color: #ffffff !important;
-          border: 1px solid rgba(255, 255, 255, 0.4) !important;
+          border: 1px solid rgba(255, 255, 255, 1) !important;
           backdrop-filter: blur(12px);
           padding: 0.95rem 2.2rem;
           font-weight: 800;
@@ -826,11 +826,11 @@ export default function SinglePageStreetwearStore() {
         .btn-street-light:hover,
         [data-theme='light'] a.btn-street-light:hover,
         [data-theme='dark'] a.btn-street-light:hover {
-          background: rgba(255, 255, 255, 0.32) !important;
+          background: rgba(255, 255, 255, 0.96) !important;
           color: #ffffff !important;
           border-color: #ffffff !important;
           transform: translateY(-3px);
-          box-shadow: 0 8px 20px rgba(255, 255, 255, 0.25);
+          box-shadow: 0 8px 20px rgba(255, 255, 255, 0.94);
         }
 
         /* Hero Visual Frame */
