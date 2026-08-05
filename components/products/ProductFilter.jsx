@@ -16,7 +16,7 @@ const COLORS = [
   { name: 'Green', hex: '#14532d' },
 ];
 
-export default function ProductFilter({ filters, setFilters, onReset }) {
+export default function ProductFilter({ filters, setFilters, onReset, hideHeader = false }) {
   const [categoriesList, setCategoriesList] = useState([]);
 
   useEffect(() => {
@@ -58,15 +58,17 @@ export default function ProductFilter({ filters, setFilters, onReset }) {
 
   return (
     <div className="filter-sidebar glass-panel">
-      <div className="filter-header">
-        <div className="filter-title-box">
-          <SlidersHorizontal size={18} className="filter-title-icon" />
-          <h3>Filters</h3>
+      {!hideHeader && (
+        <div className="filter-header">
+          <div className="filter-title-box">
+            <SlidersHorizontal size={18} className="filter-title-icon" />
+            <h3>Filters</h3>
+          </div>
+          <button onClick={onReset} className="reset-btn">
+            <RotateCcw size={14} /> Reset
+          </button>
         </div>
-        <button onClick={onReset} className="reset-btn">
-          <RotateCcw size={14} /> Reset
-        </button>
-      </div>
+      )}
 
       {/* Gender Collection Section */}
       <div className="filter-group">

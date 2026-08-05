@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/products/ProductCard';
 import ProductFilter from '@/components/products/ProductFilter';
 import QuickViewModal from '@/components/products/QuickViewModal';
-import { Search, SlidersHorizontal, ArrowUpDown, RefreshCw, X } from 'lucide-react';
+import { Search, SlidersHorizontal, ArrowUpDown, RefreshCw, X, RotateCcw } from 'lucide-react';
 
 function ProductsCatalogContent() {
   const searchParams = useSearchParams();
@@ -67,35 +67,11 @@ function ProductsCatalogContent() {
         setTotalPages(data.totalPages || 1);
       }
     } catch (e) {
-      console.error('Fetch products error:', e);
+      console.error('Failed to fetch products:', e);
     } finally {
       setLoading(false);
     }
   }, [filters]);
-
-  // Scroll Position Restoration for products page
-  useEffect(() => {
-    const handleScroll = () => {
-      sessionStorage.setItem('scroll_pos_products', window.scrollY.toString());
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    const savedPos = sessionStorage.getItem('scroll_pos_products');
-    if (savedPos && parseInt(savedPos, 10) > 0) {
-      const pos = parseInt(savedPos, 10);
-      const timer1 = setTimeout(() => window.scrollTo(0, pos), 100);
-      const timer2 = setTimeout(() => window.scrollTo(0, pos), 400);
-      return () => {
-        clearTimeout(timer1);
-        clearTimeout(timer2);
-        window.removeEventListener('scroll', handleScroll);
-      };
-    }
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   useEffect(() => {
     fetchProducts();
@@ -118,54 +94,28 @@ function ProductsCatalogContent() {
 
   return (
     <div className="container products-page-wrapper">
-      {/* Top Banner Header */}
+      {/* Top Banner / Breadcrumb */}
       <div className="page-header glass-panel">
         <div>
-          <h1>
-            {filters.gender 
-              ? `${filters.gender}'s Custom DTF Collection` 
-              : filters.category 
-              ? `${filters.category}` 
-              : 'All DTF Printed Collections'}
-          </h1>
-          <p>Explore high-density DTF printed oversized tees, desi typography, Japanese manga art, and 240 GSM bio-washed cotton drops.</p>
+          <h1>STREETWEAR CATALOG &amp; DROPS</h1>
+          <p>Discover high-density DTF printed 240 GSM bio-washed heavy cotton oversized tees.</p>
         </div>
         <button
-          onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
+          onClick={() => setMobileFilterOpen(true)}
           className="btn btn-secondary mobile-filter-btn"
         >
-          <SlidersHorizontal size={18} /> Filters
+          <SlidersHorizontal size={16} /> Filters &amp; Refinements
         </button>
       </div>
 
       <div className="catalog-layout">
-        {/* Filter Sidebar */}
-        <aside className={`sidebar-box ${mobileFilterOpen ? 'open' : ''}`}>
-          {mobileFilterOpen && (
-            <div className="mobile-drawer-header mb-3 d-flex justify-content-between align-items-center">
-              <span className="font-bold">Filters & Refinements</span>
-              <button
-                onClick={() => setMobileFilterOpen(false)}
-                className="btn btn-secondary btn-sm d-flex align-items-center gap-1"
-              >
-                <X size={16} /> Close
-              </button>
-            </div>
-          )}
+        {/* Desktop Filter Sidebar */}
+        <aside className="sidebar-box desktop-sidebar">
           <ProductFilter
             filters={filters}
             setFilters={setFilters}
             onReset={handleResetFilters}
           />
-          {mobileFilterOpen && (
-            <button
-              onClick={() => setMobileFilterOpen(false)}
-              className="btn btn-primary w-100 mt-3 font-bold"
-              style={{ padding: '0.6rem' }}
-            >
-              Show {products.length} Products
-            </button>
-          )}
         </aside>
 
         {/* Main Products Grid & Toolbar */}
@@ -253,6 +203,56 @@ function ProductsCatalogContent() {
           )}
         </main>
       </div>
+
+      {/* Mobile Filter Slide-Over Drawer Sheet */}
+      {mobileFilterOpen && (
+        <div className="mobile-filter-drawer-root">
+          <div
+            className="mobile-filter-backdrop"
+            onClick={() => setMobileFilterOpen(false)}
+          />
+          <div className="mobile-filter-sheet">
+            <div className="sheet-header">
+              <div className="sheet-title-box">
+                <SlidersHorizontal size={18} className="sheet-title-icon" />
+                <h3 className="sheet-title">Filters &amp; Refinements</h3>
+              </div>
+              <button
+                onClick={() => setMobileFilterOpen(false)}
+                className="sheet-close-btn"
+                aria-label="Close filters"
+                title="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="sheet-body">
+              <ProductFilter
+                filters={filters}
+                setFilters={setFilters}
+                onReset={handleResetFilters}
+                hideHeader={true}
+              />
+            </div>
+
+            <div className="sheet-footer">
+              <button
+                onClick={handleResetFilters}
+                className="btn btn-secondary sheet-reset-btn"
+              >
+                <RotateCcw size={14} /> Reset
+              </button>
+              <button
+                onClick={() => setMobileFilterOpen(false)}
+                className="btn btn-primary sheet-apply-btn"
+              >
+                Show {products.length} Products
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Quick View Modal */}
       {quickViewProduct && (
@@ -362,21 +362,8 @@ function ProductsCatalogContent() {
             grid-template-columns: 1fr;
             gap: 1rem;
           }
-          .sidebar-box {
+          .desktop-sidebar {
             display: none;
-          }
-          .sidebar-box.open {
-            display: block;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 99999;
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(12px);
-            padding: 1.25rem;
-            overflow-y: auto;
           }
           .controls-bar {
             padding: 0.6rem 0.85rem;
@@ -408,6 +395,123 @@ function ProductsCatalogContent() {
           .page-indicator {
             font-size: 0.8rem;
           }
+        }
+
+        /* Mobile Filter Sheet */
+        .mobile-filter-drawer-root {
+          position: fixed;
+          inset: 0;
+          z-index: 99999;
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
+        }
+        .mobile-filter-backdrop {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.65);
+          backdrop-filter: blur(8px);
+          z-index: 1;
+          animation: fadeIn 0.2s ease-out;
+        }
+        .mobile-filter-sheet {
+          position: relative;
+          z-index: 2;
+          width: 100vw;
+          max-height: 85vh;
+          background: var(--bg-secondary);
+          border-top-left-radius: 20px;
+          border-top-right-radius: 20px;
+          border-top: 1px solid var(--border-color);
+          box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          animation: slideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .sheet-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 1rem 1.25rem;
+          background: var(--bg-secondary);
+          border-bottom: 1px solid var(--border-color);
+          flex-shrink: 0;
+        }
+        .sheet-title-box {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        .sheet-title-icon {
+          color: var(--accent-primary);
+        }
+        .sheet-title {
+          font-size: 1rem;
+          font-weight: 800;
+          color: var(--text-primary);
+          margin: 0;
+        }
+        .sheet-close-btn {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          border: 1px solid var(--border-color);
+          background: var(--bg-tertiary);
+          color: var(--text-primary);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .sheet-close-btn:active {
+          transform: scale(0.9);
+          background: var(--accent-light);
+          color: var(--accent-primary);
+        }
+        .sheet-body {
+          flex: 1;
+          overflow-y: auto;
+          padding: 1rem 1.25rem;
+          -webkit-overflow-scrolling: touch;
+        }
+        .sheet-footer {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 0.85rem 1.25rem;
+          background: var(--bg-secondary);
+          border-top: 1px solid var(--border-color);
+          flex-shrink: 0;
+        }
+        .sheet-reset-btn {
+          font-size: 0.85rem;
+          font-weight: 700;
+          padding: 0.65rem 1rem;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          border-radius: var(--radius-md);
+        }
+        .sheet-apply-btn {
+          flex: 1;
+          font-size: 0.88rem !important;
+          font-weight: 800 !important;
+          padding: 0.65rem 1rem !important;
+          border-radius: var(--radius-md);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideUp {
+          from { transform: translateY(100%); }
+          to { transform: translateY(0); }
         }
       `}</style>
     </div>
