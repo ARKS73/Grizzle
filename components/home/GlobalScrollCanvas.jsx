@@ -14,25 +14,43 @@ export default function GlobalScrollCanvas() {
   const imagesRef = useRef([]);
   const [imagesLoaded, setImagesLoaded] = useState(false);
 
-  // Preload 240 frames (used only in dark mode)
+  // Progressive non-blocking frame preloader (prevents network saturation on page load)
   useEffect(() => {
-    let loadedCount = 0;
-    const loadedImages = [];
+    const loadedImages = new Array(TOTAL_FRAMES);
 
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
-      const img = new Image();
-      img.src = getFramePath(i);
-      img.onload = () => {
-        loadedCount++;
-        if (loadedCount === TOTAL_FRAMES) setImagesLoaded(true);
-      };
-      img.onerror = () => {
-        loadedCount++;
-        if (loadedCount === TOTAL_FRAMES) setImagesLoaded(true);
-      };
-      loadedImages.push(img);
-    }
+    // 1. Load Frame 1 immediately so initial canvas renders with 0ms delay
+    const firstImg = new Image();
+    firstImg.src = getFramePath(1);
+    firstImg.onload = () => {
+      renderFrame(1);
+    };
+    loadedImages[0] = firstImg;
     imagesRef.current = loadedImages;
+
+    // 2. Defer background preloading of remaining 239 frames until after UI mounts
+    const timer = setTimeout(() => {
+      let idx = 2;
+      const loadNextBatch = () => {
+        const end = Math.min(idx + 15, TOTAL_FRAMES);
+        for (; idx <= end; idx++) {
+          const img = new Image();
+          img.src = getFramePath(idx);
+          loadedImages[idx - 1] = img;
+        }
+        if (idx <= TOTAL_FRAMES) {
+          if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+            window.requestIdleCallback(loadNextBatch, { timeout: 1000 });
+          } else {
+            setTimeout(loadNextBatch, 80);
+          }
+        } else {
+          setImagesLoaded(true);
+        }
+      };
+      loadNextBatch();
+    }, 600);
+
+    return () => clearTimeout(timer);
   }, []);
 
   // Draw current frame to canvas

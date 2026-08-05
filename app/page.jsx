@@ -39,7 +39,9 @@ const globalPageCache = {
 export default function SinglePageStreetwearStore() {
   const [categories, setCategories] = useState(globalPageCache.categories);
   const [allProducts, setAllProducts] = useState(globalPageCache.allProducts);
-  const [loadingProducts, setLoadingProducts] = useState(!globalPageCache.isInitialized);
+  const [loadingProducts, setLoadingProducts] = useState(
+    !globalPageCache.isInitialized && globalPageCache.allProducts.length === 0
+  );
   const [activeCategory, setActiveCategory] = useState('ALL');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [manifestoOpen, setManifestoOpen] = useState(false);
@@ -84,8 +86,7 @@ export default function SinglePageStreetwearStore() {
 
   useEffect(() => {
     async function fetchData() {
-      // If we don't have cached data yet, show loading skeleton
-      if (!globalPageCache.isInitialized) {
+      if (globalPageCache.allProducts.length === 0) {
         setLoadingProducts(true);
       }
 
