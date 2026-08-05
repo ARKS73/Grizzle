@@ -31,7 +31,6 @@ export default function RootLayout({ children }) {
                   <Navbar />
                   <main className="main-layout">{children}</main>
                   <Footer />
-                  <FloatingActions />
                 </ThemeProvider>
               </WishlistProvider>
             </CartProvider>

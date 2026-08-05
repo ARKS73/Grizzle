@@ -616,14 +616,20 @@ export default function Navbar() {
 
       <style jsx>{`
         .navbar-header {
-          position: sticky;
+          position: fixed;
           top: 0;
-          z-index: 900;
+          left: 0;
+          right: 0;
+          width: 100%;
+          z-index: 1000;
           border-radius: 0;
           border-top: none;
           border-left: none;
           border-right: none;
           background: var(--bg-glass);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          box-shadow: var(--shadow-md);
         }
         .nav-container {
           display: flex;
