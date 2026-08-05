@@ -793,19 +793,29 @@ export default function ProductDetailPage() {
             gap: 0.35rem;
           }
           .sizes-grid {
-            grid-template-columns: repeat(5, 1fr);
-            gap: 0.35rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
           }
           .size-card {
-            height: 44px;
-            min-width: 0;
-            padding: 0.2rem;
+            flex: 1;
+            min-width: 52px;
+            height: 48px;
+            padding: 0.25rem 0.4rem;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-weight: 800;
           }
           .size-text {
-            font-size: 0.8rem;
+            font-size: 0.88rem;
+            font-weight: 800;
           }
           .size-subtag {
-            font-size: 0.52rem;
+            font-size: 0.58rem;
+            font-weight: 800;
+            margin-top: 2px;
           }
           .guarantees-grid {
             grid-template-columns: 1fr;
@@ -818,31 +828,44 @@ export default function ProductDetailPage() {
             bottom: 0;
             z-index: 99;
             margin: 0.75rem -0.75rem 0 -0.75rem;
-            padding: 0.65rem 0.85rem;
-            background: rgba(15, 23, 42, 0.95);
+            padding: 0.75rem 1rem;
+            background: var(--bg-secondary, #0f172a);
             backdrop-filter: blur(12px);
             border-top: 1px solid var(--border-color);
-            box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.3);
-            gap: 0.4rem;
+            box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.2);
+            gap: 0.5rem;
             width: calc(100% + 1.5rem);
+            align-items: center;
+          }
+          .quantity-picker {
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-tertiary);
+            height: 42px;
           }
           .quantity-picker button {
-            width: 32px;
-            height: 38px;
-            font-size: 0.9rem;
+            width: 34px;
+            height: 42px;
+            background: transparent;
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-primary);
           }
           .quantity-picker span {
             width: 32px;
-            font-size: 0.85rem;
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: var(--text-primary);
           }
           .add-btn {
-            font-size: 0.8rem !important;
-            padding: 0.5rem 0.75rem !important;
-            height: 38px;
+            font-size: 0.88rem !important;
+            padding: 0.65rem 1rem !important;
+            height: 42px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 6px;
+            border-radius: var(--radius-md);
           }
           .tabs-container {
             padding: 0.85rem;
