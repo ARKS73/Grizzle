@@ -44,11 +44,38 @@ export function AuthProvider({ children }) {
         addToast(data.message || 'Login failed', 'error');
         return { success: false, message: data.message };
       }
+
+      if (data.requiresMfa) {
+        addToast('Authenticator Security Verification Required', 'info');
+        return { success: true, requiresMfa: true, tempToken: data.tempToken };
+      }
+
       setUser(data.user);
       addToast(`Welcome back, ${data.user.name.split(' ')[0]}!`, 'success');
-      return { success: true, user: data.user };
+      return { success: true, user: data.user, requiresMfaSetup: data.requiresMfaSetup };
     } catch (err) {
       addToast('An error occurred during login', 'error');
+      return { success: false, message: err.message };
+    }
+  };
+
+  const verifyMfa = async (tempToken, otpCode) => {
+    try {
+      const res = await fetch('/api/auth/verify-mfa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tempToken, otpCode }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        addToast(data.message || 'OTP verification failed', 'error');
+        return { success: false, message: data.message };
+      }
+      setUser(data.user);
+      addToast(`Admin verification successful! Welcome ${data.user.name.split(' ')[0]}.`, 'success');
+      return { success: true, user: data.user };
+    } catch (err) {
+      addToast('MFA Verification error', 'error');
       return { success: false, message: err.message };
     }
   };
@@ -110,7 +137,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, updateProfile, refreshUser: fetchUser }}>
+    <AuthContext.Provider value={{ user, loading, login, verifyMfa, register, logout, updateProfile, refreshUser: fetchUser }}>
       {children}
     </AuthContext.Provider>
   );

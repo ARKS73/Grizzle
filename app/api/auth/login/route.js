@@ -40,6 +40,22 @@ export async function POST(request) {
       );
     }
 
+    if (user.role === 'admin' && user.isMfaEnabled) {
+      // Issue a 5-minute temporary MFA pending token (does NOT grant full site access)
+      const mfaTempToken = signToken({
+        userId: user._id.toString(),
+        email: user.email,
+        role: 'admin_mfa_pending',
+      });
+
+      return NextResponse.json({
+        success: true,
+        requiresMfa: true,
+        tempToken: mfaTempToken,
+        message: 'Security Verification Required: Enter the 6-digit code from your Authenticator App',
+      });
+    }
+
     const userPayload = {
       userId: user._id.toString(),
       email: user.email,
@@ -52,6 +68,7 @@ export async function POST(request) {
     const response = NextResponse.json({
       success: true,
       message: 'Login successful',
+      requiresMfaSetup: user.role === 'admin' && !user.isMfaEnabled,
       user: {
         _id: user._id,
         name: user.name,
@@ -60,6 +77,7 @@ export async function POST(request) {
         profileImage: user.profileImage,
         phone: user.phone,
         address: user.address,
+        isMfaEnabled: user.isMfaEnabled,
       },
     });
 

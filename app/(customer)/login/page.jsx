@@ -3,7 +3,7 @@
 import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
+import { Mail, Lock, ArrowRight, ShieldCheck, Key } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 function LoginContent() {
@@ -11,17 +11,29 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/';
 
-  const { login } = useAuth();
+  const { login, verifyMfa } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  // Step 2 MFA State
+  const [step, setStep] = useState('credentials'); // 'credentials' | 'mfa'
+  const [tempToken, setTempToken] = useState('');
+  const [otpCode, setOtpCode] = useState('');
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     const result = await login(email, password);
     setSubmitting(false);
+
     if (result.success) {
+      if (result.requiresMfa) {
+        setTempToken(result.tempToken);
+        setStep('mfa');
+        return;
+      }
+
       if (result.user?.role === 'admin') {
         router.push('/admin');
       } else if (redirect && redirect !== '/login' && redirect !== '/') {
@@ -31,6 +43,115 @@ function LoginContent() {
       }
     }
   };
+
+  const handleVerifyMfa = async (e) => {
+    e.preventDefault();
+    if (!otpCode || otpCode.trim().length !== 6) return;
+
+    setSubmitting(true);
+    const result = await verifyMfa(tempToken, otpCode.trim());
+    setSubmitting(false);
+
+    if (result.success) {
+      router.push('/admin');
+    }
+  };
+
+  if (step === 'mfa') {
+    return (
+      <div className="auth-card glass-panel text-center">
+        <div className="auth-header text-center mb-4">
+          <div className="mfa-icon-badge">
+            <ShieldCheck size={36} color="#ef4444" />
+          </div>
+          <h2 style={{ marginTop: '1rem', color: '#ffffff' }}>Admin Security Verification</h2>
+          <p style={{ color: '#94a3b8', fontSize: '0.88rem' }}>
+            Multi-Factor Authentication (MFA) is enabled on your admin account. Open your <strong>Google Authenticator</strong> or <strong>Authy</strong> app and enter the 6-digit OTP code below:
+          </p>
+        </div>
+
+        <form onSubmit={handleVerifyMfa} className="auth-form">
+          <div className="form-group my-4">
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={6}
+              placeholder="000000"
+              value={otpCode}
+              onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ''))}
+              required
+              autoFocus
+              className="otp-input-field"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={submitting || otpCode.length !== 6}
+            className="btn btn-primary btn-lg submit-btn"
+          >
+            {submitting ? 'Verifying OTP...' : 'Verify & Enter Admin Dashboard'} <ArrowRight size={18} />
+          </button>
+        </form>
+
+        <button
+          type="button"
+          onClick={() => {
+            setStep('credentials');
+            setOtpCode('');
+            setTempToken('');
+          }}
+          className="btn-back-login"
+        >
+          ← Back to Standard Sign In
+        </button>
+
+        <style jsx>{`
+          .auth-card {
+            width: 100%;
+            max-width: 440px;
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+          }
+          .mfa-icon-badge {
+            width: 64px;
+            height: 64px;
+            background: rgba(239, 68, 68, 0.15);
+            border: 2px solid #ef4444;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .otp-input-field {
+            width: 100%;
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: 12px;
+            text-align: center;
+            padding: 0.75rem;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid var(--accent-primary);
+            border-radius: 12px;
+            color: #ffffff;
+            outline: none;
+            box-shadow: 0 0 16px rgba(239, 68, 68, 0.3);
+          }
+          .submit-btn { width: 100%; margin-top: 1rem; }
+          .btn-back-login {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 1.5rem;
+            cursor: pointer;
+          }
+          .btn-back-login:hover { color: #ffffff; }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <div className="auth-card glass-panel">

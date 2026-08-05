@@ -131,6 +131,80 @@ export default function AdminUsersPage() {
     }
   };
 
+  // MFA Modal state
+  const [showMfaModal, setShowMfaModal] = useState(false);
+  const [mfaData, setMfaData] = useState(null);
+  const [mfaOtpInput, setMfaOtpInput] = useState('');
+  const [mfaLoading, setMfaLoading] = useState(false);
+
+  const openMfaSetup = async () => {
+    try {
+      setMfaLoading(true);
+      setShowMfaModal(true);
+      const res = await fetch('/api/auth/mfa');
+      const data = await res.json();
+      if (data.success) {
+        setMfaData(data);
+      } else {
+        addToast(data.message || 'Failed to load MFA setup', 'error');
+      }
+    } catch (err) {
+      addToast('Failed to connect to MFA API', 'error');
+    } finally {
+      setMfaLoading(false);
+    }
+  };
+
+  const handleEnableMfa = async (e) => {
+    e.preventDefault();
+    if (!mfaOtpInput || mfaOtpInput.trim().length !== 6) {
+      addToast('Please enter a valid 6-digit OTP code', 'error');
+      return;
+    }
+
+    try {
+      setMfaLoading(true);
+      const res = await fetch('/api/auth/mfa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ otpCode: mfaOtpInput.trim() }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        addToast('🎉 Multi-Factor Authentication (MFA) enabled successfully!', 'success');
+        setMfaData((prev) => ({ ...prev, isMfaEnabled: true }));
+        setMfaOtpInput('');
+        fetchUsers();
+      } else {
+        addToast(data.message || 'Verification failed. Check code & try again.', 'error');
+      }
+    } catch (err) {
+      addToast('Failed to enable MFA', 'error');
+    } finally {
+      setMfaLoading(false);
+    }
+  };
+
+  const handleDisableMfa = async () => {
+    if (!confirm('Are you sure you want to disable MFA on your admin account?')) return;
+    try {
+      setMfaLoading(true);
+      const res = await fetch('/api/auth/mfa', { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        addToast('MFA has been disabled on your admin account', 'info');
+        setMfaData((prev) => ({ ...prev, isMfaEnabled: false }));
+        fetchUsers();
+      } else {
+        addToast(data.message || 'Failed to disable MFA', 'error');
+      }
+    } catch (err) {
+      addToast('Failed to disable MFA', 'error');
+    } finally {
+      setMfaLoading(false);
+    }
+  };
+
   const admins = users.filter((u) => u.role === 'admin');
   const customers = users.filter((u) => u.role === 'customer');
 
@@ -142,7 +216,10 @@ export default function AdminUsersPage() {
           <h1>User Management</h1>
           <p>All users stored live in MongoDB. Create admins, manage customers, block accounts.</p>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <button onClick={openMfaSetup} className="btn btn-secondary" style={{ borderColor: '#ef4444', color: '#ef4444' }}>
+            <Shield size={15} /> Setup Admin MFA (2FA)
+          </button>
           <button onClick={fetchUsers} className="btn btn-secondary">
             <RefreshCw size={15} /> Refresh
           </button>
@@ -356,6 +433,80 @@ export default function AdminUsersPage() {
             </tbody>
           </table>
         </div>
+
+      {/* MFA Setup Modal */}
+      {showMfaModal && (
+        <div className="modal-backdrop active" onClick={() => setShowMfaModal(false)}>
+          <div className="modal-content glass-panel" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '480px', padding: '2rem', borderRadius: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, fontSize: '1.2rem', color: '#ffffff' }}>
+                <Shield size={22} color="#ef4444" /> Admin Multi-Factor Security (2FA)
+              </h3>
+              <button onClick={() => setShowMfaModal(false)} className="btn-link-reset">
+                <X size={20} color="#94a3b8" />
+              </button>
+            </div>
+
+            {mfaLoading ? (
+              <div className="text-center py-4">
+                <RefreshCw size={28} className="spin" color="#ef4444" />
+                <p className="mt-2 text-muted">Loading MFA configuration...</p>
+              </div>
+            ) : mfaData?.isMfaEnabled ? (
+              <div className="text-center py-2">
+                <div style={{ background: 'rgba(34, 197, 94, 0.15)', border: '1px solid #22c55e', padding: '1rem', borderRadius: '12px', marginBottom: '1.25rem' }}>
+                  <CheckCircle size={32} color="#22c55e" style={{ display: 'block', margin: '0 auto 0.5rem auto' }} />
+                  <strong style={{ color: '#22c55e', fontSize: '1rem' }}>MFA Security is ACTIVE</strong>
+                  <p style={{ fontSize: '0.82rem', color: '#cbd5e1', marginTop: '0.25rem', marginBottom: 0 }}>
+                    Your admin account requires Email + Password AND 6-digit Authenticator App OTP on every login attempt.
+                  </p>
+                </div>
+                <button onClick={handleDisableMfa} className="btn btn-danger btn-block">
+                  <ShieldOff size={16} /> Disable Multi-Factor Authentication
+                </button>
+              </div>
+            ) : (
+              <div>
+                <p style={{ fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '1rem' }}>
+                  Secure your admin account using any TOTP Authenticator app like <strong>Google Authenticator</strong>, <strong>Microsoft Authenticator</strong>, or <strong>Authy</strong>.
+                </p>
+
+                {mfaData?.secret && (
+                  <div style={{ background: '#0f172a', padding: '1rem', borderRadius: '12px', border: '1px solid #334155', marginBottom: '1.25rem' }}>
+                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
+                      Secret Setup Key (Manual Entry):
+                    </div>
+                    <code style={{ fontSize: '1.1rem', fontWeight: 800, color: '#ef4444', letterSpacing: '2px', wordBreak: 'break-all' }}>
+                      {mfaData.secret}
+                    </code>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.5rem' }}>
+                      Or scan OTP URI in app: <a href={mfaData.otpauthUrl} style={{ color: '#ef4444' }}>Open in Authenticator App</a>
+                    </div>
+                  </div>
+                )}
+
+                <form onSubmit={handleEnableMfa}>
+                  <label className="form-label">Enter 6-Digit OTP Code from App to Confirm *</label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={6}
+                    placeholder="000000"
+                    value={mfaOtpInput}
+                    onChange={(e) => setMfaOtpInput(e.target.value.replace(/[^0-9]/g, ''))}
+                    required
+                    style={{ fontSize: '1.6rem', textAlign: 'center', letterSpacing: '8px', fontWeight: 800, marginBottom: '1rem', width: '100%', padding: '0.6rem', borderRadius: '10px', background: '#0f172a', border: '1px solid #ef4444', color: '#fff' }}
+                  />
+                  <button type="submit" disabled={mfaLoading || mfaOtpInput.length !== 6} className="btn btn-primary btn-block">
+                    {mfaLoading ? 'Verifying...' : 'Verify OTP & Enable Admin MFA'}
+                  </button>
+                </form>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         .table-card { padding: 1.5rem; border-radius: var(--radius-lg); }
