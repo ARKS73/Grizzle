@@ -652,16 +652,21 @@ export default function SinglePageStreetwearStore() {
           padding: 4.5rem 2rem 4.5rem 3.5rem;
           position: relative;
           background: #09090b;
-          border-radius: 32px;
-          overflow: hidden;
+          border-radius: 28px !important;
+          border-top-left-radius: 28px !important;
+          border-top-right-radius: 28px !important;
+          border-bottom-left-radius: 28px !important;
+          border-bottom-right-radius: 28px !important;
+          overflow: hidden !important;
           box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
           min-height: 480px;
           display: flex;
           align-items: center;
+          margin-top: 0.5rem;
         }
         [data-theme='light'] .hero-section-street {
-          background: #f0f9ff;
-          box-shadow: 0 20px 50px rgba(56, 189, 248, 0.2);
+          background: #09090b;
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
         }
         .hero-athlete-bg-img {
           position: absolute;
@@ -673,15 +678,16 @@ export default function SinglePageStreetwearStore() {
           object-fit: cover;
           object-position: center top;
           z-index: 1;
+          border-radius: 28px;
         }
         .hero-fade-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(90deg, #09090b 32%, rgba(9, 9, 11, 0.75) 55%, rgba(9, 9, 11, 0) 100%);
+          background: linear-gradient(90deg, #09090b 35%, rgba(9, 9, 11, 0.88) 60%, rgba(9, 9, 11, 0.3) 80%, transparent 100%);
           z-index: 2;
         }
         [data-theme='light'] .hero-fade-overlay {
-          background: linear-gradient(90deg, #f0f9ff 32%, rgba(240, 249, 255, 0.78) 55%, rgba(240, 249, 255, 0) 100%);
+          background: linear-gradient(90deg, #09090b 35%, rgba(9, 9, 11, 0.88) 60%, rgba(9, 9, 11, 0.3) 80%, transparent 100%);
         }
         .hero-street-container {
           position: relative;
@@ -708,17 +714,17 @@ export default function SinglePageStreetwearStore() {
           align-items: center;
           gap: 0.5rem;
           padding: 0.45rem 1rem;
-          background: linear-gradient(135deg, rgba(37, 99, 235, 0.4), rgba(168, 85, 247, 0.4));
+          background: linear-gradient(135deg, rgba(37, 99, 235, 0.5), rgba(168, 85, 247, 0.5));
           backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.3);
-          color: #ffffff;
+          border: 1px solid rgba(255, 255, 255, 0.35);
+          color: #ffffff !important;
           font-weight: 800;
           font-size: 0.75rem;
           letter-spacing: 0.05em;
           border-radius: 9999px;
           margin-bottom: 1.5rem;
           text-transform: uppercase;
-          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
         }
         .hero-street-title {
           font-size: 3.8rem;
@@ -727,23 +733,25 @@ export default function SinglePageStreetwearStore() {
           font-family: 'Outfit', sans-serif;
           letter-spacing: -0.03em;
           margin-bottom: 1.5rem;
-          color: var(--text-primary);
+          color: #ffffff !important;
           text-transform: uppercase;
           text-align: left;
+          text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
         }
         .title-accent-italic {
           font-style: italic;
-          background: linear-gradient(135deg, #60a5fa 0%, #a855f7 50%, #ec4899 100%);
+          background: linear-gradient(135deg, #38bdf8 0%, #c084fc 50%, #f472b6 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
         }
         .hero-street-desc {
           font-size: 1.05rem;
-          color: var(--text-secondary);
+          color: rgba(255, 255, 255, 0.92) !important;
           line-height: 1.6;
           max-width: 520px;
           margin: 0 0 2.25rem 0;
           text-align: left;
+          text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
         }
         .hero-btn-group {
           display: flex;
@@ -781,7 +789,7 @@ export default function SinglePageStreetwearStore() {
         }
         .btn-street-dark {
           background: linear-gradient(135deg, #2563eb, #7c3aed);
-          color: #ffffff;
+          color: #ffffff !important;
           padding: 0.95rem 2.2rem;
           font-weight: 800;
           font-size: 0.9rem;
@@ -797,6 +805,9 @@ export default function SinglePageStreetwearStore() {
           box-shadow: 0 18px 35px rgba(37, 99, 235, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.5);
         }
         .btn-street-light {
+          background: rgba(255, 255, 255, 0.15) !important;
+          color: #ffffff !important;
+          border: 1px solid rgba(255, 255, 255, 0.35) !important;
           backdrop-filter: blur(12px);
           padding: 0.95rem 2.2rem;
           font-weight: 800;
@@ -805,29 +816,19 @@ export default function SinglePageStreetwearStore() {
           border-radius: 14px;
           transition: all 0.3s ease;
           text-decoration: none;
+          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3);
         }
         [data-theme='dark'] .btn-street-light {
-          background: rgba(255, 255, 255, 0.08);
-          color: var(--text-primary);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+          background: rgba(255, 255, 255, 0.15) !important;
+          color: #ffffff !important;
+          border: 1px solid rgba(255, 255, 255, 0.35) !important;
         }
-        [data-theme='dark'] .btn-street-light:hover {
-          background: rgba(255, 255, 255, 0.16);
+        .btn-street-light:hover {
+          background: rgba(255, 255, 255, 0.28) !important;
+          border-color: #ffffff !important;
           transform: translateY(-3px);
-          border-color: rgba(255, 255, 255, 0.4);
-        }
-        [data-theme='light'] .btn-street-light {
-          background: rgba(255, 255, 255, 0.85);
-          color: #1e40af;
-          border: 1.5px solid rgba(56, 189, 248, 0.5);
-          box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2), inset 0 1px 1px rgba(255,255,255,0.9);
-        }
-        [data-theme='light'] .btn-street-light:hover {
-          background: #eff6ff;
-          transform: translateY(-3px);
-          border-color: #2563eb;
-          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+          box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
         }
 
         /* Hero Visual Frame */
