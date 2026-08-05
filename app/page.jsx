@@ -36,8 +36,6 @@ export default function SinglePageStreetwearStore() {
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [manifestoOpen, setManifestoOpen] = useState(false);
   const [lookbookModalOpen, setLookbookModalOpen] = useState(false);
-  const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
   const [heroSettings, setHeroSettings] = useState({
     heroImage: '',
     heroBadge: 'NEW DROP | SEASON 2026',
@@ -111,15 +109,6 @@ export default function SinglePageStreetwearStore() {
 
   const mensProducts = allProducts.filter(p => p.gender === 'Men' || p.category?.includes('Oversized') || p.category?.includes('Desi') || p.category?.includes('Anime'));
   const womensProducts = allProducts.filter(p => p.gender === 'Women' || p.category?.includes('Minimalist') || p.category?.includes('Artist'));
-
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-    if (newsletterEmail.trim()) {
-      setNewsletterSubscribed(true);
-      addToast('Welcome to the Collective! Check your email for early drop access & 15% off.', 'success');
-      setNewsletterEmail('');
-    }
-  };
 
   const pastelColors = [
     '#d8d8fa', // Pastel Purple/Lavender
@@ -597,38 +586,6 @@ export default function SinglePageStreetwearStore() {
 
 
 
-
-      {/* =========================================================================
-         SECTION 6: JOIN THE COLLECTIVE (Matching Image Section 6)
-         ========================================================================= */}
-      <section className="join-collective-section" id="newsletter">
-        <div className="container">
-          <div className="collective-banner-box">
-            <div className="collective-watermark">TEAMZ</div>
-
-            <div className="collective-content">
-              <h2 className="collective-title">JOIN THE COLLECTIVE</h2>
-              <p className="collective-subtitle">
-                SIGN UP FOR EARLY ACCESS TO DROPS, EXCLUSIVE ARTIST NEWS, AND COMMUNITY-ONLY EVENTS.
-              </p>
-
-              <form onSubmit={handleSubscribe} className="collective-form">
-                <input
-                  type="email"
-                  placeholder="YOUR@EMAIL.COM"
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  className="collective-input"
-                  required
-                />
-                <button type="submit" className="collective-submit-btn">
-                  SUBSCRIBE
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Quick View Popup Modal */}
       {quickViewProduct && (
