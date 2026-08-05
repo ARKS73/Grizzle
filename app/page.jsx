@@ -804,10 +804,13 @@ export default function SinglePageStreetwearStore() {
           transform: translateY(-3px) scale(1.02);
           box-shadow: 0 18px 35px rgba(37, 99, 235, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.5);
         }
-        .btn-street-light {
-          background: rgba(255, 255, 255, 0.15) !important;
+        a.btn-street-light,
+        .btn-street-light,
+        [data-theme='light'] a.btn-street-light,
+        [data-theme='dark'] a.btn-street-light {
+          background: rgba(255, 255, 255, 0.18) !important;
           color: #ffffff !important;
-          border: 1px solid rgba(255, 255, 255, 0.35) !important;
+          border: 1px solid rgba(255, 255, 255, 0.4) !important;
           backdrop-filter: blur(12px);
           padding: 0.95rem 2.2rem;
           font-weight: 800;
@@ -816,19 +819,18 @@ export default function SinglePageStreetwearStore() {
           border-radius: 14px;
           transition: all 0.3s ease;
           text-decoration: none;
-          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.3);
         }
-        [data-theme='dark'] .btn-street-light {
-          background: rgba(255, 255, 255, 0.15) !important;
+        a.btn-street-light:hover,
+        .btn-street-light:hover,
+        [data-theme='light'] a.btn-street-light:hover,
+        [data-theme='dark'] a.btn-street-light:hover {
+          background: rgba(255, 255, 255, 0.32) !important;
           color: #ffffff !important;
-          border: 1px solid rgba(255, 255, 255, 0.35) !important;
-        }
-        .btn-street-light:hover {
-          background: rgba(255, 255, 255, 0.28) !important;
           border-color: #ffffff !important;
           transform: translateY(-3px);
-          box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+          box-shadow: 0 8px 20px rgba(255, 255, 255, 0.25);
         }
 
         /* Hero Visual Frame */
