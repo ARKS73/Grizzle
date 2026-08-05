@@ -3,18 +3,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { 
-  ShoppingBag, 
-  Heart, 
-  Search, 
-  User, 
-  Sun, 
-  Moon, 
-  Menu, 
-  X, 
-  ShieldAlert, 
-  LogOut, 
-  PackageCheck, 
+import {
+  ShoppingBag,
+  Heart,
+  Search,
+  User,
+  Sun,
+  Moon,
+  Menu,
+  X,
+  ShieldAlert,
+  LogOut,
+  PackageCheck,
   ChevronDown,
   ChevronRight,
   Sparkles,
@@ -173,7 +173,7 @@ export default function Navbar() {
             <Search className="search-icon" size={18} />
             <input
               type="text"
-              placeholder="Search 240 GSM tees, oversized graphics, desi prints..."
+              placeholder=""
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => searchQuery.length > 1 && setShowSuggestions(true)}
@@ -206,8 +206,8 @@ export default function Navbar() {
                   </div>
                 </div>
               ))}
-              <Link 
-                href={`/products?search=${encodeURIComponent(searchQuery)}`} 
+              <Link
+                href={`/products?search=${encodeURIComponent(searchQuery)}`}
                 onClick={() => setShowSuggestions(false)}
                 className="suggestion-view-all"
               >
@@ -244,15 +244,15 @@ export default function Navbar() {
           {user && (
             <>
               {/* Wishlist Dropdown */}
-              <div 
-                className="icon-dropdown-wrapper" 
+              <div
+                className="icon-dropdown-wrapper"
                 ref={wishlistRef}
                 onMouseEnter={() => setWishlistDropdownOpen(true)}
                 onMouseLeave={() => setWishlistDropdownOpen(false)}
               >
-                <Link 
-                  href="/wishlist" 
-                  className="icon-btn badge-container" 
+                <Link
+                  href="/wishlist"
+                  className="icon-btn badge-container"
                   title="Wishlist"
                   onClick={closeAllMenus}
                 >
@@ -312,15 +312,15 @@ export default function Navbar() {
               </div>
 
               {/* Shopping Cart Dropdown */}
-              <div 
-                className="icon-dropdown-wrapper" 
+              <div
+                className="icon-dropdown-wrapper"
                 ref={cartRef}
                 onMouseEnter={() => setCartDropdownOpen(true)}
                 onMouseLeave={() => setCartDropdownOpen(false)}
               >
-                <Link 
-                  href="/cart" 
-                  className="icon-btn badge-container" 
+                <Link
+                  href="/cart"
+                  className="icon-btn badge-container"
                   title="Cart"
                   onClick={closeAllMenus}
                 >
@@ -399,8 +399,8 @@ export default function Navbar() {
           {/* User Profile Dropdown */}
           <div className="user-dropdown-wrapper" ref={dropdownRef}>
             {user ? (
-              <button 
-                onClick={() => setUserDropdownOpen(!userDropdownOpen)} 
+              <button
+                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                 className="user-avatar-btn"
               >
                 {user.profileImage ? (
@@ -428,8 +428,8 @@ export default function Navbar() {
                 </div>
 
                 <div className="dropdown-menu-list">
-                  <Link 
-                    href="/profile" 
+                  <Link
+                    href="/profile"
                     onClick={closeAllMenus}
                     className="dropdown-item"
                   >
@@ -437,8 +437,8 @@ export default function Navbar() {
                     <span>Profile & Address</span>
                   </Link>
 
-                  <Link 
-                    href="/orders" 
+                  <Link
+                    href="/orders"
                     onClick={closeAllMenus}
                     className="dropdown-item"
                   >
@@ -447,8 +447,8 @@ export default function Navbar() {
                   </Link>
 
                   {user.role === 'admin' && (
-                    <Link 
-                      href="/admin" 
+                    <Link
+                      href="/admin"
                       onClick={closeAllMenus}
                       className="dropdown-item dropdown-admin"
                     >
@@ -459,8 +459,8 @@ export default function Navbar() {
 
                   <div className="dropdown-divider"></div>
 
-                  <button 
-                    onClick={() => { logout(); closeAllMenus(); }} 
+                  <button
+                    onClick={() => { logout(); closeAllMenus(); }}
                     className="dropdown-item dropdown-logout"
                   >
                     <LogOut size={16} className="dropdown-item-icon" />
@@ -472,8 +472,8 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Hamburger Toggle */}
-          <button 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="icon-btn mobile-toggle"
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
