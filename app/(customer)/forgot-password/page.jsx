@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Mail, Lock, KeyRound, ArrowRight, CheckCircle2, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
+import GrizzleLogo from '@/components/ui/GrizzleLogo';
 
 export default function ForgotPasswordPage() {
   const { addToast } = useToast();
@@ -73,17 +74,9 @@ export default function ForgotPasswordPage() {
     <div className="container auth-page-wrapper">
       <div className="auth-card glass-panel">
         <div className="auth-header text-center">
-          <img
-            src="/logo2.png"
-            alt="Grizzle Apparel Logo"
-            style={{
-              display: 'block',
-              margin: '0 auto 0.75rem auto',
-              height: '56px',
-              objectFit: 'contain',
-              filter: 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.5))',
-            }}
-          />
+          <div style={{ marginBottom: '0.75rem' }}>
+            <GrizzleLogo size="large" />
+          </div>
           <h2>
             {step === 1 && 'Forgot Password?'}
             {step === 2 && 'Verify OTP Code'}

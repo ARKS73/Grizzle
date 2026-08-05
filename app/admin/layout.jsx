@@ -19,6 +19,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import GrizzleLogo from '@/components/ui/GrizzleLogo';
 
 const navLinks = [
   { name: 'Dashboard',    short: 'Dash',       href: '/admin',            icon: LayoutDashboard },
@@ -49,11 +50,7 @@ export default function AdminLayout({ children }) {
       <aside className="admin-sidebar glass-panel">
         {/* Brand */}
         <div className="sidebar-brand">
-          <img
-            src="/logo2.png"
-            alt="Grizzle Admin"
-            style={{ height: '40px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(239,68,68,0.4))' }}
-          />
+          <GrizzleLogo size="medium" href="/admin" />
           <div className="brand-info">
             <h3>Grizzle Admin</h3>
             <span className="brand-subtitle">Management Console</span>
@@ -122,7 +119,7 @@ export default function AdminLayout({ children }) {
         )}
         <aside className={`mobile-drawer glass-panel ${drawerOpen ? 'open' : ''}`}>
           <div className="drawer-header">
-            <img src="/logo2.png" alt="Grizzle" style={{ height: '36px', objectFit: 'contain' }} />
+            <GrizzleLogo size="small" href="/admin" />
             <div>
               <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>Grizzle Admin</div>
               <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Logged in as {user?.name || 'Admin'}</div>

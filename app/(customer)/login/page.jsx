@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Mail, Lock, ArrowRight, ShieldCheck, Key, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import GoogleSignInButton from '@/components/ui/GoogleSignInButton';
+import GrizzleLogo from '@/components/ui/GrizzleLogo';
 
 function LoginContent() {
   const router = useRouter();
@@ -158,7 +159,9 @@ function LoginContent() {
   return (
     <div className="auth-card glass-panel">
       <div className="auth-header text-center">
-        <img src="/logo2.png" alt="Grizzle Apparel Logo" style={{ display: 'block', margin: '0 auto 0.75rem auto', height: '64px', width: 'auto', maxWidth: '220px', borderRadius: '0px', objectFit: 'contain', filter: 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.5))' }} />
+        <div style={{ marginBottom: '0.75rem' }}>
+          <GrizzleLogo size="large" />
+        </div>
         <h2>Welcome Back to Grizzle</h2>
         <p>Sign in to your Grizzle account to access orders, wishlist, profile & account settings.</p>
       </div>

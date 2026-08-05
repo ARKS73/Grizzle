@@ -7,6 +7,7 @@ import { User, Mail, Lock, Phone, ArrowRight, ShieldCheck, KeyRound, RefreshCw, 
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toast';
 import GoogleSignInButton from '@/components/ui/GoogleSignInButton';
+import GrizzleLogo from '@/components/ui/GrizzleLogo';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -117,19 +118,9 @@ export default function RegisterPage() {
     <div className="container auth-page-wrapper">
       <div className="auth-card glass-panel">
         <div className="auth-header text-center">
-          <img
-            src="/logo2.png"
-            alt="Grizzle Apparel Logo"
-            style={{
-              display: 'block',
-              margin: '0 auto 0.75rem auto',
-              height: '64px',
-              width: 'auto',
-              maxWidth: '220px',
-              objectFit: 'contain',
-              filter: 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.5))',
-            }}
-          />
+          <div style={{ marginBottom: '0.75rem' }}>
+            <GrizzleLogo size="large" />
+          </div>
           <h2>Create Your Grizzle Account</h2>
           <p>Verify your email OTP & join to unlock members-only drops & tracking.</p>
         </div>

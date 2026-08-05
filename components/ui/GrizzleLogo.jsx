@@ -4,46 +4,51 @@ import React from 'react';
 import Link from 'next/link';
 
 export default function GrizzleLogo({ size = 'medium', href = '/' }) {
-  // Natural rectangular aspect ratio sizing for high visibility without circular clipping
-  const logoStyles = {
-    small: { height: '42px', maxWidth: '140px' },
-    medium: { height: '54px', maxWidth: '190px' },
-    large: { height: '76px', maxWidth: '260px' },
-  }[size] || { height: '54px', maxWidth: '190px' };
+  const logoHeights = {
+    small: '30px',
+    medium: '40px',
+    large: '54px',
+  }[size] || '40px';
 
   const logoContent = (
-    <div className={`grizzle-logo-container size-${size}`}>
-      {/* Rectangular Natural Aspect Ratio Logo Image without curve clipping */}
+    <div className={`grizzle-brand-logo-container size-${size}`}>
       <img
-        src="/logo2.png"
-        alt="Grizzle Apparel Logo"
+        src="/grizzle-logo-brand.jpg"
+        alt="GRIZZLE"
         style={{
-          height: logoStyles.height,
+          height: logoHeights,
           width: 'auto',
-          maxWidth: logoStyles.maxWidth,
+          maxWidth: '220px',
           objectFit: 'contain',
-          borderRadius: '0px',
-          filter: 'drop-shadow(0 0 10px rgba(239, 68, 68, 0.4)) drop-shadow(0 0 4px rgba(251, 191, 36, 0.3))',
+          display: 'block',
         }}
-        className="grizzle-brand-img"
+        className="grizzle-brand-logo-img"
       />
 
       <style jsx>{`
-        .grizzle-logo-container {
+        .grizzle-brand-logo-container {
           display: inline-flex;
           align-items: center;
           justify-content: center;
           text-decoration: none;
           user-select: none;
+          padding: 2px 0;
         }
 
-        .grizzle-brand-img {
-          transition: transform 0.3s ease, filter 0.3s ease;
+        .grizzle-brand-logo-img {
+          transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+          mix-blend-mode: screen;
+          filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.4));
         }
 
-        .grizzle-logo-container:hover .grizzle-brand-img {
+        [data-theme='light'] .grizzle-brand-logo-img {
+          mix-blend-mode: multiply;
+          filter: contrast(180%) drop-shadow(0 0 6px rgba(0, 0, 0, 0.15));
+        }
+
+        .grizzle-brand-logo-container:hover .grizzle-brand-logo-img {
           transform: scale(1.05);
-          filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.7)) drop-shadow(0 0 8px rgba(251, 191, 36, 0.6));
+          filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.7));
         }
       `}</style>
     </div>
