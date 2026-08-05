@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Printer, CheckCircle2, Clock, Truck, Package, XCircle, ArrowLeft } from 'lucide-react';
+import { Printer, CheckCircle2, Clock, Truck, Package, XCircle, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 
 export default function OrderInvoicePage() {
