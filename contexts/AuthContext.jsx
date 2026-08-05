@@ -1,6 +1,9 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { sendPhoneOtp, confirmPhoneOtp, setupRecaptcha } from '@/lib/firebaseAuthService';
 import { useToast } from '@/components/ui/Toast';
 
 const AuthContext = createContext();
@@ -30,6 +33,28 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     fetchUser();
+
+    // Firebase Auth state listener
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          const idToken = await firebaseUser.getIdToken();
+          const res = await fetch('/api/auth/google', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken }),
+          });
+          const data = await res.json();
+          if (data.success && data.user) {
+            setUser(data.user);
+          }
+        } catch (e) {
+          console.warn('Firebase Auth state sync warning:', e);
+        }
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const login = async (email, password) => {
@@ -107,6 +132,25 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const loginWithPhoneSms = async (idToken) => {
+    try {
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
+      const data = await res.json();
+      if (data.success && data.user) {
+        setUser(data.user);
+        addToast('Phone SMS Authentication successful!', 'success');
+        return { success: true, user: data.user };
+      }
+      return { success: false, message: data.message };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  };
+
   const register = async (name, email, password, phone) => {
     try {
       const res = await fetch('/api/auth/register', {
@@ -164,7 +208,23 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, loginWithGoogle, verifyMfa, register, logout, updateProfile, refreshUser: fetchUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        loginWithGoogle,
+        loginWithPhoneSms,
+        verifyMfa,
+        register,
+        logout,
+        updateProfile,
+        refreshUser: fetchUser,
+        sendPhoneOtp,
+        confirmPhoneOtp,
+        setupRecaptcha,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
