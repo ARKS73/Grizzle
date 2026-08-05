@@ -73,6 +73,32 @@ export default function OrderInvoicePage() {
   const steps = ['Pending', 'Processing', 'Shipped', 'Delivered'];
   const currentStepIndex = order.status === 'Cancelled' ? -1 : steps.indexOf(order.status);
 
+  // 1. Mandatory requirement: Invoice is only available when order status is Delivered
+  if (order.status !== 'Delivered') {
+    return (
+      <div className="container invoice-page-wrapper">
+        <div className="top-nav-bar no-print mb-4">
+          <Link href="/orders" className="back-link">
+            <ArrowLeft size={16} /> Back to Orders
+          </Link>
+        </div>
+
+        <div className="glass-panel text-center my-4" style={{ borderRadius: '24px', maxWidth: '640px', margin: '2rem auto', padding: '3rem 2rem' }}>
+          <ShieldCheck size={52} color="#f59e0b" style={{ margin: '0 auto 1rem auto' }} />
+          <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.75rem' }}>Invoice Available After Delivery</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '1.75rem' }}>
+            Official tax invoices are generated only once your package has been successfully <strong>Delivered</strong> to your address.
+            <br />
+            Current Order Status: <strong style={{ color: 'var(--accent-primary)', textTransform: 'uppercase' }}>{order.status}</strong>
+          </p>
+          <Link href="/orders" className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+            <ArrowLeft size={16} /> Return to Order History
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container invoice-page-wrapper">
       <div className="top-nav-bar no-print">
@@ -81,52 +107,24 @@ export default function OrderInvoicePage() {
         </Link>
 
         <div className="actions">
-          {order.status !== 'Delivered' && order.status !== 'Cancelled' && (
-            <button onClick={handleCancelOrder} className="btn btn-danger btn-sm">
-              Cancel Order
-            </button>
-          )}
           <button onClick={handlePrint} className="btn btn-primary btn-sm">
-            <Printer size={16} /> Print / Save Invoice PDF
+            <Printer size={16} /> Print / Download Invoice
           </button>
         </div>
       </div>
 
-      {/* Tracking Timeline (Screen Only) */}
-      {order.status !== 'Cancelled' && (
-        <div className="tracking-card glass-panel no-print">
-          <h3>Real-Time Shipment Progress</h3>
-          <div className="timeline-wrapper">
-            {steps.map((step, idx) => {
-              const isCompleted = idx <= currentStepIndex;
-              return (
-                <div key={step} className={`timeline-step ${isCompleted ? 'completed' : ''}`}>
-                  <div className="step-node">
-                    {isCompleted ? <CheckCircle2 size={16} /> : idx + 1}
-                  </div>
-                  <span className="step-label">{step}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Styled Printable Invoice Card */}
+      {/* Mandatory Tax Invoice Card */}
       <div className="invoice-card glass-panel print-area">
         <div className="invoice-header">
           <div>
-            <div className="brand-logo">
-              <span className="logo-badge">G</span>
-              <span className="logo-text">Griz<span className="logo-highlight">zle</span></span>
-            </div>
-            <p className="invoice-sub">Official Purchase Invoice</p>
+            <img src="/placeholder.png" alt="GRIZZLE" style={{ height: '38px', width: 'auto', objectFit: 'contain', display: 'block', marginBottom: '0.5rem' }} />
+            <p className="invoice-sub">Tax Invoice / Purchase Receipt</p>
           </div>
 
           <div className="invoice-meta">
             <h2>{order.invoiceNumber}</h2>
-            <p>Date: {new Date(order.createdAt).toLocaleDateString()}</p>
-            <p>Status: <strong className="status-highlight">{order.status}</strong></p>
+            <p>Date: {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+            <p>Status: <strong className="status-highlight">DELIVERED</strong></p>
           </div>
         </div>
 
@@ -135,16 +133,15 @@ export default function OrderInvoicePage() {
             <h4>Billed & Shipped To:</h4>
             <p><strong>{order.shippingAddress?.fullName}</strong></p>
             <p>{order.shippingAddress?.street}</p>
-            <p>{order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.postalCode}</p>
-            <p>{order.shippingAddress?.country}</p>
+            <p>{order.shippingAddress?.city}, {order.shippingAddress?.state || 'Tamil Nadu'} - {order.shippingAddress?.postalCode}</p>
+            <p>{order.shippingAddress?.country || 'India 🇮🇳'}</p>
             <p>Phone: {order.shippingAddress?.phone}</p>
           </div>
 
           <div className="billing-box text-right">
             <h4>Payment Details:</h4>
-            <p>Method: {order.paymentMethod}</p>
+            <p>Method: {order.paymentMethod || 'Cash on Delivery (COD)'}</p>
             <p>Payment Status: <span className="text-success font-bold">PAID</span></p>
-            <p>Transaction Ref: #{order._id.slice(-8).toUpperCase()}</p>
           </div>
         </div>
 
@@ -152,7 +149,7 @@ export default function OrderInvoicePage() {
         <table className="invoice-table">
           <thead>
             <tr>
-              <th>Item & Description</th>
+              <th>Product Name</th>
               <th>Variant</th>
               <th>Price</th>
               <th>Qty</th>
@@ -162,11 +159,7 @@ export default function OrderInvoicePage() {
           <tbody>
             {order.orderItems?.map((item, idx) => (
               <tr key={idx}>
-                <td>
-                  <div className="item-name-cell">
-                    <strong>{item.name}</strong>
-                  </div>
-                </td>
+                <td><strong>{item.name}</strong></td>
                 <td>Size {item.size} • {item.color}</td>
                 <td>₹{item.price?.toFixed(0)}</td>
                 <td>{item.quantity}</td>
@@ -180,15 +173,11 @@ export default function OrderInvoicePage() {
         <div className="invoice-totals">
           <div className="totals-box">
             <div className="row"><span>Items Subtotal:</span><span>₹{order.itemsPrice?.toFixed(0)}</span></div>
-            {order.discountAmount > 0 && <div className="row text-success"><span>Discount Coupon:</span><span>-₹{order.discountAmount?.toFixed(0)}</span></div>}
-            <div className="row"><span>Shipping Fee:</span><span>₹{order.shippingPrice?.toFixed(0)}</span></div>
+            {order.discountAmount > 0 && <div className="row text-success"><span>Discount:</span><span>-₹{order.discountAmount?.toFixed(0)}</span></div>}
+            <div className="row"><span>Delivery Charges:</span><span>₹{order.shippingPrice?.toFixed(0)}</span></div>
             <div className="divider" />
-            <div className="row grand-total"><span>Grand Total Paid:</span><span>₹{order.totalPrice?.toFixed(0)}</span></div>
+            <div className="row grand-total"><span>Total Amount Paid:</span><span>₹{order.totalPrice?.toFixed(0)}</span></div>
           </div>
-        </div>
-
-        <div className="invoice-footer-note">
-          <p>Thank you for shopping with Grizzle! For support inquiries or returns, visit support@grizzle.com</p>
         </div>
       </div>
 

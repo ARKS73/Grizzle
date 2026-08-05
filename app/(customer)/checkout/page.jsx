@@ -95,8 +95,23 @@ const INDIAN_STATES_CITIES = {
   'Andaman and Nicobar Islands': ['Port Blair', 'Other'],
   'Dadra and Nagar Haveli and Daman and Diu': ['Daman', 'Diu', 'Silvassa', 'Other'],
   'Ladakh': ['Leh', 'Kargil', 'Other'],
-  'Lakshadweep': ['Kavaratti', 'Other']
 };
+
+const ALL_COUNTRIES = [
+  'India 🇮🇳',
+  'United States 🇺🇸',
+  'United Kingdom 🇬🇧',
+  'United Arab Emirates 🇦🇪',
+  'Singapore 🇸🇬',
+  'Malaysia 🇲🇾',
+  'Canada 🇨🇦',
+  'Australia 🇦🇺',
+  'Germany 🇩🇪',
+  'France 🇫🇷',
+  'Saudi Arabia 🇸🇦',
+  'Sri Lanka 🇱🇰',
+  'Other Country 🌐',
+];
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -363,28 +378,23 @@ export default function CheckoutPage() {
                 </small>
               </div>
 
-              {/* State Selection */}
+              {/* State Selection - Fixed to Tamil Nadu */}
               <div className="form-group">
                 <label className="form-label">State *</label>
                 <select
                   name="state"
-                  value={formData.state}
-                  onChange={handleInputChange}
-                  required
-                  className="form-select font-semibold"
+                  value="Tamil Nadu"
+                  disabled
+                  className="form-select font-semibold form-input-disabled"
                 >
-                  {Object.keys(INDIAN_STATES_CITIES).map((st) => (
-                    <option key={st} value={st}>
-                      {st}
-                    </option>
-                  ))}
+                  <option value="Tamil Nadu">Tamil Nadu (TN)</option>
                 </select>
               </div>
 
               {/* City Selection dropdown with Live Search Filter */}
               <div className="form-group span-2">
                 <label className="form-label d-flex justify-content-between align-items-center">
-                  <span>City * ({stateCityList.length} Cities in {formData.state})</span>
+                  <span>City * ({stateCityList.length} Cities in Tamil Nadu)</span>
                   {formData.city && <span className="text-success font-bold" style={{ fontSize: '0.8rem' }}>✓ Selected: {formData.city}</span>}
                 </label>
 
@@ -463,42 +473,43 @@ export default function CheckoutPage() {
                 />
               </div>
 
-              {/* Country */}
+              {/* Country Selection Dropdown */}
               <div className="form-group">
                 <label className="form-label">Country *</label>
-                <input
-                  type="text"
+                <select
                   name="country"
-                  value="India 🇮🇳"
-                  readOnly
-                  disabled
-                  className="form-input form-input-disabled font-bold"
-                />
+                  value={formData.country || 'India 🇮🇳'}
+                  onChange={handleInputChange}
+                  required
+                  className="form-select font-bold"
+                >
+                  {ALL_COUNTRIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
             {/* Payment Method - Cash on Delivery */}
-            <div className="payment-section mt-4">
-              <h3>2. Payment Method</h3>
-              <div className="payment-options">
-                <label className="payment-card selected">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="Cash on Delivery (COD)"
-                    checked={true}
-                    readOnly
-                  />
-                  <div className="payment-method-info">
-                    <span className="method-name font-bold">💵 Cash on Delivery (COD)</span>
-                    <span className="method-desc">Pay cash to delivery executive when parcel arrives at your door</span>
-                  </div>
-                </label>
+            <div className="payment-method-section mt-4">
+              <h3 className="section-title text-base font-bold mb-2">Payment Method</h3>
+              <div className="cod-badge-container flex items-center gap-3 p-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10">
+                <input type="radio" checked readOnly className="accent-emerald-500" />
+                <div>
+                  <div className="font-bold text-sm text-emerald-400">Cash on Delivery (COD)</div>
+                  <div className="text-xs text-muted">Pay with cash when your package is delivered to your doorstep</div>
+                </div>
               </div>
             </div>
 
-            <button type="submit" disabled={submitting} className="btn btn-primary btn-lg place-order-btn mt-4">
-              {submitting ? 'Processing Order...' : `Place Cash On Delivery Order (₹${totalPrice.toFixed(0)})`} <ArrowRight size={18} />
+            <button
+              type="submit"
+              disabled={submitting}
+              className="btn btn-primary btn-block btn-lg mt-4 w-full text-center"
+            >
+              {submitting ? 'Placing Order...' : `Confirm Order (₹${totalPrice.toFixed(0)})`}
             </button>
           </form>
         </div>
@@ -530,11 +541,6 @@ export default function CheckoutPage() {
               </div>
               <div className="divider" />
               <div className="row total-row"><span>Total Payable</span><span>₹{totalPrice.toFixed(0)}</span></div>
-            </div>
-
-            <div className="security-note">
-              <ShieldCheck size={16} color="#10b981" />
-              <span>100% Premium Bio-Washed Cotton. Instant GST Invoice Generated.</span>
             </div>
           </div>
         </div>

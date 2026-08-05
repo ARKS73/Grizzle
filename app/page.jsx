@@ -170,7 +170,7 @@ export default function SinglePageStreetwearStore() {
           <div className="drops-header">
             <div>
               <h2 className="drops-title">LATEST DROPS</h2>
-              <p className="drops-subtitle">TRADEMARK 2026 COLLECTION / WINTER 2026</p>
+              <p className="drops-subtitle">OFFICIAL 2026 COLLECTION / WINTER 2026</p>
             </div>
             
             {/* Filter Pills */}
