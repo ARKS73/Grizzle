@@ -2,16 +2,25 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import StoreSettings from '@/models/StoreSettings';
 import { getAuthUser } from '@/lib/jwt';
+import { getCachedData, setCachedData, clearStoreCache } from '@/lib/storeCache';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
+    const cachedSettings = getCachedData('store_settings');
+    if (cachedSettings) {
+      return NextResponse.json({ success: true, settings: cachedSettings });
+    }
+
     await connectDB();
-    let settings = await StoreSettings.findOne();
+    let settings = await StoreSettings.findOne().lean();
     if (!settings) {
       settings = await StoreSettings.create({});
     }
+
+    setCachedData('store_settings', settings, 60000);
+
     return NextResponse.json({ success: true, settings });
   } catch (error) {
     console.error('Fetch StoreSettings Error:', error);
@@ -47,6 +56,8 @@ export async function PUT(request) {
     }
 
     await settings.save();
+    clearStoreCache();
+
     return NextResponse.json({ success: true, settings });
   } catch (error) {
     console.error('Update StoreSettings Error:', error);

@@ -76,22 +76,20 @@ export default function SinglePageStreetwearStore() {
     async function fetchData() {
       try {
         setLoadingProducts(true);
-        const catRes = await fetch('/api/categories');
-        const catData = await catRes.json();
-        if (catData.success && Array.isArray(catData.categories)) {
-          setCategories(catData.categories);
-        }
+        const [catRes, prodRes, settingsRes] = await Promise.all([
+          fetch('/api/categories').then((r) => r.json()).catch(() => null),
+          fetch('/api/products?limit=20').then((r) => r.json()).catch(() => null),
+          fetch('/api/admin/settings').then((r) => r.json()).catch(() => null),
+        ]);
 
-        const prodRes = await fetch('/api/products?limit=20');
-        const prodData = await prodRes.json();
-        if (prodData.success && Array.isArray(prodData.products)) {
-          setAllProducts(prodData.products);
+        if (catRes?.success && Array.isArray(catRes.categories)) {
+          setCategories(catRes.categories);
         }
-
-        const settingsRes = await fetch('/api/admin/settings');
-        const settingsData = await settingsRes.json();
-        if (settingsData.success && settingsData.settings) {
-          setHeroSettings(settingsData.settings);
+        if (prodRes?.success && Array.isArray(prodRes.products)) {
+          setAllProducts(prodRes.products);
+        }
+        if (settingsRes?.success && settingsRes.settings) {
+          setHeroSettings(settingsRes.settings);
         }
       } catch (e) {
         console.error('Failed to fetch store data:', e);
@@ -116,6 +114,8 @@ export default function SinglePageStreetwearStore() {
     '#fde5d0', // Soft Peach
     '#d0e6fd', // Ice Blue
   ];
+
+  const displayHeroImg = heroSettings.heroImage || allProducts?.[0]?.images?.[0] || '/logo2.png';
 
   return (
     <div className="single-page-wrapper">
@@ -158,28 +158,14 @@ export default function SinglePageStreetwearStore() {
             {/* Framed Polaroid Artwork */}
             <div className="polaroid-frame-card">
               <div className="badge-hot-pink">HOT</div>
-              {heroSettings.heroImage ? (
-                <img
-                  src={getOptimizedImageUrl(heroSettings.heroImage, 800, 80)}
-                  alt={heroSettings.heroTitle}
-                  className="polaroid-img"
-                  loading="eager"
-                  fetchPriority="high"
-                />
-              ) : (
-                <div 
-                  className="polaroid-img skeleton" 
-                  style={{ 
-                    minHeight: '380px', 
-                    borderRadius: '16px', 
-                    background: 'rgba(255,255,255,0.04)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backdropFilter: 'blur(16px)'
-                  }} 
-                />
-              )}
+              <img
+                src={getOptimizedImageUrl(displayHeroImg, 700, 80)}
+                alt={heroSettings.heroTitle || 'Grizzle Apparel'}
+                className="polaroid-img"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+              />
               <div className="sticky-tape-note">
                 {heroSettings.heroTapeNote}
               </div>
