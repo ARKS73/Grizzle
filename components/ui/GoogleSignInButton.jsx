@@ -1,13 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithPopup, getRedirectResult } from 'firebase/auth';
+import { signInWithPopup, signInWithRedirect } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toast';
-
-const GOOGLE_CLIENT_ID = '898635454432-ncld09i6nkkn87m4k5rb6nv2s15nn9nl.apps.googleusercontent.com';
 
 export default function GoogleSignInButton({ text = 'Continue with Google', redirect = '/' }) {
   const router = useRouter();
@@ -15,73 +13,43 @@ export default function GoogleSignInButton({ text = 'Continue with Google', redi
   const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
 
-  // 1. Process Google OAuth redirect token from hash or Firebase redirect result
-  useEffect(() => {
-    async function processOAuthReturn() {
-      try {
-        // Check standard URL hash for id_token from direct Google OAuth redirect
-        if (typeof window !== 'undefined' && window.location.hash) {
-          const params = new URLSearchParams(window.location.hash.substring(1));
-          const idToken = params.get('id_token');
-          if (idToken) {
-            setLoading(true);
-            // Clear hash from URL cleanly
-            window.history.replaceState(null, '', window.location.pathname);
-            const authRes = await loginWithGoogle(idToken);
-            if (authRes?.success) {
-              if (authRes.user?.role === 'admin') {
-                router.push('/admin');
-              } else if (redirect && redirect !== '/login' && redirect !== '/') {
-                router.push(redirect);
-              } else {
-                router.push('/');
-              }
-            }
-            return;
-          }
-        }
-
-        // Firebase redirect result fallback
-        const result = await getRedirectResult(auth);
-        if (result?.user) {
-          setLoading(true);
-          const idToken = await result.user.getIdToken();
-          const authRes = await loginWithGoogle(idToken);
-          if (authRes?.success) {
-            if (authRes.user?.role === 'admin') {
-              router.push('/admin');
-            } else if (redirect && redirect !== '/login' && redirect !== '/') {
-              router.push(redirect);
-            } else {
-              router.push('/');
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Google Redirect Sign-In Error:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    processOAuthReturn();
-  }, []);
-
-  const handleGoogleClick = () => {
+  const handleGoogleClick = async () => {
+    if (loading) return;
     try {
       setLoading(true);
-      const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://www.grizzle.in';
-      const redirectUri = `${currentOrigin}/login`;
-      const nonce = Math.random().toString(36).substring(2);
 
-      const directGoogleUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(
-        redirectUri
-      )}&response_type=id_token&scope=openid%20email%20profile&nonce=${nonce}`;
+      // Trigger Firebase Google Sign-In Popup
+      const userCredential = await signInWithPopup(auth, googleProvider);
+      const idToken = await userCredential.user.getIdToken();
 
-      window.location.href = directGoogleUrl;
+      const result = await loginWithGoogle(idToken);
+      if (result?.success) {
+        if (result.user?.role === 'admin') {
+          router.push('/admin');
+        } else if (redirect && redirect !== '/login' && redirect !== '/') {
+          router.push(redirect);
+        } else {
+          router.push('/');
+        }
+      } else {
+        addToast(result?.message || 'Google Authentication failed', 'error');
+      }
     } catch (error) {
       console.error('Google Sign-In Error:', error);
-      addToast(error.message || 'Google Sign-In failed', 'error');
+      if (error.code === 'auth/popup-closed-by-user') {
+        // User closed popup
+      } else if (error.code === 'auth/unauthorized-domain') {
+        addToast('Domain not authorized! Add your current URL in Firebase Console Settings -> Authorized Domains', 'error');
+      } else if (error.code === 'auth/popup-blocked') {
+        try {
+          await signInWithRedirect(auth, googleProvider);
+        } catch (e) {
+          addToast(e.message || 'Popup blocked by browser', 'error');
+        }
+      } else {
+        addToast(error.message || 'Google Sign-In failed', 'error');
+      }
+    } finally {
       setLoading(false);
     }
   };
