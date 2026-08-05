@@ -8,6 +8,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import FloatingActions from '@/components/ui/FloatingActions';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/react';
 
 export const metadata = {
   title: 'Grizzle | Premium DTF Printing & Custom Printed Apparel',
@@ -38,6 +39,7 @@ export default function RootLayout({ children }) {
           </AuthProvider>
         </ToastProvider>
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
