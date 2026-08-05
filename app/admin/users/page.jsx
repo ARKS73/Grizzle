@@ -470,15 +470,38 @@ export default function AdminUsersPage() {
                 </p>
 
                 {mfaData?.secret && (
-                  <div style={{ background: '#0f172a', padding: '1rem', borderRadius: '12px', border: '1px solid #334155', marginBottom: '1.25rem' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
-                      Secret Setup Key (Manual Entry):
+                  <div style={{ background: '#0f172a', padding: '1.25rem', borderRadius: '16px', border: '1px solid #334155', marginBottom: '1.25rem', textAlign: 'center' }}>
+                    <div style={{ fontWeight: 700, fontSize: '0.88rem', color: '#e2e8f0', marginBottom: '0.75rem' }}>
+                      Step 1: Scan QR Code with Authenticator App
                     </div>
-                    <code style={{ fontSize: '1.1rem', fontWeight: 800, color: '#ef4444', letterSpacing: '2px', wordBreak: 'break-all' }}>
-                      {mfaData.secret}
-                    </code>
-                    <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.5rem' }}>
-                      Or scan OTP URI in app: <a href={mfaData.otpauthUrl} style={{ color: '#ef4444' }}>Open in Authenticator App</a>
+                    {mfaData.otpauthUrl && (
+                      <div style={{ background: '#ffffff', padding: '10px', borderRadius: '12px', display: 'inline-block', marginBottom: '1rem', boxShadow: '0 4px 14px rgba(0,0,0,0.3)' }}>
+                        <img
+                          src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(mfaData.otpauthUrl)}`}
+                          alt="MFA QR Code"
+                          style={{ width: '160px', height: '160px', display: 'block' }}
+                        />
+                      </div>
+                    )}
+
+                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>
+                      Or Enter Manual Secret Key:
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <code style={{ fontSize: '0.95rem', fontWeight: 800, color: '#ef4444', letterSpacing: '1px', wordBreak: 'break-all', background: 'rgba(239, 68, 68, 0.1)', padding: '0.45rem 0.8rem', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.2)' }}>
+                        {mfaData.secret}
+                      </code>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(mfaData.secret);
+                          addToast('Secret Key Copied to Clipboard!', 'info');
+                        }}
+                        className="btn btn-secondary btn-sm"
+                        style={{ padding: '0.4rem 0.75rem', fontSize: '0.78rem' }}
+                      >
+                        Copy Key
+                      </button>
                     </div>
                   </div>
                 )}
