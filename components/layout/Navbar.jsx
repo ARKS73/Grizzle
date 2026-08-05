@@ -484,13 +484,65 @@ export default function Navbar() {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="mobile-drawer glass-panel">
-          {/* Mobile Search Bar */}
+          {/* 1. Account Section Header Card */}
+          <div className="mobile-account-card">
+            {user ? (
+              <div className="mobile-user-profile">
+                {user.profileImage ? (
+                  <img src={user.profileImage} alt={user.name} className="mobile-user-avatar" />
+                ) : (
+                  <div className="mobile-avatar-placeholder">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="mobile-user-text">
+                  <span className="mobile-user-name">{user.name}</span>
+                  <span className="mobile-user-email">{user.email}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="mobile-guest-auth">
+                <p className="mobile-guest-title">Welcome to Grizzle Apparel</p>
+                <div className="mobile-auth-btns">
+                  <Link href="/login" onClick={closeAllMenus} className="btn btn-primary btn-sm flex-1 text-center">
+                    <User size={15} /> Sign In
+                  </Link>
+                  <Link href="/register" onClick={closeAllMenus} className="btn btn-outline btn-sm flex-1 text-center">
+                    Register
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 2. Theme Selection Switcher */}
+          <div className="mobile-theme-card">
+            <span className="mobile-section-label">🎨 Theme Appearance</span>
+            <div className="mobile-theme-toggle-group">
+              <button
+                type="button"
+                onClick={() => theme !== 'light' && toggleTheme()}
+                className={`mobile-theme-btn ${theme === 'light' ? 'active' : ''}`}
+              >
+                <Sun size={15} /> Light
+              </button>
+              <button
+                type="button"
+                onClick={() => theme !== 'dark' && toggleTheme()}
+                className={`mobile-theme-btn ${theme === 'dark' ? 'active' : ''}`}
+              >
+                <Moon size={15} /> Dark
+              </button>
+            </div>
+          </div>
+
+          {/* 3. Mobile Search Bar */}
           <div className="mobile-search-box">
             <form onSubmit={handleSearchSubmit} className="search-form">
               <Search className="search-icon" size={18} />
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder="Search streetwear & t-shirts..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="search-input"
@@ -498,7 +550,8 @@ export default function Navbar() {
             </form>
           </div>
 
-          {/* Primary Navigation Links */}
+          {/* 4. Primary Category Navigation Links */}
+          <div className="mobile-section-header">EXPLORE CATEGORIES</div>
           <div className="mobile-primary-nav">
             <Link href="/" onClick={closeAllMenus} className="mobile-nav-btn">
               <span>🏠 HOME</span>
@@ -520,7 +573,8 @@ export default function Navbar() {
 
           <div className="mobile-nav-divider" />
 
-          {/* Account & Quick Action Links */}
+          {/* 5. Account & Quick Action Links */}
+          <div className="mobile-section-header">MY ACCOUNT & QUICK LINKS</div>
           <nav className="mobile-secondary-nav">
             <Link href="/products?sort=newest" onClick={closeAllMenus} className="mobile-sub-link">
               <Sparkles size={16} /> New Arrivals
@@ -528,31 +582,33 @@ export default function Navbar() {
 
             {user ? (
               <>
-                <Link href="/wishlist" onClick={closeAllMenus} className="mobile-sub-link">
-                  <Heart size={16} /> Wishlist ({wishlistItems.length})
-                </Link>
-                <Link href="/cart" onClick={closeAllMenus} className="mobile-sub-link">
-                  <ShoppingBag size={16} /> Cart ({getTotalCount()})
+                <Link href="/profile" onClick={closeAllMenus} className="mobile-sub-link">
+                  <User size={16} /> My Profile & Address
                 </Link>
                 <Link href="/orders" onClick={closeAllMenus} className="mobile-sub-link">
                   <PackageCheck size={16} /> My Orders
                 </Link>
-                <Link href="/profile" onClick={closeAllMenus} className="mobile-sub-link">
-                  <User size={16} /> My Profile & Address
+                <Link href="/wishlist" onClick={closeAllMenus} className="mobile-sub-link">
+                  <Heart size={16} /> Saved Wishlist ({wishlistItems.length})
+                </Link>
+                <Link href="/cart" onClick={closeAllMenus} className="mobile-sub-link">
+                  <ShoppingBag size={16} /> Shopping Cart ({getTotalCount()})
                 </Link>
                 {user.role === 'admin' && (
                   <Link href="/admin" onClick={closeAllMenus} className="mobile-sub-link mobile-admin-link">
-                    <ShieldAlert size={16} /> Admin Panel
+                    <ShieldAlert size={16} /> Admin Dashboard
                   </Link>
                 )}
                 <button onClick={() => { logout(); closeAllMenus(); }} className="mobile-logout-btn">
-                  <LogOut size={16} /> Logout
+                  <LogOut size={16} /> Logout Account
                 </button>
               </>
             ) : (
-              <Link href="/login" onClick={closeAllMenus} className="btn btn-primary w-full mt-2 text-center">
-                <User size={16} /> Sign In / Register
-              </Link>
+              <>
+                <Link href="/cart" onClick={closeAllMenus} className="mobile-sub-link">
+                  <ShoppingBag size={16} /> View Cart ({getTotalCount()})
+                </Link>
+              </>
             )}
           </nav>
         </div>
@@ -1385,6 +1441,118 @@ export default function Navbar() {
           background: var(--bg-elevated) !important;
           color: var(--text-primary) !important;
           box-shadow: var(--shadow-xl);
+        }
+
+        .mobile-account-card {
+          background: var(--bg-tertiary);
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-lg);
+          padding: 1rem;
+          margin-bottom: 0.85rem;
+        }
+        .mobile-user-profile {
+          display: flex;
+          align-items: center;
+          gap: 0.85rem;
+        }
+        .mobile-user-avatar {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid var(--accent-primary);
+        }
+        .mobile-avatar-placeholder {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background: var(--accent-gradient);
+          color: white;
+          font-weight: 800;
+          font-size: 1.1rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .mobile-user-text {
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+        }
+        .mobile-user-name {
+          font-weight: 800;
+          font-size: 0.95rem;
+          color: var(--text-primary);
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+        .mobile-user-email {
+          font-size: 0.78rem;
+          color: var(--text-muted);
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+        .mobile-guest-title {
+          font-weight: 800;
+          font-size: 0.9rem;
+          margin-bottom: 0.6rem;
+          color: var(--text-primary);
+        }
+        .mobile-auth-btns {
+          display: flex;
+          gap: 0.65rem;
+        }
+
+        .mobile-theme-card {
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-lg);
+          padding: 0.75rem 1rem;
+          margin-bottom: 1rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .mobile-section-label {
+          font-size: 0.82rem;
+          font-weight: 800;
+          color: var(--text-secondary);
+        }
+        .mobile-theme-toggle-group {
+          display: flex;
+          background: var(--bg-tertiary);
+          padding: 3px;
+          border-radius: var(--radius-md);
+          border: 1px solid var(--border-color);
+        }
+        .mobile-theme-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          padding: 0.4rem 0.75rem;
+          border-radius: var(--radius-sm);
+          font-size: 0.78rem;
+          font-weight: 700;
+          background: transparent;
+          border: none;
+          color: var(--text-muted);
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .mobile-theme-btn.active {
+          background: var(--accent-primary);
+          color: white;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .mobile-section-header {
+          font-size: 0.7rem;
+          font-weight: 800;
+          color: var(--text-muted);
+          letter-spacing: 1px;
+          margin: 0.75rem 0 0.5rem 0.25rem;
         }
 
         .mobile-search-box {
