@@ -769,14 +769,29 @@ export default function CheckoutPage() {
         @media (max-width: 900px) {
           .checkout-page-wrapper {
             padding-top: 1rem;
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
           }
           .checkout-title {
-            font-size: 1.4rem;
-            margin-bottom: 1.25rem;
+            font-size: 1.35rem;
+            margin-bottom: 1rem;
           }
           .checkout-grid {
             grid-template-columns: 1fr;
-            gap: 1.25rem;
+            gap: 1rem;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
+          }
+          .checkout-form-column, .checkout-summary-column {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
           }
           .checkout-form-column {
             order: 2;
@@ -784,18 +799,31 @@ export default function CheckoutPage() {
           .checkout-summary-column {
             order: 1;
           }
-          .summary-card {
+          .summary-card, .checkout-form {
             position: relative;
             top: 0;
-            padding: 1.1rem;
-            margin-bottom: 0.5rem;
+            padding: 1rem !important;
+            margin: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
           }
-          .checkout-form {
-            padding: 1.1rem;
+          .payment-section, .payment-options, .payment-card {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+          }
+          .payment-card {
+            padding: 0.85rem !important;
+            gap: 0.75rem !important;
           }
           .form-grid {
             grid-template-columns: 1fr;
             gap: 0.85rem;
+            width: 100% !important;
+            box-sizing: border-box !important;
           }
           .span-2 { grid-column: span 1; }
           .mini-name { font-size: 0.82rem; }
