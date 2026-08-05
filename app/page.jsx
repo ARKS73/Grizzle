@@ -151,26 +151,6 @@ export default function SinglePageStreetwearStore() {
               </Link>
             </div>
           </div>
-
-          <div className="hero-visual-wrapper">
-            <div className="ambient-glow-orb"></div>
-            
-            {/* Framed Polaroid Artwork */}
-            <div className="polaroid-frame-card">
-              <div className="badge-hot-pink">HOT</div>
-              <img
-                src={getOptimizedImageUrl(displayHeroImg, 700, 80)}
-                alt={heroSettings.heroTitle || 'Grizzle Apparel'}
-                className="polaroid-img"
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-              />
-              <div className="sticky-tape-note">
-                {heroSettings.heroTapeNote}
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -671,10 +651,12 @@ export default function SinglePageStreetwearStore() {
           position: relative;
         }
         .hero-street-container {
-          display: grid;
-          grid-template-columns: 1.1fr 0.9fr;
-          gap: 3rem;
+          display: flex;
+          flex-direction: column;
           align-items: center;
+          text-align: center;
+          max-width: 920px;
+          margin: 0 auto;
           backdrop-filter: blur(24px) saturate(190%);
           border-radius: 32px;
           padding: 3.5rem 3rem;
@@ -727,12 +709,13 @@ export default function SinglePageStreetwearStore() {
           font-size: 1.05rem;
           color: var(--text-secondary);
           line-height: 1.6;
-          max-width: 500px;
-          margin-bottom: 2.25rem;
+          max-width: 640px;
+          margin: 0 auto 2.25rem auto;
         }
         .hero-btn-group {
           display: flex;
           align-items: center;
+          justify-content: center;
           gap: 1rem;
         }
 
