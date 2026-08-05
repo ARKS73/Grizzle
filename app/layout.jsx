@@ -7,6 +7,7 @@ import { WishlistProvider } from '@/contexts/WishlistContext';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import FloatingActions from '@/components/ui/FloatingActions';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata = {
   title: 'Grizzle | Premium DTF Printing & Custom Printed Apparel',
@@ -36,6 +37,7 @@ export default function RootLayout({ children }) {
             </CartProvider>
           </AuthProvider>
         </ToastProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
