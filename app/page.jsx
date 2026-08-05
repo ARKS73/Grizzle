@@ -645,56 +645,57 @@ export default function SinglePageStreetwearStore() {
           background: transparent;
         }
 
-        /* ------------------ LIQUID GLASS HERO SECTION ------------------ */
+        /* ------------------ HERO BANNER WITH ATHLETE BACKGROUND ------------------ */
         .hero-section-street {
-          padding: 4rem 0 3rem 0;
+          padding: 4.5rem 2rem 4.5rem 3.5rem;
           position: relative;
-          background: url('/hero-bg-athlete.jpg') center center / cover no-repeat;
+          background-image: url('/hero-bg-athlete.jpg');
+          background-size: cover;
+          background-position: center right;
+          background-repeat: no-repeat;
           border-radius: 32px;
           overflow: hidden;
-          box-shadow: var(--shadow-xl);
+          box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+          min-height: 480px;
+          display: flex;
+          align-items: center;
         }
         .hero-section-street::before {
           content: '';
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, rgba(9, 9, 11, 0.45) 0%, rgba(9, 9, 11, 0.72) 100%);
+          background: linear-gradient(90deg, rgba(9, 9, 11, 0.88) 0%, rgba(9, 9, 11, 0.65) 45%, rgba(9, 9, 11, 0.1) 100%);
           z-index: 1;
         }
         [data-theme='light'] .hero-section-street::before {
-          background: linear-gradient(180deg, rgba(240, 249, 255, 0.4) 0%, rgba(224, 242, 254, 0.75) 100%);
+          background: linear-gradient(90deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.7) 48%, rgba(255, 255, 255, 0.15) 100%);
         }
         .hero-street-container {
           position: relative;
           z-index: 2;
           display: flex;
           flex-direction: column;
-          align-items: center;
-          text-align: center;
-          max-width: 880px;
-          margin: 0 auto;
-          backdrop-filter: blur(28px) saturate(200%);
-          -webkit-backdrop-filter: blur(28px) saturate(200%);
-          border-radius: 28px;
-          padding: 3.5rem 2.5rem;
-          transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+          align-items: flex-start;
+          text-align: left;
+          max-width: 580px;
+          margin: 0;
+          padding: 0;
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
         }
-        [data-theme='dark'] .hero-street-container {
-          background: rgba(18, 18, 21, 0.72);
-          border: 1px solid rgba(255, 255, 255, 0.18);
-          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.2);
-        }
-        [data-theme='light'] .hero-street-container {
-          background: rgba(255, 255, 255, 0.82);
-          border: 1px solid rgba(186, 230, 255, 0.8);
-          box-shadow: 0 20px 50px rgba(56, 189, 248, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.95);
+        .hero-text-content {
+          width: 100%;
+          text-align: left;
         }
         .hero-pill-badge {
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
           padding: 0.45rem 1rem;
-          background: linear-gradient(135deg, rgba(37, 99, 235, 0.35), rgba(168, 85, 247, 0.35));
+          background: linear-gradient(135deg, rgba(37, 99, 235, 0.4), rgba(168, 85, 247, 0.4));
           backdrop-filter: blur(12px);
           border: 1px solid rgba(255, 255, 255, 0.3);
           color: #ffffff;
@@ -704,10 +705,10 @@ export default function SinglePageStreetwearStore() {
           border-radius: 9999px;
           margin-bottom: 1.5rem;
           text-transform: uppercase;
-          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+          box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
         }
         .hero-street-title {
-          font-size: 4rem;
+          font-size: 3.8rem;
           line-height: 1.05;
           font-weight: 900;
           font-family: 'Outfit', sans-serif;
@@ -715,6 +716,7 @@ export default function SinglePageStreetwearStore() {
           margin-bottom: 1.5rem;
           color: var(--text-primary);
           text-transform: uppercase;
+          text-align: left;
         }
         .title-accent-italic {
           font-style: italic;
@@ -726,13 +728,14 @@ export default function SinglePageStreetwearStore() {
           font-size: 1.05rem;
           color: var(--text-secondary);
           line-height: 1.6;
-          max-width: 640px;
-          margin: 0 auto 2.25rem auto;
+          max-width: 520px;
+          margin: 0 0 2.25rem 0;
+          text-align: left;
         }
         .hero-btn-group {
           display: flex;
           align-items: center;
-          justify-content: center;
+          justify-content: flex-start;
           gap: 1rem;
         }
 
