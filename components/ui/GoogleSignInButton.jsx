@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithPopup } from 'firebase/auth';
+import { signInWithPopup, signInWithRedirect, getRedirectResult } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toast';
@@ -13,9 +13,49 @@ export default function GoogleSignInButton({ text = 'Continue with Google', redi
   const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
 
+  // Handle mobile redirect authentication result on page load
+  useEffect(() => {
+    async function checkRedirectResult() {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result?.user) {
+          setLoading(true);
+          const idToken = await result.user.getIdToken();
+          const authRes = await loginWithGoogle(idToken);
+          if (authRes?.success) {
+            if (authRes.user?.role === 'admin') {
+              router.push('/admin');
+            } else if (redirect && redirect !== '/login' && redirect !== '/') {
+              router.push(redirect);
+            } else {
+              router.push('/');
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Google Redirect Sign-In Error:', error);
+        addToast('Google redirect authentication failed', 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    checkRedirectResult();
+  }, []);
+
   const handleGoogleClick = async () => {
     try {
       setLoading(true);
+
+      // Detect mobile user agent for seamless mobile redirect
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        await signInWithRedirect(auth, googleProvider);
+        return;
+      }
+
+      // Desktop popup flow
       const userCredential = await signInWithPopup(auth, googleProvider);
       const idToken = await userCredential.user.getIdToken();
 
@@ -30,8 +70,15 @@ export default function GoogleSignInButton({ text = 'Continue with Google', redi
         }
       }
     } catch (error) {
-      console.error('Google Sign-In Popup Error:', error);
-      if (error.code !== 'auth/popup-closed-by-user') {
+      console.error('Google Sign-In Error:', error);
+      if (error.code === 'auth/popup-blocked' || error.code === 'auth/operation-not-supported-in-this-environment') {
+        try {
+          await signInWithRedirect(auth, googleProvider);
+          return;
+        } catch (e) {
+          addToast(e.message || 'Google Sign-In failed', 'error');
+        }
+      } else if (error.code !== 'auth/popup-closed-by-user') {
         addToast(error.message || 'Google Sign-In failed', 'error');
       }
     } finally {
