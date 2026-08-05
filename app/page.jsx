@@ -212,15 +212,13 @@ export default function SinglePageStreetwearStore() {
           ) : (
             <div className="pastel-products-grid">
               {filteredProducts.slice(0, 8).map((product, idx) => {
-                const bgPastel = pastelColors[idx % pastelColors.length];
                 const isSaved = isInWishlist(product._id);
 
                 return (
                   <div key={product._id} className="pastel-card-wrapper">
-                    {/* Soft Pastel Image Block */}
+                    {/* Uniform Image Block */}
                     <div 
                       className="pastel-image-block" 
-                      style={{ backgroundColor: bgPastel, cursor: 'pointer' }}
                       onClick={() => setQuickViewProduct(product)}
                       title="Click to view product details"
                     >
@@ -315,14 +313,12 @@ export default function SinglePageStreetwearStore() {
           ) : (
             <div className="pastel-products-grid">
               {mensProducts.slice(0, 4).map((product, idx) => {
-                const bgPastel = pastelColors[idx % pastelColors.length];
                 const isSaved = isInWishlist(product._id);
 
                 return (
                   <div key={product._id} className="pastel-card-wrapper">
                     <div 
                       className="pastel-image-block" 
-                      style={{ backgroundColor: bgPastel, cursor: 'pointer' }}
                       onClick={() => setQuickViewProduct(product)}
                       title="Click to view product details"
                     >
@@ -413,14 +409,12 @@ export default function SinglePageStreetwearStore() {
           ) : (
             <div className="pastel-products-grid">
               {womensProducts.slice(0, 4).map((product, idx) => {
-                const bgPastel = pastelColors[(idx + 2) % pastelColors.length];
                 const isSaved = isInWishlist(product._id);
 
                 return (
                   <div key={product._id} className="pastel-card-wrapper">
                     <div 
                       className="pastel-image-block" 
-                      style={{ backgroundColor: bgPastel, cursor: 'pointer' }}
                       onClick={() => setQuickViewProduct(product)}
                       title="Click to view product details"
                     >
@@ -1020,6 +1014,7 @@ export default function SinglePageStreetwearStore() {
           align-items: center;
           justify-content: center;
           padding: 1rem;
+          background: var(--bg-tertiary);
         }
         .pastel-product-img {
           max-height: 85%;
