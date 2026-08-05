@@ -159,7 +159,7 @@ export default function CheckoutPage() {
   if (cartItems.length === 0) {
     return (
       <div className="container text-center py-5">
-        <h2>Your Shopping Bag is Empty</h2>
+        <h2>Your Cart is Empty</h2>
         <p className="mt-2 text-muted">Add products to your cart before proceeding to checkout.</p>
         <Link href="/products" className="btn btn-primary mt-3">Browse Products</Link>
       </div>

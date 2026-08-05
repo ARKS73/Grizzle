@@ -103,7 +103,7 @@ export default function Footer() {
           </a>
           <Link href="/orders">Track Your Order</Link>
           <Link href="/wishlist">Saved Wishlist</Link>
-          <Link href="/cart">Shopping Bag</Link>
+          <Link href="/cart">View Cart</Link>
           <Link href="#">Shipping &amp; Delivery</Link>
           <Link href="#">Returns &amp; Refund Policy</Link>
         </div>

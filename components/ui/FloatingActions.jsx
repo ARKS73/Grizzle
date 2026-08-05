@@ -41,13 +41,13 @@ export default function FloatingActions() {
 
   return (
     <div className="floating-actions-wrapper">
-      {/* Prominent Floating Shopping Bag Button - always visible */}
+      {/* Prominent Floating Cart Button - always visible */}
       <a
         href="/cart"
         onClick={handleCartClick}
         className="floating-circle-btn floating-cart-btn"
-        title={`Shopping Bag${totalCount > 0 ? ` (${totalCount} items)` : ''}`}
-        aria-label="Go to Shopping Bag"
+        title={`Cart${totalCount > 0 ? ` (${totalCount} items)` : ''}`}
+        aria-label="Go to Cart"
       >
         <ShoppingBag size={26} />
         {totalCount > 0 && (

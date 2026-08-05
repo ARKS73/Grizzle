@@ -72,7 +72,7 @@ export default function WishlistPage() {
             Saved Wishlist <span className="item-count-badge">({wishlistItems.length} items)</span>
           </h1>
           <p className="wishlist-subtitle">
-            Select your preferred size for each t-shirt and move them directly to your Shopping Bag.
+            Select your preferred size for each t-shirt and move them directly to your Cart.
           </p>
         </div>
 
@@ -84,7 +84,7 @@ export default function WishlistPage() {
               </div>
             )}
             <button onClick={handleMoveAllToCart} className="btn btn-primary shadow-glow">
-              <ShoppingBag size={18} /> Move All to Shopping Bag
+              <ShoppingBag size={18} /> Move All to Cart
             </button>
           </div>
         )}

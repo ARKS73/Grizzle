@@ -291,9 +291,9 @@ export default function Navbar() {
                                   removeFromWishlist(item._id);
                                 }}
                                 className="btn btn-primary btn-xs"
-                                title="Move to Shopping Bag"
+                                title="Move to Cart"
                               >
-                                + Bag
+                                + Cart
                               </button>
                             </div>
                           ))}
@@ -321,7 +321,7 @@ export default function Navbar() {
                 <Link 
                   href="/cart" 
                   className="icon-btn badge-container" 
-                  title="Shopping Bag"
+                  title="Cart"
                   onClick={closeAllMenus}
                 >
                   <ShoppingBag size={20} />
@@ -334,14 +334,14 @@ export default function Navbar() {
                   <div className="quick-preview-menu glass-panel">
                     <div className="preview-header">
                       <span className="preview-title">
-                        <ShoppingBag size={14} className="text-primary" /> Shopping Bag ({getTotalCount()})
+                        <ShoppingBag size={14} className="text-primary" /> Cart ({getTotalCount()})
                       </span>
-                      <Link href="/cart" onClick={closeAllMenus} className="preview-link">View Bag</Link>
+                      <Link href="/cart" onClick={closeAllMenus} className="preview-link">View Cart</Link>
                     </div>
                     <div className="preview-divider"></div>
                     {cartItems.length === 0 ? (
                       <div className="preview-empty">
-                        <p>Your shopping bag is empty.</p>
+                        <p>Your cart is empty.</p>
                         <Link href="/products" onClick={closeAllMenus} className="btn btn-primary btn-sm mt-2">
                           Start Shopping
                         </Link>
@@ -532,7 +532,7 @@ export default function Navbar() {
                   <Heart size={16} /> Wishlist ({wishlistItems.length})
                 </Link>
                 <Link href="/cart" onClick={closeAllMenus} className="mobile-sub-link">
-                  <ShoppingBag size={16} /> Shopping Bag ({getTotalCount()})
+                  <ShoppingBag size={16} /> Cart ({getTotalCount()})
                 </Link>
                 <Link href="/orders" onClick={closeAllMenus} className="mobile-sub-link">
                   <PackageCheck size={16} /> My Orders

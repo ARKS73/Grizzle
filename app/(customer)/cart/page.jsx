@@ -41,7 +41,7 @@ export default function CartPage() {
       <div className="container empty-cart-container text-center">
         <div className="empty-cart-card glass-panel">
           <ShoppingBag size={64} className="empty-icon text-muted" />
-          <h2>Your Shopping Bag is Empty</h2>
+          <h2>Your Cart is Empty</h2>
           <p>Explore our self-made printed t-shirts, anime graphics & oversized tees.</p>
           <Link href="/products" className="btn btn-primary btn-lg mt-3">
             Start Shopping Now <ArrowRight size={18} />
@@ -51,9 +51,11 @@ export default function CartPage() {
     );
   }
 
+  const totalItemCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
   return (
     <div className="container cart-page-wrapper">
-      <h1 className="cart-title">Your Shopping Bag ({cartItems.length} items)</h1>
+      <h1 className="cart-title">Your Cart ({totalItemCount} {totalItemCount === 1 ? 'item' : 'items'})</h1>
 
       <div className="cart-layout">
         {/* Items List */}
@@ -67,8 +69,8 @@ export default function CartPage() {
                   {item.product.name}
                 </Link>
                 <div className="item-variants">
-                  <span className="badge badge-secondary">Size: {item.size}</span>
-                  <span className="badge badge-secondary">Color: {item.color}</span>
+                  <span className="badge badge-secondary">SIZE: {item.size}</span>
+                  <span className="badge badge-secondary">COLOR: {item.color}</span>
                 </div>
                 <span className="item-unit-price">₹{item.product.price?.toFixed(0)} each</span>
               </div>
@@ -95,7 +97,7 @@ export default function CartPage() {
           ))}
 
           <div className="cart-list-footer">
-            <button onClick={clearCart} className="btn btn-secondary btn-sm">Clear Shopping Bag</button>
+            <button onClick={clearCart} className="btn btn-secondary btn-sm">Clear Cart</button>
             <Link href="/products" className="continue-shopping">&larr; Continue Shopping</Link>
           </div>
         </div>
@@ -146,7 +148,7 @@ export default function CartPage() {
 
             <div className="summary-row">
               <span>Estimated Shipping</span>
-              <span>{shipping === 0 ? <strong className="text-success">FREE</strong> : `₹${shipping.toFixed(0)}`}</span>
+              <span>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span>
             </div>
 
             <div className="summary-divider" />
@@ -162,7 +164,7 @@ export default function CartPage() {
           </Link>
 
           <div className="checkout-guarantee">
-            <ShieldCheck size={16} /> 256-Bit SSL Encrypted Checkout
+            <ShieldCheck size={16} className="text-success" /> <span>256-Bit SSL Encrypted Checkout</span>
           </div>
         </div>
       </div>
@@ -170,69 +172,60 @@ export default function CartPage() {
       <style jsx>{`
         .cart-page-wrapper {
           padding-top: 2rem;
+          padding-bottom: 4rem;
+          width: 100%;
+          box-sizing: border-box;
         }
         .cart-title {
-          font-size: 2.2rem;
           margin-bottom: 1.5rem;
-        }
-
-        .shipping-progress-card {
-          padding: 1.25rem;
-          margin-bottom: 2rem;
-        }
-        .progress-header {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-size: 0.9rem;
-          margin-bottom: 0.5rem;
-        }
-        .progress-bar-track {
-          height: 8px;
-          border-radius: var(--radius-full);
-          background: var(--bg-tertiary);
-          overflow: hidden;
-        }
-        .progress-bar-fill {
-          height: 100%;
-          background: var(--accent-gradient);
-          transition: width 0.4s ease;
+          font-size: clamp(1.4rem, 4vw, 2.2rem);
+          word-break: break-word;
         }
 
         .cart-layout {
           display: grid;
           grid-template-columns: 1fr 360px;
           gap: 2rem;
+          width: 100%;
         }
 
         .cart-items-list {
           display: flex;
           flex-direction: column;
           gap: 1rem;
+          width: 100%;
         }
         .cart-item-card {
           display: flex;
           align-items: center;
           gap: 1.25rem;
           padding: 1.25rem;
+          width: 100%;
+          box-sizing: border-box;
         }
         .item-img {
           width: 80px;
           height: 90px;
           object-fit: cover;
           border-radius: var(--radius-md);
+          flex-shrink: 0;
         }
         .item-info {
           flex: 1;
           display: flex;
           flex-direction: column;
           gap: 0.35rem;
+          min-width: 0;
         }
         .item-name {
           font-size: 1rem;
           font-weight: 700;
+          line-height: 1.3;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
-        .item-variants { display: flex; gap: 0.5rem; }
+        .item-variants { display: flex; gap: 0.5rem; flex-wrap: wrap; }
         .item-unit-price { font-size: 0.85rem; color: var(--text-muted); }
 
         .quantity-control {
@@ -241,6 +234,7 @@ export default function CartPage() {
           border: 1px solid var(--border-color);
           border-radius: var(--radius-md);
           overflow: hidden;
+          flex-shrink: 0;
         }
         .quantity-control button {
           width: 32px;
@@ -260,6 +254,7 @@ export default function CartPage() {
           display: flex;
           align-items: center;
           gap: 1.25rem;
+          flex-shrink: 0;
         }
         .item-line-total {
           font-size: 1.15rem;
@@ -270,6 +265,7 @@ export default function CartPage() {
           border: none;
           color: var(--text-muted);
           cursor: pointer;
+          padding: 4px;
         }
         .remove-btn:hover { color: var(--danger); }
 
@@ -278,11 +274,15 @@ export default function CartPage() {
           align-items: center;
           justify-content: space-between;
           padding-top: 1rem;
+          gap: 1rem;
+          width: 100%;
+          box-sizing: border-box;
         }
         .continue-shopping {
           font-size: 0.9rem;
           color: var(--accent-primary);
           font-weight: 600;
+          white-space: nowrap;
         }
 
         .order-summary-sidebar {
@@ -291,11 +291,18 @@ export default function CartPage() {
           flex-direction: column;
           gap: 1.25rem;
           height: fit-content;
+          width: 100%;
+          box-sizing: border-box;
         }
         .coupon-input-box {
           position: relative;
           display: flex;
           gap: 0.5rem;
+          width: 100%;
+        }
+        .coupon-input-box input {
+          flex: 1;
+          min-width: 0;
         }
         .tag-icon {
           position: absolute;
@@ -356,11 +363,45 @@ export default function CartPage() {
           color: var(--text-muted);
         }
 
-        .empty-cart-container { padding: 4rem 1.5rem; }
-        .empty-cart-card { padding: 4rem 2rem; }
+        .empty-cart-container { padding: 4rem 1rem; }
+        .empty-cart-card { padding: 3rem 1.5rem; }
 
         @media (max-width: 900px) {
           .cart-layout { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 640px) {
+          .cart-page-wrapper {
+            padding-top: 1rem;
+            padding-bottom: 2.5rem;
+          }
+          .cart-item-card {
+            padding: 0.85rem;
+            gap: 0.75rem;
+          }
+          .item-img {
+            width: 70px;
+            height: 80px;
+          }
+          .item-name {
+            font-size: 0.92rem;
+            white-space: normal;
+          }
+          .cart-list-footer {
+            flex-direction: column-reverse;
+            align-items: center;
+            gap: 1rem;
+            text-align: center;
+          }
+          .cart-list-footer button,
+          .continue-shopping {
+            width: 100%;
+            text-align: center;
+            display: block;
+          }
+          .coupon-input-box input {
+            font-size: 0.85rem;
+          }
         }
       `}</style>
     </div>
