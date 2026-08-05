@@ -339,8 +339,41 @@ export default function OrderInvoicePage() {
         }
 
         @media print {
-          .no-print { display: none !important; }
-          .print-area { border: none !important; background: white !important; color: black !important; padding: 0 !important; }
+          /* Hide all page navigation, headers, footers, and non-printable cards */
+          header, footer, nav, .navbar-header, .footer-wrapper, .top-nav-bar, .no-print, .floating-actions, button {
+            display: none !important;
+          }
+          body {
+            background: #ffffff !important;
+            color: #000000 !important;
+          }
+          body * {
+            visibility: hidden !important;
+          }
+          .print-area, .print-area * {
+            visibility: visible !important;
+          }
+          .print-area {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 1.5rem !important;
+            border: none !important;
+            background: #ffffff !important;
+            color: #000000 !important;
+            box-shadow: none !important;
+          }
+          .print-area table, .print-area th, .print-area td, .print-area p, .print-area span, .print-area h2, .print-area h4, .print-area strong, .print-area div {
+            color: #000000 !important;
+          }
+          .print-area th {
+            border-bottom: 2px solid #000000 !important;
+          }
+          .print-area td {
+            border-bottom: 1px solid #e2e8f0 !important;
+          }
         }
       `}</style>
     </div>
