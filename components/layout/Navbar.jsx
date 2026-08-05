@@ -236,7 +236,7 @@ export default function Navbar() {
         {/* Actions & User Controls */}
         <div className="nav-actions">
           {/* Theme Toggle */}
-          <button onClick={toggleTheme} className="icon-btn" title="Toggle Theme">
+          <button onClick={toggleTheme} className="icon-btn theme-toggle-desktop" title="Toggle Theme">
             {theme === 'dark' ? <Sun size={20} className="icon-sun" /> : <Moon size={20} className="icon-moon" />}
           </button>
 
@@ -1653,6 +1653,8 @@ export default function Navbar() {
         @media (max-width: 950px) {
           .desktop-nav { display: none; }
           .search-wrapper { max-width: 260px; }
+          .theme-toggle-desktop { display: none !important; }
+          .user-dropdown-wrapper { display: none !important; }
           .mobile-toggle { display: flex; }
         }
         @media (max-width: 600px) {
