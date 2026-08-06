@@ -25,8 +25,8 @@ export default function WriteReviewModal({ product, onClose, onReviewSubmitted }
       return;
     }
 
-    if (!comment.trim()) {
-      addToast('Please enter your review comment', 'error');
+    if (!rating && !comment.trim()) {
+      addToast('Please select a star rating or enter a review comment', 'error');
       return;
     }
 
@@ -135,13 +135,12 @@ export default function WriteReviewModal({ product, onClose, onReviewSubmitted }
           </div>
 
           <div className="form-group">
-            <label className="form-label">Detailed Review</label>
+            <label className="form-label">Detailed Review (Optional)</label>
             <textarea
               rows={4}
-              placeholder="Share how the fabric quality, DTF printing, fit, and delivery felt after receiving your order..."
+              placeholder="Share how the fabric quality, DTF printing, fit, and delivery felt after receiving your order (optional)..."
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              required
               className="form-textarea"
             />
           </div>

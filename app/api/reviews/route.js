@@ -55,9 +55,12 @@ export async function POST(request) {
     }
 
     const { productId, rating, title, comment } = await request.json();
-    if (!productId || !rating || !comment) {
-      return NextResponse.json({ success: false, message: 'Rating and review comment are required' }, { status: 400 });
+    if (!productId) {
+      return NextResponse.json({ success: false, message: 'Product ID is required' }, { status: 400 });
     }
+
+    const numRating = rating ? parseInt(rating, 10) : 5;
+    const finalComment = (comment && comment.trim()) ? comment.trim() : `Verified ${numRating}-Star Product Rating`;
 
     await connectDB();
 
@@ -79,9 +82,9 @@ export async function POST(request) {
       product: productId,
       user: authUser.userId,
       userName: authUser.name,
-      rating: parseInt(rating, 10),
-      title: title || '',
-      comment,
+      rating: numRating,
+      title: title || (numRating >= 4 ? 'Great Quality!' : 'Customer Rating'),
+      comment: finalComment,
       isVerifiedPurchase: true,
     });
 

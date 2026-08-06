@@ -145,13 +145,12 @@ export default function ReviewSection({ productId, reviews = [], onReviewAdded }
           </div>
 
           <div className="form-group">
-            <label className="form-label">Detailed Review</label>
+            <label className="form-label">Detailed Review (Optional)</label>
             <textarea
               rows={4}
-              placeholder="Tell others how the fabric, size fit, and overall quality felt..."
+              placeholder="Tell others how the fabric, size fit, and overall quality felt (optional)..."
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              required
               className="form-textarea"
             />
           </div>

@@ -30,6 +30,27 @@ const StoreSettingsSchema = new mongoose.Schema(
       type: Number,
       default: 49,
     },
+    footerAboutText: {
+      type: String,
+      default: 'Self-Made High-Density DTF Printed Streetwear. Bio-Washed 240 GSM Premium Cotton Built for Style & Longevity.',
+    },
+    footerCopyrightText: {
+      type: String,
+      default: '© 2026 Grizzle Apparel India. All rights reserved. Self-Made Printed T-Shirts.',
+    },
+    footerCustomLinks: {
+      type: [
+        {
+          label: { type: String, required: true },
+          url: { type: String, required: true },
+        },
+      ],
+      default: [
+        { label: '📐 Size Chart & Fit Guide', url: '#size-chart' },
+        { label: '🚚 Shipping & Delivery Policy', url: '/products' },
+        { label: '🔄 Returns & Refund Policy', url: '/orders' },
+      ],
+    },
   },
   { timestamps: true }
 );

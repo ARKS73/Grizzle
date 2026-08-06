@@ -93,21 +93,26 @@ export async function POST(request) {
 
     const conn = await connectDB();
 
-    // ATOMIC stock deduction — prevents race condition overselling
+    // Deduct overall stock and specific sizeStock for each ordered product item
     for (const item of orderItems) {
-      if (!item.product || item.product.length !== 24) continue;
-      const updated = await Product.findOneAndUpdate(
-        { _id: item.product, stock: { $gte: item.quantity } }, // atomic check + deduct
-        { $inc: { stock: -item.quantity } },
-        { new: true }
-      );
-      if (!updated) {
-        return NextResponse.json(
-          { success: false, message: `"${item.name}" is out of stock or insufficient quantity available.` },
-          { status: 400 }
-        );
+      const productIdStr = typeof item.product === 'object' ? item.product?._id : item.product;
+      if (!productIdStr || String(productIdStr).length !== 24) continue;
+
+      const targetProd = await Product.findById(productIdStr);
+      if (!targetProd) continue;
+
+      const qty = parseInt(item.quantity || '1', 10);
+      const incFields = { stock: -qty };
+
+      if (item.size && targetProd.sizeStock && targetProd.sizeStock[item.size] !== undefined) {
+        incFields[`sizeStock.${item.size}`] = -qty;
       }
+
+      await Product.findByIdAndUpdate(productIdStr, { $inc: incFields });
     }
+
+    const { clearStoreCache } = await import('@/lib/storeCache');
+    clearStoreCache();
 
     const order = await Order.create({
       user: userId,

@@ -62,7 +62,36 @@ export default function AdminDashboardPage() {
     heroAccentTitle: 'YOU CAN WEAR',
     heroDesc: 'Merging high-fidelity DTF printing with 240 GSM bio-washed heavy cotton. Vibrant prints built to last for 50+ washes.',
     heroTapeNote: 'LIMITED TO 100 PIECES GLOBALLY',
+    footerAboutText: 'Self-Made High-Density DTF Printed Streetwear. Bio-Washed 240 GSM Premium Cotton Built for Style & Longevity.',
+    footerCopyrightText: '© 2026 Grizzle Apparel India. All rights reserved. Self-Made Printed T-Shirts.',
+    footerCustomLinks: [
+      { label: '📐 Size Chart & Fit Guide', url: '#size-chart' },
+      { label: '🚚 Shipping & Delivery Policy', url: '/products' },
+      { label: '🔄 Returns & Refund Policy', url: '/orders' },
+    ],
   });
+
+  const handleAddFooterLink = () => {
+    setStoreSettings((prev) => ({
+      ...prev,
+      footerCustomLinks: [...(prev.footerCustomLinks || []), { label: 'New Link', url: '#' }],
+    }));
+  };
+
+  const handleRemoveFooterLink = (index) => {
+    setStoreSettings((prev) => ({
+      ...prev,
+      footerCustomLinks: (prev.footerCustomLinks || []).filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleFooterLinkChange = (index, field, value) => {
+    setStoreSettings((prev) => {
+      const updated = [...(prev.footerCustomLinks || [])];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, footerCustomLinks: updated };
+    });
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -297,6 +326,77 @@ export default function AdminDashboardPage() {
                 onChange={(e) => setStoreSettings((prev) => ({ ...prev, heroTapeNote: e.target.value }))}
               />
             </div>
+          </div>
+        </div>
+
+        {/* Footer Customization Section */}
+        <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem', marginTop: '1.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <h4 style={{ fontSize: '1.05rem', fontWeight: 800 }}>Footer Content &amp; Custom Links Editor</h4>
+              <p className="subtext">Add custom footer links (e.g. Size Chart, Policies) and customize brand text.</p>
+            </div>
+            <button
+              type="button"
+              onClick={handleAddFooterLink}
+              className="btn btn-secondary btn-sm"
+              style={{ fontWeight: 700 }}
+            >
+              + Add New Footer Link
+            </button>
+          </div>
+
+          <div className="form-grid-2 mb-3">
+            <div className="form-group">
+              <label className="form-label">Footer Brand Description</label>
+              <textarea
+                className="form-input"
+                rows={2}
+                value={storeSettings.footerAboutText || ''}
+                onChange={(e) => setStoreSettings((prev) => ({ ...prev, footerAboutText: e.target.value }))}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Footer Copyright Notice</label>
+              <input
+                type="text"
+                className="form-input"
+                value={storeSettings.footerCopyrightText || ''}
+                onChange={(e) => setStoreSettings((prev) => ({ ...prev, footerCopyrightText: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <label className="form-label mb-2" style={{ display: 'block' }}>Custom Footer Links List</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+            {(storeSettings.footerCustomLinks || []).map((link, idx) => (
+              <div key={idx} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                <input
+                  type="text"
+                  placeholder="Link Title (e.g. Size Chart)"
+                  value={link.label}
+                  onChange={(e) => handleFooterLinkChange(idx, 'label', e.target.value)}
+                  className="form-input"
+                  style={{ flex: '1', minWidth: '180px' }}
+                />
+                <input
+                  type="text"
+                  placeholder="URL / Path (e.g. #size-chart or /products)"
+                  value={link.url}
+                  onChange={(e) => handleFooterLinkChange(idx, 'url', e.target.value)}
+                  className="form-input"
+                  style={{ flex: '1', minWidth: '180px' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveFooterLink(idx)}
+                  className="btn btn-secondary btn-sm"
+                  style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)', padding: '0.5rem 0.75rem' }}
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       </div>

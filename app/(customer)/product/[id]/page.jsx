@@ -8,7 +8,7 @@ import ProductCard from '@/components/products/ProductCard';
 import ReviewSection from '@/components/products/ReviewSection';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
-
+import SizeChartModal from '@/components/ui/SizeChartModal';
 import { getOptimizedImageUrl } from '@/utils/imageOptimizer';
 
 export default function ProductDetailPage() {
@@ -25,6 +25,7 @@ export default function ProductDetailPage() {
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [sizeChartOpen, setSizeChartOpen] = useState(false);
 
   const fetchProductData = async () => {
     try {
@@ -254,7 +255,13 @@ export default function ProductDetailPage() {
                 <label className="variant-title">
                   Select Size: {selectedSize && <span className="selected-color-name">{selectedSize}</span>}
                 </label>
-                <button className="size-guide-link">Size Guide</button>
+                <button
+                  type="button"
+                  onClick={() => setSizeChartOpen(true)}
+                  className="size-guide-link"
+                >
+                  📐 Size Guide
+                </button>
               </div>
               <div className="sizes-grid">
                 {product.sizes.map((sz) => {
@@ -348,6 +355,12 @@ export default function ProductDetailPage() {
           </div>
         </section>
       )}
+
+      {/* Interactive Size Chart Modal */}
+      <SizeChartModal
+        isOpen={sizeChartOpen}
+        onClose={() => setSizeChartOpen(false)}
+      />
 
       <style jsx>{`
         .product-detail-wrapper {

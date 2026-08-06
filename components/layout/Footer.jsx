@@ -3,33 +3,59 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { RotateCcw, Instagram } from 'lucide-react';
+import { RotateCcw, Instagram, Ruler } from 'lucide-react';
 import GrizzleLogo from '@/components/ui/GrizzleLogo';
+import SizeChartModal from '@/components/ui/SizeChartModal';
 
 export default function Footer() {
   const pathname = usePathname();
   const [categories, setCategories] = useState([]);
+  const [settings, setSettings] = useState(null);
+  const [sizeChartOpen, setSizeChartOpen] = useState(false);
 
   useEffect(() => {
-    async function fetchFooterCategories() {
+    async function fetchFooterData() {
       try {
-        const res = await fetch('/api/categories');
-        const data = await res.json();
-        if (data.success && Array.isArray(data.categories)) {
-          setCategories(data.categories);
+        const [catRes, settingsRes] = await Promise.all([
+          fetch('/api/categories').then((r) => r.json()).catch(() => null),
+          fetch('/api/admin/settings').then((r) => r.json()).catch(() => null),
+        ]);
+
+        if (catRes?.success && Array.isArray(catRes.categories)) {
+          setCategories(catRes.categories);
+        }
+        if (settingsRes?.success && settingsRes.settings) {
+          setSettings(settingsRes.settings);
         }
       } catch (e) {
-        console.error('Fetch footer categories error:', e);
+        console.error('Fetch footer data error:', e);
       }
     }
-    fetchFooterCategories();
+    fetchFooterData();
   }, []);
 
   if (pathname?.startsWith('/admin')) return null;
 
+  const defaultLinks = [
+    { label: '📐 Size Chart & Fit Guide', url: '#size-chart' },
+    { label: '💬 Contact Us (WhatsApp)', url: 'https://wa.me/919176281858', isExternal: true },
+    { label: '📦 Track Your Order', url: '/orders' },
+    { label: '❤️ Saved Wishlist', url: '/wishlist' },
+    { label: '🛒 View Cart', url: '/cart' },
+  ];
+
+  const customLinks = settings?.footerCustomLinks && settings.footerCustomLinks.length > 0
+    ? settings.footerCustomLinks
+    : defaultLinks;
+
+  const brandDesc = settings?.footerAboutText ||
+    'Self-Made High-Density DTF Printed Streetwear. Bio-Washed 240 GSM Premium Cotton Built for Style & Longevity.';
+
+  const copyrightText = settings?.footerCopyrightText ||
+    `© ${new Date().getFullYear()} Grizzle Apparel India. All rights reserved. Self-Made Printed T-Shirts.`;
+
   return (
     <footer className="footer-wrapper">
-
       {/* ── Value bar ── */}
       <div className="features-bar">
         <div className="container features-grid">
@@ -40,20 +66,29 @@ export default function Footer() {
               <p>Available for all eligible delivery pincodes</p>
             </div>
           </div>
+          <div
+            className="feature-item"
+            style={{ cursor: 'pointer' }}
+            onClick={() => setSizeChartOpen(true)}
+            title="Click to view T-Shirt Size Chart & Fit Guide"
+          >
+            <Ruler className="feature-icon" size={22} color="var(--accent-primary)" />
+            <div>
+              <h4>Size Chart &amp; Fit Guide</h4>
+              <p>240 GSM Heavyweight Oversized Tee Sizing Table</p>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* ── Main columns ── */}
       <div className="container footer-content">
-
         {/* Brand */}
         <div className="footer-brand">
           <Link href="/" style={{ textDecoration: 'none', display: 'inline-block' }}>
             <GrizzleLogo size="medium" />
           </Link>
-          <p className="brand-description">
-            Self-Made High-Density DTF Printed Streetwear. Bio-Washed 240 GSM Premium Cotton Built for Style & Longevity.
-          </p>
+          <p className="brand-description">{brandDesc}</p>
           <div className="social-links">
             <a
               href="https://wa.me/919176281858"
@@ -78,10 +113,10 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Shop Categories — only when present */}
+        {/* Shop Categories */}
         {categories.length > 0 && (
           <div className="footer-links-group">
-            <h4 className="col-heading">Shop</h4>
+            <h4 className="col-heading">Shop Collections</h4>
             {categories.map((cat) => (
               <Link key={cat._id} href={`/products?category=${encodeURIComponent(cat.name)}`}>
                 {cat.name}
@@ -90,34 +125,66 @@ export default function Footer() {
           </div>
         )}
 
-        {/* Customer Care */}
+        {/* Admin Managed Custom Footer Links & Customer Care */}
         <div className="footer-links-group">
-          <h4 className="col-heading">Customer Care</h4>
-          <a
-            href="https://wa.me/919176281858"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="whatsapp-contact-link"
-          >
-            💬 Contact Us (WhatsApp)
-          </a>
-          <Link href="/orders">Track Your Order</Link>
-          <Link href="/wishlist">Saved Wishlist</Link>
-          <Link href="/cart">View Cart</Link>
-          <Link href="#">Shipping &amp; Delivery</Link>
-          <Link href="#">Returns &amp; Refund Policy</Link>
+          <h4 className="col-heading">Customer Care &amp; Links</h4>
+          {customLinks.map((item, idx) => {
+            const isSizeChart = item.url === '#size-chart' || item.label?.toLowerCase().includes('size chart');
+            if (isSizeChart) {
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setSizeChartOpen(true)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    margin: 0,
+                    textAlign: 'left',
+                    font: 'inherit',
+                    color: 'var(--accent-primary)',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {item.label}
+                </button>
+              );
+            }
+
+            if (item.url?.startsWith('http') || item.isExternal) {
+              return (
+                <a key={idx} href={item.url} target="_blank" rel="noopener noreferrer">
+                  {item.label}
+                </a>
+              );
+            }
+
+            return (
+              <Link key={idx} href={item.url || '#'}>
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
       </div>
 
       {/* ── Bottom bar ── */}
       <div className="footer-bottom">
         <div className="container bottom-container">
-          <p>&copy; {new Date().getFullYear()} Grizzle Apparel India. All rights reserved. Self-Made Printed T-Shirts.</p>
+          <p>{copyrightText}</p>
           <div className="payment-badges">
-            <span className="pay-badge">COD</span>
+            <span className="pay-badge">COD AVAILABLE</span>
           </div>
         </div>
       </div>
+
+      {/* Size Chart Modal */}
+      <SizeChartModal
+        isOpen={sizeChartOpen}
+        onClose={() => setSizeChartOpen(false)}
+      />
 
       <style jsx>{`
         /* ── Wrapper ── */

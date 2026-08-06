@@ -23,7 +23,7 @@ const ReviewSchema = new mongoose.Schema(
     title: { type: String, default: '' },
     comment: {
       type: String,
-      required: [true, 'Review text is required'],
+      default: '',
     },
     isVerifiedPurchase: {
       type: Boolean,

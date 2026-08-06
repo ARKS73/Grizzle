@@ -458,10 +458,7 @@ function ProductsCatalogContent() {
             display: none;
           }
           .controls-bar {
-            padding: 0.6rem 0.85rem;
-            margin-bottom: 0.85rem;
-            flex-wrap: wrap;
-            gap: 0.5rem;
+            display: none !important;
           }
           .results-count {
             font-size: 0.78rem;

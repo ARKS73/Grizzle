@@ -81,14 +81,14 @@ export default function OrderInvoicePage() {
 
   return (
     <div className="container invoice-page-wrapper">
-      <div className="top-nav-bar no-print mb-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="top-nav-bar no-print mb-4">
         <Link href="/orders" className="back-link">
           <ArrowLeft size={16} /> Back to Order History
         </Link>
 
-        <div className="actions" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div className="actions">
           {canCustomerCancel && (
-            <button onClick={handleCancelOrder} className="btn btn-secondary btn-sm" style={{ borderColor: '#ef4444', color: '#ef4444' }}>
+            <button onClick={handleCancelOrder} className="btn btn-secondary btn-sm btn-cancel-order">
               <XCircle size={16} /> Cancel Order
             </button>
           )}
@@ -99,33 +99,36 @@ export default function OrderInvoicePage() {
             </button>
           ) : (
             <span
-              className="btn btn-secondary btn-sm"
-              style={{ opacity: 0.7, cursor: 'not-allowed' }}
+              className="btn btn-secondary btn-sm invoice-pending-btn"
               title="Tax invoice will be downloadable once package is Delivered"
             >
-              <Download size={16} /> Invoice (Delivered Only)
+              <Download size={16} /> Invoice (Delivered)
             </span>
           )}
         </div>
       </div>
 
       {/* Real-Time Tracking Timeline */}
-      <div className="glass-panel p-4 mb-4" style={{ borderRadius: '20px' }}>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Truck size={20} color="var(--accent-primary)" /> Order Tracking Progress: <span style={{ color: 'var(--accent-primary)', textTransform: 'uppercase' }}>{order.status}</span>
+      <div className="glass-panel tracking-stepper-card mb-4">
+        <h3 className="tracking-title">
+          <Truck size={20} color="var(--accent-primary)" />
+          <span>Order Tracking Progress:</span>
+          <span className="status-pill">{order.status}</span>
         </h3>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', textAlign: 'center', position: 'relative' }}>
+
+        <div className="stepper-grid">
           {steps.map((step, idx) => {
             const isCompleted = idx <= currentStepIndex;
+            const isCurrent = idx === currentStepIndex;
             return (
-              <div key={step} style={{ padding: '0.75rem 0.5rem', borderRadius: '12px', background: isCompleted ? 'rgba(34, 197, 94, 0.12)' : 'rgba(255, 255, 255, 0.03)', border: isCompleted ? '1px solid rgba(34, 197, 94, 0.3)' : '1px solid var(--border-color)' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: isCompleted ? '#22c55e' : 'var(--border-color)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.5rem auto', fontWeight: 800, fontSize: '0.85rem' }}>
-                  {isCompleted ? <CheckCircle2 size={18} /> : idx + 1}
+              <div
+                key={step}
+                className={`step-card ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}`}
+              >
+                <div className="step-circle">
+                  {isCompleted ? <CheckCircle2 size={16} /> : <span>{idx + 1}</span>}
                 </div>
-                <div style={{ fontWeight: isCompleted ? 800 : 500, fontSize: '0.85rem', color: isCompleted ? '#22c55e' : 'var(--text-muted)' }}>
-                  {step}
-                </div>
+                <span className="step-text">{step}</span>
               </div>
             );
           })}
@@ -225,10 +228,12 @@ export default function OrderInvoicePage() {
           </div>
         </div>
       ) : (
-        <div className="glass-panel p-4 text-center no-print" style={{ borderRadius: '20px' }}>
-          <ShieldCheck size={36} color="var(--accent-primary)" style={{ margin: '0 auto 0.75rem auto' }} />
-          <h4 style={{ fontSize: '1.1rem', fontWeight: 800 }}>Invoice Available Upon Delivery</h4>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginTop: '0.35rem', maxWidth: '500px', margin: '0.35rem auto 0 auto' }}>
+        <div className="invoice-notice-card glass-panel no-print">
+          <div className="notice-icon-box">
+            <ShieldCheck size={28} color="var(--accent-primary)" />
+          </div>
+          <h4 className="notice-title">Invoice Available Upon Delivery</h4>
+          <p className="notice-desc">
             Your official Tax Invoice and Purchase Receipt will be generated and unlocked for view/download once your order status is marked as <strong>Delivered</strong>.
           </p>
         </div>
@@ -252,62 +257,138 @@ export default function OrderInvoicePage() {
           align-items: center;
           justify-content: space-between;
           margin-bottom: 1.5rem;
+          flex-wrap: wrap;
+          gap: 1rem;
         }
         .back-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-weight: 700;
+          color: var(--text-secondary);
+          white-space: nowrap;
+          font-size: 0.95rem;
+        }
+        .top-nav-bar .actions {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          flex-wrap: wrap;
+        }
+        .btn-cancel-order {
+          border-color: #ef4444 !important;
+          color: #ef4444 !important;
+        }
+        .invoice-pending-btn {
+          opacity: 0.75;
+          cursor: not-allowed;
+        }
+
+        .tracking-stepper-card {
+          padding: 1.5rem;
+          border-radius: 20px;
+        }
+        .tracking-title {
+          font-size: 1.05rem;
+          font-weight: 800;
+          margin-bottom: 1.25rem;
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          font-weight: 600;
-          color: var(--text-secondary);
+          flex-wrap: wrap;
         }
-
-        .tracking-card {
-          padding: 1.5rem;
-          margin-bottom: 2rem;
-          border-radius: var(--radius-lg);
+        .status-pill {
+          color: var(--accent-primary);
+          text-transform: uppercase;
+          background: var(--accent-light);
+          padding: 0.2rem 0.6rem;
+          border-radius: 6px;
+          font-size: 0.85rem;
+          font-weight: 900;
         }
-        .timeline-wrapper {
-          display: flex;
-          justify-content: space-between;
-          position: relative;
-          margin-top: 1.5rem;
+        .stepper-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 0.75rem;
         }
-        .timeline-wrapper::before {
-          content: '';
-          position: absolute;
-          top: 16px;
-          left: 0;
-          right: 0;
-          height: 3px;
-          background: var(--border-color);
-          z-index: 1;
-        }
-        .timeline-step {
-          position: relative;
-          z-index: 2;
+        .step-card {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 0.5rem;
+          justify-content: center;
+          padding: 0.85rem 0.5rem;
+          border-radius: 14px;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid var(--border-color);
+          transition: all 0.2s ease;
         }
-        .step-node {
-          width: 34px;
-          height: 34px;
-          border-radius: var(--radius-full);
-          background: var(--bg-secondary);
-          border: 2px solid var(--border-color);
+        .step-card.completed {
+          background: rgba(34, 197, 94, 0.1);
+          border-color: rgba(34, 197, 94, 0.35);
+        }
+        .step-card.current {
+          border-color: var(--accent-primary);
+          box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
+        }
+        .step-circle {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: var(--bg-tertiary);
+          border: 1.5px solid var(--border-color);
+          color: var(--text-muted);
           display: flex;
           align-items: center;
           justify-content: center;
-          font-weight: 700;
+          font-weight: 800;
           font-size: 0.85rem;
+          margin-bottom: 0.4rem;
         }
-        .timeline-step.completed .step-node {
-          background: var(--success);
-          border-color: var(--success);
+        .step-card.completed .step-circle {
+          background: #22c55e;
+          border-color: #22c55e;
           color: white;
         }
-        .step-label { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); }
+        .step-text {
+          font-size: 0.82rem;
+          font-weight: 700;
+          color: var(--text-muted);
+          white-space: nowrap;
+        }
+        .step-card.completed .step-text {
+          color: #22c55e;
+        }
+        .step-card.current .step-text {
+          color: var(--accent-primary);
+        }
+
+        .invoice-notice-card {
+          padding: 2rem 1.5rem;
+          border-radius: 20px;
+          text-align: center;
+        }
+        .notice-icon-box {
+          width: 52px;
+          height: 52px;
+          border-radius: 50%;
+          background: var(--accent-light);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 0.75rem auto;
+        }
+        .notice-title {
+          font-size: 1.1rem;
+          font-weight: 800;
+          margin-bottom: 0.35rem;
+        }
+        .notice-desc {
+          color: var(--text-muted);
+          font-size: 0.88rem;
+          max-width: 500px;
+          margin: 0 auto;
+          line-height: 1.5;
+        }
 
         /* Invoice Card */
         .invoice-card {
@@ -321,26 +402,7 @@ export default function OrderInvoicePage() {
           padding-bottom: 2rem;
           border-bottom: 1px solid var(--border-color);
         }
-        .brand-logo {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-size: 1.5rem;
-          font-weight: 800;
-        }
-        .logo-badge {
-          background: var(--accent-gradient);
-          color: white;
-          width: 34px;
-          height: 34px;
-          border-radius: var(--radius-md);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .logo-highlight { color: var(--accent-primary); }
         .invoice-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem; }
-
         .invoice-meta h2 { font-size: 1.5rem; }
         .invoice-meta p { font-size: 0.85rem; color: var(--text-secondary); }
         .status-highlight { color: var(--accent-primary); }
@@ -391,6 +453,51 @@ export default function OrderInvoicePage() {
         }
 
         @media (max-width: 768px) {
+          .top-nav-bar {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 0.75rem !important;
+          }
+          .top-nav-bar .actions {
+            width: 100% !important;
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 0.5rem !important;
+          }
+          .top-nav-bar .actions .btn, .top-nav-bar .actions span {
+            flex: 1 !important;
+            min-width: 120px !important;
+            justify-content: center !important;
+            text-align: center !important;
+            font-size: 0.8rem !important;
+            padding: 0.5rem 0.65rem !important;
+            white-space: nowrap !important;
+          }
+
+          .tracking-stepper-card {
+            padding: 1.25rem !important;
+          }
+          .stepper-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.6rem !important;
+          }
+          .step-card {
+            flex-direction: row !important;
+            justify-content: flex-start !important;
+            gap: 0.6rem !important;
+            padding: 0.65rem 0.85rem !important;
+          }
+          .step-circle {
+            margin-bottom: 0 !important;
+            width: 28px !important;
+            height: 28px !important;
+            font-size: 0.75rem !important;
+            flex-shrink: 0 !important;
+          }
+          .step-text {
+            font-size: 0.82rem !important;
+          }
+
           .invoice-card {
             padding: 1.25rem !important;
           }

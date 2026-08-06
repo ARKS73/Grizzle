@@ -165,7 +165,7 @@ export default function OrderHistoryPage() {
                     </Link>
                   ) : (
                     <Link href={`/orders/${order._id}`} className="btn btn-secondary btn-sm">
-                      <Truck size={16} /> Track Shipment Details
+                      <Truck size={16} /> Track Order
                     </Link>
                   )}
                 </div>
@@ -247,9 +247,40 @@ export default function OrderHistoryPage() {
           gap: 0.5rem;
           font-size: 0.9rem;
         }
-        .total-box strong { font-size: 1.2rem; color: var(--accent-primary); }
-
         .empty-orders { padding: 4rem 2rem; }
+
+        @media (max-width: 640px) {
+          .order-card {
+            padding: 1rem;
+          }
+          .order-header {
+            align-items: flex-start;
+          }
+          .order-footer {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.85rem;
+          }
+          .total-box {
+            justify-content: space-between;
+            width: 100%;
+          }
+          .action-btns {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+          }
+          .action-btns .btn, .action-btns a, .action-btns button {
+            flex: 1;
+            min-width: 120px;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.82rem;
+            padding: 0.5rem 0.65rem;
+          }
+        }
       `}</style>
     </div>
   );
