@@ -267,17 +267,18 @@ export default function AdminCategoriesPage() {
       </div>
 
       <style jsx>{`
-        .categories-grid { display: grid; grid-template-columns: 320px 1fr; gap: 2rem; }
-        .add-category-card, .table-card { padding: 1.5rem; border-radius: var(--radius-lg); }
+        .categories-grid { display: grid; grid-template-columns: 340px 1fr; gap: 2rem; align-items: start; }
+        .add-category-card, .table-card { padding: 1.75rem; border-radius: var(--radius-lg); }
         .admin-table { width: 100%; border-collapse: collapse; }
-        .admin-table th, .admin-table td { padding: 0.85rem; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; }
-        .cat-img { width: 44px; height: 44px; object-fit: cover; border-radius: var(--radius-md); }
+        .admin-table th { padding: 0.85rem; border-bottom: 2px solid var(--border-color); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; text-align: left; }
+        .admin-table td { padding: 0.95rem 0.85rem; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; vertical-align: middle; }
+        .cat-img { width: 46px; height: 46px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
         .btn-danger-icon { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 6px 10px; cursor: pointer; transition: background 0.2s; }
         .btn-danger-icon:hover { background: rgba(239, 68, 68, 0.25); }
         .w-100 { width: 100%; }
         code { word-break: break-all; }
-        @media (max-width: 900px) { 
-          .categories-grid { grid-template-columns: 1fr; gap: 1.25rem; } 
+        @media (max-width: 1180px) { 
+          .categories-grid { grid-template-columns: 1fr; gap: 1.5rem; } 
         }
         @media (max-width: 600px) {
           .add-category-card, .table-card { padding: 1rem; }

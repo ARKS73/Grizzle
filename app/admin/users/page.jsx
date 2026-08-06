@@ -530,30 +530,31 @@ export default function AdminUsersPage() {
       )}
 
       <style jsx>{`
-        .header-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        .header-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
         .mfa-btn { border-color: #ef4444 !important; color: #ef4444 !important; }
-        .users-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
-        .stat-card { padding: 1rem; border-radius: 12px; text-align: center; }
-        .stat-num { font-size: clamp(1.4rem, 5vw, 2rem); font-weight: 900; }
+        .users-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
+        .stat-card { padding: 1.25rem; border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border-color); }
+        .stat-num { font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 900; line-height: 1.1; margin-bottom: 0.25rem; }
         .accent-text { color: var(--accent-primary); }
-        .stat-label { font-size: 0.75rem; color: var(--text-muted); }
-        .table-card { padding: 1.5rem; border-radius: var(--radius-lg); }
+        .stat-label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+        .table-card { padding: 1.75rem; border-radius: var(--radius-lg); }
         .admin-table { width: 100%; border-collapse: collapse; }
         @media (min-width: 769px) { .admin-table { min-width: 700px; } }
-        .admin-table th { padding: 0.75rem 0.85rem; border-bottom: 2px solid var(--border-color); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; }
-        .admin-table td { padding: 0.85rem; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; vertical-align: middle; word-break: break-word; }
+        .admin-table th { padding: 0.85rem; border-bottom: 2px solid var(--border-color); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; text-align: left; }
+        .admin-table td { padding: 0.95rem 0.85rem; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; vertical-align: middle; word-break: break-word; }
         .admin-table tr:last-child td { border-bottom: none; }
         .admin-table tr:hover td { background: rgba(255,255,255,0.02); }
-        .user-cell { display: flex; align-items: center; gap: 0.75rem; }
-        .action-btns { display: flex; gap: 0.4rem; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
-        .btn-xs { padding: 0.3rem 0.6rem; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.3rem; }
+        .user-cell { display: flex; align-items: center; gap: 0.85rem; }
+        .action-btns { display: flex; gap: 0.4rem; align-items: center; justify-content: flex-end; flex-wrap: nowrap; }
+        .btn-xs { padding: 0.35rem 0.7rem; font-size: 0.76rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem; border-radius: 6px; white-space: nowrap; }
 
         @media (max-width: 600px) {
           .table-card { padding: 1rem; }
+          .users-stats-grid { gap: 0.6rem; }
           .header-actions { width: 100%; flex-direction: column; }
           .header-actions .btn { width: 100%; justify-content: center; }
-          .stat-card { padding: 0.6rem 0.4rem; }
-          .action-btns { justify-content: flex-start; }
+          .stat-card { padding: 0.75rem 0.4rem; }
+          .action-btns { justify-content: flex-start; flex-wrap: wrap; }
           .actions-cell { text-align: left !important; }
         }
       `}</style>
