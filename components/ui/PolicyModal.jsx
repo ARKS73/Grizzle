@@ -86,15 +86,6 @@ export default function PolicyModal({ isOpen, onClose, initialType = 'returns' }
                 <h4>7-Day Return &amp; Hassle-Free Exchange Guarantee</h4>
               </div>
               <p className="policy-content">{returnPolicy}</p>
-              
-              <div className="policy-list-box">
-                <h5>Requirements for Approved Returns:</h5>
-                <ul>
-                  <li>Item must be unused, unwashed, and in brand-new condition.</li>
-                  <li>Original tags and bio-washed streetwear packaging must be intact.</li>
-                  <li>Provide your Order ID / Tax Invoice received upon delivery.</li>
-                </ul>
-              </div>
             </div>
           ) : (
             <div className="policy-card">
@@ -103,15 +94,6 @@ export default function PolicyModal({ isOpen, onClose, initialType = 'returns' }
                 <h4>Express Nationwide Delivery &amp; COD Terms</h4>
               </div>
               <p className="policy-content">{shippingPolicy}</p>
-              
-              <div className="policy-list-box">
-                <h5>Shipping Highlights:</h5>
-                <ul>
-                  <li>Free Shipping available on qualifying promotional orders.</li>
-                  <li>Cash On Delivery (COD) available across 25,000+ Indian pincodes.</li>
-                  <li>Real-time WhatsApp &amp; SMS tracking links dispatched upon shipment.</li>
-                </ul>
-              </div>
             </div>
           )}
         </div>
