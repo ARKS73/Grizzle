@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { sendPhoneOtp, confirmPhoneOtp, setupRecaptcha } from '@/lib/firebaseAuthService';
+import { sendPhoneOtp, confirmPhoneOtp, setupRecaptcha, logoutFirebaseAuth } from '@/lib/firebaseAuthService';
 import { useToast } from '@/components/ui/Toast';
 
 const AuthContext = createContext();
@@ -175,6 +175,7 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
+      await logoutFirebaseAuth();
       setUser(null);
       addToast('Logged out successfully', 'info');
       if (typeof window !== 'undefined') {
