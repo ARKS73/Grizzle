@@ -1,11 +1,17 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Ruler, CheckCircle2, Info, Sparkles } from 'lucide-react';
 
 export default function SizeChartModal({ isOpen, onClose }) {
   const [unit, setUnit] = useState('in'); // 'in' or 'cm'
   const [settings, setSettings] = useState(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -23,7 +29,7 @@ export default function SizeChartModal({ isOpen, onClose }) {
     fetchChartSettings();
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   const defaultSizingData = [
     { size: 'S', chestIn: '38-40"', chestCm: '96-102 cm', lengthIn: '27.5"', lengthCm: '70 cm', shoulderIn: '18.5"', shoulderCm: '47 cm', sleeveIn: '8.5"', sleeveCm: '21 cm' },
@@ -40,7 +46,7 @@ export default function SizeChartModal({ isOpen, onClose }) {
   const fitTips = settings?.sizeChartTips ||
     'Oversized Streetwear Fit: Choose your standard size for a relaxed dropped-shoulder silhouette. For regular fit, size down 1 size.';
 
-  return (
+  const modalContent = (
     <div className="size-chart-modal-root" onClick={onClose}>
       <div className="size-chart-backdrop" />
       <div className="size-chart-sheet glass-panel" onClick={(e) => e.stopPropagation()}>
@@ -362,4 +368,6 @@ export default function SizeChartModal({ isOpen, onClose }) {
       `}</style>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

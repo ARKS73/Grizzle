@@ -1,11 +1,17 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, RotateCcw, Truck, ShieldCheck } from 'lucide-react';
 
 export default function PolicyModal({ isOpen, onClose, initialType = 'returns' }) {
   const [activeTab, setActiveTab] = useState(initialType);
   const [settings, setSettings] = useState(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (initialType) setActiveTab(initialType);
@@ -27,7 +33,7 @@ export default function PolicyModal({ isOpen, onClose, initialType = 'returns' }
     fetchSettings();
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   const returnPolicy = settings?.returnPolicyText ||
     'We accept returns and exchanges within 7 days of delivery. The item must be unworn, unwashed, and in its original packaging with tags intact. To initiate a return, contact us on WhatsApp with your Order Invoice Number.';
@@ -35,7 +41,7 @@ export default function PolicyModal({ isOpen, onClose, initialType = 'returns' }
   const shippingPolicy = settings?.shippingPolicyText ||
     'All orders are processed within 24-48 hours. Standard dispatch takes 3-5 business days across India. Cash On Delivery (COD) and Online Express Delivery available.';
 
-  return (
+  const modalContent = (
     <div className="policy-modal-root" onClick={onClose}>
       <div className="policy-backdrop" />
       <div className="policy-sheet glass-panel" onClick={(e) => e.stopPropagation()}>
@@ -324,4 +330,6 @@ export default function PolicyModal({ isOpen, onClose, initialType = 'returns' }
       `}</style>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
