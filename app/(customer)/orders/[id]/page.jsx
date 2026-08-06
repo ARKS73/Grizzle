@@ -3,13 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Printer, CheckCircle2, Clock, Truck, Package, XCircle, ArrowLeft, ShieldCheck, Download } from 'lucide-react';
+import { Printer, CheckCircle2, Clock, Truck, Package, XCircle, ArrowLeft, ShieldCheck, Download, Star } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
+import WriteReviewModal from '@/components/products/WriteReviewModal';
 
 export default function OrderInvoicePage() {
   const { id } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [reviewingProduct, setReviewingProduct] = useState(null);
   const { addToast } = useToast();
 
   const fetchOrder = async () => {
@@ -148,7 +150,7 @@ export default function OrderInvoicePage() {
 
           <div className="invoice-billing-grid">
             <div className="billing-box">
-              <h4>Billed & Shipped To:</h4>
+              <h4>Billed &amp; Shipped To:</h4>
               <p><strong>{order.shippingAddress?.fullName}</strong></p>
               <p>{order.shippingAddress?.street}</p>
               <p>{order.shippingAddress?.city}, {order.shippingAddress?.state || 'Tamil Nadu'} - {order.shippingAddress?.postalCode}</p>
@@ -171,7 +173,7 @@ export default function OrderInvoicePage() {
                   <th>Variant</th>
                   <th>Price</th>
                   <th>Qty</th>
-                  <th className="text-right">Total</th>
+                  <th className="text-right">Total &amp; Review</th>
                 </tr>
               </thead>
               <tbody>
@@ -181,7 +183,30 @@ export default function OrderInvoicePage() {
                     <td>Size {item.size} • {item.color}</td>
                     <td>₹{item.price?.toFixed(0)}</td>
                     <td>{item.quantity}</td>
-                    <td className="text-right">₹{(item.price * item.quantity).toFixed(0)}</td>
+                    <td className="text-right">
+                      <div>₹{(item.price * item.quantity).toFixed(0)}</div>
+                      {order.status === 'Delivered' && (
+                        <button
+                          onClick={() => setReviewingProduct(item)}
+                          className="btn btn-secondary btn-sm no-print"
+                          style={{
+                            fontSize: '0.72rem',
+                            padding: '0.2rem 0.55rem',
+                            color: '#f59e0b',
+                            borderColor: 'rgba(245, 158, 11, 0.4)',
+                            background: 'rgba(245, 158, 11, 0.1)',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            fontWeight: 700,
+                            marginTop: '4px',
+                          }}
+                          title="Write a verified review for this product"
+                        >
+                          <Star size={11} fill="#f59e0b" color="#f59e0b" /> Write Review
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -207,6 +232,15 @@ export default function OrderInvoicePage() {
             Your official Tax Invoice and Purchase Receipt will be generated and unlocked for view/download once your order status is marked as <strong>Delivered</strong>.
           </p>
         </div>
+      )}
+
+      {/* Write Review Modal */}
+      {reviewingProduct && (
+        <WriteReviewModal
+          product={reviewingProduct}
+          onClose={() => setReviewingProduct(null)}
+          onReviewSubmitted={() => fetchOrder()}
+        />
       )}
 
       <style jsx>{`

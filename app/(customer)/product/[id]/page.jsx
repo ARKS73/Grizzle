@@ -293,12 +293,12 @@ export default function ProductDetailPage() {
             <button
               onClick={() => {
                 addToCart(product, selectedSize, selectedColor, quantity);
-                router.push('/checkout');
+                router.push('/cart');
               }}
               className="btn btn-primary btn-lg add-btn font-bold"
               style={{ fontSize: '1.08rem', padding: '0.85rem 1.4rem' }}
             >
-              <ShoppingBag size={20} /> Checkout ({quantity}) <ArrowRight size={18} />
+              <ShoppingBag size={20} /> Add to Cart ({quantity}) <ArrowRight size={18} />
             </button>
 
             <button

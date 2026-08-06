@@ -162,8 +162,8 @@ export default function ProductCard({ product, onQuickView }) {
           </div>
 
           {isInCart ? (
-            <Link href="/checkout" className="btn btn-primary card-add-btn card-checkout-btn font-bold">
-              <ShoppingBag size={16} /> Checkout ({itemCountInCart})
+            <Link href="/cart" className="btn btn-primary card-add-btn card-checkout-btn font-bold">
+              <ShoppingBag size={16} /> View Cart ({itemCountInCart})
             </Link>
           ) : (
             <button

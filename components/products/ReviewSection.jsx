@@ -100,8 +100,8 @@ export default function ReviewSection({ productId, reviews = [], onReviewAdded }
             <MessageSquarePlus size={18} /> Write a Review
           </button>
         ) : (
-          <div className="verified-purchaser-note" style={{ fontSize: '0.8rem', background: 'rgba(255,255,255,0.05)', padding: '0.5rem 0.85rem', borderRadius: '20px', border: '1px solid var(--border-color)', color: 'var(--text-muted)' }}>
-            <span style={{ color: 'var(--accent-primary)', fontWeight: 700 }}>✓ Verified Buyers Only:</span> Review option unlocks after delivery
+          <div className="verified-purchaser-note" style={{ fontSize: '0.8rem', background: 'rgba(255,255,255,0.05)', padding: '0.5rem 0.85rem', borderRadius: '20px', border: '1px solid var(--border-color)', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+            <span style={{ color: 'var(--accent-primary)', fontWeight: 700 }}>✓ Verified Buyers Only:</span> Write a review directly from your <a href="/orders" style={{ color: 'var(--accent-primary)', fontWeight: 800, textDecoration: 'underline' }}>Order History &amp; Tracking</a> after package delivery.
           </div>
         )}
       </div>

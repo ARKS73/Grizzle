@@ -172,12 +172,12 @@ export default function QuickViewModal({ product, onClose }) {
                 onClick={() => {
                   addToCart(product, selectedSize, selectedColor, quantity);
                   onClose();
-                  router.push('/checkout');
+                  router.push('/cart');
                 }}
                 className="btn btn-primary add-to-cart-btn btn-lg font-bold"
                 style={{ fontSize: '1.05rem', padding: '0.85rem 1.25rem' }}
               >
-                <ShoppingBag size={20} /> Checkout ({quantity}) <ArrowRight size={18} />
+                <ShoppingBag size={20} /> Add to Cart ({quantity}) <ArrowRight size={18} />
               </button>
 
               <button

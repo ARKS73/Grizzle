@@ -2,16 +2,18 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Package, Clock, Truck, CheckCircle2, XCircle, ArrowRight, FileText } from 'lucide-react';
+import { Package, Clock, Truck, CheckCircle2, XCircle, ArrowRight, FileText, Star, MessageSquarePlus } from 'lucide-react';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toast';
+import WriteReviewModal from '@/components/products/WriteReviewModal';
 
 export default function OrderHistoryPage() {
   const { user } = useAuth();
   const { addToast } = useToast();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reviewingProduct, setReviewingProduct] = useState(null);
 
   const fetchOrders = async () => {
     if (!user) {
@@ -74,7 +76,7 @@ export default function OrderHistoryPage() {
 
   return (
     <div className="container orders-page-wrapper">
-      <h1 className="orders-title">Your Order History & Tracking</h1>
+      <h1 className="orders-title">Your Order History &amp; Tracking</h1>
 
       {loading ? (
         <div className="skeleton" style={{ height: '300px', borderRadius: '16px' }} />
@@ -114,7 +116,29 @@ export default function OrderHistoryPage() {
                       <span className="item-name">{item.name}</span>
                       <span className="item-spec">{item.quantity}x • Size {item.size} • {item.color}</span>
                     </div>
-                    <span className="item-price">₹{(item.price * item.quantity).toFixed(0)}</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.35rem' }}>
+                      <span className="item-price">₹{(item.price * item.quantity).toFixed(0)}</span>
+                      {order.status === 'Delivered' && (
+                        <button
+                          onClick={() => setReviewingProduct(item)}
+                          className="btn btn-secondary btn-sm"
+                          style={{
+                            fontSize: '0.75rem',
+                            padding: '0.25rem 0.65rem',
+                            color: '#f59e0b',
+                            borderColor: 'rgba(245, 158, 11, 0.4)',
+                            background: 'rgba(245, 158, 11, 0.1)',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            fontWeight: 700,
+                          }}
+                          title="Write a review for this delivered product"
+                        >
+                          <Star size={12} fill="#f59e0b" color="#f59e0b" /> Write a Review
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -137,7 +161,7 @@ export default function OrderHistoryPage() {
                   )}
                   {order.status === 'Delivered' ? (
                     <Link href={`/orders/${order._id}`} className="btn btn-primary btn-sm">
-                      <FileText size={16} /> View Invoice & Receipt
+                      <FileText size={16} /> View Invoice &amp; Receipt
                     </Link>
                   ) : (
                     <Link href={`/orders/${order._id}`} className="btn btn-secondary btn-sm">
@@ -149,6 +173,15 @@ export default function OrderHistoryPage() {
             </div>
           ))}
         </div>
+      )}
+
+      {/* Write Review Modal */}
+      {reviewingProduct && (
+        <WriteReviewModal
+          product={reviewingProduct}
+          onClose={() => setReviewingProduct(null)}
+          onReviewSubmitted={() => fetchOrders()}
+        />
       )}
 
       <style jsx>{`
