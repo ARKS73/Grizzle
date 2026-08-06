@@ -72,37 +72,44 @@ export async function POST(request) {
 
     await connectDB();
 
-    let userId = authUser ? authUser.userId : null;
-    if (!userId) {
+    let userId = authUser ? (authUser.userId || authUser._id || authUser.id) : null;
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       const User = (await import('@/models/User')).default;
       let guestUser = await User.findOne({ email: 'guest@grizzle.in' });
       if (!guestUser) {
         guestUser = await User.create({
-          name: shippingAddress.fullName || 'Guest Customer',
+          name: shippingAddress?.fullName || 'Guest Customer',
           email: 'guest@grizzle.in',
           password: 'guestpassword123',
-          phone: shippingAddress.phone || '',
+          phone: shippingAddress?.phone || '',
           role: 'customer',
         });
       }
       userId = guestUser._id;
     }
 
-    if (!orderItems || orderItems.length === 0) {
-      return NextResponse.json({ success: false, message: 'No order items provided' }, { status: 400 });
-    }
-
-    const conn = await connectDB();
+    const cleanedOrderItems = orderItems.map((item) => {
+      let prodId = typeof item.product === 'object' ? item.product?._id : item.product;
+      return {
+        product: prodId,
+        name: item.name || 'Grizzle Apparel',
+        image: item.image || '',
+        price: parseFloat(item.price || 0),
+        quantity: parseInt(item.quantity || 1, 10),
+        size: item.size || 'M',
+        color: item.color || 'Black',
+      };
+    });
 
     // Deduct overall stock and specific sizeStock for each ordered product item
-    for (const item of orderItems) {
-      const productIdStr = typeof item.product === 'object' ? item.product?._id : item.product;
+    for (const item of cleanedOrderItems) {
+      const productIdStr = item.product;
       if (!productIdStr || String(productIdStr).length !== 24) continue;
 
       const targetProd = await Product.findById(productIdStr);
       if (!targetProd) continue;
 
-      const qty = parseInt(item.quantity || '1', 10);
+      const qty = item.quantity;
       const incFields = { stock: -qty };
 
       if (item.size && targetProd.sizeStock && targetProd.sizeStock[item.size] !== undefined) {
@@ -117,14 +124,14 @@ export async function POST(request) {
 
     const order = await Order.create({
       user: userId,
-      orderItems,
+      orderItems: cleanedOrderItems,
       shippingAddress,
       paymentMethod: paymentMethod || 'Credit Card (Mock)',
-      itemsPrice: parseFloat(itemsPrice),
+      itemsPrice: parseFloat(itemsPrice || 0),
       shippingPrice: parseFloat(shippingPrice || 0),
       discountAmount: parseFloat(discountAmount || 0),
       couponCode: couponCode ? String(couponCode).toUpperCase() : '',
-      totalPrice: parseFloat(totalPrice),
+      totalPrice: parseFloat(totalPrice || 0),
       isPaid: true,
       paidAt: new Date(),
       status: 'Processing',

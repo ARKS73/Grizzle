@@ -12,6 +12,7 @@ export default function Footer() {
   const pathname = usePathname();
   const [categories, setCategories] = useState([]);
   const [settings, setSettings] = useState(null);
+  const [loadingSettings, setLoadingSettings] = useState(true);
   const [sizeChartOpen, setSizeChartOpen] = useState(false);
   const [policyModalOpen, setPolicyModalOpen] = useState(false);
   const [policyType, setPolicyType] = useState('returns');
@@ -32,6 +33,8 @@ export default function Footer() {
         }
       } catch (e) {
         console.error('Fetch footer data error:', e);
+      } finally {
+        setLoadingSettings(false);
       }
     }
     fetchFooterData();
@@ -131,7 +134,14 @@ export default function Footer() {
         {/* Admin Managed Custom Footer Links & Customer Care */}
         <div className="footer-links-group">
           <h4 className="col-heading">Customer Care &amp; Links</h4>
-          {customLinks.map((item, idx) => {
+          {loadingSettings ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', opacity: 0.6 }}>
+              <div className="skeleton" style={{ height: '14px', width: '140px', borderRadius: '4px' }} />
+              <div className="skeleton" style={{ height: '14px', width: '160px', borderRadius: '4px' }} />
+              <div className="skeleton" style={{ height: '14px', width: '130px', borderRadius: '4px' }} />
+            </div>
+          ) : (
+            customLinks.map((item, idx) => {
             const rawUrl = (item.url || '').trim();
             const lowerUrl = rawUrl.toLowerCase();
             const lowerLabel = (item.label || '').toLowerCase();
@@ -217,7 +227,7 @@ export default function Footer() {
                 {item.label}
               </Link>
             );
-          })}
+          }))}
         </div>
       </div>
 
