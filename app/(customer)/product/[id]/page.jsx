@@ -344,7 +344,6 @@ export default function ProductDetailPage() {
                   onClick={() => {
                     const finalQty = Math.min(quantity, maxAvailable);
                     addToCart(product, selectedSize, selectedColor, finalQty);
-                    router.push('/cart');
                   }}
                   disabled={maxAvailable <= 0}
                   className="btn btn-primary btn-lg add-btn font-bold"

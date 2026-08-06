@@ -293,9 +293,54 @@ export default function PolicyModal({ isOpen, onClose, initialType = 'returns' }
         }
 
         @media (max-width: 600px) {
+          .policy-modal-root {
+            padding: 0.5rem;
+          }
           .policy-sheet {
-            max-width: 95%;
-            max-height: 82vh;
+            max-width: 95vw;
+            max-height: 85vh;
+            border-radius: 14px;
+          }
+          .modal-header {
+            padding: 0.75rem 0.85rem;
+          }
+          .modal-title {
+            font-size: 0.9rem;
+          }
+          .modal-sub {
+            font-size: 0.68rem;
+          }
+          .tab-bar {
+            padding: 3px;
+            gap: 2px;
+          }
+          .tab-btn {
+            font-size: 0.7rem;
+            padding: 0.45rem 0.35rem;
+            gap: 0.25rem;
+          }
+          .modal-body-scroll {
+            padding: 0.85rem;
+          }
+          .policy-head h4 {
+            font-size: 0.86rem;
+          }
+          .policy-content {
+            font-size: 0.8rem;
+            padding: 0.75rem;
+          }
+          .modal-footer {
+            flex-direction: column-reverse;
+            padding: 0.75rem 0.85rem;
+            gap: 0.5rem;
+          }
+          .modal-footer a,
+          .modal-footer button {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.82rem;
+            padding: 0.6rem 0.5rem !important;
           }
         }
 

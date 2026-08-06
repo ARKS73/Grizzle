@@ -230,7 +230,6 @@ export default function QuickViewModal({ product, onClose }) {
                       const finalQty = Math.min(quantity, maxAvailable);
                       addToCart(product, selectedSize, selectedColor, finalQty);
                       onClose();
-                      router.push('/cart');
                     }}
                     disabled={maxAvailable <= 0}
                     className="btn btn-primary add-to-cart-btn btn-lg font-bold"
