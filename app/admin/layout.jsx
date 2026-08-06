@@ -397,6 +397,9 @@ export default function AdminLayout({ children }) {
         .admin-content-body {
           padding: 2rem;
           flex: 1;
+          max-width: 1600px;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         /* ══════════════════════

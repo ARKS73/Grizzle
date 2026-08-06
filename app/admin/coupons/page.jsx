@@ -256,25 +256,27 @@ export default function AdminCouponsPage() {
       </div>
 
       <style jsx>{`
-        .coupons-grid { display: grid; grid-template-columns: 320px 1fr; gap: 2rem; }
-        .add-card, .table-card { padding: 1.5rem; border-radius: var(--radius-lg); }
+        .coupons-grid { display: grid; grid-template-columns: 340px 1fr; gap: 2rem; align-items: start; }
+        .add-card, .table-card { padding: 1.75rem; border-radius: var(--radius-lg); }
         .admin-table { width: 100%; border-collapse: collapse; }
-        .admin-table th, .admin-table td { padding: 0.85rem; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; }
-        .code-tag { background: var(--accent-light); color: var(--accent-primary); padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.9rem; word-break: break-all; }
-        .action-buttons-group { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; flex-wrap: wrap; }
+        .admin-table th { padding: 0.85rem; border-bottom: 2px solid var(--border-color); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; text-align: left; }
+        .admin-table td { padding: 0.95rem 0.85rem; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; vertical-align: middle; }
+        .code-tag { background: var(--accent-light); color: var(--accent-primary); padding: 4px 10px; border-radius: 6px; font-family: monospace; font-size: 0.9rem; font-weight: 700; word-break: break-all; display: inline-block; }
+        .action-buttons-group { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; flex-wrap: nowrap; }
         
         .btn-deactivate {
           background: rgba(239, 68, 68, 0.12);
           color: #ef4444;
           border: 1px solid rgba(239, 68, 68, 0.3);
-          padding: 0.35rem 0.65rem;
+          padding: 0.4rem 0.75rem;
           font-size: 0.78rem;
           font-weight: 700;
           display: inline-flex;
           align-items: center;
-          gap: 4px;
+          gap: 5px;
           border-radius: 6px;
           cursor: pointer;
+          white-space: nowrap;
         }
         .btn-deactivate:hover {
           background: #ef4444;
@@ -285,14 +287,15 @@ export default function AdminCouponsPage() {
           background: rgba(16, 185, 129, 0.12);
           color: #10b981;
           border: 1px solid rgba(16, 185, 129, 0.3);
-          padding: 0.35rem 0.65rem;
+          padding: 0.4rem 0.75rem;
           font-size: 0.78rem;
           font-weight: 700;
           display: inline-flex;
           align-items: center;
-          gap: 4px;
+          gap: 5px;
           border-radius: 6px;
           cursor: pointer;
+          white-space: nowrap;
         }
         .btn-activate:hover {
           background: #10b981;
@@ -303,15 +306,16 @@ export default function AdminCouponsPage() {
           background: rgba(239, 68, 68, 0.12);
           color: #ef4444;
           border: 1px solid rgba(239, 68, 68, 0.3);
-          padding: 0.35rem 0.65rem;
+          padding: 0.4rem 0.75rem;
           font-size: 0.78rem;
           font-weight: 700;
           display: inline-flex;
           align-items: center;
-          gap: 4px;
+          gap: 5px;
           border-radius: 6px;
           cursor: pointer;
           transition: all 0.2s ease;
+          white-space: nowrap;
         }
         .btn-delete-coupon:hover:not(:disabled) {
           background: #ef4444;
@@ -323,12 +327,12 @@ export default function AdminCouponsPage() {
         }
 
         .w-100 { width: 100%; }
-        @media (max-width: 900px) { 
-          .coupons-grid { grid-template-columns: 1fr; gap: 1.25rem; } 
+        @media (max-width: 1180px) { 
+          .coupons-grid { grid-template-columns: 1fr; gap: 1.5rem; } 
         }
         @media (max-width: 600px) {
           .add-card, .table-card { padding: 1rem; }
-          .action-buttons-group { justify-content: flex-start; }
+          .action-buttons-group { justify-content: flex-start; flex-wrap: wrap; }
           .actions-cell { text-align: left !important; }
         }
       `}</style>
