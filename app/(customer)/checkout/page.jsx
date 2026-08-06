@@ -116,8 +116,19 @@ const ALL_COUNTRIES = [
 export default function CheckoutPage() {
   const router = useRouter();
   const { user, refreshUser } = useAuth();
-  const { cartItems, getSubtotal, getDiscountAmount, getTotalPrice, clearCart } = useCart();
+  const {
+    cartItems,
+    getSubtotal,
+    getDiscountAmount,
+    getTotalPrice,
+    clearCart,
+    appliedCoupon,
+    applyCoupon,
+    removeCoupon,
+  } = useCart();
   const { addToast } = useToast();
+
+  const [couponInput, setCouponInput] = useState('');
 
   // Extract clean 10-digit phone if available (ignore dummy numbers)
   const extractPhoneDigits = (raw) => {
@@ -569,9 +580,60 @@ export default function CheckoutPage() {
               ))}
             </div>
 
-            <div className="summary-breakdown mt-3">
+            {/* Coupon Code Input & Offer Application */}
+            <div className="checkout-coupon-box mt-3 mb-3">
+              {appliedCoupon ? (
+                <div className="applied-coupon-pill flex items-center justify-between p-3 rounded-xl background-emerald border border-emerald-500/30">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">🎟️</span>
+                    <div>
+                      <div className="font-extrabold text-sm text-emerald-400">
+                        {appliedCoupon.code} ({appliedCoupon.discountType === 'percentage' ? `${appliedCoupon.discountValue}% OFF` : `₹${appliedCoupon.discountValue} OFF`})
+                      </div>
+                      <div className="text-xs text-muted">Admin Promo Coupon Applied</div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={removeCoupon}
+                    className="btn btn-sm text-xs text-danger font-bold border border-red-500/30 bg-red-500/10 px-2 py-1"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    if (!couponInput.trim()) return;
+                    const success = await applyCoupon(couponInput);
+                    if (success) setCouponInput('');
+                  }}
+                  className="coupon-form flex gap-2"
+                >
+                  <input
+                    type="text"
+                    placeholder="Have a Coupon Code? (e.g. WELCOME20)"
+                    value={couponInput}
+                    onChange={(e) => setCouponInput(e.target.value)}
+                    className="form-input text-sm uppercase"
+                    style={{ flex: 1, textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '700' }}
+                  />
+                  <button type="submit" className="btn btn-secondary btn-sm font-bold" style={{ whiteSpace: 'nowrap', padding: '0.5rem 0.85rem' }}>
+                    Apply Coupon
+                  </button>
+                </form>
+              )}
+            </div>
+
+            <div className="summary-breakdown">
               <div className="row"><span>Items Subtotal</span><span>₹{subtotal.toFixed(0)}</span></div>
-              {discount > 0 && <div className="row text-success"><span>Promo Discount</span><span>-₹{discount.toFixed(0)}</span></div>}
+              {discount > 0 && (
+                <div className="row text-success font-bold">
+                  <span>🎟️ Coupon Discount ({appliedCoupon?.code})</span>
+                  <span>-₹{discount.toFixed(0)}</span>
+                </div>
+              )}
               <div className="row">
                 <span>Shipping ({formData.city || 'City'})</span>
                 <span>{shipping === 0 ? <strong className="text-success">FREE</strong> : `₹${shipping}`}</span>
