@@ -213,7 +213,7 @@ export default function AdminCategoriesPage() {
 
         {/* Existing Categories List */}
         <div className="table-card glass-panel">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="table-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
             <h3>Live Seller Categories ({categories.length})</h3>
             <button onClick={fetchCategories} className="btn btn-sm btn-secondary" title="Refresh Categories">
               <RefreshCw size={14} /> Refresh
@@ -242,13 +242,13 @@ export default function AdminCategoriesPage() {
               ) : (
                 categories.map((cat) => (
                   <tr key={cat._id || cat.slug}>
-                    <td>
+                    <td data-label="Image">
                       <img src={cat.image || '/logo2.png'} alt={cat.name} className="cat-img" />
                     </td>
-                    <td><strong>{cat.name}</strong></td>
-                    <td><code>{cat.slug}</code></td>
-                    <td><span className="badge badge-primary">{cat.productCount || 0} items</span></td>
-                    <td style={{ textAlign: 'right' }}>
+                    <td data-label="Category Name"><strong>{cat.name}</strong></td>
+                    <td data-label="Slug"><code>{cat.slug}</code></td>
+                    <td data-label="Products"><span className="badge badge-primary">{cat.productCount || 0} items</span></td>
+                    <td data-label="Actions" className="actions-cell" style={{ textAlign: 'right' }}>
                       <button
                         onClick={() => handleDeleteCategory(cat._id, cat.name)}
                         className="btn-danger-icon"
@@ -275,7 +275,15 @@ export default function AdminCategoriesPage() {
         .btn-danger-icon { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 6px 10px; cursor: pointer; transition: background 0.2s; }
         .btn-danger-icon:hover { background: rgba(239, 68, 68, 0.25); }
         .w-100 { width: 100%; }
-        @media (max-width: 900px) { .categories-grid { grid-template-columns: 1fr; } }
+        code { word-break: break-all; }
+        @media (max-width: 900px) { 
+          .categories-grid { grid-template-columns: 1fr; gap: 1.25rem; } 
+        }
+        @media (max-width: 600px) {
+          .add-category-card, .table-card { padding: 1rem; }
+          .cat-img { width: 38px; height: 38px; }
+          .actions-cell { text-align: left !important; }
+        }
       `}</style>
     </div>
   );

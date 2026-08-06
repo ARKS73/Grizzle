@@ -8,6 +8,7 @@ export default function AdminCouponsPage() {
   const { addToast } = useToast();
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
 
   const [code, setCode] = useState('');
   const [discountType, setDiscountType] = useState('percentage');
@@ -82,19 +83,25 @@ export default function AdminCouponsPage() {
     }
   };
 
-  const handleDeleteCoupon = async (id) => {
-    if (!confirm('Are you sure you want to delete this promo code?')) return;
+  const handleDeleteCoupon = async (coupon) => {
+    const couponId = coupon._id;
+    const couponCode = coupon.code || 'this coupon';
+    if (!confirm(`Are you sure you want to permanently delete promo code "${couponCode}"?`)) return;
+
     try {
-      const res = await fetch(`/api/coupons/${id}`, { method: 'DELETE' });
+      setDeletingId(couponId);
+      const res = await fetch(`/api/coupons/${couponId}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
-        addToast('Coupon deleted', 'success');
+        addToast(`Promo code "${couponCode}" deleted!`, 'success');
         fetchCoupons();
       } else {
         addToast(data.message || 'Error deleting coupon', 'error');
       }
     } catch (e) {
       addToast('Error deleting coupon', 'error');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -197,12 +204,12 @@ export default function AdminCouponsPage() {
                 ) : (
                   coupons.map((coupon) => (
                     <tr key={coupon._id || coupon.code}>
-                      <td><strong className="code-tag">{coupon.code}</strong></td>
-                      <td>
+                      <td data-label="Code"><strong className="code-tag">{coupon.code}</strong></td>
+                      <td data-label="Discount">
                         {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `₹${coupon.discountValue}`} OFF
                       </td>
-                      <td>₹{coupon.minPurchase}</td>
-                      <td>
+                      <td data-label="Min Purchase">₹{coupon.minPurchase}</td>
+                      <td data-label="Usage Limit">
                         {coupon.isOneTimePerUser ? (
                           <span className="badge badge-warning" style={{ fontSize: '0.72rem', background: 'rgba(245,158,11,0.15)', color: '#f59e0b', borderColor: 'rgba(245,158,11,0.4)' }}>
                             ⚡ 1-Time Customer
@@ -213,14 +220,14 @@ export default function AdminCouponsPage() {
                           </span>
                         )}
                       </td>
-                      <td>
+                      <td data-label="Status">
                         {coupon.isActive ? (
                           <span className="badge badge-success"><CheckCircle2 size={12} /> Active</span>
                         ) : (
                           <span className="badge badge-danger"><XCircle size={12} /> Deactivated</span>
                         )}
                       </td>
-                      <td style={{ textAlign: 'right' }}>
+                      <td data-label="Actions" className="actions-cell">
                         <div className="action-buttons-group">
                           <button
                             onClick={() => handleToggleCouponStatus(coupon)}
@@ -230,11 +237,12 @@ export default function AdminCouponsPage() {
                             <Power size={13} /> {coupon.isActive ? 'Deactivate' : 'Activate'}
                           </button>
                           <button
-                            onClick={() => handleDeleteCoupon(coupon._id)}
-                            className="btn btn-sm btn-delete-icon"
-                            title="Delete Promo Code"
+                            onClick={() => handleDeleteCoupon(coupon)}
+                            className="btn btn-sm btn-delete-coupon"
+                            disabled={deletingId === coupon._id}
+                            title="Delete Promo Code permanently"
                           >
-                            <Trash2 size={14} />
+                            <Trash2 size={13} /> {deletingId === coupon._id ? 'Deleting...' : 'Delete'}
                           </button>
                         </div>
                       </td>
@@ -252,8 +260,8 @@ export default function AdminCouponsPage() {
         .add-card, .table-card { padding: 1.5rem; border-radius: var(--radius-lg); }
         .admin-table { width: 100%; border-collapse: collapse; }
         .admin-table th, .admin-table td { padding: 0.85rem; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; }
-        .code-tag { background: var(--accent-light); color: var(--accent-primary); padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.9rem; }
-        .action-buttons-group { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; }
+        .code-tag { background: var(--accent-light); color: var(--accent-primary); padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 0.9rem; word-break: break-all; }
+        .action-buttons-group { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; flex-wrap: wrap; }
         
         .btn-deactivate {
           background: rgba(239, 68, 68, 0.12);
@@ -291,24 +299,38 @@ export default function AdminCouponsPage() {
           color: #ffffff;
         }
 
-        .btn-delete-icon {
-          background: var(--bg-tertiary);
-          color: var(--text-muted);
-          border: 1px solid var(--border-color);
-          padding: 0.35rem 0.5rem;
-          border-radius: 6px;
-          cursor: pointer;
+        .btn-delete-coupon {
+          background: rgba(239, 68, 68, 0.12);
+          color: #ef4444;
+          border: 1px solid rgba(239, 68, 68, 0.3);
+          padding: 0.35rem 0.65rem;
+          font-size: 0.78rem;
+          font-weight: 700;
           display: inline-flex;
           align-items: center;
-          justify-content: center;
+          gap: 4px;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.2s ease;
         }
-        .btn-delete-icon:hover {
-          color: #ef4444;
-          border-color: #ef4444;
+        .btn-delete-coupon:hover:not(:disabled) {
+          background: #ef4444;
+          color: #ffffff;
+        }
+        .btn-delete-coupon:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
         }
 
         .w-100 { width: 100%; }
-        @media (max-width: 900px) { .coupons-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) { 
+          .coupons-grid { grid-template-columns: 1fr; gap: 1.25rem; } 
+        }
+        @media (max-width: 600px) {
+          .add-card, .table-card { padding: 1rem; }
+          .action-buttons-group { justify-content: flex-start; }
+          .actions-cell { text-align: left !important; }
+        }
       `}</style>
     </div>
   );

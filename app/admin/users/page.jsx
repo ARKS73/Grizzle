@@ -211,13 +211,13 @@ export default function AdminUsersPage() {
   return (
     <div className="admin-users-wrapper">
       {/* Header */}
-      <div className="page-header mb-4" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="page-header mb-4">
         <div>
           <h1>User Management</h1>
           <p>All users stored live in MongoDB. Create admins, manage customers, block accounts.</p>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <button onClick={openMfaSetup} className="btn btn-secondary" style={{ borderColor: '#ef4444', color: '#ef4444' }}>
+        <div className="header-actions">
+          <button onClick={openMfaSetup} className="btn btn-secondary mfa-btn">
             <Shield size={15} /> Setup Admin MFA (2FA)
           </button>
           <button onClick={fetchUsers} className="btn btn-secondary">
@@ -312,18 +312,18 @@ export default function AdminUsersPage() {
       )}
 
       {/* Stats Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', marginBottom: '1.5rem' }}>
-        <div className="glass-panel" style={{ padding: '1rem', borderRadius: '12px', textAlign: 'center' }}>
-          <div style={{ fontSize: 'clamp(1.4rem, 5vw, 2rem)', fontWeight: 900 }}>{users.length}</div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Total Users</div>
+      <div className="users-stats-grid">
+        <div className="glass-panel stat-card">
+          <div className="stat-num">{users.length}</div>
+          <div className="stat-label">Total Users</div>
         </div>
-        <div className="glass-panel" style={{ padding: '1rem', borderRadius: '12px', textAlign: 'center' }}>
-          <div style={{ fontSize: 'clamp(1.4rem, 5vw, 2rem)', fontWeight: 900, color: 'var(--accent-primary)' }}>{admins.length}</div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Admins</div>
+        <div className="glass-panel stat-card">
+          <div className="stat-num accent-text">{admins.length}</div>
+          <div className="stat-label">Admins</div>
         </div>
-        <div className="glass-panel" style={{ padding: '1rem', borderRadius: '12px', textAlign: 'center' }}>
-          <div style={{ fontSize: 'clamp(1.4rem, 5vw, 2rem)', fontWeight: 900 }}>{customers.length}</div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Customers</div>
+        <div className="glass-panel stat-card">
+          <div className="stat-num">{customers.length}</div>
+          <div className="stat-label">Customers</div>
         </div>
       </div>
 
@@ -406,8 +406,8 @@ export default function AdminUsersPage() {
                         </span>
                       )}
                     </td>
-                    <td data-label="Actions">
-                      <div className="action-btns" style={{ justifyContent: 'flex-end' }}>
+                    <td data-label="Actions" className="actions-cell">
+                      <div className="action-btns">
                         <button
                           onClick={() => handleToggleBlock(user._id, user.isBlocked, user.name)}
                           className={`btn ${user.isBlocked ? 'btn-secondary' : 'btn-danger'} btn-xs`}
@@ -530,15 +530,32 @@ export default function AdminUsersPage() {
       )}
 
       <style jsx>{`
+        .header-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        .mfa-btn { border-color: #ef4444 !important; color: #ef4444 !important; }
+        .users-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+        .stat-card { padding: 1rem; border-radius: 12px; text-align: center; }
+        .stat-num { font-size: clamp(1.4rem, 5vw, 2rem); font-weight: 900; }
+        .accent-text { color: var(--accent-primary); }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); }
         .table-card { padding: 1.5rem; border-radius: var(--radius-lg); }
-        .admin-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        .admin-table { width: 100%; border-collapse: collapse; }
+        @media (min-width: 769px) { .admin-table { min-width: 700px; } }
         .admin-table th { padding: 0.75rem 0.85rem; border-bottom: 2px solid var(--border-color); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; }
-        .admin-table td { padding: 0.85rem; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; vertical-align: middle; }
+        .admin-table td { padding: 0.85rem; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; vertical-align: middle; word-break: break-word; }
         .admin-table tr:last-child td { border-bottom: none; }
         .admin-table tr:hover td { background: rgba(255,255,255,0.02); }
         .user-cell { display: flex; align-items: center; gap: 0.75rem; }
-        .action-btns { display: flex; gap: 0.4rem; align-items: center; }
+        .action-btns { display: flex; gap: 0.4rem; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
         .btn-xs { padding: 0.3rem 0.6rem; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.3rem; }
+
+        @media (max-width: 600px) {
+          .table-card { padding: 1rem; }
+          .header-actions { width: 100%; flex-direction: column; }
+          .header-actions .btn { width: 100%; justify-content: center; }
+          .stat-card { padding: 0.6rem 0.4rem; }
+          .action-btns { justify-content: flex-start; }
+          .actions-cell { text-align: left !important; }
+        }
       `}</style>
     </div>
   );
