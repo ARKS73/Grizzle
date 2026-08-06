@@ -325,7 +325,9 @@ export default function AdminUsersPage() {
           <div className="stat-num">{customers.length}</div>
           <div className="stat-label">Customers</div>
         </div>
-      <      {/* Users Table */}
+      </div>
+
+      {/* Users Table */}
       <div className="table-card glass-panel">
         <h3 style={{ marginBottom: '1rem', fontSize: '1rem', fontWeight: 800 }}>
           All Users ({users.length})
