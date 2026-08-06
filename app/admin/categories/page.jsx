@@ -213,75 +213,81 @@ export default function AdminCategoriesPage() {
 
         {/* Existing Categories List */}
         <div className="table-card glass-panel">
-          <div className="table-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div className="table-card-header mb-3" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
             <h3>Live Seller Categories ({categories.length})</h3>
             <button onClick={fetchCategories} className="btn btn-sm btn-secondary" title="Refresh Categories">
               <RefreshCw size={14} /> Refresh
             </button>
           </div>
 
-          <table className="admin-table mt-3">
-            <thead>
-              <tr>
-                <th>Image</th>
-                <th>Category Name</th>
-                <th>Slug</th>
-                <th>Products</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr><td colSpan={5} className="text-center p-4">Loading categories...</td></tr>
-              ) : categories.length === 0 ? (
+          <div className="table-responsive">
+            <table className="admin-table">
+              <thead>
                 <tr>
-                  <td colSpan={5} className="text-center p-4">
-                    <p style={{ color: 'var(--text-muted)' }}>No categories found in MongoDB. Create your first seller category using the form!</p>
-                  </td>
+                  <th>Image</th>
+                  <th>Category Name</th>
+                  <th>Slug</th>
+                  <th>Products</th>
+                  <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
-              ) : (
-                categories.map((cat) => (
-                  <tr key={cat._id || cat.slug}>
-                    <td data-label="Image">
-                      <img src={cat.image || '/logo2.png'} alt={cat.name} className="cat-img" />
-                    </td>
-                    <td data-label="Category Name"><strong>{cat.name}</strong></td>
-                    <td data-label="Slug"><code>{cat.slug}</code></td>
-                    <td data-label="Products"><span className="badge badge-primary">{cat.productCount || 0} items</span></td>
-                    <td data-label="Actions" className="actions-cell" style={{ textAlign: 'right' }}>
-                      <button
-                        onClick={() => handleDeleteCategory(cat._id, cat.name)}
-                        className="btn-danger-icon"
-                        disabled={deletingId === cat._id}
-                        title="Delete Category from Database"
-                      >
-                        <Trash2 size={16} color="#ef4444" />
-                      </button>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr><td colSpan={5} className="text-center p-4">Loading categories...</td></tr>
+                ) : categories.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="text-center p-4">
+                      <p style={{ color: 'var(--text-muted)' }}>No categories found in MongoDB. Create your first seller category using the form!</p>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  categories.map((cat) => (
+                    <tr key={cat._id || cat.slug}>
+                      <td data-label="Image">
+                        <img src={cat.image || '/logo2.png'} alt={cat.name} className="cat-img" />
+                      </td>
+                      <td data-label="Category Name"><strong>{cat.name}</strong></td>
+                      <td data-label="Slug"><code>{cat.slug}</code></td>
+                      <td data-label="Products"><span className="badge badge-primary">{cat.productCount || 0} items</span></td>
+                      <td data-label="Actions" className="actions-cell" style={{ textAlign: 'right' }}>
+                        <button
+                          onClick={() => handleDeleteCategory(cat._id, cat.name)}
+                          className="btn-danger-icon"
+                          disabled={deletingId === cat._id}
+                          title="Delete Category from Database"
+                        >
+                          <Trash2 size={16} color="#ef4444" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       <style jsx>{`
-        .categories-grid { display: grid; grid-template-columns: 340px 1fr; gap: 2rem; align-items: start; }
-        .add-category-card, .table-card { padding: 1.75rem; border-radius: var(--radius-lg); }
-        .admin-table { width: 100%; border-collapse: collapse; }
-        .admin-table th { padding: 0.85rem; border-bottom: 2px solid var(--border-color); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; text-align: left; }
-        .admin-table td { padding: 0.95rem 0.85rem; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; vertical-align: middle; }
-        .cat-img { width: 46px; height: 46px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
+        .categories-grid { display: grid; grid-template-columns: 320px 1fr; gap: 1.75rem; align-items: start; }
+        .add-category-card, .table-card { padding: 1.5rem; border-radius: var(--radius-lg); }
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .admin-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        .admin-table th { padding: 0.75rem 0.65rem; border-bottom: 2px solid var(--border-color); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; text-align: left; white-space: nowrap; }
+        .admin-table td { padding: 0.8rem 0.65rem; border-bottom: 1px solid var(--border-color); font-size: 0.82rem; vertical-align: middle; white-space: nowrap; }
+        .cat-img { width: 44px; height: 44px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
         .btn-danger-icon { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 6px 10px; cursor: pointer; transition: background 0.2s; }
         .btn-danger-icon:hover { background: rgba(239, 68, 68, 0.25); }
+        .badge { white-space: nowrap; font-size: 0.72rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; }
         .w-100 { width: 100%; }
-        code { word-break: break-all; }
-        @media (max-width: 1180px) { 
+        code { font-family: monospace; background: var(--bg-tertiary); padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; white-space: nowrap; }
+        @media (max-width: 1150px) { 
           .categories-grid { grid-template-columns: 1fr; gap: 1.5rem; } 
         }
-        @media (max-width: 600px) {
-          .add-category-card, .table-card { padding: 1rem; }
+        @media (max-width: 650px) {
+          .admin-table { min-width: unset; }
+          .admin-table td { white-space: normal; }
+          .add-category-card, .table-card { padding: 0.85rem; }
           .cat-img { width: 38px; height: 38px; }
           .actions-cell { text-align: left !important; }
         }

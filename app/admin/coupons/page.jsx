@@ -256,24 +256,26 @@ export default function AdminCouponsPage() {
       </div>
 
       <style jsx>{`
-        .coupons-grid { display: grid; grid-template-columns: 340px 1fr; gap: 2rem; align-items: start; }
-        .add-card, .table-card { padding: 1.75rem; border-radius: var(--radius-lg); }
-        .admin-table { width: 100%; border-collapse: collapse; }
-        .admin-table th { padding: 0.85rem; border-bottom: 2px solid var(--border-color); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; text-align: left; }
-        .admin-table td { padding: 0.95rem 0.85rem; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; vertical-align: middle; }
-        .code-tag { background: var(--accent-light); color: var(--accent-primary); padding: 4px 10px; border-radius: 6px; font-family: monospace; font-size: 0.9rem; font-weight: 700; word-break: break-all; display: inline-block; }
-        .action-buttons-group { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; flex-wrap: nowrap; }
+        .coupons-grid { display: grid; grid-template-columns: 320px 1fr; gap: 1.75rem; align-items: start; }
+        .add-card, .table-card { padding: 1.5rem; border-radius: var(--radius-lg); }
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .admin-table { width: 100%; border-collapse: collapse; min-width: 650px; }
+        .admin-table th { padding: 0.75rem 0.65rem; border-bottom: 2px solid var(--border-color); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; text-align: left; white-space: nowrap; }
+        .admin-table td { padding: 0.8rem 0.65rem; border-bottom: 1px solid var(--border-color); font-size: 0.82rem; vertical-align: middle; white-space: nowrap; }
+        .code-tag { background: var(--accent-light); color: var(--accent-primary); padding: 3px 8px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; font-weight: 800; white-space: nowrap; display: inline-block; letter-spacing: 0.05em; }
+        .badge { white-space: nowrap; font-size: 0.72rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; }
+        .action-buttons-group { display: flex; align-items: center; justify-content: flex-end; gap: 0.35rem; white-space: nowrap; }
         
         .btn-deactivate {
           background: rgba(239, 68, 68, 0.12);
           color: #ef4444;
           border: 1px solid rgba(239, 68, 68, 0.3);
-          padding: 0.4rem 0.75rem;
-          font-size: 0.78rem;
+          padding: 0.3rem 0.6rem;
+          font-size: 0.75rem;
           font-weight: 700;
           display: inline-flex;
           align-items: center;
-          gap: 5px;
+          gap: 4px;
           border-radius: 6px;
           cursor: pointer;
           white-space: nowrap;
@@ -287,12 +289,12 @@ export default function AdminCouponsPage() {
           background: rgba(16, 185, 129, 0.12);
           color: #10b981;
           border: 1px solid rgba(16, 185, 129, 0.3);
-          padding: 0.4rem 0.75rem;
-          font-size: 0.78rem;
+          padding: 0.3rem 0.6rem;
+          font-size: 0.75rem;
           font-weight: 700;
           display: inline-flex;
           align-items: center;
-          gap: 5px;
+          gap: 4px;
           border-radius: 6px;
           cursor: pointer;
           white-space: nowrap;
@@ -306,12 +308,12 @@ export default function AdminCouponsPage() {
           background: rgba(239, 68, 68, 0.12);
           color: #ef4444;
           border: 1px solid rgba(239, 68, 68, 0.3);
-          padding: 0.4rem 0.75rem;
-          font-size: 0.78rem;
+          padding: 0.3rem 0.6rem;
+          font-size: 0.75rem;
           font-weight: 700;
           display: inline-flex;
           align-items: center;
-          gap: 5px;
+          gap: 4px;
           border-radius: 6px;
           cursor: pointer;
           transition: all 0.2s ease;
@@ -327,11 +329,13 @@ export default function AdminCouponsPage() {
         }
 
         .w-100 { width: 100%; }
-        @media (max-width: 1180px) { 
+        @media (max-width: 1150px) { 
           .coupons-grid { grid-template-columns: 1fr; gap: 1.5rem; } 
         }
-        @media (max-width: 600px) {
-          .add-card, .table-card { padding: 1rem; }
+        @media (max-width: 650px) {
+          .admin-table { min-width: unset; }
+          .admin-table td { white-space: normal; }
+          .add-card, .table-card { padding: 0.85rem; }
           .action-buttons-group { justify-content: flex-start; flex-wrap: wrap; }
           .actions-cell { text-align: left !important; }
         }

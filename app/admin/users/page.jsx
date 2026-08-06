@@ -325,14 +325,13 @@ export default function AdminUsersPage() {
           <div className="stat-num">{customers.length}</div>
           <div className="stat-label">Customers</div>
         </div>
-      </div>
-
-      {/* Users Table */}
+      <      {/* Users Table */}
       <div className="table-card glass-panel">
         <h3 style={{ marginBottom: '1rem', fontSize: '1rem', fontWeight: 800 }}>
           All Users ({users.length})
         </h3>
-        <table className="admin-table">
+        <div className="table-responsive">
+          <table className="admin-table">
             <thead>
               <tr>
                 <th>User</th>
@@ -367,41 +366,44 @@ export default function AdminUsersPage() {
                     <td data-label="User">
                       <div className="user-cell">
                         <div className="avatar-circle" style={{
-                          width: 34, height: 34, borderRadius: '50%',
+                          width: 32, height: 32, borderRadius: '50%',
                           background: user.role === 'admin'
                             ? 'linear-gradient(135deg, #f59e0b, #ef4444)'
                             : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: '0.85rem', fontWeight: 800, color: '#fff', flexShrink: 0,
+                          fontSize: '0.8rem', fontWeight: 800, color: '#fff', flexShrink: 0,
                         }}>
                           {user.name?.charAt(0)?.toUpperCase() || '?'}
                         </div>
                         <div>
-                          <strong style={{ display: 'block' }}>{user.name}</strong>
-                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>#{user._id?.slice(-6)}</span>
+                          <strong className="user-name" title={user.name}>{user.name}</strong>
+                          <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', display: 'block' }}>#{user._id?.slice(-6)}</span>
                         </div>
                       </div>
                     </td>
-                    <td data-label="Email" style={{ fontSize: '0.83rem' }}>{user.email}</td>
-                    <td data-label="Phone" style={{ fontSize: '0.83rem' }}>{user.phone || <span style={{ color: 'var(--text-muted)' }}>—</span>}</td>
+                    <td data-label="Email">
+                      <span className="email-cell" title={user.email}>{user.email}</span>
+                    </td>
+                    <td data-label="Phone">
+                      <span className="phone-cell">{user.phone || <span style={{ color: 'var(--text-muted)' }}>—</span>}</span>
+                    </td>
                     <td data-label="Role">
-                      <span
-                        className={`badge ${user.role === 'admin' ? 'badge-primary' : 'badge-secondary'}`}
-                        style={{ fontWeight: 800 }}
-                      >
+                      <span className={`badge ${user.role === 'admin' ? 'badge-primary' : 'badge-secondary'}`}>
                         {user.role === 'admin' ? '👑 ADMIN' : '👤 CUSTOMER'}
                       </span>
                     </td>
-                    <td data-label="Joined" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                      {user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-IN') : '—'}
+                    <td data-label="Joined">
+                      <span className="date-cell">
+                        {user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-IN') : '—'}
+                      </span>
                     </td>
                     <td data-label="Status">
                       {user.isBlocked ? (
-                        <span className="badge badge-danger" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <span className="badge badge-danger">
                           <AlertOctagon size={11} /> Blocked
                         </span>
                       ) : (
-                        <span className="badge badge-success" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <span className="badge badge-success">
                           <CheckCircle size={11} /> Active
                         </span>
                       )}
@@ -413,7 +415,7 @@ export default function AdminUsersPage() {
                           className={`btn ${user.isBlocked ? 'btn-secondary' : 'btn-danger'} btn-xs`}
                           title={user.isBlocked ? 'Unblock User' : 'Block User'}
                         >
-                          {user.isBlocked ? <CheckCircle size={13} /> : <ShieldOff size={13} />}
+                          {user.isBlocked ? <CheckCircle size={12} /> : <ShieldOff size={12} />}
                           {user.isBlocked ? 'Unblock' : 'Block'}
                         </button>
                         <button
@@ -421,7 +423,7 @@ export default function AdminUsersPage() {
                           className="btn btn-secondary btn-xs"
                           title="Delete from MongoDB"
                         >
-                          <Trash2 size={13} />
+                          <Trash2 size={12} />
                         </button>
                       </div>
                     </td>
@@ -431,6 +433,7 @@ export default function AdminUsersPage() {
             </tbody>
           </table>
         </div>
+      </div>
 
       {/* MFA Setup Modal */}
       {showMfaModal && (
@@ -530,32 +533,39 @@ export default function AdminUsersPage() {
       )}
 
       <style jsx>{`
-        .header-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .header-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
         .mfa-btn { border-color: #ef4444 !important; color: #ef4444 !important; }
-        .users-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; }
-        .stat-card { padding: 1.25rem; border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border-color); }
-        .stat-num { font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 900; line-height: 1.1; margin-bottom: 0.25rem; }
+        .users-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-card { padding: 1rem; border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border-color); }
+        .stat-num { font-size: clamp(1.4rem, 3vw, 1.8rem); font-weight: 900; line-height: 1.1; margin-bottom: 0.2rem; }
         .accent-text { color: var(--accent-primary); }
-        .stat-label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
-        .table-card { padding: 1.75rem; border-radius: var(--radius-lg); }
-        .admin-table { width: 100%; border-collapse: collapse; }
-        @media (min-width: 769px) { .admin-table { min-width: 700px; } }
-        .admin-table th { padding: 0.85rem; border-bottom: 2px solid var(--border-color); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; text-align: left; }
-        .admin-table td { padding: 0.95rem 0.85rem; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; vertical-align: middle; word-break: break-word; }
+        .stat-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+        .table-card { padding: 1.25rem; border-radius: var(--radius-lg); }
+        .admin-table { width: 100%; border-collapse: collapse; min-width: 780px; }
+        .admin-table th { padding: 0.75rem 0.65rem; border-bottom: 2px solid var(--border-color); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; text-align: left; white-space: nowrap; }
+        .admin-table td { padding: 0.75rem 0.65rem; border-bottom: 1px solid var(--border-color); font-size: 0.82rem; vertical-align: middle; }
         .admin-table tr:last-child td { border-bottom: none; }
         .admin-table tr:hover td { background: rgba(255,255,255,0.02); }
-        .user-cell { display: flex; align-items: center; gap: 0.85rem; }
-        .action-btns { display: flex; gap: 0.4rem; align-items: center; justify-content: flex-end; flex-wrap: nowrap; }
-        .btn-xs { padding: 0.35rem 0.7rem; font-size: 0.76rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem; border-radius: 6px; white-space: nowrap; }
+        .user-cell { display: flex; align-items: center; gap: 0.65rem; white-space: nowrap; }
+        .user-name { font-size: 0.84rem; display: block; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .email-cell { font-size: 0.82rem; display: block; max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .phone-cell { font-size: 0.82rem; white-space: nowrap; }
+        .date-cell { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; }
+        .badge { white-space: nowrap; font-size: 0.72rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; }
+        .action-btns { display: flex; gap: 0.35rem; align-items: center; justify-content: flex-end; white-space: nowrap; }
+        .btn-xs { padding: 0.3rem 0.55rem; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.3rem; border-radius: 6px; white-space: nowrap; }
 
-        @media (max-width: 600px) {
-          .table-card { padding: 1rem; }
-          .users-stats-grid { gap: 0.6rem; }
+        @media (max-width: 650px) {
+          .admin-table { min-width: unset; }
+          .table-card { padding: 0.85rem; }
+          .users-stats-grid { gap: 0.5rem; }
           .header-actions { width: 100%; flex-direction: column; }
           .header-actions .btn { width: 100%; justify-content: center; }
-          .stat-card { padding: 0.75rem 0.4rem; }
+          .stat-card { padding: 0.6rem 0.3rem; }
           .action-btns { justify-content: flex-start; flex-wrap: wrap; }
           .actions-cell { text-align: left !important; }
+          .user-name, .email-cell { max-width: unset; }
         }
       `}</style>
     </div>

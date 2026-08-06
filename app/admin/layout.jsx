@@ -584,7 +584,7 @@ export default function AdminLayout({ children }) {
         /* ══════════════════════
            RESPONSIVE
            ══════════════════════ */
-        @media (max-width: 900px) {
+        @media (max-width: 1024px) {
           /* Switch to single-column layout */
           .admin-wrapper { grid-template-columns: 1fr; }
 
