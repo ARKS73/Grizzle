@@ -10,7 +10,9 @@ export const dynamic = 'force-dynamic';
 export async function GET(request) {
   try {
     const authPayload = getAuthUser(request);
-    if (!authPayload || !authPayload.userId) {
+    const userId = authPayload ? (authPayload.userId || authPayload._id || authPayload.id) : null;
+
+    if (!userId) {
       return NextResponse.json(
         { success: false, message: 'Unauthenticated', cartItems: [] },
         { status: 200 }
@@ -18,7 +20,7 @@ export async function GET(request) {
     }
 
     await connectDB();
-    const user = await User.findById(authPayload.userId).populate('cart.product');
+    const user = await User.findById(userId).populate('cart.product');
 
     if (!user) {
       return NextResponse.json(
@@ -53,7 +55,9 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const authPayload = getAuthUser(request);
-    if (!authPayload || !authPayload.userId) {
+    const userId = authPayload ? (authPayload.userId || authPayload._id || authPayload.id) : null;
+
+    if (!userId) {
       return NextResponse.json(
         { success: false, message: 'Unauthenticated' },
         { status: 401 }
@@ -70,7 +74,7 @@ export async function POST(request) {
     }
 
     await connectDB();
-    const user = await User.findById(authPayload.userId);
+    const user = await User.findById(userId);
 
     if (!user) {
       return NextResponse.json(

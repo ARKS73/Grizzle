@@ -269,15 +269,29 @@ export default function CheckoutPage() {
 
     try {
       setSubmitting(true);
-      const orderItems = cartItems.map((item) => ({
-        product: item.product._id,
-        name: item.product.name,
-        image: item.product.images?.[0] || '',
-        price: item.product.price,
-        quantity: item.quantity,
-        size: item.size,
-        color: item.color,
-      }));
+
+      if (!cartItems || cartItems.length === 0) {
+        addToast('Your cart is empty. Please add items to your cart before checking out.', 'error');
+        setSubmitting(false);
+        return;
+      }
+
+      const orderItems = cartItems.map((item) => {
+        const prodId = typeof item.product === 'object' ? (item.product?._id || item.product?.id) : item.product;
+        const prodName = typeof item.product === 'object' ? item.product?.name : (item.name || 'Grizzle Apparel');
+        const prodImage = typeof item.product === 'object' ? (item.product?.images?.[0] || item.image || '') : (item.image || '');
+        const prodPrice = typeof item.product === 'object' ? item.product?.price : (item.price || 0);
+
+        return {
+          product: prodId,
+          name: prodName,
+          image: prodImage,
+          price: parseFloat(prodPrice || 0),
+          quantity: parseInt(item.quantity || 1, 10),
+          size: item.size || 'M',
+          color: item.color || 'Black',
+        };
+      });
 
       const res = await fetch('/api/orders', {
         method: 'POST',
@@ -301,10 +315,11 @@ export default function CheckoutPage() {
         if (refreshUser) refreshUser();
         router.push(`/orders/${data.order._id}`);
       } else {
-        addToast(data.message || 'Failed to place order', 'error');
+        addToast(data.message || 'Failed to place order. Please check your delivery details.', 'error');
       }
     } catch (err) {
-      addToast('An error occurred while placing order', 'error');
+      console.error('Checkout error:', err);
+      addToast(err?.message || 'An error occurred while placing your order. Please try again.', 'error');
     } finally {
       setSubmitting(false);
     }

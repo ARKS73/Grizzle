@@ -103,20 +103,36 @@ export async function POST(request) {
 
     // Deduct overall stock and specific sizeStock for each ordered product item
     for (const item of cleanedOrderItems) {
-      const productIdStr = item.product;
-      if (!productIdStr || String(productIdStr).length !== 24) continue;
+      const productIdStr = item.product ? String(item.product) : '';
+      if (!productIdStr || productIdStr.length !== 24) continue;
 
-      const targetProd = await Product.findById(productIdStr);
-      if (!targetProd) continue;
+      try {
+        const targetProd = await Product.findById(productIdStr);
+        if (!targetProd) continue;
 
-      const qty = item.quantity;
-      const incFields = { stock: -qty };
+        const qty = parseInt(item.quantity || 1, 10);
 
-      if (item.size && targetProd.sizeStock && targetProd.sizeStock[item.size] !== undefined) {
-        incFields[`sizeStock.${item.size}`] = -qty;
+        // Reduce total stock count
+        const currentTotalStock = typeof targetProd.stock === 'number' ? targetProd.stock : 20;
+        targetProd.stock = Math.max(0, currentTotalStock - qty);
+
+        // Reduce size-specific stock
+        if (item.size) {
+          const sizeKey = String(item.size).toUpperCase();
+          const currentSizeStock = targetProd.sizeStock || {};
+          const currentSizeQty = currentSizeStock[sizeKey] !== undefined ? parseInt(currentSizeStock[sizeKey], 10) : currentTotalStock;
+          
+          targetProd.sizeStock = {
+            ...currentSizeStock,
+            [sizeKey]: Math.max(0, currentSizeQty - qty),
+          };
+          targetProd.markModified('sizeStock');
+        }
+
+        await targetProd.save();
+      } catch (stockErr) {
+        console.error(`Error updating stock for product ${item.product}:`, stockErr);
       }
-
-      await Product.findByIdAndUpdate(productIdStr, { $inc: incFields });
     }
 
     const { clearStoreCache } = await import('@/lib/storeCache');
