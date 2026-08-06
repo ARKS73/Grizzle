@@ -145,18 +145,58 @@ export default function QuickViewModal({ product, onClose }) {
             {/* Sizes Picker */}
             {product.sizes?.length > 0 && (
               <div className="variant-group">
-                <label className="variant-label">Select Size:</label>
-                <div className="sizes-picker">
-                  {product.sizes.map((sz) => (
-                    <button
-                      key={sz}
-                      onClick={() => setSelectedSize(sz)}
-                      className={`size-btn ${selectedSize === sz ? 'active' : ''}`}
-                    >
-                      {sz}
-                    </button>
-                  ))}
+                <div className="size-header">
+                  <label className="variant-label">
+                    Select Size: {selectedSize && <span className="selected-color-name">{selectedSize}</span>}
+                  </label>
                 </div>
+                <div className="sizes-picker">
+                  {product.sizes.map((sz) => {
+                    const sizeQty = (product.sizeStock && product.sizeStock[sz] !== undefined)
+                      ? Number(product.sizeStock[sz])
+                      : Math.max(0, Math.floor((product.stock || 0) / product.sizes.length));
+                    const isOut = sizeQty <= 0;
+                    const isLow = sizeQty > 0 && sizeQty <= 3;
+
+                    return (
+                      <button
+                        key={sz}
+                        onClick={() => !isOut && setSelectedSize(sz)}
+                        disabled={isOut}
+                        className={`size-btn ${selectedSize === sz ? 'active' : ''} ${isOut ? 'out-of-stock' : ''}`}
+                        title={isOut ? `Size ${sz} is Out of Stock` : `Size ${sz}: ${sizeQty} available`}
+                      >
+                        <span className="size-text">{sz}</span>
+                        {isOut && <span className="size-subtag out">Out</span>}
+                        {isLow && !isOut && <span className="size-subtag low">{sizeQty} left</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Dynamic Selected Size Stock Pill */}
+                {selectedSize && (
+                  <div className="selected-size-stock-badge">
+                    {(() => {
+                      const selectedQty = (product.sizeStock && product.sizeStock[selectedSize] !== undefined)
+                        ? Number(product.sizeStock[selectedSize])
+                        : (product.stock || 0);
+                      if (selectedQty <= 0) {
+                        return (
+                          <span className="stock-pill stock-out">
+                            ✕ Size {selectedSize}: Out of Stock (0 left)
+                          </span>
+                        );
+                      }
+                      return (
+                        <span className={`stock-pill ${selectedQty <= 3 ? 'stock-low' : 'stock-in'}`}>
+                          <span className="stock-dot" />
+                          Size {selectedSize}: In Stock ({selectedQty} {selectedQty === 1 ? 'left' : 'left'})
+                        </span>
+                      );
+                    })()}
+                  </div>
+                )}
               </div>
             )}
 
@@ -370,20 +410,84 @@ export default function QuickViewModal({ product, onClose }) {
         .sizes-picker {
           display: flex;
           gap: 0.5rem;
+          flex-wrap: wrap;
         }
         .size-btn {
-          width: 40px;
-          height: 40px;
+          min-width: 46px;
+          height: 44px;
+          padding: 0.2rem 0.4rem;
           border-radius: var(--radius-md);
-          border: 1px solid var(--border-color);
+          border: 1.5px solid var(--border-color);
           background: var(--bg-secondary);
-          font-weight: 700;
+          color: var(--text-primary);
+          font-weight: 800;
+          display: inline-flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          position: relative;
           cursor: pointer;
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .size-btn.active {
           border-color: var(--accent-primary);
           color: var(--accent-primary);
           background: var(--accent-light);
+          box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+          transform: scale(1.03);
+        }
+        .size-btn.out-of-stock {
+          opacity: 0.45;
+          cursor: not-allowed;
+          background: var(--bg-tertiary);
+          border-style: dashed;
+        }
+        .size-subtag {
+          font-size: 0.62rem;
+          font-weight: 800;
+          line-height: 1;
+          margin-top: 1px;
+        }
+        .size-subtag.low {
+          color: #f59e0b;
+        }
+        .size-subtag.out {
+          color: #ef4444;
+        }
+        .selected-size-stock-badge {
+          margin-top: 0.65rem;
+          display: flex;
+          align-items: center;
+        }
+        .stock-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          font-size: 0.8rem;
+          font-weight: 800;
+          padding: 0.35rem 0.75rem;
+          border-radius: 20px;
+        }
+        .stock-pill.stock-in {
+          background: rgba(16, 185, 129, 0.12);
+          color: #10b981;
+          border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .stock-pill.stock-low {
+          background: rgba(245, 158, 11, 0.12);
+          color: #f59e0b;
+          border: 1px solid rgba(245, 158, 11, 0.35);
+        }
+        .stock-pill.stock-out {
+          background: rgba(239, 68, 68, 0.12);
+          color: #ef4444;
+          border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .stock-dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: currentColor;
         }
 
         .action-row {

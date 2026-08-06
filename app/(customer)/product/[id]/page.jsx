@@ -286,6 +286,30 @@ export default function ProductDetailPage() {
                   );
                 })}
               </div>
+
+              {/* Dynamic Selected Size Stock Pill */}
+              {selectedSize && (
+                <div className="selected-size-stock-badge">
+                  {(() => {
+                    const selectedQty = (product.sizeStock && product.sizeStock[selectedSize] !== undefined)
+                      ? Number(product.sizeStock[selectedSize])
+                      : (product.stock || 0);
+                    if (selectedQty <= 0) {
+                      return (
+                        <span className="stock-pill stock-out">
+                          ✕ Size {selectedSize}: Out of Stock (0 left)
+                        </span>
+                      );
+                    }
+                    return (
+                      <span className={`stock-pill ${selectedQty <= 3 ? 'stock-low' : 'stock-in'}`}>
+                        <span className="stock-dot" />
+                        Size {selectedSize}: In Stock ({selectedQty} {selectedQty === 1 ? 'left' : 'left'})
+                      </span>
+                    );
+                  })()}
+                </div>
+              )}
             </div>
           )}
 
@@ -831,6 +855,41 @@ export default function ProductDetailPage() {
             background: var(--bg-secondary);
             color: var(--text-primary);
             font-weight: 800;
+          }
+          .selected-size-stock-badge {
+            margin-top: 0.65rem;
+            display: flex;
+            align-items: center;
+          }
+          .stock-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.8rem;
+            font-weight: 800;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+          }
+          .stock-pill.stock-in {
+            background: rgba(16, 185, 129, 0.12);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+          }
+          .stock-pill.stock-low {
+            background: rgba(245, 158, 11, 0.12);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+          }
+          .stock-pill.stock-out {
+            background: rgba(239, 68, 68, 0.12);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+          }
+          .stock-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
           }
           .size-text {
             font-size: 0.88rem;
