@@ -6,12 +6,15 @@ import { usePathname } from 'next/navigation';
 import { RotateCcw, Instagram, Ruler } from 'lucide-react';
 import GrizzleLogo from '@/components/ui/GrizzleLogo';
 import SizeChartModal from '@/components/ui/SizeChartModal';
+import PolicyModal from '@/components/ui/PolicyModal';
 
 export default function Footer() {
   const pathname = usePathname();
   const [categories, setCategories] = useState([]);
   const [settings, setSettings] = useState(null);
   const [sizeChartOpen, setSizeChartOpen] = useState(false);
+  const [policyModalOpen, setPolicyModalOpen] = useState(false);
+  const [policyType, setPolicyType] = useState('returns');
 
   useEffect(() => {
     async function fetchFooterData() {
@@ -38,10 +41,10 @@ export default function Footer() {
 
   const defaultLinks = [
     { label: '📐 Size Chart & Fit Guide', url: '#size-chart' },
-    { label: '💬 Contact Us (WhatsApp)', url: 'https://wa.me/919176281858', isExternal: true },
+    { label: '🚚 Shipping & Delivery Policy', url: '#shipping-policy' },
+    { label: '🔄 Returns & Refund Policy', url: '#return-policy' },
+    { label: '💬 Contact Us on WhatsApp', url: 'https://wa.me/919176281858' },
     { label: '📦 Track Your Order', url: '/orders' },
-    { label: '❤️ Saved Wishlist', url: '/wishlist' },
-    { label: '🛒 View Cart', url: '/cart' },
   ];
 
   const customLinks = settings?.footerCustomLinks && settings.footerCustomLinks.length > 0
@@ -129,40 +132,88 @@ export default function Footer() {
         <div className="footer-links-group">
           <h4 className="col-heading">Customer Care &amp; Links</h4>
           {customLinks.map((item, idx) => {
-            const isSizeChart = item.url === '#size-chart' || item.label?.toLowerCase().includes('size chart');
-            if (isSizeChart) {
+            const rawUrl = (item.url || '').trim();
+            const lowerUrl = rawUrl.toLowerCase();
+            const lowerLabel = (item.label || '').toLowerCase();
+
+            // 1. Check if link is Size Chart modal trigger
+            if (rawUrl === '#size-chart' || lowerLabel.includes('size chart')) {
               return (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => setSizeChartOpen(true)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    padding: 0,
-                    margin: 0,
-                    textAlign: 'left',
-                    font: 'inherit',
-                    color: 'var(--accent-primary)',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
+                  className="footer-btn-link"
                 >
                   {item.label}
                 </button>
               );
             }
 
-            if (item.url?.startsWith('http') || item.isExternal) {
+            // 2. Check if link is Returns Policy modal trigger
+            if (rawUrl === '#return-policy' || lowerUrl.includes('return') || lowerUrl.includes('refund') || lowerLabel.includes('return') || lowerLabel.includes('refund')) {
               return (
-                <a key={idx} href={item.url} target="_blank" rel="noopener noreferrer">
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => { setPolicyType('returns'); setPolicyModalOpen(true); }}
+                  className="footer-btn-link"
+                >
+                  {item.label}
+                </button>
+              );
+            }
+
+            // 3. Check if link is Shipping Policy modal trigger
+            if (rawUrl === '#shipping-policy' || lowerUrl.includes('shipping') || lowerUrl.includes('delivery') || lowerLabel.includes('shipping') || lowerLabel.includes('delivery')) {
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => { setPolicyType('shipping'); setPolicyModalOpen(true); }}
+                  className="footer-btn-link"
+                >
+                  {item.label}
+                </button>
+              );
+            }
+
+            // 4. External URL / WhatsApp link handling
+            const isExternal =
+              lowerUrl.includes('wa.me') ||
+              lowerUrl.includes('whatsapp') ||
+              lowerUrl.startsWith('http://') ||
+              lowerUrl.startsWith('https://') ||
+              lowerUrl.startsWith('www.') ||
+              lowerUrl.startsWith('mailto:') ||
+              lowerUrl.startsWith('tel:') ||
+              item.isExternal;
+
+            if (isExternal) {
+              let finalHref = rawUrl;
+              if (lowerUrl.startsWith('wa.me')) {
+                finalHref = `https://${rawUrl}`;
+              } else if (lowerUrl.startsWith('www.')) {
+                finalHref = `https://${rawUrl}`;
+              }
+
+              const isWhatsApp = lowerUrl.includes('wa.me') || lowerUrl.includes('whatsapp') || lowerLabel.includes('whatsapp');
+
+              return (
+                <a
+                  key={idx}
+                  href={finalHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={isWhatsApp ? 'whatsapp-contact-link' : ''}
+                >
                   {item.label}
                 </a>
               );
             }
 
             return (
-              <Link key={idx} href={item.url || '#'}>
+              <Link key={idx} href={rawUrl || '#'}>
                 {item.label}
               </Link>
             );
@@ -180,10 +231,15 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Size Chart Modal */}
+      {/* Size Chart & Policy Modals */}
       <SizeChartModal
         isOpen={sizeChartOpen}
         onClose={() => setSizeChartOpen(false)}
+      />
+      <PolicyModal
+        isOpen={policyModalOpen}
+        onClose={() => setPolicyModalOpen(false)}
+        initialType={policyType}
       />
 
       <style jsx>{`
@@ -268,14 +324,23 @@ export default function Footer() {
           flex-direction: column;
           gap: 0.6rem;
         }
-        .footer-links-group a {
+        .footer-links-group a, .footer-btn-link {
           font-size: 0.85rem;
           color: var(--text-secondary);
           transition: color var(--transition-fast);
           line-height: 1.4;
           white-space: nowrap;
         }
-        .footer-links-group a:hover { color: var(--accent-primary); }
+        .footer-btn-link {
+          background: none;
+          border: none;
+          padding: 0;
+          margin: 0;
+          text-align: left;
+          font: inherit;
+          cursor: pointer;
+        }
+        .footer-links-group a:hover, .footer-btn-link:hover { color: var(--accent-primary); }
 
         .social-icon.whatsapp-icon:hover {
           color: #25d366;

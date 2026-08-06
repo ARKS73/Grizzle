@@ -87,6 +87,23 @@ export default function AdminDashboardPage() {
     });
   };
 
+  const handleAddSizeRow = () => {
+    setStoreSettings((prev) => ({
+      ...prev,
+      sizeChartData: [
+        ...(prev.sizeChartData || []),
+        { size: '3XL', chestIn: '48-50"', chestCm: '122-127 cm', lengthIn: '32.5"', lengthCm: '82 cm', shoulderIn: '23.5"', shoulderCm: '59 cm', sleeveIn: '11.0"', sleeveCm: '28 cm' },
+      ],
+    }));
+  };
+
+  const handleRemoveSizeRow = (index) => {
+    setStoreSettings((prev) => ({
+      ...prev,
+      sizeChartData: (prev.sizeChartData || []).filter((_, i) => i !== index),
+    }));
+  };
+
   const handleAddFooterLink = () => {
     setStoreSettings((prev) => ({
       ...prev,
@@ -439,8 +456,20 @@ export default function AdminDashboardPage() {
 
         {/* Size Chart & Fit Guide Editor */}
         <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem', marginTop: '1.5rem' }}>
-          <h4 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.5rem' }}>📐 T-Shirt Size Chart &amp; Fit Guide Customization</h4>
-          <p className="subtext mb-3">Edit sizing table values (Inches &amp; CM) and customer fit recommendations.</p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <h4 style={{ fontSize: '1.05rem', fontWeight: 800 }}>📐 T-Shirt Size Chart &amp; Fit Guide Customization</h4>
+              <p className="subtext">Edit size table values, add/remove sizes, and customize customer fit recommendations.</p>
+            </div>
+            <button
+              type="button"
+              onClick={handleAddSizeRow}
+              className="btn btn-secondary btn-sm"
+              style={{ fontWeight: 700 }}
+            >
+              + Add New Size Row
+            </button>
+          </div>
 
           <div className="form-group mb-3">
             <label className="form-label">Fit Advice &amp; Sizing Tips</label>
@@ -454,22 +483,31 @@ export default function AdminDashboardPage() {
 
           <label className="form-label mb-2" style={{ display: 'block' }}>Size Measurements Table (Inches &amp; Centimeters)</label>
           <div style={{ overflowX: 'auto' }}>
-            <table className="admin-table" style={{ minWidth: '700px' }}>
+            <table className="admin-table" style={{ minWidth: '750px' }}>
               <thead>
                 <tr>
-                  <th>Size</th>
+                  <th>Size Name</th>
                   <th>Chest (Inches)</th>
                   <th>Chest (CM)</th>
                   <th>Length (Inches)</th>
                   <th>Length (CM)</th>
                   <th>Shoulder (In)</th>
                   <th>Shoulder (CM)</th>
+                  <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {(storeSettings.sizeChartData || []).map((row, idx) => (
                   <tr key={idx}>
-                    <td><strong>{row.size}</strong></td>
+                    <td>
+                      <input
+                        type="text"
+                        value={row.size || ''}
+                        onChange={(e) => handleSizeChartChange(idx, 'size', e.target.value)}
+                        className="form-input"
+                        style={{ padding: '0.35rem 0.5rem', fontSize: '0.8rem', fontWeight: 800, width: '65px' }}
+                      />
+                    </td>
                     <td>
                       <input
                         type="text"
@@ -524,6 +562,16 @@ export default function AdminDashboardPage() {
                         style={{ padding: '0.35rem 0.5rem', fontSize: '0.8rem' }}
                       />
                     </td>
+                    <td style={{ textAlign: 'right' }}>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSizeRow(idx)}
+                        className="btn btn-secondary btn-sm"
+                        style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)', padding: '0.3rem 0.55rem', fontSize: '0.75rem' }}
+                      >
+                        Delete
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -538,6 +586,44 @@ export default function AdminDashboardPage() {
               className="btn btn-primary font-bold"
             >
               <Save size={16} /> {savingSettings ? 'Saving Settings...' : 'Save Size Chart & Store Settings'}
+            </button>
+          </div>
+        </div>
+
+        {/* Customer Policies Content Editor */}
+        <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem', marginTop: '1.5rem' }}>
+          <h4 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.5rem' }}>📋 Customer Returns &amp; Shipping Policy Content Customization</h4>
+          <p className="subtext mb-3">Edit official text shown in customer policy popups on the website.</p>
+
+          <div className="form-grid-2 mb-3">
+            <div className="form-group">
+              <label className="form-label">7-Day Returns &amp; Refund Policy Text</label>
+              <textarea
+                className="form-input"
+                rows={3}
+                value={storeSettings.returnPolicyText || ''}
+                onChange={(e) => setStoreSettings((prev) => ({ ...prev, returnPolicyText: e.target.value }))}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Shipping &amp; Express Delivery Policy Text</label>
+              <textarea
+                className="form-input"
+                rows={3}
+                value={storeSettings.shippingPolicyText || ''}
+                onChange={(e) => setStoreSettings((prev) => ({ ...prev, shippingPolicyText: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div className="text-right">
+            <button
+              type="button"
+              onClick={handleSaveStoreSettings}
+              disabled={savingSettings}
+              className="btn btn-primary font-bold"
+            >
+              <Save size={16} /> {savingSettings ? 'Saving Policies...' : 'Publish Policy Changes to Website'}
             </button>
           </div>
         </div>

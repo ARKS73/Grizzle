@@ -13,6 +13,7 @@ export default function AdminCouponsPage() {
   const [discountType, setDiscountType] = useState('percentage');
   const [discountValue, setDiscountValue] = useState('');
   const [minPurchase, setMinPurchase] = useState('30');
+  const [isOneTimePerUser, setIsOneTimePerUser] = useState(false);
 
   const fetchCoupons = async () => {
     try {
@@ -45,14 +46,16 @@ export default function AdminCouponsPage() {
           discountValue: parseFloat(discountValue),
           minPurchase: parseFloat(minPurchase),
           expirationDate: new Date('2028-12-31'),
+          isOneTimePerUser,
         }),
       });
 
       const data = await res.json();
       if (data.success) {
-        addToast('Coupon code created!', 'success');
+        addToast('Coupon code created successfully!', 'success');
         setCode('');
         setDiscountValue('');
+        setIsOneTimePerUser(false);
         fetchCoupons();
       }
     } catch (e) {
@@ -144,7 +147,7 @@ export default function AdminCouponsPage() {
               />
             </div>
 
-            <div className="form-group">
+            <div className="form-group mb-2">
               <label className="form-label">Min Purchase Requirement (₹)</label>
               <input
                 type="number"
@@ -152,6 +155,18 @@ export default function AdminCouponsPage() {
                 onChange={(e) => setMinPurchase(e.target.value)}
                 className="form-input"
               />
+            </div>
+
+            <div className="form-group mb-3">
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                <input
+                  type="checkbox"
+                  checked={isOneTimePerUser}
+                  onChange={(e) => setIsOneTimePerUser(e.target.checked)}
+                  style={{ width: '16px', height: '16px', accentColor: 'var(--accent-primary)', cursor: 'pointer' }}
+                />
+                <span>⚡ One-Time Use Per Customer (Single / First Order Only)</span>
+              </label>
             </div>
 
             <button type="submit" className="btn btn-primary w-100 mt-2">
@@ -169,15 +184,16 @@ export default function AdminCouponsPage() {
                   <th>Code</th>
                   <th>Discount</th>
                   <th>Min Purchase</th>
+                  <th>Usage Limit</th>
                   <th>Status</th>
                   <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={5}>Loading coupons...</td></tr>
+                  <tr><td colSpan={6}>Loading coupons...</td></tr>
                 ) : coupons.length === 0 ? (
-                  <tr><td colSpan={5} className="text-center py-4 text-muted">No promo codes created yet.</td></tr>
+                  <tr><td colSpan={6} className="text-center py-4 text-muted">No promo codes created yet.</td></tr>
                 ) : (
                   coupons.map((coupon) => (
                     <tr key={coupon._id || coupon.code}>
@@ -186,6 +202,17 @@ export default function AdminCouponsPage() {
                         {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `₹${coupon.discountValue}`} OFF
                       </td>
                       <td>₹{coupon.minPurchase}</td>
+                      <td>
+                        {coupon.isOneTimePerUser ? (
+                          <span className="badge badge-warning" style={{ fontSize: '0.72rem', background: 'rgba(245,158,11,0.15)', color: '#f59e0b', borderColor: 'rgba(245,158,11,0.4)' }}>
+                            ⚡ 1-Time Customer
+                          </span>
+                        ) : (
+                          <span className="badge badge-secondary" style={{ fontSize: '0.72rem', opacity: 0.8 }}>
+                            Multi-Use
+                          </span>
+                        )}
+                      </td>
                       <td>
                         {coupon.isActive ? (
                           <span className="badge badge-success"><CheckCircle2 size={12} /> Active</span>

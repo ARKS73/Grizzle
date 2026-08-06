@@ -77,6 +77,14 @@ const StoreSettingsSchema = new mongoose.Schema(
       type: String,
       default: 'Oversized Streetwear Fit: Choose your standard size for a relaxed dropped-shoulder silhouette. For regular fit, size down 1 size.',
     },
+    returnPolicyText: {
+      type: String,
+      default: 'We accept returns and exchanges within 7 days of delivery. The item must be unworn, unwashed, and in its original bio-bag packaging with tags intact. To initiate a return, contact us on WhatsApp with your Order Invoice Number.',
+    },
+    shippingPolicyText: {
+      type: String,
+      default: 'All orders are processed within 24-48 hours. Standard dispatch takes 3-5 business days across India. Cash On Delivery (COD) and Online Express Delivery available.',
+    },
   },
   { timestamps: true }
 );

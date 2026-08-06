@@ -62,6 +62,7 @@ export async function POST(request) {
       itemsPrice,
       shippingPrice,
       discountAmount,
+      couponCode,
       totalPrice,
     } = await request.json();
 
@@ -122,6 +123,7 @@ export async function POST(request) {
       itemsPrice: parseFloat(itemsPrice),
       shippingPrice: parseFloat(shippingPrice || 0),
       discountAmount: parseFloat(discountAmount || 0),
+      couponCode: couponCode ? String(couponCode).toUpperCase() : '',
       totalPrice: parseFloat(totalPrice),
       isPaid: true,
       paidAt: new Date(),

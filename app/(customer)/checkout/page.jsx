@@ -289,6 +289,7 @@ export default function CheckoutPage() {
           itemsPrice: subtotal,
           shippingPrice: shipping,
           discountAmount: discount,
+          couponCode: appliedCoupon?.code || '',
           totalPrice,
         }),
       });
