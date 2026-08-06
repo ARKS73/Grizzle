@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Package, Clock, Truck, CheckCircle2, XCircle, ArrowRight, FileText } from 'lucide-react';
 
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toast';
 
 export default function OrderHistoryPage() {
