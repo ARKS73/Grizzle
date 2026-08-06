@@ -270,23 +270,23 @@ export default function AdminCategoriesPage() {
 
       <style jsx>{`
         .categories-grid { display: grid; grid-template-columns: 320px 1fr; gap: 1.75rem; align-items: start; }
-        .add-category-card, .table-card { padding: 1.5rem; border-radius: var(--radius-lg); }
-        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .add-category-card, .table-card { padding: 1.5rem; border-radius: var(--radius-lg); box-sizing: border-box; }
+        .table-responsive { width: 100% !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; display: block !important; }
         .admin-table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        .admin-table th { padding: 0.75rem 0.65rem; border-bottom: 2px solid var(--border-color); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; text-align: left; white-space: nowrap; }
-        .admin-table td { padding: 0.8rem 0.65rem; border-bottom: 1px solid var(--border-color); font-size: 0.82rem; vertical-align: middle; white-space: nowrap; }
+        .admin-table th { padding: 0.75rem 0.65rem; border-bottom: 2px solid var(--border-color); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; text-align: left; white-space: nowrap !important; }
+        .admin-table td { padding: 0.8rem 0.65rem; border-bottom: 1px solid var(--border-color); font-size: 0.82rem; vertical-align: middle; white-space: nowrap !important; }
         .cat-img { width: 44px; height: 44px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
         .btn-danger-icon { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 6px 10px; cursor: pointer; transition: background 0.2s; }
         .btn-danger-icon:hover { background: rgba(239, 68, 68, 0.25); }
-        .badge { white-space: nowrap; font-size: 0.72rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; }
+        .badge { white-space: nowrap !important; font-size: 0.72rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; }
         .w-100 { width: 100%; }
-        code { font-family: monospace; background: var(--bg-tertiary); padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; white-space: nowrap; }
-        @media (max-width: 1150px) { 
+        code { font-family: monospace; background: var(--bg-tertiary); padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; white-space: nowrap !important; }
+        @media (max-width: 1350px) { 
           .categories-grid { grid-template-columns: 1fr; gap: 1.5rem; } 
         }
         @media (max-width: 650px) {
           .admin-table { min-width: unset; }
-          .admin-table td { white-space: normal; }
+          .admin-table td { white-space: normal !important; }
           .add-category-card, .table-card { padding: 0.85rem; }
           .cat-img { width: 38px; height: 38px; }
           .actions-cell { text-align: left !important; }

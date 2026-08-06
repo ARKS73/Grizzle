@@ -193,7 +193,7 @@ export default function AdminCouponsPage() {
                   <th>Min Purchase</th>
                   <th>Usage Limit</th>
                   <th>Status</th>
-                  <th style={{ textAlign: 'right' }}>Actions</th>
+                  <th style={{ textAlign: 'right', minWidth: '150px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -227,7 +227,7 @@ export default function AdminCouponsPage() {
                           <span className="badge badge-danger"><XCircle size={12} /> Deactivated</span>
                         )}
                       </td>
-                      <td data-label="Actions" className="actions-cell">
+                      <td data-label="Actions" className="actions-cell" style={{ minWidth: '150px' }}>
                         <div className="action-buttons-group">
                           <button
                             onClick={() => handleToggleCouponStatus(coupon)}
@@ -257,20 +257,20 @@ export default function AdminCouponsPage() {
 
       <style jsx>{`
         .coupons-grid { display: grid; grid-template-columns: 320px 1fr; gap: 1.75rem; align-items: start; }
-        .add-card, .table-card { padding: 1.5rem; border-radius: var(--radius-lg); }
-        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        .admin-table { width: 100%; border-collapse: collapse; min-width: 650px; }
+        .add-card, .table-card { padding: 1.5rem; border-radius: var(--radius-lg); box-sizing: border-box; }
+        .table-responsive { width: 100% !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; display: block !important; }
+        .admin-table { width: 100%; border-collapse: collapse; min-width: 680px; }
         .admin-table th { padding: 0.75rem 0.65rem; border-bottom: 2px solid var(--border-color); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; text-align: left; white-space: nowrap; }
         .admin-table td { padding: 0.8rem 0.65rem; border-bottom: 1px solid var(--border-color); font-size: 0.82rem; vertical-align: middle; white-space: nowrap; }
-        .code-tag { background: var(--accent-light); color: var(--accent-primary); padding: 3px 8px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; font-weight: 800; white-space: nowrap; display: inline-block; letter-spacing: 0.05em; }
-        .badge { white-space: nowrap; font-size: 0.72rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; }
-        .action-buttons-group { display: flex; align-items: center; justify-content: flex-end; gap: 0.35rem; white-space: nowrap; }
+        .code-tag { background: var(--accent-light); color: var(--accent-primary); padding: 4px 9px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; font-weight: 800; white-space: nowrap !important; word-break: normal !important; display: inline-block !important; letter-spacing: 0.05em; }
+        .badge { white-space: nowrap !important; font-size: 0.72rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; }
+        .action-buttons-group { display: flex; align-items: center; justify-content: flex-end; gap: 0.35rem; white-space: nowrap !important; flex-wrap: nowrap; }
         
         .btn-deactivate {
           background: rgba(239, 68, 68, 0.12);
           color: #ef4444;
           border: 1px solid rgba(239, 68, 68, 0.3);
-          padding: 0.3rem 0.6rem;
+          padding: 0.35rem 0.65rem;
           font-size: 0.75rem;
           font-weight: 700;
           display: inline-flex;
@@ -278,7 +278,8 @@ export default function AdminCouponsPage() {
           gap: 4px;
           border-radius: 6px;
           cursor: pointer;
-          white-space: nowrap;
+          white-space: nowrap !important;
+          flex-shrink: 0;
         }
         .btn-deactivate:hover {
           background: #ef4444;
@@ -289,7 +290,7 @@ export default function AdminCouponsPage() {
           background: rgba(16, 185, 129, 0.12);
           color: #10b981;
           border: 1px solid rgba(16, 185, 129, 0.3);
-          padding: 0.3rem 0.6rem;
+          padding: 0.35rem 0.65rem;
           font-size: 0.75rem;
           font-weight: 700;
           display: inline-flex;
@@ -297,7 +298,8 @@ export default function AdminCouponsPage() {
           gap: 4px;
           border-radius: 6px;
           cursor: pointer;
-          white-space: nowrap;
+          white-space: nowrap !important;
+          flex-shrink: 0;
         }
         .btn-activate:hover {
           background: #10b981;
@@ -308,7 +310,7 @@ export default function AdminCouponsPage() {
           background: rgba(239, 68, 68, 0.12);
           color: #ef4444;
           border: 1px solid rgba(239, 68, 68, 0.3);
-          padding: 0.3rem 0.6rem;
+          padding: 0.35rem 0.65rem;
           font-size: 0.75rem;
           font-weight: 700;
           display: inline-flex;
@@ -317,7 +319,8 @@ export default function AdminCouponsPage() {
           border-radius: 6px;
           cursor: pointer;
           transition: all 0.2s ease;
-          white-space: nowrap;
+          white-space: nowrap !important;
+          flex-shrink: 0;
         }
         .btn-delete-coupon:hover:not(:disabled) {
           background: #ef4444;
@@ -329,7 +332,7 @@ export default function AdminCouponsPage() {
         }
 
         .w-100 { width: 100%; }
-        @media (max-width: 1150px) { 
+        @media (max-width: 1350px) { 
           .coupons-grid { grid-template-columns: 1fr; gap: 1.5rem; } 
         }
         @media (max-width: 650px) {

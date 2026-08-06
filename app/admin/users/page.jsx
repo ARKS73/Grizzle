@@ -342,7 +342,7 @@ export default function AdminUsersPage() {
                 <th>Role</th>
                 <th>Joined</th>
                 <th>Status</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
+                <th style={{ textAlign: 'right', minWidth: '150px' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -410,7 +410,7 @@ export default function AdminUsersPage() {
                         </span>
                       )}
                     </td>
-                    <td data-label="Actions" className="actions-cell">
+                    <td data-label="Actions" className="actions-cell" style={{ minWidth: '150px' }}>
                       <div className="action-btns">
                         <button
                           onClick={() => handleToggleBlock(user._id, user.isBlocked, user.name)}
@@ -535,31 +535,32 @@ export default function AdminUsersPage() {
       )}
 
       <style jsx>{`
-        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .table-responsive { width: 100% !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; display: block !important; }
         .header-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
         .mfa-btn { border-color: #ef4444 !important; color: #ef4444 !important; }
         .users-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
-        .stat-card { padding: 1rem; border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border-color); }
+        .stat-card { padding: 1rem; border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border-color); box-sizing: border-box; }
         .stat-num { font-size: clamp(1.4rem, 3vw, 1.8rem); font-weight: 900; line-height: 1.1; margin-bottom: 0.2rem; }
         .accent-text { color: var(--accent-primary); }
         .stat-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
-        .table-card { padding: 1.25rem; border-radius: var(--radius-lg); }
-        .admin-table { width: 100%; border-collapse: collapse; min-width: 780px; }
-        .admin-table th { padding: 0.75rem 0.65rem; border-bottom: 2px solid var(--border-color); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; text-align: left; white-space: nowrap; }
-        .admin-table td { padding: 0.75rem 0.65rem; border-bottom: 1px solid var(--border-color); font-size: 0.82rem; vertical-align: middle; }
+        .table-card { padding: 1.25rem; border-radius: var(--radius-lg); box-sizing: border-box; }
+        .admin-table { width: 100%; border-collapse: collapse; min-width: 820px; }
+        .admin-table th { padding: 0.75rem 0.65rem; border-bottom: 2px solid var(--border-color); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; text-align: left; white-space: nowrap !important; }
+        .admin-table td { padding: 0.75rem 0.65rem; border-bottom: 1px solid var(--border-color); font-size: 0.82rem; vertical-align: middle; white-space: nowrap !important; }
         .admin-table tr:last-child td { border-bottom: none; }
         .admin-table tr:hover td { background: rgba(255,255,255,0.02); }
-        .user-cell { display: flex; align-items: center; gap: 0.65rem; white-space: nowrap; }
-        .user-name { font-size: 0.84rem; display: block; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .email-cell { font-size: 0.82rem; display: block; max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .phone-cell { font-size: 0.82rem; white-space: nowrap; }
-        .date-cell { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; }
-        .badge { white-space: nowrap; font-size: 0.72rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; }
-        .action-btns { display: flex; gap: 0.35rem; align-items: center; justify-content: flex-end; white-space: nowrap; }
-        .btn-xs { padding: 0.3rem 0.55rem; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.3rem; border-radius: 6px; white-space: nowrap; }
+        .user-cell { display: flex; align-items: center; gap: 0.65rem; white-space: nowrap !important; }
+        .user-name { font-size: 0.84rem; display: block; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap !important; }
+        .email-cell { font-size: 0.82rem; display: block; max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap !important; }
+        .phone-cell { font-size: 0.82rem; white-space: nowrap !important; }
+        .date-cell { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap !important; }
+        .badge { white-space: nowrap !important; font-size: 0.72rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; }
+        .action-btns { display: flex; gap: 0.35rem; align-items: center; justify-content: flex-end; white-space: nowrap !important; flex-wrap: nowrap; }
+        .btn-xs { padding: 0.3rem 0.55rem; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.3rem; border-radius: 6px; white-space: nowrap !important; flex-shrink: 0; }
 
         @media (max-width: 650px) {
           .admin-table { min-width: unset; }
+          .admin-table td { white-space: normal !important; }
           .table-card { padding: 0.85rem; }
           .users-stats-grid { gap: 0.5rem; }
           .header-actions { width: 100%; flex-direction: column; }
