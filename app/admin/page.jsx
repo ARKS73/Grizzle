@@ -69,7 +69,23 @@ export default function AdminDashboardPage() {
       { label: '🚚 Shipping & Delivery Policy', url: '/products' },
       { label: '🔄 Returns & Refund Policy', url: '/orders' },
     ],
+    sizeChartTips: 'Oversized Streetwear Fit: Choose your standard size for a relaxed dropped-shoulder silhouette. For regular fit, size down 1 size.',
+    sizeChartData: [
+      { size: 'S', chestIn: '38-40"', chestCm: '96-102 cm', lengthIn: '27.5"', lengthCm: '70 cm', shoulderIn: '18.5"', shoulderCm: '47 cm', sleeveIn: '8.5"', sleeveCm: '21 cm' },
+      { size: 'M', chestIn: '40-42"', chestCm: '102-107 cm', lengthIn: '28.5"', lengthCm: '72 cm', shoulderIn: '19.5"', shoulderCm: '49.5 cm', sleeveIn: '9.0"', sleeveCm: '23 cm' },
+      { size: 'L', chestIn: '42-44"', chestCm: '107-112 cm', lengthIn: '29.5"', lengthCm: '75 cm', shoulderIn: '20.5"', shoulderCm: '52 cm', sleeveIn: '9.5"', sleeveCm: '24 cm' },
+      { size: 'XL', chestIn: '44-46"', chestCm: '112-117 cm', lengthIn: '30.5"', lengthCm: '77 cm', shoulderIn: '21.5"', shoulderCm: '54.5 cm', sleeveIn: '10.0"', sleeveCm: '25.5 cm' },
+      { size: 'XXL', chestIn: '46-48"', chestCm: '117-122 cm', lengthIn: '31.5"', lengthCm: '80 cm', shoulderIn: '22.5"', shoulderCm: '57 cm', sleeveIn: '10.5"', sleeveCm: '26.5 cm' },
+    ],
   });
+
+  const handleSizeChartChange = (index, field, value) => {
+    setStoreSettings((prev) => {
+      const updated = [...(prev.sizeChartData || [])];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, sizeChartData: updated };
+    });
+  };
 
   const handleAddFooterLink = () => {
     setStoreSettings((prev) => ({
@@ -137,7 +153,7 @@ export default function AdminDashboardPage() {
   };
 
   const handleSaveStoreSettings = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     try {
       setSavingSettings(true);
       const res = await fetch('/api/admin/settings', {
@@ -147,7 +163,7 @@ export default function AdminDashboardPage() {
       });
       const data = await res.json();
       if (data.success) {
-        if (addToast) addToast('Hero Banner Image & Settings published to Landing Page!', 'success');
+        if (addToast) addToast('Footer content, custom links & store settings published to website!', 'success');
       } else {
         if (addToast) addToast('Failed to save settings: ' + data.message, 'error');
       }
@@ -336,14 +352,24 @@ export default function AdminDashboardPage() {
               <h4 style={{ fontSize: '1.05rem', fontWeight: 800 }}>Footer Content &amp; Custom Links Editor</h4>
               <p className="subtext">Add custom footer links (e.g. Size Chart, Policies) and customize brand text.</p>
             </div>
-            <button
-              type="button"
-              onClick={handleAddFooterLink}
-              className="btn btn-secondary btn-sm"
-              style={{ fontWeight: 700 }}
-            >
-              + Add New Footer Link
-            </button>
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={handleAddFooterLink}
+                className="btn btn-secondary btn-sm"
+                style={{ fontWeight: 700 }}
+              >
+                + Add New Footer Link
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveStoreSettings}
+                disabled={savingSettings}
+                className="btn btn-primary btn-sm font-bold"
+              >
+                <Save size={14} /> {savingSettings ? 'Saving...' : 'Save Footer Changes'}
+              </button>
+            </div>
           </div>
 
           <div className="form-grid-2 mb-3">
@@ -397,6 +423,122 @@ export default function AdminDashboardPage() {
                 </button>
               </div>
             ))}
+          </div>
+
+          <div className="mt-3 text-right">
+            <button
+              type="button"
+              onClick={handleSaveStoreSettings}
+              disabled={savingSettings}
+              className="btn btn-primary font-bold"
+            >
+              <Save size={16} /> {savingSettings ? 'Saving Footer Changes...' : 'Publish Footer Changes to Website'}
+            </button>
+          </div>
+        </div>
+
+        {/* Size Chart & Fit Guide Editor */}
+        <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem', marginTop: '1.5rem' }}>
+          <h4 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.5rem' }}>📐 T-Shirt Size Chart &amp; Fit Guide Customization</h4>
+          <p className="subtext mb-3">Edit sizing table values (Inches &amp; CM) and customer fit recommendations.</p>
+
+          <div className="form-group mb-3">
+            <label className="form-label">Fit Advice &amp; Sizing Tips</label>
+            <textarea
+              className="form-input"
+              rows={2}
+              value={storeSettings.sizeChartTips || ''}
+              onChange={(e) => setStoreSettings((prev) => ({ ...prev, sizeChartTips: e.target.value }))}
+            />
+          </div>
+
+          <label className="form-label mb-2" style={{ display: 'block' }}>Size Measurements Table (Inches &amp; Centimeters)</label>
+          <div style={{ overflowX: 'auto' }}>
+            <table className="admin-table" style={{ minWidth: '700px' }}>
+              <thead>
+                <tr>
+                  <th>Size</th>
+                  <th>Chest (Inches)</th>
+                  <th>Chest (CM)</th>
+                  <th>Length (Inches)</th>
+                  <th>Length (CM)</th>
+                  <th>Shoulder (In)</th>
+                  <th>Shoulder (CM)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(storeSettings.sizeChartData || []).map((row, idx) => (
+                  <tr key={idx}>
+                    <td><strong>{row.size}</strong></td>
+                    <td>
+                      <input
+                        type="text"
+                        value={row.chestIn || ''}
+                        onChange={(e) => handleSizeChartChange(idx, 'chestIn', e.target.value)}
+                        className="form-input"
+                        style={{ padding: '0.35rem 0.5rem', fontSize: '0.8rem' }}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        value={row.chestCm || ''}
+                        onChange={(e) => handleSizeChartChange(idx, 'chestCm', e.target.value)}
+                        className="form-input"
+                        style={{ padding: '0.35rem 0.5rem', fontSize: '0.8rem' }}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        value={row.lengthIn || ''}
+                        onChange={(e) => handleSizeChartChange(idx, 'lengthIn', e.target.value)}
+                        className="form-input"
+                        style={{ padding: '0.35rem 0.5rem', fontSize: '0.8rem' }}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        value={row.lengthCm || ''}
+                        onChange={(e) => handleSizeChartChange(idx, 'lengthCm', e.target.value)}
+                        className="form-input"
+                        style={{ padding: '0.35rem 0.5rem', fontSize: '0.8rem' }}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        value={row.shoulderIn || ''}
+                        onChange={(e) => handleSizeChartChange(idx, 'shoulderIn', e.target.value)}
+                        className="form-input"
+                        style={{ padding: '0.35rem 0.5rem', fontSize: '0.8rem' }}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        value={row.shoulderCm || ''}
+                        onChange={(e) => handleSizeChartChange(idx, 'shoulderCm', e.target.value)}
+                        className="form-input"
+                        style={{ padding: '0.35rem 0.5rem', fontSize: '0.8rem' }}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-3 text-right">
+            <button
+              type="button"
+              onClick={handleSaveStoreSettings}
+              disabled={savingSettings}
+              className="btn btn-primary font-bold"
+            >
+              <Save size={16} /> {savingSettings ? 'Saving Settings...' : 'Save Size Chart & Store Settings'}
+            </button>
           </div>
         </div>
       </div>
