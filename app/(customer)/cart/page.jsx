@@ -76,11 +76,32 @@ export default function CartPage() {
               </div>
 
               {/* Quantity Controls */}
-              <div className="quantity-control">
-                <button onClick={() => updateQuantity(item.product._id, item.size, item.color, item.quantity - 1)}>-</button>
-                <span>{item.quantity}</span>
-                <button onClick={() => updateQuantity(item.product._id, item.size, item.color, item.quantity + 1)}>+</button>
-              </div>
+              {(() => {
+                const maxStock = (item.product?.sizeStock && item.product.sizeStock[item.size] !== undefined)
+                  ? Number(item.product.sizeStock[item.size])
+                  : (item.product?.stock || 0);
+                const isMax = item.quantity >= maxStock;
+
+                return (
+                  <div className="quantity-control">
+                    <button onClick={() => updateQuantity(item.product._id, item.size, item.color, item.quantity - 1)}>-</button>
+                    <span>{item.quantity}</span>
+                    <button
+                      onClick={() => {
+                        if (!isMax) {
+                          updateQuantity(item.product._id, item.size, item.color, item.quantity + 1);
+                        } else if (addToast) {
+                          addToast(`Only ${maxStock} item(s) left in stock for Size ${item.size}`, 'info');
+                        }
+                      }}
+                      disabled={isMax}
+                      title={isMax ? `Only ${maxStock} available in stock` : ''}
+                    >
+                      +
+                    </button>
+                  </div>
+                );
+              })()}
 
               {/* Line Total & Remove */}
               <div className="item-actions">

@@ -201,32 +201,53 @@ export default function QuickViewModal({ product, onClose }) {
             )}
 
             {/* Quantity & CTA */}
-            <div className="action-row">
-              <div className="quantity-control">
-                <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
-                <span>{quantity}</span>
-                <button onClick={() => setQuantity(quantity + 1)}>+</button>
-              </div>
+            {(() => {
+              const maxAvailable = selectedSize && product.sizeStock && product.sizeStock[selectedSize] !== undefined
+                ? Math.max(0, Number(product.sizeStock[selectedSize]))
+                : Math.max(0, Number(product.stock || 0));
+              const isMaxReached = quantity >= maxAvailable;
 
-              <button
-                onClick={() => {
-                  addToCart(product, selectedSize, selectedColor, quantity);
-                  onClose();
-                  router.push('/cart');
-                }}
-                className="btn btn-primary add-to-cart-btn btn-lg font-bold"
-                style={{ fontSize: '1.05rem', padding: '0.85rem 1.25rem' }}
-              >
-                <ShoppingBag size={20} /> Add to Cart ({quantity}) <ArrowRight size={18} />
-              </button>
+              return (
+                <div className="action-row">
+                  <div className="quantity-control">
+                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
+                    <span>{quantity}</span>
+                    <button
+                      onClick={() => {
+                        if (!isMaxReached) {
+                          setQuantity(quantity + 1);
+                        }
+                      }}
+                      disabled={isMaxReached || maxAvailable <= 0}
+                      title={isMaxReached ? `Only ${maxAvailable} in stock` : ''}
+                    >
+                      +
+                    </button>
+                  </div>
 
-              <button
-                onClick={() => toggleWishlist(product)}
-                className={`btn btn-secondary wishlist-btn ${isSaved ? 'saved' : ''}`}
-              >
-                <Heart size={18} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : 'currentColor'} />
-              </button>
-            </div>
+                  <button
+                    onClick={() => {
+                      const finalQty = Math.min(quantity, maxAvailable);
+                      addToCart(product, selectedSize, selectedColor, finalQty);
+                      onClose();
+                      router.push('/cart');
+                    }}
+                    disabled={maxAvailable <= 0}
+                    className="btn btn-primary add-to-cart-btn btn-lg font-bold"
+                    style={{ fontSize: '1.05rem', padding: '0.85rem 1.25rem' }}
+                  >
+                    <ShoppingBag size={20} /> {maxAvailable <= 0 ? 'Out of Stock' : `Add to Cart (${Math.min(quantity, maxAvailable)})`} <ArrowRight size={18} />
+                  </button>
+
+                  <button
+                    onClick={() => toggleWishlist(product)}
+                    className={`btn btn-secondary wishlist-btn ${isSaved ? 'saved' : ''}`}
+                  >
+                    <Heart size={18} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : 'currentColor'} />
+                  </button>
+                </div>
+              );
+            })()}
 
             <Link href={`/product/${product._id}`} onClick={onClose} className="full-details-link mt-2">
               View Full Product Page & Verified Reviews &rarr;

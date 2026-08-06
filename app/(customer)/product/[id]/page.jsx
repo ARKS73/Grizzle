@@ -314,23 +314,44 @@ export default function ProductDetailPage() {
           )}
 
           {/* Quantity & CTA */}
-          <div className="cta-box">
-            <div className="quantity-picker">
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
-              <span>{quantity}</span>
-              <button onClick={() => setQuantity(quantity + 1)}>+</button>
-            </div>
+          {(() => {
+            const maxAvailable = selectedSize && product.sizeStock && product.sizeStock[selectedSize] !== undefined
+              ? Math.max(0, Number(product.sizeStock[selectedSize]))
+              : Math.max(0, Number(product.stock || 0));
+            const isMaxReached = quantity >= maxAvailable;
 
-            <button
-              onClick={() => {
-                addToCart(product, selectedSize, selectedColor, quantity);
-                router.push('/cart');
-              }}
-              className="btn btn-primary btn-lg add-btn font-bold"
-              style={{ fontSize: '1.08rem', padding: '0.85rem 1.4rem' }}
-            >
-              <ShoppingBag size={20} /> Add to Cart ({quantity}) <ArrowRight size={18} />
-            </button>
+            return (
+              <div className="cta-box">
+                <div className="quantity-picker">
+                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
+                  <span>{quantity}</span>
+                  <button
+                    onClick={() => {
+                      if (!isMaxReached) {
+                        setQuantity(quantity + 1);
+                      } else if (addToast) {
+                        addToast(`Only ${maxAvailable} item(s) available in stock for Size ${selectedSize || ''}`, 'info');
+                      }
+                    }}
+                    disabled={isMaxReached || maxAvailable <= 0}
+                    title={isMaxReached ? `Only ${maxAvailable} in stock` : ''}
+                  >
+                    +
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => {
+                    const finalQty = Math.min(quantity, maxAvailable);
+                    addToCart(product, selectedSize, selectedColor, finalQty);
+                    router.push('/cart');
+                  }}
+                  disabled={maxAvailable <= 0}
+                  className="btn btn-primary btn-lg add-btn font-bold"
+                  style={{ fontSize: '1.08rem', padding: '0.85rem 1.4rem' }}
+                >
+                  <ShoppingBag size={20} /> {maxAvailable <= 0 ? 'Out of Stock' : `Add to Cart (${Math.min(quantity, maxAvailable)})`} <ArrowRight size={18} />
+                </button>
 
             <button
               onClick={() => toggleWishlist(product)}
@@ -340,6 +361,8 @@ export default function ProductDetailPage() {
               <Heart size={20} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : 'currentColor'} />
             </button>
           </div>
+        );
+      })()}
         </div>
       </div>
 
