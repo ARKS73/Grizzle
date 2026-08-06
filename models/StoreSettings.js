@@ -26,6 +26,10 @@ const StoreSettingsSchema = new mongoose.Schema(
       type: String,
       default: 'LIMITED TO 100 PIECES GLOBALLY',
     },
+    defaultShippingFee: {
+      type: Number,
+      default: 49,
+    },
   },
   { timestamps: true }
 );

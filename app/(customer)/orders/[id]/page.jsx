@@ -32,6 +32,7 @@ export default function OrderInvoicePage() {
   }, [id]);
 
   const handleCancelOrder = async () => {
+    if (!window.confirm('Are you sure you want to cancel this order?')) return;
     try {
       const res = await fetch(`/api/orders/${id}`, {
         method: 'PATCH',
@@ -42,6 +43,8 @@ export default function OrderInvoicePage() {
       if (data.success) {
         addToast('Order cancelled successfully', 'info');
         fetchOrder();
+      } else {
+        addToast(data.message || 'Failed to cancel order', 'error');
       }
     } catch (e) {
       addToast('Error cancelling order', 'error');
@@ -72,15 +75,22 @@ export default function OrderInvoicePage() {
   // Tracking Steps Progress index
   const steps = ['Pending', 'Processing', 'Shipped', 'Delivered'];
   const currentStepIndex = order.status === 'Cancelled' ? -1 : steps.indexOf(order.status);
+  const canCustomerCancel = ['Pending', 'Processing'].includes(order.status);
 
   return (
     <div className="container invoice-page-wrapper">
-      <div className="top-nav-bar no-print mb-4">
+      <div className="top-nav-bar no-print mb-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Link href="/orders" className="back-link">
           <ArrowLeft size={16} /> Back to Order History
         </Link>
 
-        <div className="actions">
+        <div className="actions" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          {canCustomerCancel && (
+            <button onClick={handleCancelOrder} className="btn btn-secondary btn-sm" style={{ borderColor: '#ef4444', color: '#ef4444' }}>
+              <XCircle size={16} /> Cancel Order
+            </button>
+          )}
+
           {order.status === 'Delivered' ? (
             <button onClick={handlePrint} className="btn btn-primary btn-sm">
               <Download size={16} /> Download Invoice (PDF)
@@ -120,75 +130,84 @@ export default function OrderInvoicePage() {
         </div>
       </div>
 
-      {/* Mandatory Tax Invoice Card */}
-      <div className="invoice-card glass-panel print-area">
-        <div className="invoice-header">
-          <div>
-            <img src="/placeholder.png" alt="GRIZZLE" style={{ height: '38px', width: 'auto', objectFit: 'contain', display: 'block', marginBottom: '0.5rem' }} />
-            <p className="invoice-sub">Tax Invoice / Purchase Receipt</p>
+      {/* Invoice Card - ONLY visible when product is Delivered */}
+      {order.status === 'Delivered' ? (
+        <div className="invoice-card glass-panel print-area">
+          <div className="invoice-header">
+            <div>
+              <img src="/placeholder.png" alt="GRIZZLE" style={{ height: '38px', width: 'auto', objectFit: 'contain', display: 'block', marginBottom: '0.5rem' }} />
+              <p className="invoice-sub">Tax Invoice / Purchase Receipt</p>
+            </div>
+
+            <div className="invoice-meta">
+              <h2>{order.invoiceNumber}</h2>
+              <p>Date: {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+              <p>Status: <strong className="status-highlight">{order.status.toUpperCase()}</strong></p>
+            </div>
           </div>
 
-          <div className="invoice-meta">
-            <h2>{order.invoiceNumber}</h2>
-            <p>Date: {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
-            <p>Status: <strong className="status-highlight">DELIVERED</strong></p>
-          </div>
-        </div>
+          <div className="invoice-billing-grid">
+            <div className="billing-box">
+              <h4>Billed & Shipped To:</h4>
+              <p><strong>{order.shippingAddress?.fullName}</strong></p>
+              <p>{order.shippingAddress?.street}</p>
+              <p>{order.shippingAddress?.city}, {order.shippingAddress?.state || 'Tamil Nadu'} - {order.shippingAddress?.postalCode}</p>
+              <p>{order.shippingAddress?.country || 'India 🇮🇳'}</p>
+              <p>Phone: {order.shippingAddress?.phone}</p>
+            </div>
 
-        <div className="invoice-billing-grid">
-          <div className="billing-box">
-            <h4>Billed & Shipped To:</h4>
-            <p><strong>{order.shippingAddress?.fullName}</strong></p>
-            <p>{order.shippingAddress?.street}</p>
-            <p>{order.shippingAddress?.city}, {order.shippingAddress?.state || 'Tamil Nadu'} - {order.shippingAddress?.postalCode}</p>
-            <p>{order.shippingAddress?.country || 'India 🇮🇳'}</p>
-            <p>Phone: {order.shippingAddress?.phone}</p>
+            <div className="billing-box text-right">
+              <h4>Payment Details:</h4>
+              <p>Method: {order.paymentMethod || 'Cash on Delivery (COD)'}</p>
+            </div>
           </div>
 
-          <div className="billing-box text-right">
-            <h4>Payment Details:</h4>
-            <p>Method: {order.paymentMethod || 'Cash on Delivery (COD)'}</p>
-            <p>Payment Status: <span className="text-success font-bold">PAID</span></p>
-          </div>
-        </div>
-
-        {/* Invoice Items Table */}
-        <div className="invoice-table-wrapper">
-          <table className="invoice-table">
-            <thead>
-              <tr>
-                <th>Product Name</th>
-                <th>Variant</th>
-                <th>Price</th>
-                <th>Qty</th>
-                <th className="text-right">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {order.orderItems?.map((item, idx) => (
-                <tr key={idx}>
-                  <td><strong>{item.name}</strong></td>
-                  <td>Size {item.size} • {item.color}</td>
-                  <td>₹{item.price?.toFixed(0)}</td>
-                  <td>{item.quantity}</td>
-                  <td className="text-right">₹{(item.price * item.quantity).toFixed(0)}</td>
+          {/* Invoice Items Table */}
+          <div className="invoice-table-wrapper">
+            <table className="invoice-table">
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>Variant</th>
+                  <th>Price</th>
+                  <th>Qty</th>
+                  <th className="text-right">Total</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {order.orderItems?.map((item, idx) => (
+                  <tr key={idx}>
+                    <td><strong>{item.name}</strong></td>
+                    <td>Size {item.size} • {item.color}</td>
+                    <td>₹{item.price?.toFixed(0)}</td>
+                    <td>{item.quantity}</td>
+                    <td className="text-right">₹{(item.price * item.quantity).toFixed(0)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-        {/* Invoice Summary Totals */}
-        <div className="invoice-totals">
-          <div className="totals-box">
-            <div className="row"><span>Items Subtotal:</span><span>₹{order.itemsPrice?.toFixed(0)}</span></div>
-            {order.discountAmount > 0 && <div className="row text-success"><span>Discount:</span><span>-₹{order.discountAmount?.toFixed(0)}</span></div>}
-            <div className="row"><span>Delivery Charges:</span><span>₹{order.shippingPrice?.toFixed(0)}</span></div>
-            <div className="divider" />
-            <div className="row grand-total"><span>Total Amount Paid:</span><span>₹{order.totalPrice?.toFixed(0)}</span></div>
+          {/* Invoice Summary Totals */}
+          <div className="invoice-totals">
+            <div className="totals-box">
+              <div className="row"><span>Items Subtotal:</span><span>₹{order.itemsPrice?.toFixed(0)}</span></div>
+              {order.discountAmount > 0 && <div className="row text-success"><span>Discount:</span><span>-₹{order.discountAmount?.toFixed(0)}</span></div>}
+              <div className="row"><span>Delivery Charges:</span><span>₹{order.shippingPrice?.toFixed(0)}</span></div>
+              <div className="divider" />
+              <div className="row grand-total"><span>Total Amount:</span><span>₹{order.totalPrice?.toFixed(0)}</span></div>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="glass-panel p-4 text-center no-print" style={{ borderRadius: '20px' }}>
+          <ShieldCheck size={36} color="var(--accent-primary)" style={{ margin: '0 auto 0.75rem auto' }} />
+          <h4 style={{ fontSize: '1.1rem', fontWeight: 800 }}>Invoice Available Upon Delivery</h4>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginTop: '0.35rem', maxWidth: '500px', margin: '0.35rem auto 0 auto' }}>
+            Your official Tax Invoice and Purchase Receipt will be generated and unlocked for view/download once your order status is marked as <strong>Delivered</strong>.
+          </p>
+        </div>
+      )}
 
       <style jsx>{`
         .invoice-page-wrapper {

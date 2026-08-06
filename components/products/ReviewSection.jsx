@@ -15,11 +15,33 @@ export default function ReviewSection({ productId, reviews = [], onReviewAdded }
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [canReview, setCanReview] = useState(false);
+
+  useEffect(() => {
+    async function checkReviewEligibility() {
+      if (!productId) return;
+      try {
+        const res = await fetch(`/api/reviews?productId=${productId}`);
+        const data = await res.json();
+        if (data.success) {
+          setCanReview(Boolean(data.canReview));
+        }
+      } catch (err) {
+        console.error('Failed checking review eligibility', err);
+      }
+    }
+    checkReviewEligibility();
+  }, [productId, user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
       addToast('Please log in to leave a review', 'error');
+      return;
+    }
+
+    if (!canReview) {
+      addToast('Only customers who have purchased and received this product can submit a review', 'error');
       return;
     }
 
@@ -64,18 +86,24 @@ export default function ReviewSection({ productId, reviews = [], onReviewAdded }
 
   return (
     <div className="reviews-section glass-panel">
-      <div className="reviews-header">
+      <div className="reviews-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h3>Customer Reviews & Ratings</h3>
           <p className="subtext">Verified customer feedback and rating breakdown</p>
         </div>
 
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="btn btn-primary"
-        >
-          <MessageSquarePlus size={18} /> Write a Review
-        </button>
+        {canReview ? (
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="btn btn-primary"
+          >
+            <MessageSquarePlus size={18} /> Write a Review
+          </button>
+        ) : (
+          <div className="verified-purchaser-note" style={{ fontSize: '0.8rem', background: 'rgba(255,255,255,0.05)', padding: '0.5rem 0.85rem', borderRadius: '20px', border: '1px solid var(--border-color)', color: 'var(--text-muted)' }}>
+            <span style={{ color: 'var(--accent-primary)', fontWeight: 700 }}>✓ Verified Buyers Only:</span> Review option unlocks after delivery
+          </div>
+        )}
       </div>
 
       {/* Review Submission Form */}

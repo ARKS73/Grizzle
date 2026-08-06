@@ -142,6 +142,26 @@ export default function CheckoutPage() {
 
   const [paymentMethod, setPaymentMethod] = useState('Cash on Delivery (COD)');
   const [submitting, setSubmitting] = useState(false);
+  const [cityRates, setCityRates] = useState([]);
+  const [defaultShippingFee, setDefaultShippingFee] = useState(49);
+
+  useEffect(() => {
+    async function fetchShippingRates() {
+      try {
+        const res = await fetch('/api/shipping');
+        const data = await res.json();
+        if (data.success) {
+          setCityRates(data.rates || []);
+          if (data.defaultShippingFee !== undefined) {
+            setDefaultShippingFee(data.defaultShippingFee);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load shipping rates:', err);
+      }
+    }
+    fetchShippingRates();
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -158,12 +178,13 @@ export default function CheckoutPage() {
     }
   }, [user]);
 
-  const METRO_CITIES = ['Chennai', 'Mumbai', 'Bengaluru', 'Delhi', 'New Delhi', 'Hyderabad', 'Kolkata', 'Pune', 'Ahmedabad', 'Surat'];
-
-  // Calculate Shipping Fee based strictly on City
+  // Calculate Shipping Fee based on Admin defined City Rate or Default Rate
   const calculateCityShippingFee = (city) => {
-    if (METRO_CITIES.includes(city)) return 49; // Express Metro City rate
-    return 79; // Standard regional city rate
+    if (!city) return defaultShippingFee;
+    const target = (city === 'Other' ? customCity : city).trim().toLowerCase();
+    const found = cityRates.find((r) => r.city.trim().toLowerCase() === target);
+    if (found) return found.shippingFee;
+    return defaultShippingFee;
   };
 
   const subtotal = getSubtotal();
@@ -394,7 +415,7 @@ export default function CheckoutPage() {
               {/* City Selection dropdown with Live Search Filter */}
               <div className="form-group span-2">
                 <label className="form-label d-flex justify-content-between align-items-center">
-                  <span>City * ({stateCityList.length} Cities in Tamil Nadu)</span>
+                  <span>City *</span>
                   {formData.city && <span className="text-success font-bold" style={{ fontSize: '0.8rem' }}>✓ Selected: {formData.city}</span>}
                 </label>
 

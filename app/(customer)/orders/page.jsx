@@ -4,35 +4,57 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Package, Clock, Truck, CheckCircle2, XCircle, ArrowRight, FileText } from 'lucide-react';
 
-import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui/Toast';
 
 export default function OrderHistoryPage() {
   const { user } = useAuth();
+  const { addToast } = useToast();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchOrders() {
-      if (!user) {
-        setOrders([]);
-        setLoading(false);
-        return;
-      }
-      try {
-        setLoading(true);
-        const res = await fetch('/api/orders');
-        const data = await res.json();
-        if (data.success) {
-          setOrders(data.orders || []);
-        }
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
+  const fetchOrders = async () => {
+    if (!user) {
+      setOrders([]);
+      setLoading(false);
+      return;
     }
+    try {
+      setLoading(true);
+      const res = await fetch('/api/orders');
+      const data = await res.json();
+      if (data.success) {
+        setOrders(data.orders || []);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchOrders();
   }, [user]);
+
+  const handleCancelOrder = async (orderId) => {
+    if (!window.confirm('Are you sure you want to cancel this order?')) return;
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'Cancelled' }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (addToast) addToast('Order cancelled successfully', 'info');
+        fetchOrders();
+      } else {
+        if (addToast) addToast(data.message || 'Failed to cancel order', 'error');
+      }
+    } catch (e) {
+      if (addToast) addToast('Error cancelling order', 'error');
+    }
+  };
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -98,11 +120,20 @@ export default function OrderHistoryPage() {
 
               <div className="order-footer">
                 <div className="total-box">
-                  <span>Total Amount Paid:</span>
+                  <span>Total Amount:</span>
                   <strong>₹{order.totalPrice?.toFixed(0)}</strong>
                 </div>
 
-                <div className="action-btns">
+                <div className="action-btns" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  {['Pending', 'Processing'].includes(order.status) && (
+                    <button
+                      onClick={() => handleCancelOrder(order._id)}
+                      className="btn btn-secondary btn-sm"
+                      style={{ borderColor: '#ef4444', color: '#ef4444' }}
+                    >
+                      <XCircle size={15} /> Cancel Order
+                    </button>
+                  )}
                   {order.status === 'Delivered' ? (
                     <Link href={`/orders/${order._id}`} className="btn btn-primary btn-sm">
                       <FileText size={16} /> View Invoice & Receipt

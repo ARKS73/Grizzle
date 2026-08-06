@@ -19,7 +19,18 @@ export async function GET(request) {
     await connectDB();
     const reviews = await Review.find({ product: productId }).sort({ createdAt: -1 });
 
-    return NextResponse.json({ success: true, reviews });
+    const authUser = getAuthUser(request);
+    let canReview = false;
+    if (authUser && authUser.userId) {
+      const deliveredOrder = await Order.findOne({
+        user: authUser.userId,
+        'orderItems.product': productId,
+        status: 'Delivered',
+      });
+      canReview = Boolean(deliveredOrder);
+    }
+
+    return NextResponse.json({ success: true, reviews, canReview });
   } catch (error) {
     return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
@@ -39,11 +50,19 @@ export async function POST(request) {
 
     await connectDB();
 
-    // Verify customer purchased this product
+    // Verify customer purchased and received this product (Status: Delivered)
     const userOrder = await Order.findOne({
       user: authUser.userId,
       'orderItems.product': productId,
+      status: 'Delivered',
     });
+
+    if (!userOrder) {
+      return NextResponse.json({
+        success: false,
+        message: 'Only verified customers who have purchased and received this product (Delivered) can post a review.',
+      }, { status: 403 });
+    }
 
     const review = await Review.create({
       product: productId,
@@ -52,7 +71,7 @@ export async function POST(request) {
       rating: parseInt(rating, 10),
       title: title || '',
       comment,
-      isVerifiedPurchase: Boolean(userOrder),
+      isVerifiedPurchase: true,
     });
 
     // Update Product average ratings

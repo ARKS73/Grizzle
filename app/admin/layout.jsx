@@ -12,6 +12,7 @@ import {
   Users,
   FolderTree,
   Tag,
+  Truck,
   ArrowLeft,
   LogOut,
   ShieldCheck,
@@ -29,6 +30,7 @@ const navLinks = [
   { name: 'Orders',       short: 'Orders',     href: '/admin/orders',     icon: Receipt },
   { name: 'Categories',   short: 'Cats',       href: '/admin/categories', icon: FolderTree },
   { name: 'Coupons',      short: 'Coupons',    href: '/admin/coupons',    icon: Tag },
+  { name: 'Shipping',     short: 'Ship',       href: '/admin/shipping',   icon: Truck },
   { name: 'Users',        short: 'Users',      href: '/admin/users',      icon: Users },
 ];
 
