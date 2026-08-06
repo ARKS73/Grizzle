@@ -189,7 +189,7 @@ export default function AdminCategoriesPage() {
                 type="text"
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
-                placeholder="Or paste image URL (https://...)"
+                
                 className="form-input"
               />
             </div>
@@ -200,7 +200,7 @@ export default function AdminCategoriesPage() {
                 rows={2}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Short category description..."
+                
                 className="form-textarea"
               />
             </div>

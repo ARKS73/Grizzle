@@ -134,7 +134,7 @@ export default function RegisterPage() {
                 <User size={18} className="input-icon" />
                 <input
                   type="text"
-                  placeholder="e.g. Rahul Sharma"
+                  
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -150,7 +150,7 @@ export default function RegisterPage() {
                 <Mail size={18} className="input-icon" />
                 <input
                   type="email"
-                  placeholder="rahul@example.com"
+                 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -175,7 +175,7 @@ export default function RegisterPage() {
                   onChange={handlePhoneChange}
                   maxLength={10}
                   required
-                  placeholder="e.g. 9876543210"
+                 
                   className="phone-number-input"
                 />
               </div>
@@ -191,7 +191,7 @@ export default function RegisterPage() {
                 <Lock size={18} className="input-icon" />
                 <input
                   type="password"
-                  placeholder="Minimum 6 characters"
+                  
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -225,7 +225,7 @@ export default function RegisterPage() {
                 maxLength={6}
                 required
                 autoFocus
-                placeholder="e.g. 849201"
+                
                 className="form-input otp-input-large"
               />
             </div>

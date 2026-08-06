@@ -80,7 +80,7 @@ function LoginContent() {
               inputMode="numeric"
               pattern="[0-9]*"
               maxLength={6}
-              placeholder="000000"
+             
               value={otpCode}
               onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ''))}
               required
@@ -173,7 +173,7 @@ function LoginContent() {
             <Mail size={18} className="input-icon" />
             <input
               type="email"
-              placeholder="you@example.com"
+              
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

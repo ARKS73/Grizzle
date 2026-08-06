@@ -308,7 +308,7 @@ export default function CheckoutPage() {
                   value={formData.fullName}
                   onChange={handleInputChange}
                   required
-                  placeholder="e.g. Rahul Sharma"
+                  
                   className="form-input"
                 />
               </div>
@@ -329,7 +329,7 @@ export default function CheckoutPage() {
                     onChange={handlePhoneChange}
                     maxLength={10}
                     required
-                    placeholder="e.g. 9876543210"
+                    
                     className="phone-number-input"
                   />
                 </div>
@@ -353,7 +353,7 @@ export default function CheckoutPage() {
                   onChange={handleInputChange}
                   required
                   minLength={25}
-                  placeholder="e.g. Flat No. 402, 4th Floor, Sunshine Heights Apartment, 12th Main Road, Indiranagar"
+                 
                   className={`form-textarea ${formData.street.length > 0 && formData.street.length < 25 ? 'border-danger' : ''}`}
                 />
                 <small className="subtext mt-1 d-block">
@@ -370,7 +370,7 @@ export default function CheckoutPage() {
                   value={formData.landmark}
                   onChange={handleInputChange}
                   required
-                  placeholder="e.g. Opposite Central Mall / Near HDFC Bank ATM / Beside Apollo Pharmacy"
+                 
                   className="form-input"
                 />
                 <small className="subtext mt-1 d-block">
@@ -403,7 +403,7 @@ export default function CheckoutPage() {
                   <Search size={16} className="city-search-icon" />
                   <input
                     type="text"
-                    placeholder={`🔍 Type to search city name (e.g. Chennai, Madurai, Hosur, Ooty, Salem...)`}
+                   
                     value={citySearch}
                     onChange={(e) => setCitySearch(e.target.value)}
                     className="form-input city-search-input"
@@ -452,7 +452,7 @@ export default function CheckoutPage() {
                     value={customCity}
                     onChange={(e) => setCustomCity(e.target.value)}
                     required
-                    placeholder="Enter city/town name"
+                   
                     className="form-input"
                   />
                 </div>
@@ -468,7 +468,7 @@ export default function CheckoutPage() {
                   onChange={handleInputChange}
                   required
                   maxLength={6}
-                  placeholder="e.g. 600001"
+                 
                   className="form-input"
                 />
               </div>

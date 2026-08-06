@@ -114,7 +114,7 @@ export default function CartPage() {
                 <Tag size={16} className="tag-icon" />
                 <input
                   type="text"
-                  placeholder="Try SAVE10 or WELCOME20"
+                  
                   value={couponInput}
                   onChange={(e) => setCouponInput(e.target.value)}
                   className="form-input"
