@@ -387,6 +387,79 @@ export default function AdminProductsPage() {
     }
   };
 
+  const [newImageUrl, setNewImageUrl] = useState('');
+
+  const handleMultipleFileUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    try {
+      setUploadingImage(true);
+      const newUploadedUrls = [];
+
+      for (const file of files) {
+        const compressedDataUrl = await compressImage(file, 800, 1000, 0.75);
+        if (!compressedDataUrl) continue;
+
+        try {
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ file: compressedDataUrl }),
+          });
+          const data = await res.json();
+          const finalUrl = data.success && data.url ? data.url : compressedDataUrl;
+          newUploadedUrls.push(finalUrl);
+        } catch (err) {
+          newUploadedUrls.push(compressedDataUrl);
+        }
+      }
+
+      if (newUploadedUrls.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          images: Array.from(new Set([...(prev.images || []), ...newUploadedUrls])).filter(Boolean),
+        }));
+        addToast(`Uploaded ${newUploadedUrls.length} product gallery photo(s)!`, 'success');
+      }
+    } catch (err) {
+      console.error(err);
+      addToast('Error uploading images', 'error');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleAddImageUrl = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (!newImageUrl.trim()) return;
+    setFormData((prev) => ({
+      ...prev,
+      images: Array.from(new Set([...(prev.images || []), newImageUrl.trim()])).filter(Boolean),
+    }));
+    setNewImageUrl('');
+    addToast('Product photo URL added to gallery!', 'success');
+  };
+
+  const handleSetPrimaryImage = (index) => {
+    setFormData((prev) => {
+      const imgs = [...(prev.images || [])];
+      if (index <= 0 || index >= imgs.length) return prev;
+      const target = imgs[index];
+      imgs.splice(index, 1);
+      imgs.unshift(target);
+      return { ...prev, images: imgs };
+    });
+    addToast('Set as main product cover photo!', 'info');
+  };
+
+  const handleRemoveImage = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      images: (prev.images || []).filter((_, i) => i !== index),
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.name.trim()) {
@@ -1052,41 +1125,172 @@ export default function AdminProductsPage() {
                 />
               </div>
 
-              {/* Main Product Gallery Images */}
-              <div className="form-group">
-                <label className="form-label">Main Gallery Image (Upload or Paste URL)</label>
-                <div className="image-upload-box">
-                  <input type="file" accept="image/*" onChange={handleFileUpload} id="cloudinary-upload" hidden />
-                  <label htmlFor="cloudinary-upload" className="btn btn-secondary upload-btn">
-                    <Upload size={16} /> {uploadingImage ? 'Uploading image...' : 'Upload Image File'}
-                  </label>
+              {/* 📸 Multi-Image Product Gallery Manager (No Color Selection Required) */}
+              <div className="form-group glass-panel p-3 border-radius-lg border-primary-light mb-3">
+                <div className="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                  <div>
+                    <label className="form-label m-0 text-primary d-flex align-items-center gap-2 font-bold text-md">
+                      <ImageIcon size={18} /> Product Photo Gallery (Upload Multiple Images)
+                    </label>
+                    <p className="subtext mt-1">
+                      Upload multiple product photos for this item (front, back, model shots, close-ups). No color selection required!
+                    </p>
+                  </div>
+                  <div className="d-flex gap-2 align-items-center">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      id="multi-image-upload-input"
+                      onChange={handleMultipleFileUpload}
+                      hidden
+                    />
+                    <label
+                      htmlFor="multi-image-upload-input"
+                      className="btn btn-primary btn-sm font-bold"
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <Upload size={15} /> {uploadingImage ? 'Uploading Photos...' : '+ Upload Multiple Photos'}
+                    </label>
+                  </div>
+                </div>
+
+                {/* Paste Image URL Bar */}
+                <div className="d-flex gap-2 mb-3">
                   <input
                     type="text"
-                    placeholder="Or paste Image URL"
-                    value={formData.images[0] || ''}
-                    onChange={(e) => setFormData({ ...formData, images: [e.target.value, ...formData.images.slice(1)] })}
+                    placeholder="Or paste Product Photo Image URL here..."
+                    value={newImageUrl}
+                    onChange={(e) => setNewImageUrl(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleAddImageUrl(e); }}
                     className="form-input"
+                    style={{ fontSize: '0.85rem' }}
                   />
+                  <button
+                    type="button"
+                    onClick={handleAddImageUrl}
+                    className="btn btn-secondary btn-sm"
+                    style={{ whiteSpace: 'nowrap', fontWeight: 700 }}
+                  >
+                    + Add URL
+                  </button>
                 </div>
 
                 {/* Preset stock image selector chips */}
-                <div className="preset-images-list mt-2">
-                  <span className="preset-title">Or pick preset photo:</span>
+                <div className="preset-images-list mb-3 p-2 bg-secondary rounded d-flex align-items-center gap-2 flex-wrap">
+                  <span className="preset-title font-semibold" style={{ fontSize: '0.78rem' }}>⚡ Quick Add Sample Photos:</span>
                   {PRESET_TSHIRT_IMAGES.map((preset, idx) => (
                     <button
                       key={idx}
                       type="button"
-                      onClick={() => setFormData({ ...formData, images: Array.from(new Set([preset.url, ...formData.images])).filter(Boolean) })}
+                      onClick={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          images: Array.from(new Set([...(prev.images || []), preset.url])).filter(Boolean),
+                        }))
+                      }
                       className="preset-chip"
+                      style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}
                     >
-                      {preset.name}
+                      + {preset.name}
                     </button>
                   ))}
                 </div>
 
-                {formData.images[0] && (
-                  <div className="image-preview-container mt-2">
-                    <img src={formData.images[0]} alt="preview" className="image-preview" />
+                {/* Gallery Images Grid Preview */}
+                {(formData.images || []).length === 0 ? (
+                  <div className="text-center p-4 border rounded bg-secondary">
+                    <ImageIcon size={32} className="text-muted mb-2 mx-auto" />
+                    <p className="subtext m-0">No gallery photos added yet. Click &quot;+ Upload Multiple Photos&quot; above to add images.</p>
+                  </div>
+                ) : (
+                  <div className="gallery-grid-preview" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.75rem' }}>
+                    {(formData.images || []).map((imgUrl, idx) => (
+                      <div
+                        key={idx}
+                        className="gallery-preview-card glass-panel"
+                        style={{
+                          position: 'relative',
+                          aspectRatio: '4 / 5',
+                          borderRadius: '10px',
+                          overflow: 'hidden',
+                          border: idx === 0 ? '2px solid var(--accent-primary)' : '1px solid var(--border-color)',
+                          background: 'var(--bg-tertiary)',
+                        }}
+                      >
+                        <img src={imgUrl} alt={`Gallery ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        
+                        {/* Primary Badge */}
+                        {idx === 0 ? (
+                          <span
+                            style={{
+                              position: 'absolute',
+                              top: '6px',
+                              left: '6px',
+                              background: 'var(--accent-gradient)',
+                              color: '#ffffff',
+                              fontSize: '0.65rem',
+                              fontWeight: 900,
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                            }}
+                          >
+                            ⭐ Cover
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleSetPrimaryImage(idx)}
+                            title="Set as main cover photo"
+                            style={{
+                              position: 'absolute',
+                              top: '6px',
+                              left: '6px',
+                              background: 'rgba(0,0,0,0.65)',
+                              color: '#fff',
+                              fontSize: '0.65rem',
+                              fontWeight: 700,
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              border: 'none',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            Set Cover
+                          </button>
+                        )}
+
+                        {/* Remove Image Button */}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(idx)}
+                          title="Delete photo from gallery"
+                          style={{
+                            position: 'absolute',
+                            top: '6px',
+                            right: '6px',
+                            background: 'rgba(239, 68, 68, 0.9)',
+                            color: '#fff',
+                            width: '22px',
+                            height: '22px',
+                            borderRadius: '50%',
+                            border: 'none',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '0.75rem',
+                            fontWeight: 'bold',
+                          }}
+                        >
+                          ✕
+                        </button>
+                        <div style={{ position: 'absolute', bottom: '4px', right: '6px', fontSize: '0.65rem', color: '#fff', fontWeight: 800, textShadow: '0 1px 3px #000' }}>
+                          #{idx + 1}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
