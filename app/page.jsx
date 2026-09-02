@@ -193,7 +193,7 @@ export default function SinglePageStreetwearStore() {
       <section className="hero-section-street" id="hero">
         {/* Athlete Model Background Image */}
         <img
-          src={displayHeroImg}
+          src="/hero-bg-athlete.jpg"
           alt="Grizzle Hero Image"
           className="hero-athlete-bg-img"
         />
