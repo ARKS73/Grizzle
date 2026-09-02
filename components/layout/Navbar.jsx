@@ -487,49 +487,180 @@ export default function Navbar() {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="mobile-drawer glass-panel">
-          {/* Mobile User Header / Account Action */}
-          <div style={{ padding: '0.25rem 0', marginBottom: '0.75rem' }}>
-            {user ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem 1rem', background: 'var(--bg-tertiary)', borderRadius: '12px' }}>
-                {user.profileImage ? (
-                  <img src={user.profileImage} alt="" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }} />
-                ) : (
-                  <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--accent-primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 'bold' }}>
-                    {user.name.charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <div style={{ overflow: 'hidden' }}>
-                  <div style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{user.name}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user.email}</div>
-                </div>
-              </div>
-            ) : (
+          {/* Top Header: Welcome User Name (Left) & User Profile Icon / Close (Right) */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingBottom: '0.85rem',
+              marginBottom: '1rem',
+              borderBottom: '1px solid var(--border-color)',
+            }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                {user ? 'Welcome Back,' : 'Welcome to Grizzle'}
+              </span>
+              <span style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: '1.2' }}>
+                {user ? user.name : 'Guest User'}
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+              {/* User Profile Logo / Avatar button -> Redirects to Profile & Address Page */}
               <Link
-                href="/login"
+                href={user ? "/profile" : "/login"}
                 onClick={closeAllMenus}
+                title={user ? "Go to Profile & Address Page" : "Sign In"}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '0.5rem',
-                  padding: '0.75rem 1rem',
-                  background: 'var(--accent-primary)',
-                  color: '#ffffff',
-                  fontWeight: 800,
-                  fontSize: '0.95rem',
-                  borderRadius: '12px',
-                  boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)',
-                  textDecoration: 'none'
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '50%',
+                  background: 'var(--bg-tertiary)',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
+                  textDecoration: 'none',
+                  flexShrink: 0
                 }}
               >
-                <User size={18} /> Sign In / Create Account
+                {user ? (
+                  user.profileImage ? (
+                    <img src={user.profileImage} alt="" style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'var(--accent-primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 'bold' }}>
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                  )
+                ) : (
+                  <User size={20} />
+                )}
               </Link>
+
+              {/* Close Drawer Button */}
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-primary)',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                title="Close Menu"
+              >
+                <X size={24} />
+              </button>
+            </div>
+          </div>
+
+          {/* Search Bar */}
+          <div className="mobile-search-box" style={{ marginBottom: '1rem' }}>
+            <form onSubmit={handleSearchSubmit} className="search-form">
+              <Search className="search-icon" size={18} />
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+            </form>
+          </div>
+
+          {/* Clean minimal Category List with right arrow chevron */}
+          <div className="mobile-category-list" style={{ display: 'flex', flexDirection: 'column' }}>
+            <Link href="/" onClick={closeAllMenus} className="mobile-category-row">
+              <span>HOME</span>
+              <ChevronRight size={18} />
+            </Link>
+
+            <Link href="/products?sort=newest" onClick={closeAllMenus} className="mobile-category-row">
+              <span>NEW ARRIVALS</span>
+              <ChevronRight size={18} />
+            </Link>
+
+            <Link href="/products?gender=Men" onClick={closeAllMenus} className="mobile-category-row">
+              <span>MEN</span>
+              <ChevronRight size={18} />
+            </Link>
+
+            <Link href="/products?gender=Women" onClick={closeAllMenus} className="mobile-category-row">
+              <span>WOMEN</span>
+              <ChevronRight size={18} />
+            </Link>
+
+            <Link href="/products?gender=Unisex" onClick={closeAllMenus} className="mobile-category-row">
+              <span>UNISEX</span>
+              <ChevronRight size={18} />
+            </Link>
+
+            <Link href="/products" onClick={closeAllMenus} className="mobile-category-row">
+              <span>ALL COLLECTIONS</span>
+              <ChevronRight size={18} />
+            </Link>
+
+            {user ? (
+              <>
+                <Link href="/profile" onClick={closeAllMenus} className="mobile-category-row">
+                  <span>MY PROFILE & ADDRESS</span>
+                  <ChevronRight size={18} />
+                </Link>
+
+                <Link href="/orders" onClick={closeAllMenus} className="mobile-category-row">
+                  <span>MY ORDERS</span>
+                  <ChevronRight size={18} />
+                </Link>
+
+                <Link href="/wishlist" onClick={closeAllMenus} className="mobile-category-row">
+                  <span>WISHLIST ({wishlistItems.length})</span>
+                  <ChevronRight size={18} />
+                </Link>
+
+                <Link href="/cart" onClick={closeAllMenus} className="mobile-category-row">
+                  <span>SHOPPING CART ({getTotalCount()})</span>
+                  <ChevronRight size={18} />
+                </Link>
+
+                {user.role === 'admin' && (
+                  <Link href="/admin" onClick={closeAllMenus} className="mobile-category-row" style={{ color: 'var(--accent-primary)' }}>
+                    <span>ADMIN DASHBOARD</span>
+                    <ChevronRight size={18} />
+                  </Link>
+                )}
+
+                <button
+                  onClick={() => { logout(); closeAllMenus(); }}
+                  className="mobile-category-row"
+                  style={{ background: 'none', border: 'none', width: '100%', color: 'var(--danger)', cursor: 'pointer', textAlign: 'left' }}
+                >
+                  <span>LOGOUT</span>
+                  <LogOut size={18} />
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/cart" onClick={closeAllMenus} className="mobile-category-row">
+                  <span>VIEW CART ({getTotalCount()})</span>
+                  <ChevronRight size={18} />
+                </Link>
+                <Link href="/login" onClick={closeAllMenus} className="mobile-category-row" style={{ color: 'var(--accent-primary)', fontWeight: 800 }}>
+                  <span>SIGN IN / REGISTER</span>
+                  <ChevronRight size={18} />
+                </Link>
+              </>
             )}
           </div>
 
-          {/* 2. Theme Selection Switcher */}
-          <div className="mobile-theme-card">
-            <span className="mobile-section-label">🎨 Theme Appearance</span>
+          {/* Theme Selection Switcher at bottom */}
+          <div className="mobile-theme-card" style={{ marginTop: '1.25rem' }}>
+            <span className="mobile-section-label">🎨 Theme</span>
             <div className="mobile-theme-toggle-group">
               <button
                 type="button"
@@ -547,85 +678,6 @@ export default function Navbar() {
               </button>
             </div>
           </div>
-
-          {/* 3. Mobile Search Bar */}
-          <div className="mobile-search-box">
-            <form onSubmit={handleSearchSubmit} className="search-form">
-              <Search className="search-icon" size={18} />
-              <input
-                type="text"
-                placeholder="Search streetwear & t-shirts..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="search-input"
-              />
-            </form>
-          </div>
-
-          {/* 4. Primary Category Navigation Links */}
-          <div className="mobile-section-header">EXPLORE CATEGORIES</div>
-          <div className="mobile-primary-nav">
-            <Link href="/" onClick={closeAllMenus} className="mobile-nav-btn">
-              <span> HOME</span>
-              <ChevronRight size={18} />
-            </Link>
-            <Link href="/products?gender=Men" onClick={closeAllMenus} className="mobile-nav-btn">
-              <span> MEN</span>
-              <ChevronRight size={18} />
-            </Link>
-            <Link href="/products?gender=Women" onClick={closeAllMenus} className="mobile-nav-btn">
-              <span> WOMEN</span>
-              <ChevronRight size={18} />
-            </Link>
-            <Link href="/products?gender=Unisex" onClick={closeAllMenus} className="mobile-nav-btn mobile-nav-btn-highlight">
-              <span> UNISEX</span>
-              <ChevronRight size={18} />
-            </Link>
-          </div>
-
-          <div className="mobile-nav-divider" />
-
-          {/* 5. Account & Quick Action Links */}
-          <div className="mobile-section-header" id="mobile-account-links">MY ACCOUNT & QUICK LINKS</div>
-          <nav className="mobile-secondary-nav">
-            <Link href="/products?sort=newest" onClick={closeAllMenus} className="mobile-sub-link">
-              <Sparkles size={16} /> New Arrivals
-            </Link>
-
-            {user ? (
-              <>
-                <Link href="/profile" onClick={closeAllMenus} className="mobile-sub-link">
-                  <User size={16} /> My Profile & Address
-                </Link>
-                <Link href="/orders" onClick={closeAllMenus} className="mobile-sub-link">
-                  <PackageCheck size={16} /> My Orders
-                </Link>
-                <Link href="/wishlist" onClick={closeAllMenus} className="mobile-sub-link">
-                  <Heart size={16} /> Saved Wishlist ({wishlistItems.length})
-                </Link>
-                <Link href="/cart" onClick={closeAllMenus} className="mobile-sub-link">
-                  <ShoppingBag size={16} /> Shopping Cart ({getTotalCount()})
-                </Link>
-                {user.role === 'admin' && (
-                  <Link href="/admin" onClick={closeAllMenus} className="mobile-sub-link mobile-admin-link">
-                    <ShieldAlert size={16} /> Admin Dashboard
-                  </Link>
-                )}
-                <button onClick={() => { logout(); closeAllMenus(); }} className="mobile-logout-btn">
-                  <LogOut size={16} /> Logout Account
-                </button>
-              </>
-            ) : (
-              <>
-                <Link href="/login" onClick={closeAllMenus} className="mobile-sub-link" style={{ fontWeight: 700, color: 'var(--accent-primary)' }}>
-                  <User size={16} /> Sign In / Account
-                </Link>
-                <Link href="/cart" onClick={closeAllMenus} className="mobile-sub-link">
-                  <ShoppingBag size={16} /> View Cart ({getTotalCount()})
-                </Link>
-              </>
-            )}
-          </nav>
         </div>
       )}
 
@@ -1578,6 +1630,25 @@ export default function Navbar() {
 
         .mobile-search-box {
           margin-bottom: 1rem;
+        }
+
+        .mobile-category-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.95rem 0.35rem;
+          border-bottom: 1px solid var(--border-color);
+          color: var(--text-primary);
+          font-size: 0.88rem;
+          font-weight: 800;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          text-decoration: none;
+          box-sizing: border-box;
+          transition: background 0.15s ease, color 0.15s ease;
+        }
+        .mobile-category-row:hover, .mobile-category-row:active {
+          color: var(--accent-primary);
         }
 
         .mobile-primary-nav {

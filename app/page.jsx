@@ -1244,60 +1244,86 @@ export default function SinglePageStreetwearStore() {
         .pastel-image-block {
           position: relative;
           width: 100%;
-          aspect-ratio: 1 / 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 1rem;
+          height: 320px;
+          border-radius: 16px;
+          overflow: hidden;
           background: var(--bg-tertiary);
+          display: block;
+          cursor: pointer;
+        }
+        @media (max-width: 640px) {
+          .pastel-image-block {
+            height: 220px;
+          }
         }
         .pastel-product-img {
-          max-height: 85%;
-          max-width: 85%;
-          object-fit: contain;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
           transition: transform 0.4s ease;
         }
         .pastel-card-wrapper:hover .pastel-product-img {
-          transform: scale(1.08);
+          transform: scale(1.06);
         }
         .pastel-action-overlay {
           position: absolute;
           top: 12px;
           right: 12px;
+          z-index: 10;
           display: flex;
           flex-direction: column;
           gap: 6px;
         }
         .pastel-icon-btn {
-          width: 32px;
-          height: 32px;
+          width: 34px;
+          height: 34px;
           border-radius: 50%;
-          background: #ffffff;
+          background: rgba(255, 255, 255, 0.9);
+          backdrop-filter: blur(4px);
+          -webkit-backdrop-filter: blur(4px);
           border: none;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+          box-shadow: 0 4px 10px rgba(0,0,0,0.15);
           transition: transform 0.15s ease;
         }
         .pastel-icon-btn:hover {
           transform: scale(1.1);
+          background: #ffffff;
         }
         .pastel-tag-badge {
           position: absolute;
-          bottom: 10px;
-          left: 10px;
-          background: var(--bg-tertiary);
-          color: var(--text-primary);
-          border: 1px solid var(--border-color);
-          font-size: 0.65rem;
+          top: 12px;
+          left: 12px;
+          z-index: 10;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.3rem 0.65rem;
+          border-radius: 99px;
+          font-size: 0.68rem;
           font-weight: 800;
-          padding: 0.25rem 0.5rem;
-          border-radius: 4px;
           letter-spacing: 0.05em;
+          text-transform: uppercase;
+          background: rgba(15, 23, 42, 0.75);
+          color: #ffffff;
+          backdrop-filter: blur(6px);
+          -webkit-backdrop-filter: blur(6px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          pointer-events: none;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+          width: auto !important;
+          height: auto !important;
         }
-        .badge-trending { background: #f43f5e; color: white; }
+        .badge-trending {
+          background: #ef4444 !important;
+          color: #ffffff !important;
+          box-shadow: 0 4px 12px rgba(239, 68, 68, 0.45) !important;
+          border: none !important;
+        }
 
         .pastel-card-info {
           padding: 1rem;
