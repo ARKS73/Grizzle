@@ -77,6 +77,20 @@ const StoreSettingsSchema = new mongoose.Schema(
       type: String,
       default: 'Oversized Streetwear Fit: Choose your standard size for a relaxed dropped-shoulder silhouette. For regular fit, size down 1 size.',
     },
+    sizeChartColumns: {
+      type: [String],
+      default: ['Size', 'Chest (in)', 'Chest (cm)', 'Length (in)', 'Length (cm)', 'Shoulder (in)', 'Shoulder (cm)'],
+    },
+    sizeChartRows: {
+      type: [[String]],
+      default: [
+        ['S', '38-40"', '96-102 cm', '27.5"', '70 cm', '18.5"', '47 cm'],
+        ['M', '40-42"', '102-107 cm', '28.5"', '72 cm', '19.5"', '49.5 cm'],
+        ['L', '42-44"', '107-112 cm', '29.5"', '75 cm', '20.5"', '52 cm'],
+        ['XL', '44-46"', '112-117 cm', '30.5"', '77 cm', '21.5"', '54.5 cm'],
+        ['XXL', '46-48"', '117-122 cm', '31.5"', '80 cm', '22.5"', '57 cm'],
+      ],
+    },
     returnPolicyText: {
       type: String,
       default: 'We accept returns and exchanges within 7 days of delivery. The item must be unworn, unwashed, and in its original bio-bag packaging with tags intact. To initiate a return, contact us on WhatsApp with your Order Invoice Number.',

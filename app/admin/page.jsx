@@ -45,6 +45,24 @@ const compressHeroImage = (file, maxWidth = 900, maxHeight = 1200, quality = 0.8
   });
 };
 
+const DEFAULT_SIZE_CHART_COLS = [
+  'Size',
+  'Chest (in)',
+  'Chest (cm)',
+  'Length (in)',
+  'Length (cm)',
+  'Shoulder (in)',
+  'Shoulder (cm)',
+];
+
+const DEFAULT_SIZE_CHART_ROWS = [
+  ['S', '38-40"', '96-102 cm', '27.5"', '70 cm', '18.5"', '47 cm'],
+  ['M', '40-42"', '102-107 cm', '28.5"', '72 cm', '19.5"', '49.5 cm'],
+  ['L', '42-44"', '107-112 cm', '29.5"', '75 cm', '20.5"', '52 cm'],
+  ['XL', '44-46"', '112-117 cm', '30.5"', '77 cm', '21.5"', '54.5 cm'],
+  ['XXL', '46-48"', '117-122 cm', '31.5"', '80 cm', '22.5"', '57 cm'],
+];
+
 export default function AdminDashboardPage() {
   const [metrics, setMetrics] = useState(null);
   const [lowStockProducts, setLowStockProducts] = useState([]);
@@ -77,7 +95,111 @@ export default function AdminDashboardPage() {
       { size: 'XL', chestIn: '44-46"', chestCm: '112-117 cm', lengthIn: '30.5"', lengthCm: '77 cm', shoulderIn: '21.5"', shoulderCm: '54.5 cm', sleeveIn: '10.0"', sleeveCm: '25.5 cm' },
       { size: 'XXL', chestIn: '46-48"', chestCm: '117-122 cm', lengthIn: '31.5"', lengthCm: '80 cm', shoulderIn: '22.5"', shoulderCm: '57 cm', sleeveIn: '10.5"', sleeveCm: '26.5 cm' },
     ],
+    sizeChartColumns: DEFAULT_SIZE_CHART_COLS,
+    sizeChartRows: DEFAULT_SIZE_CHART_ROWS,
   });
+
+  const currentCols =
+    Array.isArray(storeSettings.sizeChartColumns) && storeSettings.sizeChartColumns.length > 0
+      ? storeSettings.sizeChartColumns
+      : DEFAULT_SIZE_CHART_COLS;
+
+  const currentRows =
+    Array.isArray(storeSettings.sizeChartRows) && storeSettings.sizeChartRows.length > 0
+      ? storeSettings.sizeChartRows
+      : (Array.isArray(storeSettings.sizeChartData) && storeSettings.sizeChartData.length > 0
+          ? storeSettings.sizeChartData.map((row) => [
+              row.size || '',
+              row.chestIn || '',
+              row.chestCm || '',
+              row.lengthIn || '',
+              row.lengthCm || '',
+              row.shoulderIn || '',
+              row.shoulderCm || '',
+            ])
+          : DEFAULT_SIZE_CHART_ROWS);
+
+  const handleAddColumn = () => {
+    const newColName = `Col ${currentCols.length + 1}`;
+    const newCols = [...currentCols, newColName];
+    const newRows = currentRows.map((r) => [...r, '']);
+    setStoreSettings((prev) => ({
+      ...prev,
+      sizeChartColumns: newCols,
+      sizeChartRows: newRows,
+    }));
+  };
+
+  const handleRemoveColumn = (colIndex) => {
+    if (currentCols.length <= 1) return;
+    const newCols = currentCols.filter((_, idx) => idx !== colIndex);
+    const newRows = currentRows.map((r) => r.filter((_, idx) => idx !== colIndex));
+    setStoreSettings((prev) => ({
+      ...prev,
+      sizeChartColumns: newCols,
+      sizeChartRows: newRows,
+    }));
+  };
+
+  const handleRenameColumn = (colIndex, val) => {
+    const newCols = [...currentCols];
+    newCols[colIndex] = val;
+    setStoreSettings((prev) => ({
+      ...prev,
+      sizeChartColumns: newCols,
+      sizeChartRows: currentRows,
+    }));
+  };
+
+  const handleAddRow = () => {
+    const emptyRow = new Array(currentCols.length).fill('');
+    emptyRow[0] = 'NEW';
+    const newRows = [...currentRows, emptyRow];
+    setStoreSettings((prev) => ({
+      ...prev,
+      sizeChartColumns: currentCols,
+      sizeChartRows: newRows,
+    }));
+  };
+
+  const handleRemoveRow = (rowIndex) => {
+    const newRows = currentRows.filter((_, idx) => idx !== rowIndex);
+    setStoreSettings((prev) => ({
+      ...prev,
+      sizeChartColumns: currentCols,
+      sizeChartRows: newRows,
+    }));
+  };
+
+  const handleCellChange = (rowIndex, colIndex, val) => {
+    const newRows = currentRows.map((r, rIdx) => {
+      if (rIdx !== rowIndex) return r;
+      const updatedRow = [...r];
+      updatedRow[colIndex] = val;
+      return updatedRow;
+    });
+    setStoreSettings((prev) => ({
+      ...prev,
+      sizeChartColumns: currentCols,
+      sizeChartRows: newRows,
+    }));
+  };
+
+  const handleResetPreset = () => {
+    setStoreSettings((prev) => ({
+      ...prev,
+      sizeChartColumns: DEFAULT_SIZE_CHART_COLS,
+      sizeChartRows: DEFAULT_SIZE_CHART_ROWS,
+    }));
+  };
+
+  const handleClearTable = () => {
+    setStoreSettings((prev) => ({
+      ...prev,
+      sizeChartColumns: ['Size', 'Chest', 'Length'],
+      sizeChartRows: [['S', '', '']],
+    }));
+  };
 
   const handleSizeChartChange = (index, field, value) => {
     setStoreSettings((prev) => {
