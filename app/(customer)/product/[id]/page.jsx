@@ -107,16 +107,16 @@ export default function ProductDetailPage() {
     ? activeColorObj.images.filter((img) => img && img !== '/logo2.png')
     : (activeColorObj?.image && activeColorObj.image !== '/logo2.png' ? [activeColorObj.image] : []);
 
-  const allColorImages = (product?.colors || []).flatMap((c) => (Array.isArray(c.images) && c.images.length > 0) ? c.images : (c.image ? [c.image] : [])).filter((img) => img && img !== '/logo2.png');
   const userImages = (product?.images || []).filter((img) => img && img !== '/logo2.png');
 
-  let cleanImages = [];
-  if (activeColorImages.length > 0) {
-    cleanImages = Array.from(new Set([...activeColorImages, ...userImages, ...allColorImages])).filter(Boolean);
-  } else {
-    cleanImages = Array.from(new Set([...userImages, ...allColorImages])).filter(Boolean);
-  }
-  const displayedThumbnails = cleanImages.length > 0 ? cleanImages : (product?.images || []);
+  // Show ONLY chosen color images if defined; otherwise fallback to product gallery images
+  const displayedThumbnails = activeColorImages.length > 0
+    ? activeColorImages
+    : (userImages.length > 0 ? userImages : (product?.images || []));
+
+  const currentMainImage = (selectedImage && displayedThumbnails.includes(selectedImage))
+    ? selectedImage
+    : (displayedThumbnails[0] || '');
 
   const handleBack = () => {
     if (typeof window !== 'undefined' && window.history.length > 1) {
@@ -136,7 +136,7 @@ export default function ProductDetailPage() {
         <div className="product-gallery-box">
           <div className="main-image-container glass-panel">
             <img
-              src={getOptimizedImageUrl(selectedImage || displayedThumbnails[0] || '', 800, 80)}
+              src={getOptimizedImageUrl(currentMainImage, 800, 80)}
               alt={product.name}
               className="main-product-img"
               loading="eager"
@@ -154,7 +154,7 @@ export default function ProductDetailPage() {
                 <div
                   key={idx}
                   onClick={() => setSelectedImage(img)}
-                  className={`thumbnail-card ${selectedImage === img ? 'active' : ''}`}
+                  className={`thumbnail-card ${currentMainImage === img ? 'active' : ''}`}
                 >
                   <img
                     src={getOptimizedImageUrl(img, 180, 70)}
