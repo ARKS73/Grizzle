@@ -357,7 +357,7 @@ export default function SinglePageStreetwearStore() {
       {/* =========================================================================
          SECTION: MEN'S COLLECTION SECTION
          ========================================================================= */}
-      <section className="latest-drops-section mens-collection-section" id="mens-collection" style={{ padding: '4rem 0' }}>
+      <section className="latest-drops-section mens-collection-section" id="mens-collection" style={{ padding: '3rem 0' }}>
         <div className="container">
           <div className="drops-header">
             <div>
@@ -365,8 +365,8 @@ export default function SinglePageStreetwearStore() {
               <p className="drops-subtitle">240 GSM HEAVYWEIGHT TEES, OVERSIZED CUTS & DESI GRAPHICS</p>
             </div>
 
-            <Link href="/products?gender=Men" className="btn-street-dark">
-              SHOP MEN&apos;S FILTERS &rarr;
+            <Link href="/products?gender=Men" className="header-cta-pill">
+              SHOP MEN&apos;S COLLECTION &rarr;
             </Link>
           </div>
 
@@ -451,19 +451,13 @@ export default function SinglePageStreetwearStore() {
               })}
             </div>
           )}
-
-          <div className="collection-cta-wrapper">
-            <Link href="/products?gender=Men" className="collection-filter-cta-btn">
-              VIEW MEN&apos;S COLLECTION WITH FILTERS &rarr;
-            </Link>
-          </div>
         </div>
       </section>
 
       {/* =========================================================================
          SECTION: WOMEN'S COLLECTION SECTION
          ========================================================================= */}
-      <section className="latest-drops-section womens-collection-section" id="womens-collection" style={{ background: 'var(--bg-secondary)', padding: '4rem 0' }}>
+      <section className="latest-drops-section womens-collection-section" id="womens-collection" style={{ background: 'var(--bg-secondary)', padding: '3rem 0' }}>
         <div className="container">
           <div className="drops-header">
             <div>
@@ -471,8 +465,8 @@ export default function SinglePageStreetwearStore() {
               <p className="drops-subtitle">AESTHETIC MINIMALIST LINE ART, PASTELS & SOFT BIO-WASHED TEES</p>
             </div>
 
-            <Link href="/products?gender=Women" className="btn-street-light">
-              SHOP WOMEN&apos;S FILTERS &rarr;
+            <Link href="/products?gender=Women" className="header-cta-pill">
+              SHOP WOMEN&apos;S COLLECTION &rarr;
             </Link>
           </div>
 
@@ -557,19 +551,13 @@ export default function SinglePageStreetwearStore() {
               })}
             </div>
           )}
-
-          <div className="collection-cta-wrapper">
-            <Link href="/products?gender=Women" className="collection-filter-cta-btn">
-              VIEW WOMEN&apos;S COLLECTION WITH FILTERS &rarr;
-            </Link>
-          </div>
         </div>
       </section>
 
       {/* =========================================================================
          SECTION: UNISEX COLLECTION SECTION
          ========================================================================= */}
-      <section className="latest-drops-section unisex-collection-section" id="unisex-collection" style={{ padding: '4rem 0' }}>
+      <section className="latest-drops-section unisex-collection-section" id="unisex-collection" style={{ padding: '3rem 0' }}>
         <div className="container">
           <div className="drops-header">
             <div>
@@ -577,8 +565,8 @@ export default function SinglePageStreetwearStore() {
               <p className="drops-subtitle">VERSATILE FIT TEES FOR EVERYONE, ALL STYLES & ALL SIZES</p>
             </div>
 
-            <Link href="/products?gender=Unisex" className="btn-street-dark">
-              SHOP UNISEX FILTERS &rarr;
+            <Link href="/products?gender=Unisex" className="header-cta-pill">
+              SHOP UNISEX COLLECTION &rarr;
             </Link>
           </div>
 
@@ -663,12 +651,6 @@ export default function SinglePageStreetwearStore() {
               })}
             </div>
           )}
-
-          <div className="collection-cta-wrapper">
-            <Link href="/products?gender=Unisex" className="collection-filter-cta-btn">
-              VIEW UNISEX COLLECTION WITH FILTERS &rarr;
-            </Link>
-          </div>
         </div>
       </section>
 
@@ -1093,10 +1075,40 @@ export default function SinglePageStreetwearStore() {
           transition: all 0.25s ease;
           max-width: 100%;
         }
-        .collection-filter-cta-btn:hover {
-          background: linear-gradient(135deg, #dc2626, #b91c1c);
-          transform: translateY(-2px);
-          box-shadow: 0 12px 28px rgba(239, 68, 68, 0.5);
+        /* ------------------ HEADER CTA PILL BUTTON ------------------ */
+        a.header-cta-pill,
+        .header-cta-pill {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 0.5rem !important;
+          background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+          color: #ffffff !important;
+          padding: 0.65rem 1.4rem !important;
+          font-size: 0.82rem !important;
+          font-weight: 800 !important;
+          letter-spacing: 0.04em !important;
+          border-radius: 9999px !important;
+          border: 1px solid rgba(255, 255, 255, 0.15) !important;
+          box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25) !important;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+          text-decoration: none !important;
+          white-space: nowrap !important;
+          cursor: pointer !important;
+        }
+
+        [data-theme='dark'] a.header-cta-pill,
+        [data-theme='dark'] .header-cta-pill {
+          background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%) !important;
+          color: #ffffff !important;
+          box-shadow: 0 4px 16px rgba(56, 189, 248, 0.35) !important;
+          border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+
+        a.header-cta-pill:hover,
+        .header-cta-pill:hover {
+          transform: translateY(-2px) scale(1.03) !important;
+          box-shadow: 0 8px 22px rgba(15, 23, 42, 0.35) !important;
         }
         .btn-street-dark {
           background: linear-gradient(135deg, #2563eb, #7c3aed);
