@@ -851,45 +851,47 @@ export default function SinglePageStreetwearStore() {
 
         /* ------------------ HERO BANNER WITH ATHLETE BACKGROUND ------------------ */
         .hero-section-street {
-          padding: 4.5rem 2rem 4.5rem 3.5rem;
+          padding: 4.5rem 2rem 4.5rem 2rem;
           position: relative;
           background: #09090b;
-          border-radius: 28px !important;
-          border-top-left-radius: 28px !important;
-          border-top-right-radius: 28px !important;
-          border-bottom-left-radius: 28px !important;
-          border-bottom-right-radius: 28px !important;
+          border-radius: 0 !important;
+          border-top-left-radius: 0 !important;
+          border-top-right-radius: 0 !important;
+          border-bottom-left-radius: 0 !important;
+          border-bottom-right-radius: 0 !important;
           overflow: hidden !important;
-          box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+          box-shadow: none;
           min-height: 480px;
           display: flex;
           align-items: center;
-          margin-top: 0.5rem;
+          margin-top: 0 !important;
         }
         [data-theme='light'] .hero-section-street {
           background: #09090b;
-          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+          box-shadow: none;
         }
         .hero-athlete-bg-img {
           position: absolute;
           top: 0;
           right: 0;
           bottom: 0;
-          width: 58%;
+          width: 100%;
           height: 100%;
           object-fit: cover;
           object-position: center top;
           z-index: 1;
-          border-radius: 28px;
+          border-radius: 0 !important;
         }
         .hero-fade-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(90deg, #09090b 35%, rgba(9, 9, 11, 0.88) 60%, rgba(9, 9, 11, 0.3) 80%, transparent 100%);
+          background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.72) 100%) !important;
           z-index: 2;
+          border-radius: 0 !important;
         }
         [data-theme='light'] .hero-fade-overlay {
-          background: linear-gradient(90deg, #09090b 35%, rgba(9, 9, 11, 0.88) 60%, rgba(9, 9, 11, 0.3) 80%, transparent 100%);
+          background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.72) 100%) !important;
+          border-radius: 0 !important;
         }
         .hero-street-container {
           position: relative;
