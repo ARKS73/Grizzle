@@ -213,25 +213,25 @@ export default function SinglePageStreetwearStore() {
           }}
         />
 
-        <div className="container hero-street-container">
-          <div className="hero-text-content">
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#fff', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+        <div className="container hero-street-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', width: '100%' }}>
+          <div className="hero-text-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', width: '100%', maxWidth: '800px', margin: '0 auto' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: '#fff', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '0.75rem', textAlign: 'center' }}>
               <Sparkles size={14} style={{ color: '#93c5fd' }} />
               <span>{heroSettings.heroBadge}</span>
             </div>
 
-            <h1 className="hero-street-title">
+            <h1 className="hero-street-title" style={{ textAlign: 'center', width: '100%' }}>
               {heroSettings.heroTitle} <br />
-              <span style={{ fontStyle: 'normal', color: 'var(--accent-primary)', textShadow: '0 4px 25px rgba(220, 38, 38, 0.6)' }}>
+              <span style={{ display: 'block', fontStyle: 'normal', color: 'var(--accent-primary)', textShadow: '0 4px 25px rgba(220, 38, 38, 0.6)', marginTop: '0.5rem', textAlign: 'center' }}>
                 {heroSettings.heroAccentTitle}
               </span>
             </h1>
 
-            <p className="hero-street-desc">
+            <p className="hero-street-desc" style={{ textAlign: 'center', margin: '1rem auto 1.5rem', maxWidth: '600px' }}>
               {heroSettings.heroDesc}
             </p>
 
-            <div className="hero-btn-group">
+            <div className="hero-btn-group" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', width: '100%' }}>
               <a href="#latest-drops" className="btn-street-dark">
                 SHOP DROPS
               </a>
