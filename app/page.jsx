@@ -193,8 +193,8 @@ export default function SinglePageStreetwearStore() {
       <section className="hero-section-street" id="hero">
         {/* Athlete Model Background Image */}
         <img
-          src="/hero-bg-athlete.jpg"
-          alt="Grizzle Athlete Model"
+          src={displayHeroImg}
+          alt="Grizzle Hero Image"
           className="hero-athlete-bg-img"
         />
         <div className="hero-fade-overlay" />
