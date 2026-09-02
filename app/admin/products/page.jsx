@@ -11,11 +11,11 @@ const ALL_AVAILABLE_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
 const GENDER_OPTIONS = ['Men', 'Women', 'Unisex'];
 
 const PRESET_COLOR_VARIANTS = [
-  { name: 'White', hex: '#ffffff', image: '' },
-  { name: 'Black', hex: '#000000', image: '' },
-  { name: 'Red', hex: '#ef4444', image: '' },
-  { name: 'Blue', hex: '#3b82f6', image: '' },
-  { name: 'Green', hex: '#10b981', image: '' },
+  { name: 'White', hex: '#ffffff', image: '', images: [] },
+  { name: 'Black', hex: '#000000', image: '', images: [] },
+  { name: 'Red', hex: '#ef4444', image: '', images: [] },
+  { name: 'Blue', hex: '#3b82f6', image: '', images: [] },
+  { name: 'Green', hex: '#10b981', image: '', images: [] },
 ];
 
 const PRESET_TSHIRT_IMAGES = [
@@ -464,6 +464,108 @@ export default function AdminProductsPage() {
     }));
   };
 
+  const [colorUrlInputs, setColorUrlInputs] = useState({});
+
+  const handleColorMultipleFileUpload = async (colorIdx, filesList) => {
+    const files = Array.from(filesList || []);
+    if (files.length === 0) return;
+
+    try {
+      setUploadingImage(true);
+      const newUploadedUrls = [];
+
+      for (const file of files) {
+        const compressedDataUrl = await compressImage(file, 800, 1000, 0.75);
+        if (!compressedDataUrl) continue;
+
+        try {
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ file: compressedDataUrl }),
+          });
+          const data = await res.json();
+          const finalUrl = data.success && data.url ? data.url : compressedDataUrl;
+          newUploadedUrls.push(finalUrl);
+        } catch (err) {
+          newUploadedUrls.push(compressedDataUrl);
+        }
+      }
+
+      if (newUploadedUrls.length > 0) {
+        setFormData((prev) => {
+          const newColors = JSON.parse(JSON.stringify(prev.colors || []));
+          if (newColors[colorIdx]) {
+            const currentImgs = newColors[colorIdx].images || (newColors[colorIdx].image ? [newColors[colorIdx].image] : []);
+            const updatedColorImgs = Array.from(new Set([...currentImgs, ...newUploadedUrls])).filter(Boolean);
+            newColors[colorIdx].images = updatedColorImgs;
+            newColors[colorIdx].image = updatedColorImgs[0] || '';
+          }
+          const allGenImages = Array.from(new Set([...(prev.images || []), ...newUploadedUrls])).filter(Boolean);
+          return { ...prev, colors: newColors, images: allGenImages };
+        });
+        addToast(`Uploaded ${newUploadedUrls.length} photo(s) for color!`, 'success');
+      }
+    } catch (err) {
+      console.error(err);
+      addToast('Error uploading color images', 'error');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleAddColorImageUrl = (colorIdx) => {
+    const rawVal = colorUrlInputs[colorIdx] || '';
+    if (!rawVal.trim()) return;
+    const cleanUrl = rawVal.trim();
+
+    setFormData((prev) => {
+      const newColors = JSON.parse(JSON.stringify(prev.colors || []));
+      if (newColors[colorIdx]) {
+        const currentImgs = newColors[colorIdx].images || (newColors[colorIdx].image ? [newColors[colorIdx].image] : []);
+        const updatedColorImgs = Array.from(new Set([...currentImgs, cleanUrl])).filter(Boolean);
+        newColors[colorIdx].images = updatedColorImgs;
+        newColors[colorIdx].image = updatedColorImgs[0] || '';
+      }
+      const allGenImages = Array.from(new Set([...(prev.images || []), cleanUrl])).filter(Boolean);
+      return { ...prev, colors: newColors, images: allGenImages };
+    });
+
+    setColorUrlInputs((prev) => ({ ...prev, [colorIdx]: '' }));
+    addToast('Photo URL added for this color variant!', 'success');
+  };
+
+  const handleRemoveColorImage = (colorIdx, imgIdx) => {
+    setFormData((prev) => {
+      const newColors = JSON.parse(JSON.stringify(prev.colors || []));
+      if (newColors[colorIdx]) {
+        const currentImgs = newColors[colorIdx].images || (newColors[colorIdx].image ? [newColors[colorIdx].image] : []);
+        const updatedColorImgs = currentImgs.filter((_, i) => i !== imgIdx);
+        newColors[colorIdx].images = updatedColorImgs;
+        newColors[colorIdx].image = updatedColorImgs[0] || '';
+      }
+      return { ...prev, colors: newColors };
+    });
+  };
+
+  const handleSetColorCoverImage = (colorIdx, imgIdx) => {
+    setFormData((prev) => {
+      const newColors = JSON.parse(JSON.stringify(prev.colors || []));
+      if (newColors[colorIdx]) {
+        const currentImgs = newColors[colorIdx].images || (newColors[colorIdx].image ? [newColors[colorIdx].image] : []);
+        if (imgIdx > 0 && imgIdx < currentImgs.length) {
+          const target = currentImgs[imgIdx];
+          currentImgs.splice(imgIdx, 1);
+          currentImgs.unshift(target);
+          newColors[colorIdx].images = currentImgs;
+          newColors[colorIdx].image = currentImgs[0];
+        }
+      }
+      return { ...prev, colors: newColors };
+    });
+    addToast('Set main cover photo for this color!', 'info');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.name.trim()) {
@@ -485,7 +587,11 @@ export default function AdminProductsPage() {
       const method = editingId ? 'PUT' : 'POST';
 
       // Gather all color-specific t-shirt images into main product images list
-      const colorImages = (formData.colors || []).map(c => c.image).filter((img) => img && img !== '/logo2.png');
+      const colorImages = (formData.colors || []).flatMap(c => {
+        const arr = Array.isArray(c.images) && c.images.length > 0 ? [...c.images] : [];
+        if (c.image && !arr.includes(c.image)) arr.push(c.image);
+        return arr;
+      }).filter((img) => img && img !== '/logo2.png');
       const userImages = (formData.images || []).filter((img) => img && img !== '/logo2.png');
       let combinedImages = Array.from(new Set([...userImages, ...colorImages])).filter((img) => img && img !== '/logo2.png');
 
@@ -867,56 +973,109 @@ export default function AdminProductsPage() {
                         </button>
                       </div>
 
-                      {/* T-Shirt Photo for this Color */}
-                      <div className="color-photo-upload-row mt-2 p-2 bg-tertiary rounded d-flex align-items-center gap-3">
-                        {col.image ? (
-                          <img src={col.image} alt={col.name} className="color-variant-preview-img" />
-                        ) : (
-                          <div className="color-no-img-box">
-                            <ImageIcon size={20} className="text-muted" />
-                            <span className="subtext">No Photo</span>
-                          </div>
-                        )}
-                        <div className="flex-1">
-                          <label className="subtext font-semibold d-block mb-1">
-                            T-Shirt Photo for <strong>{col.name || 'this color'}</strong>:
+                      {/* Multiple Photos for this Specific Color */}
+                      <div className="color-photo-upload-box mt-3 p-3 bg-tertiary rounded border">
+                        <div className="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                          <label className="subtext font-bold d-flex align-items-center gap-1 m-0 text-primary">
+                            <ImageIcon size={14} /> Product Photos for <strong>{col.name || 'this color'}</strong>:
                           </label>
-                          <div className="d-flex gap-2">
+                          <div className="d-flex gap-2 align-items-center">
                             <input
                               type="file"
                               accept="image/*"
-                              id={`col-file-${idx}`}
+                              multiple
+                              id={`col-files-${idx}`}
                               hidden
-                              onChange={async (e) => {
-                                const file = e.target.files[0];
-                                if (!file) return;
-                                const compressed = await compressImage(file, 800, 1000, 0.75);
-                                if (compressed) {
-                                  const newColors = [...formData.colors];
-                                  newColors[idx].image = compressed;
-                                  const newImages = Array.from(new Set([compressed, ...formData.images])).filter(Boolean);
-                                  setFormData({ ...formData, colors: newColors, images: newImages });
-                                  addToast(`T-shirt image uploaded for ${col.name}!`, 'success');
-                                }
-                              }}
+                              onChange={(e) => handleColorMultipleFileUpload(idx, e.target.files)}
                             />
-                            <label htmlFor={`col-file-${idx}`} className="btn btn-secondary btn-xs upload-btn">
-                              <Upload size={14} /> Upload T-Shirt Photo
+                            <label
+                              htmlFor={`col-files-${idx}`}
+                              className="btn btn-secondary btn-xs upload-btn font-bold"
+                              style={{ cursor: 'pointer' }}
+                            >
+                              <Upload size={13} /> + Upload Photos for {col.name || 'Color'}
                             </label>
-                            <input
-                              type="text"
-                              placeholder="Or paste T-Shirt Image URL"
-                              value={col.image || ''}
-                              onChange={(e) => {
-                                const newColors = [...formData.colors];
-                                newColors[idx].image = e.target.value;
-                                const newImages = Array.from(new Set([e.target.value, ...formData.images])).filter(Boolean);
-                                setFormData({ ...formData, colors: newColors, images: newImages });
-                              }}
-                              className="form-input form-input-sm"
-                            />
                           </div>
                         </div>
+
+                        {/* Paste URL for this Color */}
+                        <div className="d-flex gap-2 mb-2">
+                          <input
+                            type="text"
+                            placeholder={`Paste Photo Image URL for ${col.name || 'this color'}...`}
+                            value={colorUrlInputs[idx] || ''}
+                            onChange={(e) => setColorUrlInputs({ ...colorUrlInputs, [idx]: e.target.value })}
+                            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddColorImageUrl(idx); } }}
+                            className="form-input form-input-sm"
+                            style={{ fontSize: '0.78rem' }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleAddColorImageUrl(idx)}
+                            className="btn btn-secondary btn-xs font-bold"
+                            style={{ whiteSpace: 'nowrap' }}
+                          >
+                            + Add Photo
+                          </button>
+                        </div>
+
+                        {/* Grid preview of images for this specific color */}
+                        {(() => {
+                          const colImgs = (Array.isArray(col.images) && col.images.length > 0)
+                            ? col.images
+                            : (col.image ? [col.image] : []);
+
+                          if (colImgs.length === 0) {
+                            return (
+                              <div className="text-center p-2 bg-secondary rounded border" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                No photos added yet for {col.name || 'this color'}. Upload or paste URLs above.
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <div className="d-flex flex-wrap gap-2 mt-2">
+                              {colImgs.map((cImg, cImgIdx) => (
+                                <div
+                                  key={cImgIdx}
+                                  style={{
+                                    position: 'relative',
+                                    width: '80px',
+                                    height: '95px',
+                                    borderRadius: '8px',
+                                    overflow: 'hidden',
+                                    border: cImgIdx === 0 ? '2px solid var(--accent-primary)' : '1px solid var(--border-color)',
+                                    background: 'var(--bg-secondary)',
+                                  }}
+                                >
+                                  <img src={cImg} alt={`${col.name} ${cImgIdx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                  {cImgIdx === 0 ? (
+                                    <span style={{ position: 'absolute', top: '3px', left: '3px', background: 'var(--accent-primary)', color: '#fff', fontSize: '0.55rem', fontWeight: 900, padding: '1px 4px', borderRadius: '3px' }}>
+                                      Cover
+                                    </span>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleSetColorCoverImage(idx, cImgIdx)}
+                                      title="Make cover photo for this color"
+                                      style={{ position: 'absolute', top: '3px', left: '3px', background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '0.55rem', padding: '1px 4px', borderRadius: '3px', border: 'none', cursor: 'pointer' }}
+                                    >
+                                      Cover
+                                    </button>
+                                  )}
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveColorImage(idx, cImgIdx)}
+                                    title="Delete photo"
+                                    style={{ position: 'absolute', top: '3px', right: '3px', background: '#ef4444', color: '#fff', width: '18px', height: '18px', borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: 'bold' }}
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        })()}
                       </div>
                     </div>
                   ))}

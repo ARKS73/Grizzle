@@ -102,11 +102,20 @@ export default function ProductDetailPage() {
     ? (reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / totalReviews).toFixed(1)
     : (product.numReviews > 0 && product.ratings ? Number(product.ratings).toFixed(1) : '0.0');
 
-  const colorImages = (product?.colors || []).map((c) => c.image).filter((img) => img && img !== '/logo2.png');
-  const userImages = (product?.images || []).filter((img) => img && img !== '/logo2.png');
-  const cleanImages = Array.from(new Set([...userImages, ...colorImages])).filter(Boolean);
   const activeColorObj = product?.colors?.find((c) => c.name === selectedColor);
-  const activeColorImg = activeColorObj?.image;
+  const activeColorImages = (Array.isArray(activeColorObj?.images) && activeColorObj.images.length > 0)
+    ? activeColorObj.images.filter((img) => img && img !== '/logo2.png')
+    : (activeColorObj?.image && activeColorObj.image !== '/logo2.png' ? [activeColorObj.image] : []);
+
+  const allColorImages = (product?.colors || []).flatMap((c) => (Array.isArray(c.images) && c.images.length > 0) ? c.images : (c.image ? [c.image] : [])).filter((img) => img && img !== '/logo2.png');
+  const userImages = (product?.images || []).filter((img) => img && img !== '/logo2.png');
+
+  let cleanImages = [];
+  if (activeColorImages.length > 0) {
+    cleanImages = Array.from(new Set([...activeColorImages, ...userImages, ...allColorImages])).filter(Boolean);
+  } else {
+    cleanImages = Array.from(new Set([...userImages, ...allColorImages])).filter(Boolean);
+  }
   const displayedThumbnails = cleanImages.length > 0 ? cleanImages : (product?.images || []);
 
   const handleBack = () => {
@@ -220,8 +229,11 @@ export default function ProductDetailPage() {
                     key={c.name}
                     onClick={() => {
                       setSelectedColor(c.name);
-                      if (c.image) {
-                        setSelectedImage(c.image);
+                      const cImgs = (Array.isArray(c.images) && c.images.length > 0)
+                        ? c.images
+                        : (c.image ? [c.image] : []);
+                      if (cImgs[0]) {
+                        setSelectedImage(cImgs[0]);
                       }
                     }}
                     className={`color-btn ${selectedColor === c.name ? 'active' : ''}`}

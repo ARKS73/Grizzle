@@ -4,6 +4,7 @@ const ColorSchema = new mongoose.Schema({
   name: { type: String, required: true },
   hex: { type: String, required: true },
   image: { type: String, default: '' },
+  images: { type: [String], default: [] },
 });
 
 
