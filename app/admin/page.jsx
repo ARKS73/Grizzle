@@ -454,21 +454,48 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Size Chart & Fit Guide Editor */}
+        {/* Size Chart & Fit Guide Custom Table Builder */}
         <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem', marginTop: '1.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
-              <h4 style={{ fontSize: '1.05rem', fontWeight: 800 }}>📐 T-Shirt Size Chart &amp; Fit Guide Customization</h4>
-              <p className="subtext">Edit size table values, add/remove sizes, and customize customer fit recommendations.</p>
+              <h4 style={{ fontSize: '1.05rem', fontWeight: 800 }}>📐 Custom Size Chart &amp; Fit Guide Builder</h4>
+              <p className="subtext">Build custom size charts from scratch. Add/remove columns &amp; rows, rename headers, and edit any measurement cell.</p>
             </div>
-            <button
-              type="button"
-              onClick={handleAddSizeRow}
-              className="btn btn-secondary btn-sm"
-              style={{ fontWeight: 700 }}
-            >
-              + Add New Size Row
-            </button>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={handleAddColumn}
+                className="btn btn-secondary btn-sm"
+                style={{ fontWeight: 700, color: 'var(--accent-primary)', borderColor: 'var(--accent-primary)' }}
+              >
+                + Add Column
+              </button>
+              <button
+                type="button"
+                onClick={handleAddRow}
+                className="btn btn-secondary btn-sm"
+                style={{ fontWeight: 700 }}
+              >
+                + Add Row
+              </button>
+              <button
+                type="button"
+                onClick={handleResetPreset}
+                className="btn btn-secondary btn-sm"
+                title="Load Standard T-Shirt Sizing Template"
+              >
+                🔄 Preset Template
+              </button>
+              <button
+                type="button"
+                onClick={handleClearTable}
+                className="btn btn-secondary btn-sm"
+                style={{ color: '#ef4444' }}
+                title="Clear and build from scratch"
+              >
+                🗑️ Clear All
+              </button>
+            </div>
           </div>
 
           <div className="form-group mb-3">
@@ -478,98 +505,75 @@ export default function AdminDashboardPage() {
               rows={2}
               value={storeSettings.sizeChartTips || ''}
               onChange={(e) => setStoreSettings((prev) => ({ ...prev, sizeChartTips: e.target.value }))}
+              placeholder="e.g. Oversized Streetwear Fit: Choose your standard size for a relaxed dropped-shoulder silhouette..."
             />
           </div>
 
-          <label className="form-label mb-2" style={{ display: 'block' }}>Size Measurements Table (Inches &amp; Centimeters)</label>
-          <div style={{ overflowX: 'auto' }}>
-            <table className="admin-table" style={{ minWidth: '750px' }}>
+          <label className="form-label mb-2" style={{ display: 'block', fontWeight: 700 }}>
+            Dynamic Measurement Table (Editable Column Headers &amp; Cell Rows)
+          </label>
+          <div style={{ overflowX: 'auto', background: 'var(--bg-tertiary)', borderRadius: '12px', padding: '0.5rem', border: '1px solid var(--border-color)' }}>
+            <table className="admin-table" style={{ minWidth: '700px', width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  <th>Size Name</th>
-                  <th>Chest (Inches)</th>
-                  <th>Chest (CM)</th>
-                  <th>Length (Inches)</th>
-                  <th>Length (CM)</th>
-                  <th>Shoulder (In)</th>
-                  <th>Shoulder (CM)</th>
-                  <th style={{ textAlign: 'right' }}>Actions</th>
+                  {currentCols.map((colTitle, colIdx) => (
+                    <th key={colIdx} style={{ padding: '0.5rem', background: 'var(--bg-secondary)', borderBottom: '2px solid var(--border-color)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                        <input
+                          type="text"
+                          value={colTitle}
+                          onChange={(e) => handleRenameColumn(colIdx, e.target.value)}
+                          className="form-input"
+                          style={{ padding: '0.25rem 0.45rem', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', background: 'var(--bg-primary)' }}
+                          placeholder={`Col ${colIdx + 1}`}
+                        />
+                        {currentCols.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveColumn(colIdx)}
+                            title="Delete Column"
+                            style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '2px', fontSize: '0.85rem' }}
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                    </th>
+                  ))}
+                  <th style={{ width: '60px', textAlign: 'center', background: 'var(--bg-secondary)', borderBottom: '2px solid var(--border-color)' }}>
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {(storeSettings.sizeChartData || []).map((row, idx) => (
-                  <tr key={idx}>
-                    <td>
-                      <input
-                        type="text"
-                        value={row.size || ''}
-                        onChange={(e) => handleSizeChartChange(idx, 'size', e.target.value)}
-                        className="form-input"
-                        style={{ padding: '0.35rem 0.5rem', fontSize: '0.8rem', fontWeight: 800, width: '65px' }}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={row.chestIn || ''}
-                        onChange={(e) => handleSizeChartChange(idx, 'chestIn', e.target.value)}
-                        className="form-input"
-                        style={{ padding: '0.35rem 0.5rem', fontSize: '0.8rem' }}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={row.chestCm || ''}
-                        onChange={(e) => handleSizeChartChange(idx, 'chestCm', e.target.value)}
-                        className="form-input"
-                        style={{ padding: '0.35rem 0.5rem', fontSize: '0.8rem' }}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={row.lengthIn || ''}
-                        onChange={(e) => handleSizeChartChange(idx, 'lengthIn', e.target.value)}
-                        className="form-input"
-                        style={{ padding: '0.35rem 0.5rem', fontSize: '0.8rem' }}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={row.lengthCm || ''}
-                        onChange={(e) => handleSizeChartChange(idx, 'lengthCm', e.target.value)}
-                        className="form-input"
-                        style={{ padding: '0.35rem 0.5rem', fontSize: '0.8rem' }}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={row.shoulderIn || ''}
-                        onChange={(e) => handleSizeChartChange(idx, 'shoulderIn', e.target.value)}
-                        className="form-input"
-                        style={{ padding: '0.35rem 0.5rem', fontSize: '0.8rem' }}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={row.shoulderCm || ''}
-                        onChange={(e) => handleSizeChartChange(idx, 'shoulderCm', e.target.value)}
-                        className="form-input"
-                        style={{ padding: '0.35rem 0.5rem', fontSize: '0.8rem' }}
-                      />
-                    </td>
-                    <td style={{ textAlign: 'right' }}>
+                {currentRows.map((rowArr, rowIdx) => (
+                  <tr key={rowIdx}>
+                    {currentCols.map((_, colIdx) => (
+                      <td key={colIdx} style={{ padding: '0.4rem' }}>
+                        <input
+                          type="text"
+                          value={rowArr[colIdx] || ''}
+                          onChange={(e) => handleCellChange(rowIdx, colIdx, e.target.value)}
+                          className="form-input"
+                          style={{
+                            padding: '0.35rem 0.5rem',
+                            fontSize: '0.8rem',
+                            fontWeight: colIdx === 0 ? 800 : 400,
+                            background: colIdx === 0 ? 'var(--bg-primary)' : 'var(--bg-secondary)',
+                          }}
+                          placeholder={colIdx === 0 ? 'e.g. S' : 'Value'}
+                        />
+                      </td>
+                    ))}
+                    <td style={{ textAlign: 'center', padding: '0.4rem' }}>
                       <button
                         type="button"
-                        onClick={() => handleRemoveSizeRow(idx)}
+                        onClick={() => handleRemoveRow(rowIdx)}
                         className="btn btn-secondary btn-sm"
-                        style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)', padding: '0.3rem 0.55rem', fontSize: '0.75rem' }}
+                        style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)', padding: '0.25rem 0.45rem', fontSize: '0.75rem' }}
+                        title="Delete Row"
                       >
-                        Delete
+                        ✕
                       </button>
                     </td>
                   </tr>
