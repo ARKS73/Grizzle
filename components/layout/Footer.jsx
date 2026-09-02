@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { RotateCcw, Instagram, Ruler } from 'lucide-react';
+import { Instagram, Ruler } from 'lucide-react';
 import GrizzleLogo from '@/components/ui/GrizzleLogo';
 import SizeChartModal from '@/components/ui/SizeChartModal';
 import PolicyModal from '@/components/ui/PolicyModal';
@@ -62,31 +62,6 @@ export default function Footer() {
 
   return (
     <footer className="footer-wrapper">
-      {/* ── Value bar ── */}
-      <div className="features-bar">
-        <div className="container features-grid">
-          <div className="feature-item">
-            <RotateCcw className="feature-icon" size={22} />
-            <div>
-              <h4>Cash On Delivery</h4>
-              <p>Available for all eligible delivery pincodes</p>
-            </div>
-          </div>
-          <div
-            className="feature-item"
-            style={{ cursor: 'pointer' }}
-            onClick={() => setSizeChartOpen(true)}
-            title="Click to view T-Shirt Size Chart & Fit Guide"
-          >
-            <Ruler className="feature-icon" size={22} color="var(--accent-primary)" />
-            <div>
-              <h4>Size Chart &amp; Fit Guide</h4>
-              <p>240 GSM Heavyweight Oversized Tee Sizing Table</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* ── Main columns ── */}
       <div className="container footer-content">
         {/* Brand */}
