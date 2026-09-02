@@ -325,12 +325,6 @@ export default function QuickViewModal({ product, onClose }) {
           gap: 2rem;
           align-items: start;
         }
-        @media (max-width: 768px) {
-          .quickview-grid {
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-          }
-        }
 
         .main-image-box {
           position: relative;
@@ -627,6 +621,67 @@ export default function QuickViewModal({ product, onClose }) {
         .view-full-page-link:hover {
           text-decoration: underline;
           color: var(--accent-hover);
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+          .quickview-card {
+            padding: 1.25rem 1rem !important;
+            max-height: 92vh !important;
+            border-radius: 16px !important;
+            width: 95% !important;
+          }
+          .modal-close-btn {
+            top: 0.75rem;
+            right: 0.75rem;
+            width: 32px;
+            height: 32px;
+          }
+          .quickview-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1rem !important;
+          }
+          .main-image-box {
+            height: 260px !important;
+            border-radius: 12px;
+          }
+          .thumb-btn {
+            width: 54px !important;
+            height: 66px !important;
+          }
+          .product-title {
+            font-size: 1.15rem !important;
+          }
+          .price-current {
+            font-size: 1.2rem !important;
+          }
+          .action-row {
+            gap: 0.5rem !important;
+          }
+          .add-to-cart-btn {
+            font-size: 0.88rem !important;
+            padding: 0 0.5rem !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .main-image-box {
+            height: 220px !important;
+          }
+          .action-row {
+            flex-wrap: wrap !important;
+          }
+          .quantity-control {
+            height: 42px;
+          }
+          .add-to-cart-btn {
+            height: 42px;
+            font-size: 0.85rem !important;
+          }
+          .wishlist-btn {
+            width: 42px;
+            height: 42px;
+          }
         }
       `}</style>
     </div>
