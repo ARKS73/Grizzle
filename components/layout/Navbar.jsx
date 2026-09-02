@@ -575,7 +575,7 @@ export default function Navbar() {
           </div>
 
           {/* Clean minimal Category List with right arrow chevron */}
-          <div className="mobile-category-list" style={{ display: 'flex', flexDirection: 'column' }}>
+          <div className="mobile-category-list" style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
             <Link href="/" onClick={closeAllMenus} className="mobile-category-row">
               <span>HOME</span>
               <ChevronRight size={18} />
@@ -1632,23 +1632,30 @@ export default function Navbar() {
           margin-bottom: 1rem;
         }
 
+        .mobile-category-list {
+          display: flex !important;
+          flex-direction: column !important;
+          width: 100% !important;
+        }
+
         .mobile-category-row {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0.95rem 0.35rem;
-          border-bottom: 1px solid var(--border-color);
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          width: 100% !important;
+          padding: 1rem 0.35rem !important;
+          border-bottom: 1px solid var(--border-color) !important;
           color: var(--text-primary);
-          font-size: 0.88rem;
-          font-weight: 800;
-          letter-spacing: 0.05em;
-          text-transform: uppercase;
-          text-decoration: none;
-          box-sizing: border-box;
+          font-size: 0.88rem !important;
+          font-weight: 800 !important;
+          letter-spacing: 0.05em !important;
+          text-transform: uppercase !important;
+          text-decoration: none !important;
+          box-sizing: border-box !important;
           transition: background 0.15s ease, color 0.15s ease;
         }
         .mobile-category-row:hover, .mobile-category-row:active {
-          color: var(--accent-primary);
+          color: var(--accent-primary) !important;
         }
 
         .mobile-primary-nav {
