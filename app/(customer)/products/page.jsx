@@ -148,8 +148,29 @@ function ProductsCatalogContent() {
 
         {/* Main Products Grid & Toolbar */}
         <main className="catalog-main">
-          {/* Controls Bar */}
-          <div className="controls-bar glass-panel">
+          {/* Controls Bar & Search */}
+          <div className="controls-bar glass-panel" style={{ flexWrap: 'wrap', gap: '0.75rem' }}>
+            <div style={{ position: 'relative', flex: 1, minWidth: '220px', display: 'flex', alignItems: 'center' }}>
+              <Search size={16} style={{ position: 'absolute', left: '12px', color: 'var(--accent-primary)' }} />
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={filters.search}
+                onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value, page: 1 }))}
+                className="form-input"
+                style={{ width: '100%', paddingLeft: '2.2rem', paddingRight: '2.2rem', fontSize: '0.85rem', borderRadius: '30px' }}
+              />
+              {filters.search && (
+                <button
+                  type="button"
+                  onClick={() => setFilters((prev) => ({ ...prev, search: '', page: 1 }))}
+                  style={{ position: 'absolute', right: '12px', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
             <div className="results-count">
               Showing <strong>{products.length}</strong> of <strong>{totalProducts}</strong> products
             </div>

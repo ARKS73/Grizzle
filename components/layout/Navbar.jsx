@@ -148,6 +148,7 @@ export default function Navbar() {
     if (searchQuery.trim()) {
       router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
       setShowSuggestions(false);
+      setMobileMenuOpen(false);
     }
   };
 
@@ -182,7 +183,7 @@ export default function Navbar() {
             <Search className="search-icon" size={18} />
             <input
               type="text"
-              placeholder=""
+              placeholder="Search T-Shirts, Anime, Oversized..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => searchQuery.length > 1 && setShowSuggestions(true)}

@@ -37,10 +37,14 @@ export async function GET(request) {
     const query = {};
 
     if (search) {
+      const safeSearch = search.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
       query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-        { category: { $regex: search, $options: 'i' } },
+        { name: { $regex: safeSearch, $options: 'i' } },
+        { description: { $regex: safeSearch, $options: 'i' } },
+        { category: { $regex: safeSearch, $options: 'i' } },
+        { gender: { $regex: safeSearch, $options: 'i' } },
+        { fabricFit: { $regex: safeSearch, $options: 'i' } },
+        { 'colors.name': { $regex: safeSearch, $options: 'i' } },
       ];
     }
 

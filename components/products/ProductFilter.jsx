@@ -70,6 +70,30 @@ export default function ProductFilter({ filters, setFilters, onReset, hideHeader
         </div>
       )}
 
+      {/* Search Input Section */}
+      <div className="filter-group">
+        <h4>Search Keyword</h4>
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+          <input
+            type="text"
+            placeholder="Search T-shirts, designs..."
+            value={filters.search || ''}
+            onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value, page: 1 }))}
+            className="form-input"
+            style={{ width: '100%', paddingRight: '2rem', fontSize: '0.85rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '0.5rem 2rem 0.5rem 0.75rem', color: 'var(--text-primary)' }}
+          />
+          {filters.search && (
+            <button
+              type="button"
+              onClick={() => setFilters((prev) => ({ ...prev, search: '', page: 1 }))}
+              style={{ position: 'absolute', right: '8px', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.85rem' }}
+            >
+              ✕
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Gender Collection Section */}
       <div className="filter-group">
         <h4>Collection / Gender</h4>
