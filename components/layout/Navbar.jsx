@@ -162,9 +162,18 @@ export default function Navbar() {
   return (
     <header className="navbar-header glass-panel">
       <div className="container nav-container" ref={megaMenuRef}>
-        {/* Logo */}
-        <div onClick={closeAllMenus}>
-          <GrizzleLogo size="medium" />
+        {/* Mobile Toggle & Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="icon-btn mobile-toggle"
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+          
+          <div onClick={closeAllMenus}>
+            <GrizzleLogo size="medium" />
+          </div>
         </div>
 
         {/* Live Search Bar */}
@@ -471,34 +480,7 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile User Profile & Hamburger Toggle */}
-          <button
-            onClick={() => {
-              setMobileMenuOpen(true);
-              setTimeout(() => {
-                document.getElementById('mobile-account-links')?.scrollIntoView({ behavior: 'smooth' });
-              }, 100);
-            }}
-            className="icon-btn mobile-user-btn"
-          >
-            {user ? (
-              user.profileImage ? (
-                <img src={user.profileImage} alt="" style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover' }} />
-              ) : (
-                <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'var(--accent-primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold' }}>
-                  {user.name.charAt(0).toUpperCase()}
-                </div>
-              )
-            ) : (
-              <User size={22} />
-            )}
-          </button>
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="icon-btn mobile-toggle"
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+
         </div>
       </div>
 
