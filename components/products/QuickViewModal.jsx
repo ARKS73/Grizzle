@@ -63,10 +63,10 @@ export default function QuickViewModal({ product, onClose }) {
     : (finalThumbnails[0] || '');
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay quickview-modal-overlay" onClick={onClose}>
       <div className="modal-content quickview-card glass-panel" onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} className="modal-close-btn" aria-label="Close modal">
-          <X size={16} />
+          <X size={20} strokeWidth={2.5} />
         </button>
 
         <div className="quickview-grid">
@@ -74,7 +74,7 @@ export default function QuickViewModal({ product, onClose }) {
           <div className="quickview-gallery">
             <div className="main-image-box">
               <img
-                src={getOptimizedImageUrl(currentMainImage, 500, 80)}
+                src={getOptimizedImageUrl(currentMainImage, 600, 85)}
                 alt={product.name}
                 className="main-image"
                 loading="eager"
@@ -89,7 +89,7 @@ export default function QuickViewModal({ product, onClose }) {
                     onClick={() => setSelectedImage(img)}
                     className={`thumb-btn ${currentMainImage === img ? 'active' : ''}`}
                   >
-                    <img src={getOptimizedImageUrl(img, 120, 70)} alt={`thumb-${idx}`} loading="lazy" />
+                    <img src={getOptimizedImageUrl(img, 140, 75)} alt={`thumb-${idx}`} loading="lazy" />
                   </button>
                 ))}
               </div>
@@ -294,37 +294,45 @@ export default function QuickViewModal({ product, onClose }) {
       </div>
 
       <style jsx>{`
+        :global(.quickview-modal-overlay) {
+          padding-top: 80px !important;
+          padding-bottom: 20px !important;
+          align-items: flex-start !important;
+        }
+
         .quickview-card {
           max-width: 680px;
           width: 92%;
           padding: 1.25rem 1.5rem;
           border-radius: 16px;
           position: relative;
-          max-height: 85vh;
+          max-height: calc(88vh - 80px);
           overflow-y: auto;
+          margin-top: 0;
         }
 
         .modal-close-btn {
           position: absolute;
-          top: 0.85rem;
-          right: 0.85rem;
-          width: 30px;
-          height: 30px;
+          top: 10px;
+          right: 10px;
+          width: 34px;
+          height: 34px;
           border-radius: 50%;
-          background: var(--bg-tertiary);
-          border: 1px solid var(--border-color);
-          color: var(--text-primary);
+          background: #ffffff !important;
+          border: 2px solid var(--accent-primary) !important;
+          color: #0f172a !important;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
           transition: all 0.2s ease;
-          z-index: 10;
+          z-index: 50;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
         .modal-close-btn:hover {
-          background: var(--accent-light);
-          color: var(--accent-primary);
-          border-color: var(--accent-primary);
+          background: var(--accent-primary) !important;
+          color: #ffffff !important;
+          transform: scale(1.1);
         }
 
         .quickview-grid {
@@ -342,11 +350,15 @@ export default function QuickViewModal({ product, onClose }) {
           overflow: hidden;
           background: var(--bg-tertiary);
           border: 1px solid var(--border-color);
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         .main-image {
           width: 100%;
           height: 100%;
-          object-fit: cover;
+          object-fit: contain;
+          object-position: center;
         }
 
         .thumbnails-row {
@@ -653,21 +665,25 @@ export default function QuickViewModal({ product, onClose }) {
 
         /* Mobile Optimization */
         @media (max-width: 768px) {
+          :global(.quickview-modal-overlay) {
+            padding-top: 76px !important;
+            padding-bottom: 10px !important;
+          }
           .quickview-card {
-            padding: 1rem !important;
-            max-height: 90vh !important;
+            padding: 1rem 0.85rem !important;
+            max-height: calc(90vh - 76px) !important;
             border-radius: 14px !important;
             width: 94% !important;
           }
           .modal-close-btn {
-            top: 0.6rem;
-            right: 0.6rem;
-            width: 28px;
-            height: 28px;
+            top: 8px !important;
+            right: 8px !important;
+            width: 32px !important;
+            height: 32px !important;
           }
           .quickview-grid {
             grid-template-columns: 1fr !important;
-            gap: 0.85rem !important;
+            gap: 0.75rem !important;
           }
           .main-image-box {
             height: 220px !important;
