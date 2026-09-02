@@ -31,17 +31,39 @@ export default function SizeChartModal({ isOpen, onClose }) {
 
   if (!isOpen || !mounted) return null;
 
-  const defaultSizingData = [
-    { size: 'S', chestIn: '38-40"', chestCm: '96-102 cm', lengthIn: '27.5"', lengthCm: '70 cm', shoulderIn: '18.5"', shoulderCm: '47 cm', sleeveIn: '8.5"', sleeveCm: '21 cm' },
-    { size: 'M', chestIn: '40-42"', chestCm: '102-107 cm', lengthIn: '28.5"', lengthCm: '72 cm', shoulderIn: '19.5"', shoulderCm: '49.5 cm', sleeveIn: '9.0"', sleeveCm: '23 cm' },
-    { size: 'L', chestIn: '42-44"', chestCm: '107-112 cm', lengthIn: '29.5"', lengthCm: '75 cm', shoulderIn: '20.5"', shoulderCm: '52 cm', sleeveIn: '9.5"', sleeveCm: '24 cm' },
-    { size: 'XL', chestIn: '44-46"', chestCm: '112-117 cm', lengthIn: '30.5"', lengthCm: '77 cm', shoulderIn: '21.5"', shoulderCm: '54.5 cm', sleeveIn: '10.0"', sleeveCm: '25.5 cm' },
-    { size: 'XXL', chestIn: '46-48"', chestCm: '117-122 cm', lengthIn: '31.5"', lengthCm: '80 cm', shoulderIn: '22.5"', shoulderCm: '57 cm', sleeveIn: '10.5"', sleeveCm: '26.5 cm' },
-  ];
+  const getNormalizedChartData = (settings) => {
+    if (Array.isArray(settings?.sizeChartColumns) && Array.isArray(settings?.sizeChartRows)) {
+      return {
+        columns: settings.sizeChartColumns,
+        rows: settings.sizeChartRows,
+      };
+    }
+    if (Array.isArray(settings?.sizeChartData) && settings.sizeChartData.length > 0) {
+      const cols = ['Size', 'Chest (in)', 'Chest (cm)', 'Length (in)', 'Length (cm)', 'Shoulder (in)', 'Shoulder (cm)'];
+      const rws = settings.sizeChartData.map((row) => [
+        row.size || '',
+        row.chestIn || '',
+        row.chestCm || '',
+        row.lengthIn || '',
+        row.lengthCm || '',
+        row.shoulderIn || '',
+        row.shoulderCm || '',
+      ]);
+      return { columns: cols, rows: rws };
+    }
+    return {
+      columns: ['Size', 'Chest (in)', 'Chest (cm)', 'Length (in)', 'Length (cm)', 'Shoulder (in)', 'Shoulder (cm)'],
+      rows: [
+        ['S', '38-40"', '96-102 cm', '27.5"', '70 cm', '18.5"', '47 cm'],
+        ['M', '40-42"', '102-107 cm', '28.5"', '72 cm', '19.5"', '49.5 cm'],
+        ['L', '42-44"', '107-112 cm', '29.5"', '75 cm', '20.5"', '52 cm'],
+        ['XL', '44-46"', '112-117 cm', '30.5"', '77 cm', '21.5"', '54.5 cm'],
+        ['XXL', '46-48"', '117-122 cm', '31.5"', '80 cm', '22.5"', '57 cm'],
+      ],
+    };
+  };
 
-  const sizingData = (settings?.sizeChartData && settings.sizeChartData.length > 0)
-    ? settings.sizeChartData
-    : defaultSizingData;
+  const { columns, rows } = getNormalizedChartData(settings);
 
   const fitTips = settings?.sizeChartTips ||
     'Oversized Streetwear Fit: Choose your standard size for a relaxed dropped-shoulder silhouette. For regular fit, size down 1 size.';
@@ -66,53 +88,38 @@ export default function SizeChartModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Controls & Unit Switcher */}
+        {/* Controls & Fit Pill */}
         <div className="controls-bar">
           <div className="fit-pill">
             <Sparkles size={13} color="#f59e0b" />
             <span>Streetwear Oversized Fit</span>
           </div>
-
-          <div className="unit-toggle-group">
-            <button
-              onClick={() => setUnit('in')}
-              className={`unit-toggle-btn ${unit === 'in' ? 'active' : ''}`}
-            >
-              Inches (in)
-            </button>
-            <button
-              onClick={() => setUnit('cm')}
-              className={`unit-toggle-btn ${unit === 'cm' ? 'active' : ''}`}
-            >
-              Centimeters (cm)
-            </button>
-          </div>
         </div>
 
         {/* Modal Scrollable Content Area */}
         <div className="modal-body-scroll">
-          {/* Table */}
+          {/* Dynamic Table */}
           <div className="table-wrapper">
             <table className="size-table">
               <thead>
                 <tr>
-                  <th>Size</th>
-                  <th>Chest</th>
-                  <th>Length</th>
-                  <th>Shoulder</th>
-                  <th>Sleeve</th>
+                  {columns.map((colName, cIdx) => (
+                    <th key={cIdx}>{colName}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {sizingData.map((row) => (
-                  <tr key={row.size}>
-                    <td>
-                      <span className="size-pill-tag">{row.size}</span>
-                    </td>
-                    <td><strong>{unit === 'in' ? row.chestIn : row.chestCm}</strong></td>
-                    <td>{unit === 'in' ? row.lengthIn : row.lengthCm}</td>
-                    <td>{unit === 'in' ? row.shoulderIn : row.shoulderCm}</td>
-                    <td>{unit === 'in' ? row.sleeveIn : row.sleeveCm}</td>
+                {rows.map((rowArr, rIdx) => (
+                  <tr key={rIdx}>
+                    {rowArr.map((cellVal, cIdx) => (
+                      <td key={cIdx}>
+                        {cIdx === 0 ? (
+                          <span className="size-pill-tag">{cellVal || '-'}</span>
+                        ) : (
+                          cellVal || '-'
+                        )}
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
