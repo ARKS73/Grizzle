@@ -27,9 +27,9 @@ export const metadata = {
   title: 'Grizzle Apparel | Heavyweight Cotton Tees & Custom Graphics',
   description: 'Discover premium streetwear at Grizzle, featuring heavy cotton tees, vibrant custom anime designs, and bold typography printed to perfection.',
   icons: {
-    icon: '/logo2.jpeg',
-    shortcut: '/logo2.jpeg',
-    apple: '/logo2.jpeg',
+    icon: '/logo2.png',
+    shortcut: '/logo2.png',
+    apple: '/logo2.png',
   },
 };
 
@@ -37,8 +37,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" data-theme="light" className={`${inter.variable} ${outfit.variable}`}>
       <head>
-        <link rel="icon" href="/logo2.jpeg" type="image/jpeg" />
-        <link rel="apple-touch-icon" href="/logo2.jpeg" />
+        <link rel="icon" href="/logo2.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/logo2.png" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
