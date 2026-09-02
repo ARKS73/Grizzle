@@ -102,17 +102,31 @@ export default function ProductDetailPage() {
     ? (reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / totalReviews).toFixed(1)
     : (product.numReviews > 0 && product.ratings ? Number(product.ratings).toFixed(1) : '0.0');
 
-  const activeColorObj = product?.colors?.find((c) => c.name === selectedColor);
+  const activeColorObj = product?.colors?.find((c) => c.name === selectedColor) || product?.colors?.[0];
+
+  // Images of ALL OTHER colors (to hide when current color is active)
+  const otherColors = (product?.colors || []).filter((c) => c.name !== activeColorObj?.name);
+  const otherColorImages = otherColors.flatMap((c) =>
+    (Array.isArray(c.images) && c.images.length > 0) ? c.images : (c.image ? [c.image] : [])
+  ).filter((img) => img && img !== '/logo2.png');
+
+  // Images of the ACTIVE color
   const activeColorImages = (Array.isArray(activeColorObj?.images) && activeColorObj.images.length > 0)
     ? activeColorObj.images.filter((img) => img && img !== '/logo2.png')
     : (activeColorObj?.image && activeColorObj.image !== '/logo2.png' ? [activeColorObj.image] : []);
 
+  // General product gallery images
   const userImages = (product?.images || []).filter((img) => img && img !== '/logo2.png');
 
-  // Show ONLY chosen color images if defined; otherwise fallback to product gallery images
-  const displayedThumbnails = activeColorImages.length > 0
-    ? activeColorImages
-    : (userImages.length > 0 ? userImages : (product?.images || []));
+  // Displayed thumbnails: active color images first + general images (excluding images of other colors)
+  const cleanImages = Array.from(
+    new Set([
+      ...activeColorImages,
+      ...userImages.filter((img) => !otherColorImages.includes(img)),
+    ])
+  ).filter(Boolean);
+
+  const displayedThumbnails = cleanImages.length > 0 ? cleanImages : (product?.images || []);
 
   const currentMainImage = (selectedImage && displayedThumbnails.includes(selectedImage))
     ? selectedImage
