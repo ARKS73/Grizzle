@@ -65,7 +65,7 @@ export function CartProvider({ children }) {
     return Math.max(0, Number(product.stock || 0));
   };
 
-  const addToCart = (product, size = 'M', color = 'Pitch Black', quantity = 1) => {
+  const addToCart = (product, size, color, quantity = 1) => {
     if (!product || !product._id) return;
 
     // Strict Rule: Only logged-in users can add items to cart
@@ -77,9 +77,17 @@ export function CartProvider({ children }) {
       return;
     }
 
-    const maxStock = getAvailableStock(product, size);
+    const resolvedColor = (color && typeof color === 'string' && color.trim())
+      ? color.trim()
+      : (product.colors?.[0]?.name || 'Standard');
+
+    const resolvedSize = (size && typeof size === 'string' && size.trim())
+      ? size.trim()
+      : (product.sizes?.[0] || 'M');
+
+    const maxStock = getAvailableStock(product, resolvedSize);
     if (maxStock <= 0) {
-      if (addToast) addToast(`Size ${size} for "${product.name}" is currently out of stock`, 'error');
+      if (addToast) addToast(`Size ${resolvedSize} for "${product.name}" is currently out of stock`, 'error');
       return;
     }
 
@@ -87,7 +95,7 @@ export function CartProvider({ children }) {
 
     setCartItems((prev) => {
       const existingIndex = prev.findIndex(
-        (item) => (item.product?._id === product._id || item.product === product._id) && item.size === size && item.color === color
+        (item) => (item.product?._id === product._id || item.product === product._id) && item.size === resolvedSize && item.color === resolvedColor
       );
 
       let updated = [...prev];
@@ -103,7 +111,7 @@ export function CartProvider({ children }) {
       } else {
         const targetQty = Math.min(quantity, maxStock);
         if (quantity > maxStock) capped = true;
-        updated.push({ product, size, color, quantity: targetQty });
+        updated.push({ product, size: resolvedSize, color: resolvedColor, quantity: targetQty });
       }
 
       syncCartToDatabase(updated);

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { X, Star, ShoppingBag, Heart, Check, Truck, ShieldCheck, ArrowRight } from 'lucide-react';
@@ -16,20 +16,38 @@ export default function QuickViewModal({ product, onClose }) {
   const cleanImages = (product?.images || []).filter((img) => img && img !== '/logo2.png');
   const defaultColor = product?.colors?.[0]?.name || '';
   const defaultColorObj = product?.colors?.[0];
-  const initialImg = defaultColorObj?.image || cleanImages[0] || product?.images?.[0] || '';
+  const initialImg = defaultColorObj?.images?.[0] || defaultColorObj?.image || cleanImages[0] || product?.images?.[0] || '';
 
   const [selectedImage, setSelectedImage] = useState(initialImg);
   const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || 'M');
   const [selectedColor, setSelectedColor] = useState(defaultColor);
   const [quantity, setQuantity] = useState(1);
 
+  useEffect(() => {
+    if (product?.colors?.[0]?.name && !selectedColor) {
+      setSelectedColor(product.colors[0].name);
+    }
+  }, [product]);
+
   if (!product) return null;
 
   const isSaved = isInWishlist(product._id);
 
-  const activeColorObj = product?.colors?.find((c) => c.name === selectedColor);
-  const activeColorImg = activeColorObj?.image;
-  const displayedThumbnails = cleanImages.length > 0 ? cleanImages : (product?.images || []);
+  const activeColorObj = product?.colors?.find((c) => c.name === selectedColor) || product?.colors?.[0];
+  const activeColorImages = (Array.isArray(activeColorObj?.images) && activeColorObj.images.length > 0)
+    ? activeColorObj.images.filter((img) => img && img !== '/logo2.png')
+    : (activeColorObj?.image && activeColorObj.image !== '/logo2.png' ? [activeColorObj.image] : []);
+
+  const userImages = (product?.images || []).filter((img) => img && img !== '/logo2.png');
+
+  // Show ONLY chosen color images if defined; otherwise fallback to general product gallery
+  const displayedThumbnails = activeColorImages.length > 0
+    ? activeColorImages
+    : (userImages.length > 0 ? userImages : (product?.images || []));
+
+  const currentMainImage = (selectedImage && displayedThumbnails.includes(selectedImage))
+    ? selectedImage
+    : (displayedThumbnails[0] || '');
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -43,7 +61,7 @@ export default function QuickViewModal({ product, onClose }) {
           <div className="quickview-gallery">
             <div className="main-image-box">
               <img
-                src={getOptimizedImageUrl(selectedImage || activeColorImg || displayedThumbnails[0] || '', 600, 80)}
+                src={getOptimizedImageUrl(currentMainImage, 600, 80)}
                 alt={product.name}
                 className="main-image"
                 loading="eager"
@@ -56,7 +74,7 @@ export default function QuickViewModal({ product, onClose }) {
                   <button
                     key={idx}
                     onClick={() => setSelectedImage(img)}
-                    className={`thumb-btn ${selectedImage === img ? 'active' : ''}`}
+                    className={`thumb-btn ${currentMainImage === img ? 'active' : ''}`}
                   >
                     <img src={getOptimizedImageUrl(img, 150, 70)} alt={`thumb-${idx}`} loading="lazy" />
                   </button>
@@ -110,8 +128,11 @@ export default function QuickViewModal({ product, onClose }) {
                       key={c.name}
                       onClick={() => {
                         setSelectedColor(c.name);
-                        if (c.image) {
-                          setSelectedImage(c.image);
+                        const cImgs = (Array.isArray(c.images) && c.images.length > 0)
+                          ? c.images
+                          : (c.image ? [c.image] : []);
+                        if (cImgs[0]) {
+                          setSelectedImage(cImgs[0]);
                         }
                       }}
                       className={`color-pill ${selectedColor === c.name ? 'active' : ''}`}
@@ -123,7 +144,6 @@ export default function QuickViewModal({ product, onClose }) {
                 </div>
               </div>
             )}
-
 
             {/* Sizes Picker */}
             {product.sizes?.length > 0 && (
@@ -211,7 +231,8 @@ export default function QuickViewModal({ product, onClose }) {
                   <button
                     onClick={() => {
                       const finalQty = Math.min(quantity, maxAvailable);
-                      addToCart(product, selectedSize, selectedColor, finalQty);
+                      const finalColor = selectedColor || product?.colors?.[0]?.name || 'Standard';
+                      addToCart(product, selectedSize, finalColor, finalQty);
                       onClose();
                     }}
                     disabled={maxAvailable <= 0}
@@ -230,428 +251,9 @@ export default function QuickViewModal({ product, onClose }) {
                 </div>
               );
             })()}
-
-            <Link href={`/product/${product._id}`} onClick={onClose} className="full-details-link mt-2">
-              View Full Product Page & Verified Reviews &rarr;
-            </Link>
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        .quickview-card {
-          max-width: 900px;
-          padding: 2rem;
-        }
-        .modal-close-btn {
-          position: absolute;
-          top: 1rem;
-          right: 1rem;
-          background: var(--bg-tertiary);
-          border: 1px solid var(--border-color);
-          color: var(--text-primary);
-          border-radius: var(--radius-full);
-          width: 36px;
-          height: 36px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          z-index: 10;
-        }
-
-        .quickview-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 2rem;
-        }
-
-        .main-image-box {
-          aspect-ratio: 4 / 5;
-          border-radius: var(--radius-md);
-          overflow: hidden;
-          background: var(--bg-tertiary);
-        }
-        .main-image {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-        .thumbnails-row {
-          display: flex;
-          gap: 0.5rem;
-          margin-top: 0.75rem;
-        }
-        .thumb-btn {
-          width: 60px;
-          height: 60px;
-          border-radius: var(--radius-sm);
-          border: 1px solid var(--border-color);
-          overflow: hidden;
-          cursor: pointer;
-        }
-        .thumb-btn.active {
-          border-color: var(--accent-primary);
-        }
-        .thumb-btn img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .quickview-details {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-        .product-title {
-          font-size: 1.5rem;
-        }
-        .rating-row {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-        .stars { display: flex; gap: 2px; }
-        .rating-text { font-size: 0.85rem; color: var(--text-muted); }
-
-        .price-row {
-          display: flex;
-          align-items: baseline;
-          gap: 0.75rem;
-        }
-        .price-current {
-          font-size: 1.5rem;
-          font-weight: 800;
-        }
-        .price-original {
-          font-size: 1rem;
-          color: var(--text-muted);
-          text-decoration: line-through;
-        }
-
-        .description {
-          font-size: 0.9rem;
-          color: var(--text-secondary);
-          line-height: 1.5;
-        }
-
-        .variant-group {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-        .variant-label {
-          font-size: 0.85rem;
-          font-weight: 600;
-        }
-        .colors-picker {
-          display: flex;
-          gap: 0.5rem;
-          flex-wrap: wrap;
-        }
-        .color-pill {
-          display: flex;
-          align-items: center;
-          gap: 0.35rem;
-          padding: 0.45rem 0.75rem;
-          border-radius: var(--radius-md);
-          border: 1.5px solid var(--border-color);
-          background: var(--bg-secondary);
-          font-size: 0.82rem;
-          font-weight: 700;
-          cursor: pointer;
-          touch-action: manipulation;
-          -webkit-tap-highlight-color: transparent;
-          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .color-pill:active { transform: scale(0.96); }
-        .color-pill.active {
-          border-color: var(--accent-primary);
-          background: var(--accent-light);
-          box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
-          transform: scale(1.02);
-        }
-        .color-dot {
-          width: 12px;
-          height: 12px;
-          border-radius: var(--radius-full);
-          border: 1px solid rgba(0,0,0,0.2);
-        }
-        .color-dot-all {
-          width: 12px;
-          height: 12px;
-          border-radius: var(--radius-full);
-          background: linear-gradient(135deg, #ef4444 25%, #3b82f6 25%, #3b82f6 50%, #10b981 50%, #10b981 75%, #f59e0b 75%);
-          border: 1px solid rgba(0,0,0,0.2);
-        }
-        .variant-header-row {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 1rem;
-          margin-bottom: 0.4rem;
-        }
-        .selected-color-name {
-          font-weight: 800;
-          margin-left: 0.35rem;
-          color: var(--accent-primary);
-        }
-        .btn-link-reset-sm {
-          background: none;
-          border: none;
-          color: var(--accent-primary);
-          font-size: 0.78rem;
-          font-weight: 700;
-          cursor: pointer;
-          text-decoration: underline;
-          margin-left: auto;
-          white-space: nowrap;
-        }
-
-
-        .sizes-picker {
-          display: flex;
-          gap: 0.5rem;
-          flex-wrap: wrap;
-        }
-        .size-btn {
-          min-width: 46px;
-          height: 44px;
-          padding: 0.2rem 0.4rem;
-          border-radius: var(--radius-md);
-          border: 1.5px solid var(--border-color);
-          background: var(--bg-secondary);
-          color: var(--text-primary);
-          font-weight: 800;
-          display: inline-flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          position: relative;
-          cursor: pointer;
-          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .size-btn.active {
-          border-color: var(--accent-primary);
-          color: var(--accent-primary);
-          background: var(--accent-light);
-          box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
-          transform: scale(1.03);
-        }
-        .size-btn.out-of-stock {
-          opacity: 0.45;
-          cursor: not-allowed;
-          background: var(--bg-tertiary);
-          border-style: dashed;
-        }
-        .size-subtag {
-          font-size: 0.62rem;
-          font-weight: 800;
-          line-height: 1;
-          margin-top: 1px;
-        }
-        .size-subtag.low {
-          color: #f59e0b;
-        }
-        .size-subtag.out {
-          color: #ef4444;
-        }
-        .selected-size-stock-badge {
-          margin-top: 0.65rem;
-          display: flex;
-          align-items: center;
-        }
-        .stock-pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.45rem;
-          font-size: 0.8rem;
-          font-weight: 800;
-          padding: 0.35rem 0.75rem;
-          border-radius: 20px;
-        }
-        .stock-pill.stock-in {
-          background: rgba(16, 185, 129, 0.12);
-          color: #10b981;
-          border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-        .stock-pill.stock-low {
-          background: rgba(245, 158, 11, 0.12);
-          color: #f59e0b;
-          border: 1px solid rgba(245, 158, 11, 0.35);
-        }
-        .stock-pill.stock-out {
-          background: rgba(239, 68, 68, 0.12);
-          color: #ef4444;
-          border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-        .stock-dot {
-          width: 7px;
-          height: 7px;
-          border-radius: 50%;
-          background: currentColor;
-        }
-
-        .action-row {
-          display: flex;
-          gap: 0.75rem;
-          margin-top: 0.5rem;
-        }
-        .quantity-control {
-          display: flex;
-          align-items: center;
-          border: 1px solid var(--border-color);
-          border-radius: var(--radius-md);
-          overflow: hidden;
-        }
-        .quantity-control button {
-          width: 36px;
-          height: 40px;
-          background: var(--bg-tertiary);
-          border: none;
-          cursor: pointer;
-          font-weight: 700;
-        }
-        .quantity-control span {
-          width: 40px;
-          text-align: center;
-          font-weight: 700;
-        }
-        .add-to-cart-btn { flex: 1; }
-
-        .perks-row {
-          display: flex;
-          flex-direction: column;
-          gap: 0.35rem;
-          font-size: 0.8rem;
-          color: var(--text-muted);
-          margin-top: 0.5rem;
-        }
-        .perks-row span { display: flex; align-items: center; gap: 0.5rem; }
-
-        .full-details-link {
-          font-size: 0.85rem;
-          color: var(--accent-primary);
-          font-weight: 600;
-          margin-top: 0.5rem;
-        }
-
-        @media (max-width: 768px) {
-          .quickview-card {
-            padding: 1rem !important;
-            max-height: 88vh;
-            overflow-y: auto;
-            width: 94%;
-            margin: 0 auto;
-          }
-          .modal-close-btn {
-            top: 0.5rem;
-            right: 0.5rem;
-            width: 30px;
-            height: 30px;
-          }
-          .quickview-grid {
-            grid-template-columns: 1fr;
-            gap: 0.85rem;
-          }
-          .main-image-box {
-            max-height: 220px;
-            aspect-ratio: 1 / 1;
-          }
-          .main-image {
-            object-fit: contain;
-          }
-          .thumbnails-row {
-            gap: 0.35rem;
-            margin-top: 0.4rem;
-          }
-          .thumb-btn {
-            width: 44px;
-            height: 44px;
-          }
-          .quickview-details {
-            gap: 0.5rem;
-          }
-          .product-title {
-            font-size: 1.1rem;
-            line-height: 1.25;
-          }
-          .rating-row {
-            gap: 0.35rem;
-          }
-          .rating-text {
-            font-size: 0.75rem;
-          }
-          .price-row {
-            gap: 0.5rem;
-            align-items: center;
-          }
-          .price-current {
-            font-size: 1.2rem;
-          }
-          .price-original {
-            font-size: 0.85rem;
-          }
-          .description {
-            font-size: 0.78rem;
-            line-height: 1.35;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-          }
-          .variant-group {
-            gap: 0.35rem;
-          }
-          .variant-label {
-            font-size: 0.78rem;
-          }
-          .color-pill {
-            padding: 0.3rem 0.55rem;
-            font-size: 0.72rem;
-            gap: 0.25rem;
-          }
-          .sizes-picker {
-            gap: 0.35rem;
-          }
-          .size-btn {
-            width: 32px;
-            height: 32px;
-            font-size: 0.75rem;
-          }
-          .action-row {
-            gap: 0.4rem;
-            margin-top: 0.35rem;
-          }
-          .quantity-control button {
-            width: 30px;
-            height: 36px;
-          }
-          .quantity-control span {
-            width: 30px;
-            font-size: 0.8rem;
-          }
-          .add-to-cart-btn {
-            font-size: 0.8rem !important;
-            padding: 0.45rem 0.65rem !important;
-            height: 36px;
-          }
-          .wishlist-btn {
-            height: 36px;
-            width: 36px;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-          .full-details-link {
-            font-size: 0.75rem;
-            text-align: center;
-            margin-top: 0.25rem;
-          }
-        }
-      `}</style>
     </div>
   );
 }
