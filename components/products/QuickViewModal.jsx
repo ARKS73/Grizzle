@@ -263,10 +263,16 @@ export default function QuickViewModal({ product, onClose }) {
 
                     <button
                       onClick={() => toggleWishlist(product)}
-                      className={`btn btn-secondary wishlist-btn ${isSaved ? 'saved' : ''}`}
+                      className={`wishlist-btn ${isSaved ? 'saved' : ''}`}
                       title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                      aria-label="Wishlist"
                     >
-                      <Heart size={18} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : 'currentColor'} />
+                      <Heart
+                        size={20}
+                        fill={isSaved ? '#ef4444' : 'transparent'}
+                        stroke="#ef4444"
+                        strokeWidth={2}
+                      />
                     </button>
                   </div>
 
@@ -599,14 +605,24 @@ export default function QuickViewModal({ product, onClose }) {
           width: 46px;
           height: 46px;
           border-radius: 10px;
-          background: var(--bg-tertiary);
-          border: 1px solid var(--border-color);
-          color: var(--text-primary);
+          background: var(--bg-secondary);
+          border: 1.5px solid var(--border-color);
+          color: var(--accent-primary);
           display: inline-flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
           transition: all 0.2s ease;
+          flex-shrink: 0;
+        }
+        .wishlist-btn:hover {
+          border-color: var(--accent-primary);
+          background: var(--accent-light);
+          transform: scale(1.05);
+        }
+        .wishlist-btn.saved {
+          background: rgba(239, 68, 68, 0.12) !important;
+          border-color: #ef4444 !important;
         }
 
         .view-full-page-link {
