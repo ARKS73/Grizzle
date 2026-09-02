@@ -14,7 +14,6 @@ export default function QuickViewModal({ product, onClose }) {
   const { toggleWishlist, isInWishlist } = useWishlist();
 
   const defaultColor = product?.colors?.[0]?.name || '';
-  const defaultColorObj = product?.colors?.[0];
 
   const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || 'M');
   const [selectedColor, setSelectedColor] = useState(defaultColor);
@@ -38,14 +37,14 @@ export default function QuickViewModal({ product, onClose }) {
   const userImages = (product?.images || []).filter((img) => img && img !== '/logo2.png');
 
   // Displayed thumbnails: chosen color images first + general images (excluding images of other colors)
-  const displayedThumbnails = Array.from(
+  const cleanImages = Array.from(
     new Set([
       ...activeColorImages,
       ...userImages.filter((img) => !otherColorImages.includes(img)),
     ])
   ).filter(Boolean);
 
-  const finalThumbnails = displayedThumbnails.length > 0 ? displayedThumbnails : (product?.images || []);
+  const finalThumbnails = cleanImages.length > 0 ? cleanImages : (product?.images || []);
 
   const [selectedImage, setSelectedImage] = useState(finalThumbnails[0] || '');
 
@@ -66,7 +65,7 @@ export default function QuickViewModal({ product, onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content quickview-card" onClick={(e) => e.stopPropagation()}>
-        <button onClick={onClose} className="modal-close-btn">
+        <button onClick={onClose} className="modal-close-btn" aria-label="Close modal">
           <X size={20} />
         </button>
 
@@ -99,44 +98,54 @@ export default function QuickViewModal({ product, onClose }) {
 
           {/* Details */}
           <div className="quickview-details">
-            <span className="badge badge-primary">{product.category}</span>
-            <h2 className="product-title">{product.name}</h2>
+            <span className="badge badge-primary text-uppercase" style={{ letterSpacing: '0.05em', fontSize: '0.72rem', fontWeight: 800 }}>
+              {product.category || 'Grizzle Collection'}
+            </span>
+            <h2 className="product-title font-bold mt-1 mb-2">{product.name}</h2>
 
-            <div className="rating-row">
-              <div className="stars">
+            <div className="rating-row d-flex align-items-center gap-2 mb-2">
+              <div className="stars d-flex gap-1">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={16} fill={i < Math.round(product.ratings || 0) ? '#f59e0b' : 'none'} color="#f59e0b" />
+                  <Star key={i} size={15} fill={i < Math.round(product.ratings || 0) ? '#f59e0b' : 'none'} color="#f59e0b" />
                 ))}
               </div>
-              <span className="rating-text">
+              <span className="rating-text subtext" style={{ fontSize: '0.82rem' }}>
                 {product.numReviews > 0
                   ? `${Number(product.ratings || 0).toFixed(1)} (${product.numReviews} ${product.numReviews === 1 ? 'review' : 'reviews'})`
                   : '0.0 (0 reviews)'}
               </span>
             </div>
 
-            <div className="price-row">
-              <span className="price-current">₹{product.price?.toFixed(0)}</span>
+            <div className="price-row d-flex align-items-baseline gap-2 mb-3">
+              <span className="price-current text-primary font-extrabold" style={{ fontSize: '1.4rem' }}>
+                ₹{product.price?.toFixed(0)}
+              </span>
               {product.originalPrice > product.price && (
-                <span className="price-original">₹{product.originalPrice?.toFixed(0)}</span>
+                <span className="price-original text-muted text-decoration-line-through" style={{ fontSize: '0.95rem' }}>
+                  ₹{product.originalPrice?.toFixed(0)}
+                </span>
               )}
               {product.discountPercentage > 0 && (
-                <span className="badge badge-danger">Save {product.discountPercentage}%</span>
+                <span className="badge badge-danger font-bold" style={{ fontSize: '0.75rem' }}>
+                  -{product.discountPercentage}% OFF
+                </span>
               )}
             </div>
 
-            <p className="description">{product.description}</p>
+            <p className="description subtext mb-3" style={{ lineHeight: 1.5, fontSize: '0.88rem' }}>
+              {product.description}
+            </p>
 
             {/* Colors Picker */}
             {product.colors?.length > 0 && (
-              <div className="variant-group">
-                <div className="variant-header-row">
-                  <label className="variant-label">
-                    Color Option: <span className="selected-color-name">{selectedColor || product.colors[0]?.name}</span>
+              <div className="variant-group mb-3">
+                <div className="variant-header-row mb-1">
+                  <label className="variant-label font-semibold" style={{ fontSize: '0.88rem' }}>
+                    Color Option: <span className="selected-color-name font-bold text-danger">{selectedColor || product.colors[0]?.name}</span>
                   </label>
                 </div>
 
-                <div className="colors-picker">
+                <div className="colors-picker d-flex flex-wrap gap-2">
                   {product.colors.map((c) => (
                     <button
                       key={c.name}
@@ -161,13 +170,13 @@ export default function QuickViewModal({ product, onClose }) {
 
             {/* Sizes Picker */}
             {product.sizes?.length > 0 && (
-              <div className="variant-group">
-                <div className="size-header">
-                  <label className="variant-label">
-                    Select Size: {selectedSize && <span className="selected-color-name">{selectedSize}</span>}
+              <div className="variant-group mb-3">
+                <div className="size-header mb-1">
+                  <label className="variant-label font-semibold" style={{ fontSize: '0.88rem' }}>
+                    Select Size: {selectedSize && <span className="selected-color-name font-bold text-danger">{selectedSize}</span>}
                   </label>
                 </div>
-                <div className="sizes-picker">
+                <div className="sizes-picker d-flex flex-wrap gap-2">
                   {product.sizes.map((sz) => {
                     const sizeQty = (product.sizeStock && product.sizeStock[sz] !== undefined)
                       ? Number(product.sizeStock[sz])
@@ -193,7 +202,7 @@ export default function QuickViewModal({ product, onClose }) {
 
                 {/* Dynamic Selected Size Stock Pill */}
                 {selectedSize && (
-                  <div className="selected-size-stock-badge">
+                  <div className="selected-size-stock-badge mt-2">
                     {(() => {
                       const selectedQty = (product.sizeStock && product.sizeStock[selectedSize] !== undefined)
                         ? Number(product.sizeStock[selectedSize])
@@ -225,43 +234,58 @@ export default function QuickViewModal({ product, onClose }) {
               const isMaxReached = quantity >= maxAvailable;
 
               return (
-                <div className="action-row">
-                  <div className="quantity-control">
-                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
-                    <span>{quantity}</span>
+                <div>
+                  <div className="action-row d-flex align-items-center gap-2">
+                    <div className="quantity-control">
+                      <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
+                      <span>{quantity}</span>
+                      <button
+                        onClick={() => {
+                          if (!isMaxReached) {
+                            setQuantity(quantity + 1);
+                          }
+                        }}
+                        disabled={isMaxReached || maxAvailable <= 0}
+                        title={isMaxReached ? `Only ${maxAvailable} in stock` : ''}
+                      >
+                        +
+                      </button>
+                    </div>
+
                     <button
                       onClick={() => {
-                        if (!isMaxReached) {
-                          setQuantity(quantity + 1);
-                        }
+                        const finalQty = Math.min(quantity, maxAvailable);
+                        const finalColor = selectedColor || product?.colors?.[0]?.name || 'Standard';
+                        addToCart(product, selectedSize, finalColor, finalQty);
+                        onClose();
                       }}
-                      disabled={isMaxReached || maxAvailable <= 0}
-                      title={isMaxReached ? `Only ${maxAvailable} in stock` : ''}
+                      disabled={maxAvailable <= 0}
+                      className="btn btn-primary add-to-cart-btn font-bold flex-1 d-flex align-items-center justify-content-center gap-2"
+                      style={{ fontSize: '0.98rem', padding: '0.75rem 1rem' }}
                     >
-                      +
+                      <ShoppingBag size={18} /> {maxAvailable <= 0 ? 'Out of Stock' : `Add to Cart (${Math.min(quantity, maxAvailable)})`} <ArrowRight size={16} />
+                    </button>
+
+                    <button
+                      onClick={() => toggleWishlist(product)}
+                      className={`btn btn-secondary wishlist-btn ${isSaved ? 'saved' : ''}`}
+                      title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                    >
+                      <Heart size={18} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : 'currentColor'} />
                     </button>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      const finalQty = Math.min(quantity, maxAvailable);
-                      const finalColor = selectedColor || product?.colors?.[0]?.name || 'Standard';
-                      addToCart(product, selectedSize, finalColor, finalQty);
-                      onClose();
-                    }}
-                    disabled={maxAvailable <= 0}
-                    className="btn btn-primary add-to-cart-btn btn-lg font-bold"
-                    style={{ fontSize: '1.05rem', padding: '0.85rem 1.25rem' }}
-                  >
-                    <ShoppingBag size={20} /> {maxAvailable <= 0 ? 'Out of Stock' : `Add to Cart (${Math.min(quantity, maxAvailable)})`} <ArrowRight size={18} />
-                  </button>
-
-                  <button
-                    onClick={() => toggleWishlist(product)}
-                    className={`btn btn-secondary wishlist-btn ${isSaved ? 'saved' : ''}`}
-                  >
-                    <Heart size={18} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : 'currentColor'} />
-                  </button>
+                  {/* View Full Product Page Link */}
+                  <div className="mt-3 pt-2">
+                    <Link
+                      href={`/product/${product._id}`}
+                      onClick={onClose}
+                      className="view-full-page-link font-semibold subtext text-primary d-inline-flex align-items-center gap-1"
+                      style={{ textDecoration: 'none' }}
+                    >
+                      View Full Product Page &amp; Verified Reviews &rarr;
+                    </Link>
+                  </div>
                 </div>
               );
             })()}
