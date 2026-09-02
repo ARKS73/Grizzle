@@ -32,7 +32,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: transparent;
   z-index: 1;
 }
 
@@ -47,7 +47,21 @@
   gap: 1.5rem;
 }
 
+.hero-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
 
+.badge-sparkle {
+  color: #93c5fd;
+}
 
 .hero-street-title {
   font-size: clamp(3rem, 6vw, 5rem);
@@ -61,7 +75,7 @@
 
 .title-accent-italic {
   display: block;
-  font-style: italic;
+  font-style: normal;
   font-weight: 800;
   color: var(--accent-primary);
   text-shadow: 0 4px 25px rgba(220, 38, 38, 0.6);
