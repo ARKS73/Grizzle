@@ -127,7 +127,6 @@ function ProductsCatalogContent() {
       <div className="page-header glass-panel">
         <div>
           <h1>STREETWEAR CATALOG &amp; DROPS</h1>
-          <p>Discover high-density DTF printed 240 GSM bio-washed heavy cotton oversized tees.</p>
         </div>
         <button
           onClick={() => setMobileFilterOpen(true)}
