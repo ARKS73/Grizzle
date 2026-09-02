@@ -388,6 +388,7 @@ export default function ProductDetailPage() {
 
       {/* Interactive Size Chart Modal */}
       <SizeChartModal
+        product={product}
         isOpen={sizeChartOpen}
         onClose={() => setSizeChartOpen(false)}
       />

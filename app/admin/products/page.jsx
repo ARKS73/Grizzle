@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Plus, Edit, Trash2, Search, Upload, X, ArrowLeft, Palette, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Upload, X, ArrowLeft, Palette, Image as ImageIcon, Ruler } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 
 
@@ -119,6 +119,155 @@ export default function AdminProductsPage() {
     fetchProducts();
   }, [search]);
 
+  const DEFAULT_SIZE_CHART_TABLE = {
+    title: 'Standard Size Chart (Inches)',
+    columns: ['Size', 'Chest (in)', 'Length (in)', 'Shoulder (in)'],
+    rows: [
+      ['S', '38-40"', '27.5"', '18.5"'],
+      ['M', '40-42"', '28.5"', '19.5"'],
+      ['L', '42-44"', '29.5"', '20.5"'],
+      ['XL', '44-46"', '30.5"', '21.5"'],
+      ['XXL', '46-48"', '31.5"', '22.5"'],
+    ],
+  };
+
+  const handleLoadMasterPreset = async () => {
+    try {
+      const res = await fetch('/api/admin/settings');
+      const data = await res.json();
+      if (data.success && data.settings) {
+        const s = data.settings;
+        if (Array.isArray(s.sizeChartColumns) && Array.isArray(s.sizeChartRows)) {
+          setFormData((prev) => ({
+            ...prev,
+            sizeCharts: [{ title: 'Master Store Size Chart', columns: s.sizeChartColumns, rows: s.sizeChartRows }],
+            sizeChartTips: s.sizeChartTips || prev.sizeChartTips,
+          }));
+          addToast('Loaded Master Store Size Chart Preset', 'info');
+          return;
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    setFormData((prev) => ({
+      ...prev,
+      sizeCharts: [DEFAULT_SIZE_CHART_TABLE],
+    }));
+    addToast('Loaded Standard Preset', 'info');
+  };
+
+  const handleCopyFromProduct = (sourceProductId) => {
+    const src = products.find((p) => p._id === sourceProductId);
+    if (!src) return;
+    let srcCharts = [];
+    if (Array.isArray(src.sizeCharts) && src.sizeCharts.length > 0) {
+      srcCharts = JSON.parse(JSON.stringify(src.sizeCharts));
+    } else {
+      srcCharts = [DEFAULT_SIZE_CHART_TABLE];
+    }
+    setFormData((prev) => ({
+      ...prev,
+      sizeCharts: srcCharts,
+      sizeChartTips: src.sizeChartTips || prev.sizeChartTips,
+    }));
+    addToast(`Copied size chart from "${src.name}"!`, 'success');
+  };
+
+  const handleAddTable = () => {
+    const newTbl = {
+      title: `Table #${(formData.sizeCharts || []).length + 1} Specs`,
+      columns: ['Size', 'Measure 1', 'Measure 2'],
+      rows: [['S', '', '']],
+    };
+    setFormData((prev) => ({
+      ...prev,
+      sizeCharts: [...(prev.sizeCharts || []), newTbl],
+    }));
+  };
+
+  const handleRemoveTable = (tableIdx) => {
+    setFormData((prev) => ({
+      ...prev,
+      sizeCharts: (prev.sizeCharts || []).filter((_, i) => i !== tableIdx),
+    }));
+  };
+
+  const handleTableTitleChange = (tableIdx, titleVal) => {
+    setFormData((prev) => {
+      const updated = JSON.parse(JSON.stringify(prev.sizeCharts || []));
+      if (updated[tableIdx]) updated[tableIdx].title = titleVal;
+      return { ...prev, sizeCharts: updated };
+    });
+  };
+
+  const handleAddTableColumn = (tableIdx) => {
+    setFormData((prev) => {
+      const updated = JSON.parse(JSON.stringify(prev.sizeCharts || []));
+      if (updated[tableIdx]) {
+        const cols = updated[tableIdx].columns || [];
+        cols.push(`Col ${cols.length + 1}`);
+        updated[tableIdx].rows = (updated[tableIdx].rows || []).map((r) => [...r, '']);
+      }
+      return { ...prev, sizeCharts: updated };
+    });
+  };
+
+  const handleRemoveTableColumn = (tableIdx, colIdx) => {
+    setFormData((prev) => {
+      const updated = JSON.parse(JSON.stringify(prev.sizeCharts || []));
+      if (updated[tableIdx]) {
+        if (updated[tableIdx].columns.length <= 1) return prev;
+        updated[tableIdx].columns = updated[tableIdx].columns.filter((_, i) => i !== colIdx);
+        updated[tableIdx].rows = updated[tableIdx].rows.map((r) => r.filter((_, i) => i !== colIdx));
+      }
+      return { ...prev, sizeCharts: updated };
+    });
+  };
+
+  const handleRenameTableColumn = (tableIdx, colIdx, val) => {
+    setFormData((prev) => {
+      const updated = JSON.parse(JSON.stringify(prev.sizeCharts || []));
+      if (updated[tableIdx] && updated[tableIdx].columns) {
+        updated[tableIdx].columns[colIdx] = val;
+      }
+      return { ...prev, sizeCharts: updated };
+    });
+  };
+
+  const handleAddTableRow = (tableIdx) => {
+    setFormData((prev) => {
+      const updated = JSON.parse(JSON.stringify(prev.sizeCharts || []));
+      if (updated[tableIdx]) {
+        const colCount = updated[tableIdx].columns ? updated[tableIdx].columns.length : 3;
+        const newRow = new Array(colCount).fill('');
+        newRow[0] = 'NEW';
+        updated[tableIdx].rows.push(newRow);
+      }
+      return { ...prev, sizeCharts: updated };
+    });
+  };
+
+  const handleRemoveTableRow = (tableIdx, rowIdx) => {
+    setFormData((prev) => {
+      const updated = JSON.parse(JSON.stringify(prev.sizeCharts || []));
+      if (updated[tableIdx]) {
+        updated[tableIdx].rows = updated[tableIdx].rows.filter((_, i) => i !== rowIdx);
+      }
+      return { ...prev, sizeCharts: updated };
+    });
+  };
+
+  const handleTableCellChange = (tableIdx, rowIdx, colIdx, val) => {
+    setFormData((prev) => {
+      const updated = JSON.parse(JSON.stringify(prev.sizeCharts || []));
+      if (updated[tableIdx] && updated[tableIdx].rows && updated[tableIdx].rows[rowIdx]) {
+        updated[tableIdx].rows[rowIdx][colIdx] = val;
+      }
+      return { ...prev, sizeCharts: updated };
+    });
+  };
+
   const handleOpenAddModal = () => {
     setEditingId(null);
     setFormData({
@@ -134,6 +283,8 @@ export default function AdminProductsPage() {
       images: [],
       sizes: ['S', 'M', 'L', 'XL', 'XXL'],
       colors: PRESET_COLOR_VARIANTS.slice(0, 2),
+      sizeCharts: [DEFAULT_SIZE_CHART_TABLE],
+      sizeChartTips: 'Oversized Streetwear Fit: Choose standard size for relaxed dropped-shoulder fit.',
       isFeatured: false,
       isTrending: false,
       isBestSeller: false,
@@ -164,6 +315,10 @@ export default function AdminProductsPage() {
       images: product.images && product.images.length > 0 ? product.images : [],
       sizes,
       colors: product.colors && product.colors.length > 0 ? product.colors : [],
+      sizeCharts: Array.isArray(product.sizeCharts) && product.sizeCharts.length > 0
+        ? product.sizeCharts
+        : [DEFAULT_SIZE_CHART_TABLE],
+      sizeChartTips: product.sizeChartTips || 'Oversized Streetwear Fit: Choose standard size for relaxed dropped-shoulder fit.',
       isFeatured: product.isFeatured || false,
       isTrending: product.isTrending || false,
       isBestSeller: product.isBestSeller || false,
@@ -689,6 +844,189 @@ export default function AdminProductsPage() {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              {/* 📐 Product Unique Multi-Table Size Chart Manager */}
+              <div className="form-group glass-panel p-3 border-radius-lg border-primary-light mt-3 mb-3">
+                <div className="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                  <div>
+                    <label className="form-label m-0 text-primary d-flex align-items-center gap-2 font-bold text-md">
+                      <Ruler size={18} /> Unique Product Size Chart &amp; Fit Guide (Multi-Table Editor)
+                    </label>
+                    <p className="subtext mt-1">
+                      Customize unique size charts for this product. Create multiple named tables (e.g. Inches, CM, Fit Specs), edit cells, or reuse preset/previous product charts.
+                    </p>
+                  </div>
+                  <div className="d-flex gap-2 flex-wrap">
+                    {/* Copy from existing product selector */}
+                    {products.length > 0 && (
+                      <select
+                        onChange={(e) => {
+                          if (e.target.value) {
+                            handleCopyFromProduct(e.target.value);
+                            e.target.value = '';
+                          }
+                        }}
+                        className="form-select form-select-sm"
+                        style={{ fontSize: '0.78rem', minWidth: '180px' }}
+                      >
+                        <option value="">📋 Reuse From Existing Product...</option>
+                        {products.map((p) => (
+                          <option key={p._id} value={p._id}>
+                            {p.name}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                    <button
+                      type="button"
+                      onClick={handleLoadMasterPreset}
+                      className="btn btn-secondary btn-sm"
+                      title="Load Default Store Master Size Chart"
+                    >
+                      🌟 Store Preset
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAddTable}
+                      className="btn btn-primary btn-sm font-bold"
+                    >
+                      + Add Extra Table
+                    </button>
+                  </div>
+                </div>
+
+                {/* Fit Tips Advice Input */}
+                <div className="form-group mb-3">
+                  <label className="subtext font-semibold d-block mb-1">
+                    Product Fit Advice &amp; Sizing Recommendation Tips:
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.sizeChartTips || ''}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, sizeChartTips: e.target.value }))}
+                    placeholder="e.g. Oversized Streetwear Fit: Choose standard size for dropped-shoulder fit. For regular fit, size down 1 size."
+                    className="form-input"
+                    style={{ fontSize: '0.85rem' }}
+                  />
+                </div>
+
+                {/* Loop Over Multiple Tables */}
+                {(formData.sizeCharts || []).map((chart, tIdx) => (
+                  <div key={tIdx} className="mb-4 p-3 border rounded glass-panel bg-secondary">
+                    <div className="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 border-bottom pb-2">
+                      <div className="d-flex align-items-center gap-2 flex-1" style={{ minWidth: '220px' }}>
+                        <span className="badge badge-primary font-bold">Table #{tIdx + 1}</span>
+                        <input
+                          type="text"
+                          value={chart.title || ''}
+                          onChange={(e) => handleTableTitleChange(tIdx, e.target.value)}
+                          placeholder="Table Name (e.g. Inches Chart, Centimeters Chart)"
+                          className="form-input font-bold"
+                          style={{ fontSize: '0.9rem', flex: 1 }}
+                        />
+                      </div>
+                      <div className="d-flex gap-2 align-items-center">
+                        <button
+                          type="button"
+                          onClick={() => handleAddTableColumn(tIdx)}
+                          className="btn btn-secondary btn-xs"
+                          style={{ color: 'var(--accent-primary)', borderColor: 'var(--accent-primary)' }}
+                        >
+                          + Column
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleAddTableRow(tIdx)}
+                          className="btn btn-secondary btn-xs"
+                        >
+                          + Row
+                        </button>
+                        {formData.sizeCharts.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveTable(tIdx)}
+                            className="btn btn-danger btn-xs"
+                            title="Delete this entire table"
+                          >
+                            <Trash2 size={13} /> Delete Table
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Table Matrix Editor */}
+                    <div style={{ overflowX: 'auto', background: 'var(--bg-tertiary)', borderRadius: '8px', padding: '0.4rem', border: '1px solid var(--border-color)' }}>
+                      <table className="admin-table" style={{ width: '100%', borderCollapse: 'collapse', minWidth: '500px' }}>
+                        <thead>
+                          <tr>
+                            {(chart.columns || []).map((colTitle, colIdx) => (
+                              <th key={colIdx} style={{ padding: '0.35rem', background: 'var(--bg-secondary)', borderBottom: '2px solid var(--border-color)' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                  <input
+                                    type="text"
+                                    value={colTitle}
+                                    onChange={(e) => handleRenameTableColumn(tIdx, colIdx, e.target.value)}
+                                    className="form-input"
+                                    style={{ padding: '0.2rem 0.4rem', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', background: 'var(--bg-primary)' }}
+                                    placeholder={`Col ${colIdx + 1}`}
+                                  />
+                                  {chart.columns.length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRemoveTableColumn(tIdx, colIdx)}
+                                      title="Delete Column"
+                                      style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '2px', fontSize: '0.8rem' }}
+                                    >
+                                      ✕
+                                    </button>
+                                  )}
+                                </div>
+                              </th>
+                            ))}
+                            <th style={{ width: '40px', textAlign: 'center', background: 'var(--bg-secondary)', borderBottom: '2px solid var(--border-color)', fontSize: '0.75rem' }}>
+                              ✕
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(chart.rows || []).map((rowArr, rowIdx) => (
+                            <tr key={rowIdx}>
+                              {(chart.columns || []).map((_, colIdx) => (
+                                <td key={colIdx} style={{ padding: '0.3rem' }}>
+                                  <input
+                                    type="text"
+                                    value={rowArr[colIdx] || ''}
+                                    onChange={(e) => handleTableCellChange(tIdx, rowIdx, colIdx, e.target.value)}
+                                    className="form-input"
+                                    style={{
+                                      padding: '0.3rem 0.45rem',
+                                      fontSize: '0.78rem',
+                                      fontWeight: colIdx === 0 ? 800 : 400,
+                                      background: colIdx === 0 ? 'var(--bg-primary)' : 'var(--bg-secondary)',
+                                    }}
+                                    placeholder={colIdx === 0 ? 'e.g. S' : 'Value'}
+                                  />
+                                </td>
+                              ))}
+                              <td style={{ textAlign: 'center', padding: '0.3rem' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveTableRow(tIdx, rowIdx)}
+                                  className="btn btn-secondary btn-xs"
+                                  style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)', padding: '0.2rem 0.4rem', fontSize: '0.75rem' }}
+                                  title="Delete Row"
+                                >
+                                  ✕
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               <div className="form-group">

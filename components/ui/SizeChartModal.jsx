@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Ruler, CheckCircle2, Info, Sparkles } from 'lucide-react';
 
-export default function SizeChartModal({ isOpen, onClose }) {
-  const [unit, setUnit] = useState('in'); // 'in' or 'cm'
+export default function SizeChartModal({ isOpen, onClose, product }) {
   const [settings, setSettings] = useState(null);
   const [mounted, setMounted] = useState(false);
+  const [activeTabIdx, setActiveTabIdx] = useState(0);
 
   useEffect(() => {
     setMounted(true);
@@ -31,41 +31,38 @@ export default function SizeChartModal({ isOpen, onClose }) {
 
   if (!isOpen || !mounted) return null;
 
-  const getNormalizedChartData = (settings) => {
+  // Resolve tables: Product-specific sizeCharts vs Store Settings vs Defaults
+  let tablesList = [];
+  if (Array.isArray(product?.sizeCharts) && product.sizeCharts.length > 0) {
+    tablesList = product.sizeCharts.filter(t => t && t.columns && t.columns.length > 0);
+  }
+
+  if (tablesList.length === 0) {
+    // Fall back to StoreSettings master table or standard defaults
     if (Array.isArray(settings?.sizeChartColumns) && Array.isArray(settings?.sizeChartRows)) {
-      return {
+      tablesList = [{
+        title: 'Master Size Chart',
         columns: settings.sizeChartColumns,
         rows: settings.sizeChartRows,
-      };
+      }];
+    } else {
+      tablesList = [{
+        title: 'Standard Size Chart',
+        columns: ['Size', 'Chest (in)', 'Chest (cm)', 'Length (in)', 'Length (cm)', 'Shoulder (in)', 'Shoulder (cm)'],
+        rows: [
+          ['S', '38-40"', '96-102 cm', '27.5"', '70 cm', '18.5"', '47 cm'],
+          ['M', '40-42"', '102-107 cm', '28.5"', '72 cm', '19.5"', '49.5 cm'],
+          ['L', '42-44"', '107-112 cm', '29.5"', '75 cm', '20.5"', '52 cm'],
+          ['XL', '44-46"', '112-117 cm', '30.5"', '77 cm', '21.5"', '54.5 cm'],
+          ['XXL', '46-48"', '117-122 cm', '31.5"', '80 cm', '22.5"', '57 cm'],
+        ],
+      }];
     }
-    if (Array.isArray(settings?.sizeChartData) && settings.sizeChartData.length > 0) {
-      const cols = ['Size', 'Chest (in)', 'Chest (cm)', 'Length (in)', 'Length (cm)', 'Shoulder (in)', 'Shoulder (cm)'];
-      const rws = settings.sizeChartData.map((row) => [
-        row.size || '',
-        row.chestIn || '',
-        row.chestCm || '',
-        row.lengthIn || '',
-        row.lengthCm || '',
-        row.shoulderIn || '',
-        row.shoulderCm || '',
-      ]);
-      return { columns: cols, rows: rws };
-    }
-    return {
-      columns: ['Size', 'Chest (in)', 'Chest (cm)', 'Length (in)', 'Length (cm)', 'Shoulder (in)', 'Shoulder (cm)'],
-      rows: [
-        ['S', '38-40"', '96-102 cm', '27.5"', '70 cm', '18.5"', '47 cm'],
-        ['M', '40-42"', '102-107 cm', '28.5"', '72 cm', '19.5"', '49.5 cm'],
-        ['L', '42-44"', '107-112 cm', '29.5"', '75 cm', '20.5"', '52 cm'],
-        ['XL', '44-46"', '112-117 cm', '30.5"', '77 cm', '21.5"', '54.5 cm'],
-        ['XXL', '46-48"', '117-122 cm', '31.5"', '80 cm', '22.5"', '57 cm'],
-      ],
-    };
-  };
+  }
 
-  const { columns, rows } = getNormalizedChartData(settings);
+  const currentTable = tablesList[activeTabIdx] || tablesList[0];
 
-  const fitTips = settings?.sizeChartTips ||
+  const fitTips = product?.sizeChartTips || settings?.sizeChartTips ||
     'Oversized Streetwear Fit: Choose your standard size for a relaxed dropped-shoulder silhouette. For regular fit, size down 1 size.';
 
   const modalContent = (
@@ -79,8 +76,8 @@ export default function SizeChartModal({ isOpen, onClose }) {
               <Ruler size={18} color="var(--accent-primary)" />
             </div>
             <div>
-              <h3 className="modal-title">Size Chart &amp; Fit Guide</h3>
-              <p className="modal-sub">240 GSM Bio-Washed Heavyweight Cotton</p>
+              <h3 className="modal-title">{product?.name ? `${product.name} Size Guide` : 'Size Chart & Fit Guide'}</h3>
+              <p className="modal-sub">{product?.fabricFit || '240 GSM Bio-Washed Heavyweight Cotton'}</p>
             </div>
           </div>
           <button onClick={onClose} className="btn-close-circle" title="Close">
@@ -88,11 +85,27 @@ export default function SizeChartModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Controls & Fit Pill */}
+        {/* Multi-Table Tabs Header */}
+        {tablesList.length > 1 && (
+          <div className="table-tabs-bar">
+            {tablesList.map((tbl, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setActiveTabIdx(idx)}
+                className={`table-tab-btn ${activeTabIdx === idx ? 'active' : ''}`}
+              >
+                {tbl.title || `Table ${idx + 1}`}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Fit Pill */}
         <div className="controls-bar">
           <div className="fit-pill">
             <Sparkles size={13} color="#f59e0b" />
-            <span>Streetwear Oversized Fit</span>
+            <span>{currentTable?.title || 'Streetwear Fit Guide'}</span>
           </div>
         </div>
 
@@ -103,15 +116,15 @@ export default function SizeChartModal({ isOpen, onClose }) {
             <table className="size-table">
               <thead>
                 <tr>
-                  {columns.map((colName, cIdx) => (
+                  {(currentTable?.columns || []).map((colName, cIdx) => (
                     <th key={cIdx}>{colName}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {rows.map((rowArr, rIdx) => (
+                {(currentTable?.rows || []).map((rowArr, rIdx) => (
                   <tr key={rIdx}>
-                    {rowArr.map((cellVal, cIdx) => (
+                    {(rowArr || []).map((cellVal, cIdx) => (
                       <td key={cIdx}>
                         {cIdx === 0 ? (
                           <span className="size-pill-tag">{cellVal || '-'}</span>
@@ -164,7 +177,7 @@ export default function SizeChartModal({ isOpen, onClose }) {
           position: relative;
           z-index: 2;
           width: 100%;
-          max-width: 520px;
+          max-width: 580px;
           max-height: 85vh;
           display: flex;
           flex-direction: column;
@@ -224,6 +237,34 @@ export default function SizeChartModal({ isOpen, onClose }) {
           cursor: pointer;
         }
 
+        .table-tabs-bar {
+          display: flex;
+          gap: 0.35rem;
+          padding: 0.5rem 1.1rem;
+          background: var(--bg-primary);
+          border-bottom: 1px solid var(--border-color);
+          overflow-x: auto;
+          flex-shrink: 0;
+        }
+        .table-tab-btn {
+          padding: 0.4rem 0.85rem;
+          border-radius: 20px;
+          border: 1px solid var(--border-color);
+          background: var(--bg-secondary);
+          color: var(--text-secondary);
+          font-size: 0.78rem;
+          font-weight: 700;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: all 0.15s ease;
+        }
+        .table-tab-btn.active {
+          background: var(--accent-gradient);
+          color: white;
+          border-color: transparent;
+          box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+
         .controls-bar {
           display: flex;
           align-items: center;
@@ -242,30 +283,6 @@ export default function SizeChartModal({ isOpen, onClose }) {
           font-size: 0.72rem;
           font-weight: 700;
           color: var(--text-secondary);
-        }
-
-        .unit-toggle-group {
-          display: flex;
-          background: var(--bg-secondary);
-          padding: 2px;
-          border-radius: 6px;
-          border: 1px solid var(--border-color);
-        }
-        .unit-toggle-btn {
-          border: none;
-          background: transparent;
-          color: var(--text-muted);
-          font-size: 0.72rem;
-          font-weight: 700;
-          padding: 0.25rem 0.6rem;
-          border-radius: 4px;
-          cursor: pointer;
-          transition: all 0.15s ease;
-        }
-        .unit-toggle-btn.active {
-          background: var(--accent-primary);
-          color: white;
-          box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
         }
 
         .modal-body-scroll {

@@ -76,6 +76,17 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    sizeCharts: [
+      {
+        title: { type: String, default: 'Standard Size Chart' },
+        columns: { type: [String], default: [] },
+        rows: { type: [[String]], default: [] },
+      },
+    ],
+    sizeChartTips: {
+      type: String,
+      default: '',
+    },
     isFeatured: {
       type: Boolean,
       default: false,
