@@ -471,7 +471,28 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Hamburger Toggle */}
+          {/* Mobile User Profile & Hamburger Toggle */}
+          <button
+            onClick={() => {
+              setMobileMenuOpen(true);
+              setTimeout(() => {
+                document.getElementById('mobile-account-links')?.scrollIntoView({ behavior: 'smooth' });
+              }, 100);
+            }}
+            className="icon-btn mobile-user-btn"
+          >
+            {user ? (
+              user.profileImage ? (
+                <img src={user.profileImage} alt="" style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover' }} />
+              ) : (
+                <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'var(--accent-primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold' }}>
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+              )
+            ) : (
+              <User size={22} />
+            )}
+          </button>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="icon-btn mobile-toggle"
@@ -484,37 +505,6 @@ export default function Navbar() {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="mobile-drawer glass-panel">
-          {/* 1. Account Section Header Card */}
-          <div className="mobile-account-card">
-            {user ? (
-              <div className="mobile-user-profile">
-                {user.profileImage ? (
-                  <img src={user.profileImage} alt={user.name} className="mobile-user-avatar" />
-                ) : (
-                  <div className="mobile-avatar-placeholder">
-                    {user.name.charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <div className="mobile-user-text">
-                  <span className="mobile-user-name">{user.name}</span>
-                  <span className="mobile-user-email">{user.email}</span>
-                </div>
-              </div>
-            ) : (
-              <div className="mobile-guest-auth">
-                <p className="mobile-guest-title">Welcome to Grizzle Apparel</p>
-                <div className="mobile-auth-btns">
-                  <Link href="/login" onClick={closeAllMenus} className="btn btn-primary btn-sm flex-1 text-center">
-                    <User size={15} /> Sign In
-                  </Link>
-                  <Link href="/register" onClick={closeAllMenus} className="btn btn-outline btn-sm flex-1 text-center">
-                    Register
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-
           {/* 2. Theme Selection Switcher */}
           <div className="mobile-theme-card">
             <span className="mobile-section-label">🎨 Theme Appearance</span>
@@ -574,7 +564,7 @@ export default function Navbar() {
           <div className="mobile-nav-divider" />
 
           {/* 5. Account & Quick Action Links */}
-          <div className="mobile-section-header">MY ACCOUNT & QUICK LINKS</div>
+          <div className="mobile-section-header" id="mobile-account-links">MY ACCOUNT & QUICK LINKS</div>
           <nav className="mobile-secondary-nav">
             <Link href="/products?sort=newest" onClick={closeAllMenus} className="mobile-sub-link">
               <Sparkles size={16} /> New Arrivals
@@ -1436,7 +1426,7 @@ export default function Navbar() {
           color: #ef4444 !important;
         }
 
-        .mobile-toggle { display: none; }
+        .mobile-toggle, .mobile-user-btn { display: none; }
 
         /* MOBILE DRAWER STYLING */
         .mobile-drawer {
@@ -1585,6 +1575,8 @@ export default function Navbar() {
           border: 1px solid var(--border-color);
           text-decoration: none;
           transition: all var(--transition-fast);
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .mobile-nav-btn:hover, .mobile-nav-btn:active {
@@ -1661,7 +1653,7 @@ export default function Navbar() {
           .search-wrapper { max-width: 260px; }
           .theme-toggle-desktop { display: none !important; }
           .user-dropdown-wrapper { display: none !important; }
-          .mobile-toggle { display: flex; }
+          .mobile-toggle, .mobile-user-btn { display: flex; }
         }
         @media (max-width: 600px) {
           .search-wrapper { display: none; }
