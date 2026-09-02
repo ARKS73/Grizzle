@@ -140,8 +140,8 @@ export async function POST(request) {
     } = body;
 
     const finalCategory = (category && category.trim()) ? category : 'T-Shirts';
-    const validImages = (images && Array.isArray(images)) ? images.filter(Boolean) : [];
-    const finalImages = validImages.length > 0 ? validImages : ['/logo2.png'];
+    const validImages = (images && Array.isArray(images)) ? images.filter((img) => img && img !== '/logo2.png') : [];
+    const finalImages = validImages;
 
     if (!name || !description || !price) {
       return NextResponse.json(

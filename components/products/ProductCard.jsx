@@ -67,14 +67,19 @@ export default function ProductCard({ product, onQuickView }) {
         style={{ cursor: 'pointer' }}
         title="Tap to view full details • Hold for quick preview"
       >
-        <img
-          src={getOptimizedImageUrl(product.images?.[0] || '/logo2.png', 500, 80)}
-          alt={product.name}
-          className="card-img"
-          loading="eager"
-          decoding="async"
-          fetchPriority="high"
-        />
+        {(() => {
+          const cleanImg = (product.images || []).find((img) => img && img !== '/logo2.png') || product.images?.[0] || '';
+          return (
+            <img
+              src={getOptimizedImageUrl(cleanImg, 500, 80)}
+              alt={product.name}
+              className="card-img"
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+            />
+          );
+        })()}
 
         {/* Badges Overlay */}
         <div className="card-badges">

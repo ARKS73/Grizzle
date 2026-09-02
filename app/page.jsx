@@ -164,6 +164,15 @@ export default function SinglePageStreetwearStore() {
     );
   }, [allProducts]);
 
+  const unisexProducts = useMemo(() => {
+    return allProducts.filter(
+      (p) =>
+        p.gender === 'Unisex' ||
+        !p.gender ||
+        (p.gender !== 'Men' && p.gender !== 'Women')
+    );
+  }, [allProducts]);
+
   const pastelColors = [
     '#d8d8fa', // Pastel Purple/Lavender
     '#fcdada', // Soft Blush Pink
@@ -171,7 +180,7 @@ export default function SinglePageStreetwearStore() {
     '#d0e6fd', // Ice Blue
   ];
 
-  const displayHeroImg = heroSettings.heroImage || allProducts?.[0]?.images?.[0] || '/logo2.png';
+  const displayHeroImg = heroSettings.heroImage || (allProducts?.[0]?.images || []).find((img) => img && img !== '/logo2.png') || '';
 
   return (
     <div className="single-page-wrapper">
@@ -279,7 +288,7 @@ export default function SinglePageStreetwearStore() {
                       title="Click to view product details"
                     >
                       <img
-                        src={product.images?.[0] || '/logo2.png'}
+                        src={(product.images || []).find((img) => img && img !== '/logo2.png') || product.images?.[0] || ''}
                         alt={product.name}
                         className="pastel-product-img"
                       />
@@ -352,7 +361,6 @@ export default function SinglePageStreetwearStore() {
         <div className="container">
           <div className="drops-header">
             <div>
-              <span className="badge-hot-pink" style={{ position: 'static', display: 'inline-block', marginBottom: '0.5rem' }}>MEN&apos;S DTF PRINTS</span>
               <h2 className="drops-title">MEN&apos;S COLLECTION</h2>
               <p className="drops-subtitle">240 GSM HEAVYWEIGHT TEES, OVERSIZED CUTS & DESI GRAPHICS</p>
             </div>
@@ -390,7 +398,7 @@ export default function SinglePageStreetwearStore() {
                       title="Click to view product details"
                     >
                       <img
-                        src={product.images?.[0] || '/logo2.png'}
+                        src={(product.images || []).find((img) => img && img !== '/logo2.png') || product.images?.[0] || ''}
                         alt={product.name}
                         className="pastel-product-img"
                       />
@@ -459,7 +467,6 @@ export default function SinglePageStreetwearStore() {
         <div className="container">
           <div className="drops-header">
             <div>
-              <span className="badge-pink-tilted" style={{ position: 'static', display: 'inline-block', marginBottom: '0.5rem' }}>WOMEN&apos;S LINE</span>
               <h2 className="drops-title">WOMEN&apos;S COLLECTION</h2>
               <p className="drops-subtitle">AESTHETIC MINIMALIST LINE ART, PASTELS & SOFT BIO-WASHED TEES</p>
             </div>
@@ -497,7 +504,7 @@ export default function SinglePageStreetwearStore() {
                       title="Click to view product details"
                     >
                       <img
-                        src={product.images?.[0] || '/logo2.png'}
+                        src={(product.images || []).find((img) => img && img !== '/logo2.png') || product.images?.[0] || ''}
                         alt={product.name}
                         className="pastel-product-img"
                       />
@@ -554,6 +561,112 @@ export default function SinglePageStreetwearStore() {
           <div className="collection-cta-wrapper">
             <Link href="/products?gender=Women" className="collection-filter-cta-btn">
               VIEW WOMEN&apos;S COLLECTION WITH FILTERS &rarr;
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+         SECTION: UNISEX COLLECTION SECTION
+         ========================================================================= */}
+      <section className="latest-drops-section unisex-collection-section" id="unisex-collection" style={{ padding: '4rem 0' }}>
+        <div className="container">
+          <div className="drops-header">
+            <div>
+              <h2 className="drops-title">UNISEX COLLECTION</h2>
+              <p className="drops-subtitle">VERSATILE FIT TEES FOR EVERYONE, ALL STYLES & ALL SIZES</p>
+            </div>
+
+            <Link href="/products?gender=Unisex" className="btn-street-dark">
+              SHOP UNISEX FILTERS &rarr;
+            </Link>
+          </div>
+
+          {loadingProducts ? (
+            <div className="pastel-products-grid">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="skeleton" style={{ height: '340px', borderRadius: '24px' }} />
+              ))}
+            </div>
+          ) : unisexProducts.length === 0 ? (
+            <div className="glass-panel text-center p-5" style={{ borderRadius: '24px', padding: '3rem 2rem' }}>
+              <ShoppingBag size={40} style={{ opacity: 0.4, marginBottom: '1rem' }} />
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 800 }}>No Unisex Products Added Yet</h3>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Products created by the seller in Admin Dashboard will be displayed live here.</p>
+              <Link href="/admin/products" className="btn-street-dark">
+                Go to Admin Product Manager &rarr;
+              </Link>
+            </div>
+          ) : (
+            <div className="pastel-products-grid">
+              {unisexProducts.slice(0, 4).map((product, idx) => {
+                const isSaved = isInWishlist(product._id);
+
+                return (
+                  <div key={product._id} className="pastel-card-wrapper">
+                    <div
+                      className="pastel-image-block"
+                      onClick={() => setQuickViewProduct(product)}
+                      title="Click to view product details"
+                    >
+                      <img
+                        src={(product.images || []).find((img) => img && img !== '/logo2.png') || product.images?.[0] || ''}
+                        alt={product.name}
+                        className="pastel-product-img"
+                      />
+                      <div className="pastel-action-overlay">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleWishlist(product);
+                          }}
+                          className={`pastel-icon-btn ${isSaved ? 'saved' : ''}`}
+                          title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                        >
+                          <Heart size={16} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : '#1e293b'} />
+                        </button>
+                      </div>
+                      {product.isBestSeller && <span className="pastel-tag-badge">BESTSELLER</span>}
+                    </div>
+
+                    <div className="pastel-card-info">
+                      <div
+                        className="info-text-box"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setQuickViewProduct(product)}
+                      >
+                        <h4 className="pastel-card-title">{product.name}</h4>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '2px' }}>
+                          <span className="pastel-card-price">₹{product.price?.toFixed(0)}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginLeft: 'auto' }}>
+                            <Star size={11} fill="#f59e0b" color="#f59e0b" />
+                            <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-secondary)' }}>
+                              {product.numReviews > 0 ? Number(product.ratings || 0).toFixed(1) : '0.0'}
+                            </span>
+                            <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                              ({product.numReviews || 0})
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => addToCart(product, product.sizes?.[0] || 'M', product.colors?.[0]?.name || 'Default', 1)}
+                        className="pastel-add-btn"
+                        title="Add to Cart"
+                      >
+                        <ShoppingBag size={15} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="collection-cta-wrapper">
+            <Link href="/products?gender=Unisex" className="collection-filter-cta-btn">
+              VIEW UNISEX COLLECTION WITH FILTERS &rarr;
             </Link>
           </div>
         </div>
@@ -643,9 +756,9 @@ export default function SinglePageStreetwearStore() {
       {/* =========================================================================
          SECTION: GLOBAL VERIFIED CUSTOMER REVIEWS & RATINGS
          ========================================================================= */}
-      <section className="global-reviews-section" id="reviews" style={{ padding: '4rem 0', background: 'var(--bg-secondary)' }}>
+      <section className="global-reviews-section" id="reviews" style={{ padding: '1.75rem 0', background: 'var(--bg-secondary)' }}>
         <div className="container">
-          <div className="drops-header" style={{ textAlign: 'center', display: 'block', marginBottom: '2.5rem' }}>
+          <div className="drops-header" style={{ textAlign: 'center', display: 'block', marginBottom: '1.25rem' }}>
             <span className="bento-tag-pill" style={{ display: 'inline-block', marginBottom: '0.5rem', background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
               ★ REAL CUSTOMER FEEDBACK
             </span>

@@ -13,9 +13,14 @@ export default function QuickViewModal({ product, onClose }) {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
-  const [selectedImage, setSelectedImage] = useState(product?.images?.[0] || '');
+  const cleanImages = (product?.images || []).filter((img) => img && img !== '/logo2.png');
+  const defaultColor = product?.colors?.[0]?.name || '';
+  const defaultColorObj = product?.colors?.[0];
+  const initialImg = defaultColorObj?.image || cleanImages[0] || product?.images?.[0] || '';
+
+  const [selectedImage, setSelectedImage] = useState(initialImg);
   const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || 'M');
-  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedColor, setSelectedColor] = useState(defaultColor);
   const [quantity, setQuantity] = useState(1);
 
   if (!product) return null;
@@ -24,7 +29,7 @@ export default function QuickViewModal({ product, onClose }) {
 
   const activeColorObj = product?.colors?.find((c) => c.name === selectedColor);
   const activeColorImg = activeColorObj?.image;
-  const displayedThumbnails = (selectedColor && activeColorImg) ? [activeColorImg] : (product?.images || []);
+  const displayedThumbnails = cleanImages.length > 0 ? cleanImages : (product?.images || []);
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -38,7 +43,7 @@ export default function QuickViewModal({ product, onClose }) {
           <div className="quickview-gallery">
             <div className="main-image-box">
               <img
-                src={getOptimizedImageUrl(selectedImage || activeColorImg || product.images?.[0] || '/logo2.png', 600, 80)}
+                src={getOptimizedImageUrl(selectedImage || activeColorImg || displayedThumbnails[0] || '', 600, 80)}
                 alt={product.name}
                 className="main-image"
                 loading="eager"
@@ -95,33 +100,11 @@ export default function QuickViewModal({ product, onClose }) {
               <div className="variant-group">
                 <div className="variant-header-row">
                   <label className="variant-label">
-                    Color Option: <span className="selected-color-name">{selectedColor || 'All Colors'}</span>
+                    Color Option: <span className="selected-color-name">{selectedColor || product.colors[0]?.name}</span>
                   </label>
-                  {selectedColor && (
-                    <button
-                      onClick={() => {
-                        setSelectedColor('');
-                        setSelectedImage(product.images?.[0] || '');
-                      }}
-                      className="btn-link-reset-sm"
-                    >
-                      Reset (Show All Photos)
-                    </button>
-                  )}
                 </div>
 
                 <div className="colors-picker">
-                  <button
-                    onClick={() => {
-                      setSelectedColor('');
-                      setSelectedImage(product.images?.[0] || '');
-                    }}
-                    className={`color-pill ${selectedColor === '' ? 'active' : ''}`}
-                  >
-                    <span className="color-dot-all" />
-                    <span>All Colors</span>
-                  </button>
-
                   {product.colors.map((c) => (
                     <button
                       key={c.name}

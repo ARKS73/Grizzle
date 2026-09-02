@@ -36,9 +36,14 @@ export default function ProductDetailPage() {
       if (data.success && data.product) {
         const prod = data.product;
         setProduct(prod);
-        setSelectedImage(prod.images?.[0] || '');
+        const cleanImages = (prod.images || []).filter((img) => img && img !== '/logo2.png');
+        const defaultColor = prod.colors?.[0]?.name || '';
+        const defaultColorObj = prod.colors?.[0];
+        const initialImg = defaultColorObj?.image || cleanImages[0] || prod.images?.[0] || '';
+
+        setSelectedImage(initialImg);
         setSelectedSize(prod.sizes?.[0] || 'M');
-        setSelectedColor(''); // Default: Show All Colors Mode
+        setSelectedColor(defaultColor);
         setLoading(false); // Unblock UI immediately for instant rendering
 
         // Preload primary Cloudinary image in browser cache for 0ms delay
@@ -97,9 +102,10 @@ export default function ProductDetailPage() {
     ? (reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / totalReviews).toFixed(1)
     : (product.numReviews > 0 && product.ratings ? Number(product.ratings).toFixed(1) : '0.0');
 
+  const cleanImages = (product?.images || []).filter((img) => img && img !== '/logo2.png');
   const activeColorObj = product?.colors?.find((c) => c.name === selectedColor);
   const activeColorImg = activeColorObj?.image;
-  const displayedThumbnails = (selectedColor && activeColorImg) ? [activeColorImg] : (product?.images || []);
+  const displayedThumbnails = cleanImages.length > 0 ? cleanImages : (product?.images || []);
 
   const handleBack = () => {
     if (typeof window !== 'undefined' && window.history.length > 1) {
@@ -119,7 +125,7 @@ export default function ProductDetailPage() {
         <div className="product-gallery-box">
           <div className="main-image-container glass-panel">
             <img
-              src={getOptimizedImageUrl(selectedImage || displayedThumbnails[0] || '/logo2.png', 800, 80)}
+              src={getOptimizedImageUrl(selectedImage || displayedThumbnails[0] || '', 800, 80)}
               alt={product.name}
               className="main-product-img"
               loading="eager"
@@ -202,33 +208,11 @@ export default function ProductDetailPage() {
             <div className="variant-box">
               <div className="variant-header-row">
                 <label className="variant-title">
-                  Color Option: <span className="selected-color-name">{selectedColor || 'All Colors'}</span>
+                  Color Option: <span className="selected-color-name">{selectedColor || product.colors[0]?.name}</span>
                 </label>
-                {selectedColor && (
-                  <button
-                    onClick={() => {
-                      setSelectedColor('');
-                      setSelectedImage(product.images?.[0] || '');
-                    }}
-                    className="btn-link-reset"
-                  >
-                    Reset (Show All Photos)
-                  </button>
-                )}
               </div>
 
               <div className="color-swatches">
-                <button
-                  onClick={() => {
-                    setSelectedColor('');
-                    setSelectedImage(product.images?.[0] || '');
-                  }}
-                  className={`color-btn ${selectedColor === '' ? 'active' : ''}`}
-                >
-                  <span className="swatch-circle-all" />
-                  <span>All Colors</span>
-                </button>
-
                 {product.colors.map((c) => (
                   <button
                     key={c.name}

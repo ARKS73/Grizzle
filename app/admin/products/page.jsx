@@ -131,7 +131,7 @@ export default function AdminProductsPage() {
       originalPrice: '999',
       stock: '25',
       sizeStock: { S: 5, M: 5, L: 5, XL: 5, XXL: 5 },
-      images: ['/logo2.png'],
+      images: [],
       sizes: ['S', 'M', 'L', 'XL', 'XXL'],
       colors: PRESET_COLOR_VARIANTS.slice(0, 2),
       isFeatured: false,
@@ -253,13 +253,9 @@ export default function AdminProductsPage() {
       const method = editingId ? 'PUT' : 'POST';
 
       // Gather all color-specific t-shirt images into main product images list
-      const colorImages = (formData.colors || []).map(c => c.image).filter(Boolean);
-      const userImages = (formData.images || []).filter(Boolean);
-      let combinedImages = Array.from(new Set([...userImages, ...colorImages])).filter(Boolean);
-
-      if (combinedImages.length === 0) {
-        combinedImages = ['/logo2.png'];
-      }
+      const colorImages = (formData.colors || []).map(c => c.image).filter((img) => img && img !== '/logo2.png');
+      const userImages = (formData.images || []).filter((img) => img && img !== '/logo2.png');
+      let combinedImages = Array.from(new Set([...userImages, ...colorImages])).filter((img) => img && img !== '/logo2.png');
 
       const res = await fetch(url, {
         method,
