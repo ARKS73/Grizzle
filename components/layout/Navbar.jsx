@@ -608,23 +608,8 @@ export default function Navbar() {
 
             {user ? (
               <>
-                <Link href="/profile" onClick={closeAllMenus} className="mobile-category-row">
-                  <span>MY PROFILE & ADDRESS</span>
-                  <ChevronRight size={18} />
-                </Link>
-
                 <Link href="/orders" onClick={closeAllMenus} className="mobile-category-row">
                   <span>MY ORDERS</span>
-                  <ChevronRight size={18} />
-                </Link>
-
-                <Link href="/wishlist" onClick={closeAllMenus} className="mobile-category-row">
-                  <span>WISHLIST ({wishlistItems.length})</span>
-                  <ChevronRight size={18} />
-                </Link>
-
-                <Link href="/cart" onClick={closeAllMenus} className="mobile-category-row">
-                  <span>SHOPPING CART ({getTotalCount()})</span>
                   <ChevronRight size={18} />
                 </Link>
 
@@ -646,10 +631,6 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link href="/cart" onClick={closeAllMenus} className="mobile-category-row">
-                  <span>VIEW CART ({getTotalCount()})</span>
-                  <ChevronRight size={18} />
-                </Link>
                 <Link href="/login" onClick={closeAllMenus} className="mobile-category-row" style={{ color: 'var(--accent-primary)', fontWeight: 800 }}>
                   <span>SIGN IN / REGISTER</span>
                   <ChevronRight size={18} />
