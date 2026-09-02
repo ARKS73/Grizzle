@@ -66,7 +66,7 @@ export default function QuickViewModal({ product, onClose }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content quickview-card glass-panel" onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} className="modal-close-btn" aria-label="Close modal">
-          <X size={18} />
+          <X size={16} />
         </button>
 
         <div className="quickview-grid">
@@ -74,7 +74,7 @@ export default function QuickViewModal({ product, onClose }) {
           <div className="quickview-gallery">
             <div className="main-image-box">
               <img
-                src={getOptimizedImageUrl(currentMainImage, 600, 80)}
+                src={getOptimizedImageUrl(currentMainImage, 500, 80)}
                 alt={product.name}
                 className="main-image"
                 loading="eager"
@@ -89,7 +89,7 @@ export default function QuickViewModal({ product, onClose }) {
                     onClick={() => setSelectedImage(img)}
                     className={`thumb-btn ${currentMainImage === img ? 'active' : ''}`}
                   >
-                    <img src={getOptimizedImageUrl(img, 150, 70)} alt={`thumb-${idx}`} loading="lazy" />
+                    <img src={getOptimizedImageUrl(img, 120, 70)} alt={`thumb-${idx}`} loading="lazy" />
                   </button>
                 ))}
               </div>
@@ -101,12 +101,12 @@ export default function QuickViewModal({ product, onClose }) {
             <span className="badge badge-primary text-uppercase">
               {product.category || 'Grizzle Collection'}
             </span>
-            <h2 className="product-title font-bold mt-1 mb-2">{product.name}</h2>
+            <h2 className="product-title">{product.name}</h2>
 
             <div className="rating-row">
               <div className="stars">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={15} fill={i < Math.round(product.ratings || 0) ? '#f59e0b' : 'none'} color="#f59e0b" />
+                  <Star key={i} size={13} fill={i < Math.round(product.ratings || 0) ? '#f59e0b' : 'none'} color="#f59e0b" />
                 ))}
               </div>
               <span className="rating-text subtext">
@@ -132,9 +132,11 @@ export default function QuickViewModal({ product, onClose }) {
               )}
             </div>
 
-            <p className="description">
-              {product.description}
-            </p>
+            {product.description && (
+              <p className="description">
+                {product.description}
+              </p>
+            )}
 
             {/* Colors Picker */}
             {product.colors?.length > 0 && (
@@ -258,7 +260,7 @@ export default function QuickViewModal({ product, onClose }) {
                       disabled={maxAvailable <= 0}
                       className="btn btn-primary add-to-cart-btn"
                     >
-                      <ShoppingBag size={18} /> {maxAvailable <= 0 ? 'Out of Stock' : `Add to Cart (${Math.min(quantity, maxAvailable)})`} <ArrowRight size={16} />
+                      <ShoppingBag size={16} /> {maxAvailable <= 0 ? 'Out of Stock' : `Add to Cart (${Math.min(quantity, maxAvailable)})`} <ArrowRight size={14} />
                     </button>
 
                     <button
@@ -268,7 +270,7 @@ export default function QuickViewModal({ product, onClose }) {
                       aria-label="Wishlist"
                     >
                       <Heart
-                        size={20}
+                        size={18}
                         fill={isSaved ? '#ef4444' : 'transparent'}
                         stroke="#ef4444"
                         strokeWidth={2}
@@ -293,21 +295,21 @@ export default function QuickViewModal({ product, onClose }) {
 
       <style jsx>{`
         .quickview-card {
-          max-width: 820px;
-          width: 95%;
-          padding: 2rem;
-          border-radius: var(--radius-lg);
+          max-width: 680px;
+          width: 92%;
+          padding: 1.25rem 1.5rem;
+          border-radius: 16px;
           position: relative;
-          max-height: 90vh;
+          max-height: 85vh;
           overflow-y: auto;
         }
 
         .modal-close-btn {
           position: absolute;
-          top: 1rem;
-          right: 1rem;
-          width: 36px;
-          height: 36px;
+          top: 0.85rem;
+          right: 0.85rem;
+          width: 30px;
+          height: 30px;
           border-radius: 50%;
           background: var(--bg-tertiary);
           border: 1px solid var(--border-color);
@@ -327,16 +329,16 @@ export default function QuickViewModal({ product, onClose }) {
 
         .quickview-grid {
           display: grid;
-          grid-template-columns: 320px 1fr;
-          gap: 2rem;
+          grid-template-columns: 240px 1fr;
+          gap: 1.25rem;
           align-items: start;
         }
 
         .main-image-box {
           position: relative;
           width: 100%;
-          height: 360px;
-          border-radius: 14px;
+          height: 270px;
+          border-radius: 10px;
           overflow: hidden;
           background: var(--bg-tertiary);
           border: 1px solid var(--border-color);
@@ -349,16 +351,16 @@ export default function QuickViewModal({ product, onClose }) {
 
         .thumbnails-row {
           display: flex;
-          gap: 0.6rem;
+          gap: 0.4rem;
           overflow-x: auto;
-          margin-top: 0.75rem;
-          padding-bottom: 0.25rem;
+          margin-top: 0.5rem;
+          padding-bottom: 0.2rem;
         }
 
         .thumb-btn {
-          width: 64px;
-          height: 76px;
-          border-radius: 8px;
+          width: 50px;
+          height: 60px;
+          border-radius: 6px;
           overflow: hidden;
           border: 2px solid var(--border-color);
           background: var(--bg-tertiary);
@@ -369,7 +371,7 @@ export default function QuickViewModal({ product, onClose }) {
         }
         .thumb-btn.active {
           border-color: var(--accent-primary) !important;
-          box-shadow: 0 0 10px rgba(220, 38, 38, 0.4);
+          box-shadow: 0 0 8px rgba(220, 38, 38, 0.4);
           transform: scale(1.03);
         }
         .thumb-btn img {
@@ -381,55 +383,65 @@ export default function QuickViewModal({ product, onClose }) {
         .quickview-details {
           display: flex;
           flex-direction: column;
-          gap: 0.75rem;
+          gap: 0.45rem;
         }
 
         .product-title {
-          font-size: 1.35rem;
+          font-size: 1.12rem;
+          font-weight: 700;
           line-height: 1.25;
           color: var(--text-primary);
+          margin: 0;
         }
 
         .rating-row {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.4rem;
         }
         .stars {
           display: flex;
           gap: 2px;
         }
+        .rating-text {
+          font-size: 0.78rem;
+        }
 
         .price-row {
           display: flex;
           align-items: baseline;
-          gap: 0.6rem;
+          gap: 0.5rem;
         }
         .price-current {
-          font-size: 1.4rem;
+          font-size: 1.25rem;
           font-weight: 800;
           color: var(--text-primary);
         }
         .price-original {
-          font-size: 0.95rem;
+          font-size: 0.85rem;
           color: var(--text-muted);
           text-decoration: line-through;
         }
 
         .description {
-          font-size: 0.88rem;
-          line-height: 1.5;
+          font-size: 0.8rem;
+          line-height: 1.4;
           color: var(--text-secondary);
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          margin: 0;
         }
 
         .variant-group {
           display: flex;
           flex-direction: column;
-          gap: 0.4rem;
+          gap: 0.25rem;
         }
 
         .variant-label {
-          font-size: 0.88rem;
+          font-size: 0.8rem;
           font-weight: 600;
           color: var(--text-primary);
         }
@@ -441,18 +453,18 @@ export default function QuickViewModal({ product, onClose }) {
         .colors-picker {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.5rem;
+          gap: 0.35rem;
         }
         .color-pill {
           display: inline-flex;
           align-items: center;
-          gap: 0.4rem;
-          padding: 0.45rem 0.9rem;
+          gap: 0.3rem;
+          padding: 0.35rem 0.75rem;
           border-radius: 99px;
           background: var(--bg-secondary);
           border: 1px solid var(--border-color);
           color: var(--text-primary);
-          font-size: 0.85rem;
+          font-size: 0.78rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.2s ease;
@@ -465,8 +477,8 @@ export default function QuickViewModal({ product, onClose }) {
           box-shadow: 0 0 0 1px var(--accent-primary);
         }
         .color-dot {
-          width: 12px;
-          height: 12px;
+          width: 10px;
+          height: 10px;
           border-radius: 50%;
           border: 1px solid rgba(0, 0, 0, 0.2);
         }
@@ -474,20 +486,20 @@ export default function QuickViewModal({ product, onClose }) {
         .sizes-picker {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.5rem;
+          gap: 0.35rem;
         }
         .size-btn {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          min-width: 42px;
-          height: 42px;
-          padding: 0 0.8rem;
-          border-radius: 8px;
+          min-width: 36px;
+          height: 36px;
+          padding: 0 0.6rem;
+          border-radius: 6px;
           background: var(--bg-secondary);
           border: 1px solid var(--border-color);
           color: var(--text-primary);
-          font-size: 0.88rem;
+          font-size: 0.8rem;
           font-weight: 700;
           cursor: pointer;
           transition: all 0.2s ease;
@@ -507,15 +519,15 @@ export default function QuickViewModal({ product, onClose }) {
         }
 
         .selected-size-stock-badge {
-          margin-top: 0.35rem;
+          margin-top: 0.2rem;
         }
         .stock-pill {
           display: inline-flex;
           align-items: center;
-          gap: 0.4rem;
-          padding: 0.35rem 0.75rem;
+          gap: 0.35rem;
+          padding: 0.25rem 0.65rem;
           border-radius: 99px;
-          font-size: 0.78rem;
+          font-size: 0.74rem;
           font-weight: 700;
         }
         .stock-in {
@@ -534,8 +546,8 @@ export default function QuickViewModal({ product, onClose }) {
           border: 1px solid #fca5a5;
         }
         .stock-dot {
-          width: 7px;
-          height: 7px;
+          width: 6px;
+          height: 6px;
           border-radius: 50%;
           background: currentColor;
         }
@@ -543,26 +555,26 @@ export default function QuickViewModal({ product, onClose }) {
         .action-row {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
-          margin-top: 1rem;
+          gap: 0.5rem;
+          margin-top: 0.5rem;
         }
 
         .quantity-control {
           display: inline-flex;
           align-items: center;
           border: 1px solid var(--border-color);
-          border-radius: 8px;
+          border-radius: 6px;
           overflow: hidden;
           background: var(--bg-tertiary);
-          height: 46px;
+          height: 38px;
         }
         .quantity-control button {
-          width: 36px;
+          width: 30px;
           height: 100%;
           border: none;
           background: transparent;
           color: var(--text-primary);
-          font-size: 1.1rem;
+          font-size: 1rem;
           font-weight: 700;
           cursor: pointer;
           transition: background 0.2s ease;
@@ -571,28 +583,28 @@ export default function QuickViewModal({ product, onClose }) {
           background: var(--border-color);
         }
         .quantity-control span {
-          width: 36px;
+          width: 28px;
           text-align: center;
           font-weight: 800;
-          font-size: 0.95rem;
+          font-size: 0.88rem;
           color: var(--text-primary);
         }
 
         .add-to-cart-btn {
           flex: 1;
-          height: 46px;
-          border-radius: 10px;
+          height: 38px;
+          border-radius: 8px;
           background: var(--accent-gradient);
           color: #ffffff;
           border: none;
-          font-size: 0.98rem;
+          font-size: 0.88rem;
           font-weight: 800;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 0.5rem;
+          gap: 0.4rem;
           cursor: pointer;
-          box-shadow: var(--shadow-md);
+          box-shadow: var(--shadow-sm);
           transition: all 0.2s ease;
         }
         .add-to-cart-btn:hover {
@@ -602,9 +614,9 @@ export default function QuickViewModal({ product, onClose }) {
         }
 
         .wishlist-btn {
-          width: 46px;
-          height: 46px;
-          border-radius: 10px;
+          width: 38px;
+          height: 38px;
+          border-radius: 8px;
           background: var(--bg-secondary);
           border: 1.5px solid var(--border-color);
           color: var(--accent-primary);
@@ -627,10 +639,10 @@ export default function QuickViewModal({ product, onClose }) {
 
         .view-full-page-link {
           color: var(--accent-primary);
-          font-size: 0.88rem;
+          font-size: 0.8rem;
           font-weight: 700;
           text-decoration: none;
-          margin-top: 1rem;
+          margin-top: 0.5rem;
           display: inline-block;
           transition: color 0.2s ease;
         }
@@ -642,61 +654,57 @@ export default function QuickViewModal({ product, onClose }) {
         /* Mobile Optimization */
         @media (max-width: 768px) {
           .quickview-card {
-            padding: 1.25rem 1rem !important;
-            max-height: 92vh !important;
-            border-radius: 16px !important;
-            width: 95% !important;
+            padding: 1rem !important;
+            max-height: 90vh !important;
+            border-radius: 14px !important;
+            width: 94% !important;
           }
           .modal-close-btn {
-            top: 0.75rem;
-            right: 0.75rem;
-            width: 32px;
-            height: 32px;
+            top: 0.6rem;
+            right: 0.6rem;
+            width: 28px;
+            height: 28px;
           }
           .quickview-grid {
             grid-template-columns: 1fr !important;
-            gap: 1rem !important;
+            gap: 0.85rem !important;
           }
           .main-image-box {
-            height: 260px !important;
-            border-radius: 12px;
+            height: 220px !important;
+            border-radius: 8px;
           }
           .thumb-btn {
-            width: 54px !important;
-            height: 66px !important;
+            width: 46px !important;
+            height: 56px !important;
           }
           .product-title {
-            font-size: 1.15rem !important;
+            font-size: 1.05rem !important;
           }
           .price-current {
-            font-size: 1.2rem !important;
+            font-size: 1.15rem !important;
           }
           .action-row {
-            gap: 0.5rem !important;
-          }
-          .add-to-cart-btn {
-            font-size: 0.88rem !important;
-            padding: 0 0.5rem !important;
+            gap: 0.4rem !important;
           }
         }
 
         @media (max-width: 480px) {
           .main-image-box {
-            height: 220px !important;
+            height: 190px !important;
           }
           .action-row {
             flex-wrap: wrap !important;
           }
           .quantity-control {
-            height: 42px;
+            height: 36px;
           }
           .add-to-cart-btn {
-            height: 42px;
-            font-size: 0.85rem !important;
+            height: 36px;
+            font-size: 0.82rem !important;
           }
           .wishlist-btn {
-            width: 42px;
-            height: 42px;
+            width: 36px;
+            height: 36px;
           }
         }
       `}</style>
