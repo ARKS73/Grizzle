@@ -196,19 +196,21 @@ export default function SinglePageStreetwearStore() {
           src="/hero-bg-athlete.jpg"
           alt="Grizzle Hero Image"
           className="hero-athlete-bg-img"
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', zIndex: 0 }}
         />
-        <div className="hero-fade-overlay" />
 
         <div className="container hero-street-container">
           <div className="hero-text-content">
-            <div className="hero-pill-badge">
-              <Sparkles size={14} className="badge-sparkle" />
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#fff', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+              <Sparkles size={14} style={{ color: '#93c5fd' }} />
               <span>{heroSettings.heroBadge}</span>
             </div>
 
             <h1 className="hero-street-title">
               {heroSettings.heroTitle} <br />
-              <span className="title-accent-italic">{heroSettings.heroAccentTitle}</span>
+              <span style={{ fontStyle: 'normal', color: 'var(--accent-primary)', textShadow: '0 4px 25px rgba(220, 38, 38, 0.6)' }}>
+                {heroSettings.heroAccentTitle}
+              </span>
             </h1>
 
             <p className="hero-street-desc">
@@ -735,114 +737,7 @@ export default function SinglePageStreetwearStore() {
         </div>
       </section>
 
-      {/* =========================================================================
-         SECTION: GLOBAL VERIFIED CUSTOMER REVIEWS & RATINGS
-         ========================================================================= */}
-      <section className="global-reviews-section" id="reviews" style={{ padding: '1.75rem 0', background: 'var(--bg-secondary)' }}>
-        <div className="container">
-          <div className="drops-header" style={{ textAlign: 'center', display: 'block', marginBottom: '1.25rem' }}>
-            <span className="bento-tag-pill" style={{ display: 'inline-block', marginBottom: '0.5rem', background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
-              ★ REAL CUSTOMER FEEDBACK
-            </span>
-            <h2 className="drops-title" style={{ fontSize: '2.5rem' }}>VERIFIED CUSTOMER REVIEWS &amp; RATINGS</h2>
-            <p className="drops-subtitle">AUTHENTIC REVIEWS SUBMITTED BY VERIFIED BUYERS AFTER ORDER DELIVERY</p>
-          </div>
 
-          {globalReviews.length === 0 ? (
-            <div className="glass-panel text-center p-5 mb-4" style={{ borderRadius: '24px', padding: '3rem 2rem' }}>
-              <Star size={40} style={{ opacity: 0.4, marginBottom: '1rem', color: '#f59e0b' }} />
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 800 }}>No Customer Reviews Yet</h3>
-              <p style={{ color: 'var(--text-secondary)' }}>
-                When customers receive delivered orders and rate products, their verified reviews appear here globally across the store.
-              </p>
-            </div>
-          ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
-              {globalReviews.map((rev) => (
-                <div
-                  key={rev._id}
-                  className="glass-panel"
-                  style={{
-                    padding: '1.5rem',
-                    borderRadius: 'var(--radius-lg)',
-                    background: 'var(--bg-primary)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justify: 'space-between',
-                    gap: '1rem',
-                    border: '1px solid var(--border-color)',
-                  }}
-                >
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                      <div style={{ display: 'flex', gap: '2px' }}>
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            size={14}
-                            fill={i < rev.rating ? '#f59e0b' : 'none'}
-                            color="#f59e0b"
-                          />
-                        ))}
-                      </div>
-                      <span className="badge-success" style={{ fontSize: '0.7rem', padding: '0.2rem 0.55rem', borderRadius: '12px', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', fontWeight: 700 }}>
-                        ✓ Verified Buyer
-                      </span>
-                    </div>
-
-                    {rev.title && (
-                      <h4 style={{ fontSize: '0.95rem', fontWeight: 800, marginBottom: '0.35rem', color: 'var(--text-primary)' }}>
-                        {rev.title}
-                      </h4>
-                    )}
-                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.5', fontStyle: 'italic' }}>
-                      &ldquo;{rev.comment}&rdquo;
-                    </p>
-                  </div>
-
-                  <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div>
-                      <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-primary)', display: 'block' }}>
-                        {rev.userName}
-                      </span>
-                      <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                        {new Date(rev.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                      </span>
-                    </div>
-
-                    {rev.product && (
-                      <Link
-                        href={`/product/${rev.product._id || rev.product}`}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.35rem',
-                          fontSize: '0.75rem',
-                          fontWeight: 700,
-                          color: 'var(--accent-primary)',
-                          textDecoration: 'none',
-                          background: 'var(--accent-light)',
-                          padding: '0.35rem 0.65rem',
-                          borderRadius: '8px',
-                        }}
-                      >
-                        {rev.product.images?.[0] && (
-                          <img
-                            src={getOptimizedImageUrl(rev.product.images[0], 40, 70)}
-                            alt=""
-                            style={{ width: '22px', height: '22px', borderRadius: '4px', objectFit: 'cover' }}
-                          />
-                        )}
-                        <span>View Tee &rarr;</span>
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
 
 
 
