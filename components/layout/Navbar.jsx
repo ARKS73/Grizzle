@@ -487,6 +487,46 @@ export default function Navbar() {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="mobile-drawer glass-panel">
+          {/* Mobile User Header / Account Action */}
+          <div style={{ padding: '0.25rem 0', marginBottom: '0.75rem' }}>
+            {user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem 1rem', background: 'var(--bg-tertiary)', borderRadius: '12px' }}>
+                {user.profileImage ? (
+                  <img src={user.profileImage} alt="" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--accent-primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 'bold' }}>
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div style={{ overflow: 'hidden' }}>
+                  <div style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{user.name}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user.email}</div>
+                </div>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                onClick={closeAllMenus}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  padding: '0.75rem 1rem',
+                  background: 'var(--accent-primary)',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  fontSize: '0.95rem',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)',
+                  textDecoration: 'none'
+                }}
+              >
+                <User size={18} /> Sign In / Create Account
+              </Link>
+            )}
+          </div>
+
           {/* 2. Theme Selection Switcher */}
           <div className="mobile-theme-card">
             <span className="mobile-section-label">🎨 Theme Appearance</span>
@@ -577,6 +617,9 @@ export default function Navbar() {
               </>
             ) : (
               <>
+                <Link href="/login" onClick={closeAllMenus} className="mobile-sub-link" style={{ fontWeight: 700, color: 'var(--accent-primary)' }}>
+                  <User size={16} /> Sign In / Account
+                </Link>
                 <Link href="/cart" onClick={closeAllMenus} className="mobile-sub-link">
                   <ShoppingBag size={16} /> View Cart ({getTotalCount()})
                 </Link>
@@ -594,7 +637,7 @@ export default function Navbar() {
           right: 0;
           width: 100%;
           z-index: 1000;
-          border-radius: 0;
+          border-radius: 0 !important;
           border-top: none;
           border-left: none;
           border-right: none;

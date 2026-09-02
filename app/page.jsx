@@ -190,13 +190,27 @@ export default function SinglePageStreetwearStore() {
       {/* =========================================================================
          SECTION 1: HERO BANNER (Matching Image Section 1)
          ========================================================================= */}
-      <section className="hero-section-street" id="hero">
+      <section className="hero-section-street" id="hero" style={{ borderRadius: 0, marginTop: 0 }}>
         {/* Athlete Model Background Image */}
         <img
           src="/hero-bg-athlete.jpg"
           alt="Grizzle Hero Image"
           className="hero-athlete-bg-img"
-          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', zIndex: 0 }}
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', zIndex: 0, borderRadius: 0 }}
+        />
+        {/* Darkening Overlay for dark background & text readability */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.72) 100%)',
+            zIndex: 1,
+            pointerEvents: 'none',
+            borderRadius: 0
+          }}
         />
 
         <div className="container hero-street-container">
