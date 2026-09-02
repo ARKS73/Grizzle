@@ -24,8 +24,8 @@ const outfit = Outfit({
 });
 
 export const metadata = {
-  title: 'Grizzle | Premium DTF Printing & Custom Printed Apparel',
-  description: 'High-density DTF printed t-shirts, bio-washed 240 GSM heavy cotton tees, custom anime graphics, desi typography, and vibrant DTF prints.',
+  title: 'Grizzle Apparel | Heavyweight Cotton Tees & Custom Graphics',
+  description: 'Discover premium streetwear at Grizzle, featuring heavy cotton tees, vibrant custom anime designs, and bold typography printed to perfection.',
 };
 
 export default function RootLayout({ children }) {

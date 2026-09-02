@@ -52,9 +52,9 @@ export default function SinglePageStreetwearStore() {
     globalPageCache.heroSettings || {
       heroImage: '',
       heroBadge: 'NEW DROP | SEASON 2026',
-      heroTitle: 'HIGH-DENSITY DTF PRINTS',
+      heroTitle: 'Artistry Woven in Heavyweight Cotton',
       heroAccentTitle: 'YOU CAN WEAR',
-      heroDesc: 'Merging high-fidelity DTF printing with 240 GSM bio-washed heavy cotton. Vibrant prints built to last for 50+ washes.',
+      heroDesc: 'Exclusivity in every thread. Discover the signature drop',
       heroTapeNote: 'LIMITED TO 100 PIECES GLOBALLY',
     }
   );
