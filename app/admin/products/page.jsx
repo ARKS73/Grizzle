@@ -302,6 +302,10 @@ export default function AdminProductsPage() {
       }
     });
 
+    const colorImages = (product.colors || []).map((c) => c.image).filter((img) => img && img !== '/logo2.png');
+    const existingImages = (product.images || []).filter((img) => img && img !== '/logo2.png');
+    const combinedAllImages = Array.from(new Set([...existingImages, ...colorImages])).filter(Boolean);
+
     setFormData({
       name: product.name,
       description: product.description,
@@ -312,7 +316,7 @@ export default function AdminProductsPage() {
       originalPrice: product.originalPrice ? product.originalPrice.toString() : '',
       stock: product.stock ? product.stock.toString() : '20',
       sizeStock: existingSizeStock,
-      images: product.images && product.images.length > 0 ? product.images : [],
+      images: combinedAllImages,
       sizes,
       colors: product.colors && product.colors.length > 0 ? product.colors : [],
       sizeCharts: Array.isArray(product.sizeCharts) && product.sizeCharts.length > 0

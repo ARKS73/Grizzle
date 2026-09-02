@@ -102,7 +102,9 @@ export default function ProductDetailPage() {
     ? (reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / totalReviews).toFixed(1)
     : (product.numReviews > 0 && product.ratings ? Number(product.ratings).toFixed(1) : '0.0');
 
-  const cleanImages = (product?.images || []).filter((img) => img && img !== '/logo2.png');
+  const colorImages = (product?.colors || []).map((c) => c.image).filter((img) => img && img !== '/logo2.png');
+  const userImages = (product?.images || []).filter((img) => img && img !== '/logo2.png');
+  const cleanImages = Array.from(new Set([...userImages, ...colorImages])).filter(Boolean);
   const activeColorObj = product?.colors?.find((c) => c.name === selectedColor);
   const activeColorImg = activeColorObj?.image;
   const displayedThumbnails = cleanImages.length > 0 ? cleanImages : (product?.images || []);
