@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Trash2, ShoppingBag, ArrowRight, Tag, Truck, ShieldCheck } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
+import { getProductVariantStock } from '@/utils/stockHelper';
 
 export default function CartPage() {
   const {
@@ -77,9 +78,7 @@ export default function CartPage() {
 
               {/* Quantity Controls */}
               {(() => {
-                const maxStock = (item.product?.sizeStock && item.product.sizeStock[item.size] !== undefined)
-                  ? Number(item.product.sizeStock[item.size])
-                  : (item.product?.stock || 0);
+                const maxStock = getProductVariantStock(item.product, item.size, item.color);
                 const isMax = item.quantity >= maxStock;
 
                 return (
@@ -91,7 +90,7 @@ export default function CartPage() {
                         if (!isMax) {
                           updateQuantity(item.product._id, item.size, item.color, item.quantity + 1);
                         } else if (addToast) {
-                          addToast(`Only ${maxStock} item(s) left in stock for Size ${item.size}`, 'info');
+                          addToast(`Only ${maxStock} item(s) left in stock for Size ${item.size} (${item.color})`, 'info');
                         }
                       }}
                       disabled={isMax}

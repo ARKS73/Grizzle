@@ -73,8 +73,8 @@ export default function AdminProductsPage() {
   // Modal State
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [customHexInput, setCustomHexInput] = useState('#000000');
+  const [customNameInput, setCustomNameInput] = useState('');
 
   const [formData, setFormData] = useState({
     name: '',
@@ -86,6 +86,7 @@ export default function AdminProductsPage() {
     originalPrice: '',
     stock: '25',
     sizeStock: { S: 5, M: 5, L: 5, XL: 5, XXL: 5 },
+    variantStock: {},
     images: [],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     colors: [],
@@ -270,6 +271,15 @@ export default function AdminProductsPage() {
 
   const handleOpenAddModal = () => {
     setEditingId(null);
+    const initialColors = PRESET_COLOR_VARIANTS.slice(0, 2);
+    const initialSizes = ['S', 'M', 'L', 'XL', 'XXL'];
+    const initialVariantStock = {};
+    initialColors.forEach((col) => {
+      initialSizes.forEach((sz) => {
+        initialVariantStock[`${col.name}_${sz}`] = 5;
+      });
+    });
+
     setFormData({
       name: '',
       description: 'High-quality 240 GSM bio-washed combed cotton t-shirt with durable DTF print.',
@@ -278,11 +288,12 @@ export default function AdminProductsPage() {
       gender: 'Men',
       price: '699',
       originalPrice: '999',
-      stock: '25',
-      sizeStock: { S: 5, M: 5, L: 5, XL: 5, XXL: 5 },
+      stock: '50',
+      sizeStock: { S: 10, M: 10, L: 10, XL: 10, XXL: 10 },
+      variantStock: initialVariantStock,
       images: [],
-      sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-      colors: PRESET_COLOR_VARIANTS.slice(0, 2),
+      sizes: initialSizes,
+      colors: initialColors,
       sizeCharts: [DEFAULT_SIZE_CHART_TABLE],
       sizeChartTips: 'Oversized Streetwear Fit: Choose standard size for relaxed dropped-shoulder fit.',
       isFeatured: false,
@@ -295,14 +306,35 @@ export default function AdminProductsPage() {
   const handleOpenEditModal = (product) => {
     setEditingId(product._id);
     const sizes = product.sizes || ['S', 'M', 'L', 'XL'];
+    const colors = product.colors && product.colors.length > 0 ? product.colors : [];
     const existingSizeStock = product.sizeStock || {};
+    const existingVariantStock = product.variantStock ? { ...product.variantStock } : {};
+
+    // Auto-populate missing variantStock keys from existing sizeStock
+    if (colors.length > 0 && sizes.length > 0) {
+      colors.forEach((col) => {
+        sizes.forEach((sz) => {
+          const vKey = `${col.name}_${sz}`;
+          if (existingVariantStock[vKey] === undefined) {
+            if (existingSizeStock[vKey] !== undefined) {
+              existingVariantStock[vKey] = Number(existingSizeStock[vKey]);
+            } else if (existingSizeStock[sz] !== undefined) {
+              existingVariantStock[vKey] = Math.max(0, Math.floor(Number(existingSizeStock[sz]) / colors.length));
+            } else {
+              existingVariantStock[vKey] = 5;
+            }
+          }
+        });
+      });
+    }
+
     sizes.forEach((sz) => {
       if (existingSizeStock[sz] === undefined) {
         existingSizeStock[sz] = Math.floor((product.stock || 20) / sizes.length);
       }
     });
 
-    const colorImages = (product.colors || []).map((c) => c.image).filter((img) => img && img !== '/logo2.png');
+    const colorImages = colors.map((c) => c.image).filter((img) => img && img !== '/logo2.png');
     const existingImages = (product.images || []).filter((img) => img && img !== '/logo2.png');
     const combinedAllImages = Array.from(new Set([...existingImages, ...colorImages])).filter(Boolean);
 
@@ -316,9 +348,10 @@ export default function AdminProductsPage() {
       originalPrice: product.originalPrice ? product.originalPrice.toString() : '',
       stock: product.stock ? product.stock.toString() : '20',
       sizeStock: existingSizeStock,
+      variantStock: existingVariantStock,
       images: combinedAllImages,
       sizes,
-      colors: product.colors && product.colors.length > 0 ? product.colors : [],
+      colors,
       sizeCharts: Array.isArray(product.sizeCharts) && product.sizeCharts.length > 0
         ? product.sizeCharts
         : [DEFAULT_SIZE_CHART_TABLE],
@@ -606,6 +639,7 @@ export default function AdminProductsPage() {
           originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : parseFloat(formData.price),
           stock: parseInt(formData.stock, 10) || 20,
           sizeStock: formData.sizeStock || {},
+          variantStock: formData.variantStock || {},
         }),
       });
 
@@ -843,40 +877,107 @@ export default function AdminProductsPage() {
 
                 {(formData.sizes || []).length > 0 && (
                   <div className="size-stock-breakdown-box bg-secondary p-3 rounded">
-                    <label className="subtext font-semibold d-block mb-2">
-                      Enter Stock for Each Selected Size:
-                    </label>
-                    <div className="d-flex flex-wrap gap-2">
-                      {(formData.sizes || []).map((sz) => {
-                        const currentSizeQty = formData.sizeStock?.[sz] !== undefined ? formData.sizeStock[sz] : 5;
-                        return (
-                          <div key={sz} className="d-flex align-items-center gap-1 bg-tertiary p-2 rounded border">
-                            <span className="badge badge-info font-bold" style={{ minWidth: '24px', textAlign: 'center' }}>{sz}</span>
-                            <input
-                              type="number"
-                              min="0"
-                              value={currentSizeQty}
-                              onChange={(e) => {
-                                const val = Math.max(0, parseInt(e.target.value, 10) || 0);
-                                const updatedSizeStock = { ...(formData.sizeStock || {}), [sz]: val };
-                                const newTotalStock = Object.entries(updatedSizeStock)
-                                  .filter(([s]) => (formData.sizes || []).includes(s))
-                                  .reduce((sum, [, q]) => sum + (parseInt(q, 10) || 0), 0);
-                                setFormData({
-                                  ...formData,
-                                  sizeStock: updatedSizeStock,
-                                  stock: newTotalStock.toString(),
-                                });
-                              }}
-                              className="form-input form-input-sm"
-                              style={{ width: '64px', textAlign: 'center', padding: '0.2rem 0.4rem' }}
-                            />
-                          </div>
-                        );
-                      })}
+                    <div className="d-flex align-items-center justify-content-between mb-2">
+                      <label className="subtext font-semibold m-0">
+                        📦 Size &amp; Color-Wise Stock Quantity:
+                      </label>
+                      <span className="subtext text-muted">
+                        Set stock per Size and Color combination
+                      </span>
                     </div>
-                    <div className="subtext mt-2">
-                      Total Calculated Stock: <strong>{formData.stock} units</strong>
+
+                    {/* If product has colors, render Color x Size Stock Matrix */}
+                    {formData.colors && formData.colors.length > 0 ? (
+                      <div className="d-flex flex-direction-column gap-2 mt-2">
+                        {formData.colors.map((col, cIdx) => (
+                          <div key={cIdx} className="bg-tertiary p-2 rounded border d-flex align-items-center justify-content-between flex-wrap gap-2">
+                            <div className="d-flex align-items-center gap-2" style={{ minWidth: '130px' }}>
+                              <span className="chip-circle" style={{ backgroundColor: col.hex || '#000', width: '16px', height: '16px', borderRadius: '50%', border: '1px solid var(--border-color)', display: 'inline-block' }} />
+                              <strong style={{ fontSize: '0.85rem' }}>{col.name || `Color #${cIdx + 1}`}</strong>
+                            </div>
+                            <div className="d-flex flex-wrap gap-2">
+                              {formData.sizes.map((sz) => {
+                                const variantKey = `${col.name}_${sz}`;
+                                const currentQty = formData.variantStock?.[variantKey] !== undefined
+                                  ? formData.variantStock[variantKey]
+                                  : (formData.sizeStock?.[sz] !== undefined ? formData.sizeStock[sz] : 5);
+
+                                return (
+                                  <div key={sz} className="d-flex align-items-center gap-1 bg-secondary px-2 py-1 rounded border">
+                                    <span className="badge badge-info font-bold" style={{ minWidth: '22px', textAlign: 'center', fontSize: '0.7rem' }}>{sz}</span>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      value={currentQty}
+                                      onChange={(e) => {
+                                        const val = Math.max(0, parseInt(e.target.value, 10) || 0);
+                                        const updatedVariantStock = { ...(formData.variantStock || {}), [variantKey]: val };
+
+                                        // Recalculate sizeStock (sum per size across colors)
+                                        const updatedSizeStock = {};
+                                        formData.sizes.forEach((s) => {
+                                          let sumForSize = 0;
+                                          formData.colors.forEach((c) => {
+                                            const vKey = `${c.name}_${s}`;
+                                            sumForSize += parseInt(updatedVariantStock[vKey] || 0, 10);
+                                          });
+                                          updatedSizeStock[s] = sumForSize;
+                                        });
+
+                                        const newTotalStock = Object.values(updatedVariantStock).reduce((sum, q) => sum + (parseInt(q, 10) || 0), 0);
+
+                                        setFormData({
+                                          ...formData,
+                                          variantStock: updatedVariantStock,
+                                          sizeStock: updatedSizeStock,
+                                          stock: newTotalStock.toString(),
+                                        });
+                                      }}
+                                      className="form-input form-input-sm"
+                                      style={{ width: '56px', textAlign: 'center', padding: '0.15rem 0.3rem', fontSize: '0.8rem' }}
+                                    />
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      /* Fallback for products without color options */
+                      <div className="d-flex flex-wrap gap-2 mt-1">
+                        {(formData.sizes || []).map((sz) => {
+                          const currentSizeQty = formData.sizeStock?.[sz] !== undefined ? formData.sizeStock[sz] : 5;
+                          return (
+                            <div key={sz} className="d-flex align-items-center gap-1 bg-tertiary p-2 rounded border">
+                              <span className="badge badge-info font-bold" style={{ minWidth: '24px', textAlign: 'center' }}>{sz}</span>
+                              <input
+                                type="number"
+                                min="0"
+                                value={currentSizeQty}
+                                onChange={(e) => {
+                                  const val = Math.max(0, parseInt(e.target.value, 10) || 0);
+                                  const updatedSizeStock = { ...(formData.sizeStock || {}), [sz]: val };
+                                  const newTotalStock = Object.entries(updatedSizeStock)
+                                    .filter(([s]) => (formData.sizes || []).includes(s))
+                                    .reduce((sum, [, q]) => sum + (parseInt(q, 10) || 0), 0);
+                                  setFormData({
+                                    ...formData,
+                                    sizeStock: updatedSizeStock,
+                                    stock: newTotalStock.toString(),
+                                  });
+                                }}
+                                className="form-input form-input-sm"
+                                style={{ width: '64px', textAlign: 'center', padding: '0.2rem 0.4rem' }}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    <div className="subtext mt-2 font-bold text-primary">
+                      Total Calculated Stock (All Size &amp; Color Variants): <strong>{formData.stock} units</strong>
                     </div>
                   </div>
                 )}
@@ -887,7 +988,7 @@ export default function AdminProductsPage() {
                 <div className="d-flex align-items-center justify-content-between mb-2">
                   <div>
                     <label className="form-label m-0 text-primary d-flex align-items-center gap-2 font-bold text-md">
-                      <Palette size={18} /> Color Variants & Color-Wise T-Shirt Photos (1 Style, Multiple Colors)
+                      <Palette size={18} /> Color Variants &amp; Color-Wise T-Shirt Photos (1 Style, Multiple Colors)
                     </label>
                     <p className="subtext mt-1">
                       Add color variants for this t-shirt style and upload/set a specific t-shirt photo for each color option.
@@ -905,6 +1006,51 @@ export default function AdminProductsPage() {
                   >
                     + Add Color Variant
                   </button>
+                </div>
+
+                {/* Direct Paste Color Hex Code Bar */}
+                <div className="p-2 mb-3 bg-secondary rounded border border-primary-light">
+                  <div className="d-flex align-items-center gap-2 flex-wrap">
+                    <span className="font-semibold text-xs text-primary">🎨 Paste Color Hex Code:</span>
+                    <input
+                      type="text"
+                      placeholder="#HEX (e.g. #3b82f6)"
+                      value={customHexInput}
+                      onChange={(e) => setCustomHexInput(e.target.value)}
+                      className="form-input form-input-sm"
+                      style={{ width: '120px', fontFamily: 'monospace', fontSize: '0.82rem' }}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Color Name (e.g. Royal Blue)"
+                      value={customNameInput}
+                      onChange={(e) => setCustomNameInput(e.target.value)}
+                      className="form-input form-input-sm"
+                      style={{ width: '160px', fontSize: '0.82rem' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        let hex = customHexInput.trim();
+                        if (hex && !hex.startsWith('#')) hex = '#' + hex;
+                        if (!hex || !/^#[0-9a-fA-F]{3,6}$/.test(hex)) {
+                          addToast('Please enter a valid Hex color code (e.g. #FF5733)', 'warning');
+                          return;
+                        }
+                        const name = customNameInput.trim() || `Color ${hex}`;
+                        setFormData((prev) => ({
+                          ...prev,
+                          colors: [...(prev.colors || []), { name, hex, image: '', images: [] }],
+                        }));
+                        setCustomHexInput('#000000');
+                        setCustomNameInput('');
+                        addToast(`Added Color "${name}" (${hex})`, 'success');
+                      }}
+                      className="btn btn-primary btn-xs font-bold"
+                    >
+                      + Add Hex Color
+                    </button>
+                  </div>
                 </div>
 
                 {/* Preset Color Quick Add */}
@@ -936,7 +1082,7 @@ export default function AdminProductsPage() {
                   {(formData.colors || []).map((col, idx) => (
                     <div key={idx} className="color-variant-card-box mb-3 p-3 border rounded glass-panel">
                       <div className="color-card-header d-flex align-items-center justify-content-between mb-2">
-                        <div className="d-flex align-items-center gap-2">
+                        <div className="d-flex align-items-center gap-2 flex-wrap">
                           <input
                             type="color"
                             value={col.hex || '#0f172a'}
@@ -946,6 +1092,24 @@ export default function AdminProductsPage() {
                               setFormData({ ...formData, colors: newColors });
                             }}
                             className="color-picker-circle"
+                            title="Pick color visually"
+                          />
+                          <input
+                            type="text"
+                            placeholder="#Hex Code"
+                            value={col.hex || ''}
+                            onChange={(e) => {
+                              let val = e.target.value.trim();
+                              if (val && !val.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(val)) {
+                                val = '#' + val;
+                              }
+                              const newColors = [...formData.colors];
+                              newColors[idx].hex = val;
+                              setFormData({ ...formData, colors: newColors });
+                            }}
+                            className="form-input"
+                            style={{ width: '110px', fontSize: '0.82rem', fontFamily: 'monospace' }}
+                            title="Type or paste Hex Color Code (e.g. #FF5733)"
                           />
                           <input
                             type="text"
@@ -958,7 +1122,6 @@ export default function AdminProductsPage() {
                             }}
                             className="form-input col-name-input font-bold"
                           />
-                          <span className="color-hex-tag subtext">{col.hex}</span>
                         </div>
                         <button
                           type="button"

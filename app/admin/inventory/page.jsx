@@ -29,37 +29,74 @@ export default function AdminInventoryPage() {
     fetchInventory();
   }, []);
 
-  // Helper to extract or fallback size-based stock
-  const getProductSizeMap = (product) => {
+  // Helper to extract size & color variant stock map
+  const getProductVariantMap = (product) => {
     const sizes = product.sizes && product.sizes.length > 0 ? product.sizes : ['S', 'M', 'L', 'XL'];
-    const existing = product.sizeStock || {};
+    const colors = product.colors && product.colors.length > 0 ? product.colors : [];
+    const vStock = product.variantStock || {};
+    const sStock = product.sizeStock || {};
+
     const result = {};
-    sizes.forEach((sz) => {
-      if (existing[sz] !== undefined && existing[sz] !== null) {
-        result[sz] = Number(existing[sz]);
-      } else {
-        const perSize = Math.floor((product.stock || 0) / sizes.length);
-        result[sz] = Math.max(0, perSize);
-      }
-    });
+    if (colors.length > 0) {
+      colors.forEach((col) => {
+        sizes.forEach((sz) => {
+          const key = `${col.name}_${sz}`;
+          if (vStock[key] !== undefined && vStock[key] !== null) {
+            result[key] = Number(vStock[key]);
+          } else if (sStock[key] !== undefined) {
+            result[key] = Number(sStock[key]);
+          } else {
+            const perVar = Math.max(0, Math.floor((product.stock || 20) / (colors.length * sizes.length)));
+            result[key] = perVar;
+          }
+        });
+      });
+    } else {
+      sizes.forEach((sz) => {
+        if (sStock[sz] !== undefined && sStock[sz] !== null) {
+          result[sz] = Number(sStock[sz]);
+        } else {
+          result[sz] = Math.max(0, Math.floor((product.stock || 20) / sizes.length));
+        }
+      });
+    }
     return result;
   };
 
-  // Adjust stock per size
-  const handleSizeStockAdjust = async (product, sizeName, delta) => {
-    const currentMap = getProductSizeMap(product);
-    const currentQty = currentMap[sizeName] || 0;
+  // Adjust stock per size & color variant
+  const handleVariantStockAdjust = async (product, variantKey, delta) => {
+    const currentMap = getProductVariantMap(product);
+    const currentQty = currentMap[variantKey] || 0;
     const newQty = Math.max(0, currentQty + delta);
-    const updatedSizeStock = { ...currentMap, [sizeName]: newQty };
-    const totalStock = Object.values(updatedSizeStock).reduce((sum, n) => sum + (parseInt(n, 10) || 0), 0);
+    const updatedVariantStock = { ...currentMap, [variantKey]: newQty };
 
-    const updateKey = `${product._id}-${sizeName}`;
+    const sizes = product.sizes && product.sizes.length > 0 ? product.sizes : ['S', 'M', 'L', 'XL'];
+    const colors = product.colors && product.colors.length > 0 ? product.colors : [];
+
+    const updatedSizeStock = {};
+    sizes.forEach((s) => {
+      if (colors.length > 0) {
+        let sum = 0;
+        colors.forEach((c) => {
+          sum += parseInt(updatedVariantStock[`${c.name}_${s}`] || 0, 10);
+        });
+        updatedSizeStock[s] = sum;
+      } else {
+        updatedSizeStock[s] = parseInt(updatedVariantStock[s] || 0, 10);
+      }
+    });
+
+    const totalStock = Object.values(updatedVariantStock).reduce((sum, n) => sum + (parseInt(n, 10) || 0), 0);
+
+    const updateKey = `${product._id}-${variantKey}`;
     setUpdatingKey(updateKey);
 
     // Optimistic UI update
     setProducts((prev) =>
       prev.map((p) =>
-        p._id === product._id ? { ...p, sizeStock: updatedSizeStock, stock: totalStock } : p
+        p._id === product._id
+          ? { ...p, variantStock: updatedVariantStock, sizeStock: updatedSizeStock, stock: totalStock }
+          : p
       )
     );
 
@@ -67,17 +104,17 @@ export default function AdminInventoryPage() {
       const res = await fetch(`/api/products/${product._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sizeStock: updatedSizeStock, stock: totalStock }),
+        body: JSON.stringify({ variantStock: updatedVariantStock, sizeStock: updatedSizeStock, stock: totalStock }),
       });
       const data = await res.json();
       if (data.success) {
-        addToast(`${product.name} [Size ${sizeName}] stock set to ${newQty}`, 'success');
+        addToast(`${product.name} [${variantKey.replace('_', ' ')}] set to ${newQty}`, 'success');
       } else {
         addToast(data.message || 'Failed to update stock', 'error');
-        fetchInventory(); // Revert on failure
+        fetchInventory();
       }
     } catch (e) {
-      addToast('Failed to update size stock', 'error');
+      addToast('Failed to update variant stock', 'error');
       fetchInventory();
     } finally {
       setUpdatingKey(null);
@@ -90,8 +127,8 @@ export default function AdminInventoryPage() {
     <div className="admin-inventory-wrapper">
       <div className="page-header mb-4">
         <div>
-          <h1>Size-Wise Inventory & Stock Control</h1>
-          <p>Manage and adjust warehouse stock based on available sizes (S, M, L, XL, XXL).</p>
+          <h1>Size &amp; Color-Wise Inventory Control</h1>
+          <p>Manage real-time warehouse stock for every size and color variant combination.</p>
         </div>
         <div className="summary-pills">
           <span className="badge badge-info">{products.length} Products</span>
@@ -106,7 +143,7 @@ export default function AdminInventoryPage() {
               <th>Product / SKU</th>
               <th>Category</th>
               <th>Price</th>
-              <th>Stock by Available Size</th>
+              <th>Stock by Size &amp; Color Variant</th>
               <th>Total Units</th>
             </tr>
           </thead>
@@ -117,8 +154,8 @@ export default function AdminInventoryPage() {
               <tr><td colSpan={5} className="text-center p-4">No products found.</td></tr>
             ) : (
               products.map((product) => {
-                const sizeMap = getProductSizeMap(product);
-                const totalCalculatedStock = Object.values(sizeMap).reduce((a, b) => a + b, 0);
+                const variantMap = getProductVariantMap(product);
+                const totalCalculatedStock = Object.values(variantMap).reduce((a, b) => a + b, 0);
 
                 return (
                   <tr key={product._id}>
@@ -140,26 +177,27 @@ export default function AdminInventoryPage() {
                       <strong>₹{product.price?.toFixed(0)}</strong>
                     </td>
 
-                    <td data-label="Stock by Size">
+                    <td data-label="Stock by Variant">
                       <div className="sizes-stock-matrix">
-                        {Object.entries(sizeMap).map(([sz, qty]) => {
+                        {Object.entries(variantMap).map(([key, qty]) => {
                           const isLow = qty <= 2;
                           const isOut = qty === 0;
-                          const isUpdating = updatingKey === `${product._id}-${sz}`;
+                          const isUpdating = updatingKey === `${product._id}-${key}`;
+                          const displayLabel = key.includes('_') ? key.replace('_', ' • ') : key;
 
                           return (
                             <div
-                              key={sz}
+                              key={key}
                               className={`size-stock-card ${isOut ? 'out-of-stock' : isLow ? 'low-stock' : 'in-stock'}`}
                             >
-                              <span className="size-label">{sz}</span>
+                              <span className="size-label">{displayLabel}</span>
                               <div className="size-controls">
                                 <button
                                   type="button"
                                   disabled={isUpdating || qty <= 0}
-                                  onClick={() => handleSizeStockAdjust(product, sz, -1)}
+                                  onClick={() => handleVariantStockAdjust(product, key, -1)}
                                   className="btn-stock-step"
-                                  title={`Decrease size ${sz} stock`}
+                                  title={`Decrease ${displayLabel} stock`}
                                 >
                                   <Minus size={12} />
                                 </button>
@@ -169,9 +207,9 @@ export default function AdminInventoryPage() {
                                 <button
                                   type="button"
                                   disabled={isUpdating}
-                                  onClick={() => handleSizeStockAdjust(product, sz, 1)}
+                                  onClick={() => handleVariantStockAdjust(product, key, 1)}
                                   className="btn-stock-step"
-                                  title={`Increase size ${sz} stock`}
+                                  title={`Increase ${displayLabel} stock`}
                                 >
                                   <Plus size={12} />
                                 </button>

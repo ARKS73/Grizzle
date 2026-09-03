@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/Toast';
 import { useAuth } from '@/contexts/AuthContext';
 
+import { getProductVariantStock } from '@/utils/stockHelper';
+
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
@@ -57,12 +59,9 @@ export function CartProvider({ children }) {
     }
   };
 
-  const getAvailableStock = (product, size) => {
+  const getAvailableStock = (product, size, color) => {
     if (!product) return 0;
-    if (size && product.sizeStock && product.sizeStock[size] !== undefined) {
-      return Math.max(0, Number(product.sizeStock[size]));
-    }
-    return Math.max(0, Number(product.stock || 0));
+    return getProductVariantStock(product, size, color);
   };
 
   const addToCart = (product, size, color, quantity = 1) => {
@@ -85,7 +84,7 @@ export function CartProvider({ children }) {
       ? size.trim()
       : (product.sizes?.[0] || 'M');
 
-    const maxStock = getAvailableStock(product, resolvedSize);
+    const maxStock = getAvailableStock(product, resolvedSize, resolvedColor);
     if (maxStock <= 0) {
       if (addToast) addToast(`Size ${resolvedSize} for "${product.name}" is currently out of stock`, 'error');
       return;

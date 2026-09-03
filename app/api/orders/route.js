@@ -116,6 +116,18 @@ export async function POST(request) {
         const currentTotalStock = typeof targetProd.stock === 'number' ? targetProd.stock : 20;
         targetProd.stock = Math.max(0, currentTotalStock - qty);
 
+        // Reduce size & color-wise variantStock
+        if (item.color && item.size) {
+          const varKey = `${item.color}_${item.size}`;
+          const currentVariantStock = targetProd.variantStock || {};
+          const currentVarQty = currentVariantStock[varKey] !== undefined ? parseInt(currentVariantStock[varKey], 10) : currentTotalStock;
+          targetProd.variantStock = {
+            ...currentVariantStock,
+            [varKey]: Math.max(0, currentVarQty - qty),
+          };
+          targetProd.markModified('variantStock');
+        }
+
         // Reduce size-specific stock
         if (item.size) {
           const sizeKey = String(item.size).toUpperCase();

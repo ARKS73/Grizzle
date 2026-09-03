@@ -52,6 +52,10 @@ const ProductSchema = new mongoose.Schema(
       type: Object,
       default: {},
     },
+    variantStock: {
+      type: Object,
+      default: {},
+    },
     stock: {
       type: Number,
       required: [true, 'Stock count is required'],

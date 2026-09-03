@@ -10,6 +10,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import SizeChartModal from '@/components/ui/SizeChartModal';
 import { getOptimizedImageUrl } from '@/utils/imageOptimizer';
+import { getProductVariantStock } from '@/utils/stockHelper';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -212,9 +213,9 @@ export default function ProductDetailPage() {
             )}
             <span className="stock-status">
               {(() => {
-                if (selectedSize && product.sizeStock && product.sizeStock[selectedSize] !== undefined) {
-                  const sizeQty = Number(product.sizeStock[selectedSize]);
-                  if (sizeQty <= 0) return <span className="text-danger">Size {selectedSize}: Out of Stock</span>;
+                if (selectedSize) {
+                  const sizeQty = getProductVariantStock(product, selectedSize, selectedColor);
+                  if (sizeQty <= 0) return <span className="text-danger">Size {selectedSize} ({selectedColor || 'Default'}): Out of Stock</span>;
                   return <span className="text-success"><Check size={14} /> Size {selectedSize}: In Stock ({sizeQty} left)</span>;
                 }
                 return product.stock > 0 ? (
@@ -277,9 +278,7 @@ export default function ProductDetailPage() {
               </div>
               <div className="sizes-grid">
                 {product.sizes.map((sz) => {
-                  const sizeQty = (product.sizeStock && product.sizeStock[sz] !== undefined)
-                    ? Number(product.sizeStock[sz])
-                    : Math.max(0, Math.floor((product.stock || 0) / product.sizes.length));
+                  const sizeQty = getProductVariantStock(product, sz, selectedColor);
                   const isOut = sizeQty <= 0;
                   const isLow = sizeQty > 0 && sizeQty <= 3;
 
@@ -289,7 +288,7 @@ export default function ProductDetailPage() {
                       onClick={() => !isOut && setSelectedSize(sz)}
                       disabled={isOut}
                       className={`size-card ${selectedSize === sz ? 'active' : ''} ${isOut ? 'out-of-stock' : ''}`}
-                      title={isOut ? `Size ${sz} is Out of Stock` : `Size ${sz}: ${sizeQty} available`}
+                      title={isOut ? `Size ${sz} (${selectedColor || ''}) is Out of Stock` : `Size ${sz}: ${sizeQty} available`}
                     >
                       <span className="size-text">{sz}</span>
                       {isOut && <span className="size-subtag out">Out</span>}
@@ -303,20 +302,18 @@ export default function ProductDetailPage() {
               {selectedSize && (
                 <div className="selected-size-stock-badge">
                   {(() => {
-                    const selectedQty = (product.sizeStock && product.sizeStock[selectedSize] !== undefined)
-                      ? Number(product.sizeStock[selectedSize])
-                      : (product.stock || 0);
+                    const selectedQty = getProductVariantStock(product, selectedSize, selectedColor);
                     if (selectedQty <= 0) {
                       return (
                         <span className="stock-pill stock-out">
-                          ✕ Size {selectedSize}: Out of Stock (0 left)
+                          ✕ Size {selectedSize} ({selectedColor || 'Default'}): Out of Stock
                         </span>
                       );
                     }
                     return (
                       <span className={`stock-pill ${selectedQty <= 3 ? 'stock-low' : 'stock-in'}`}>
                         <span className="stock-dot" />
-                        Size {selectedSize}: In Stock ({selectedQty} {selectedQty === 1 ? 'left' : 'left'})
+                        Size {selectedSize} ({selectedColor || 'Default'}): In Stock ({selectedQty} {selectedQty === 1 ? 'left' : 'left'})
                       </span>
                     );
                   })()}
@@ -327,9 +324,7 @@ export default function ProductDetailPage() {
 
           {/* Quantity & CTA */}
           {(() => {
-            const maxAvailable = selectedSize && product.sizeStock && product.sizeStock[selectedSize] !== undefined
-              ? Math.max(0, Number(product.sizeStock[selectedSize]))
-              : Math.max(0, Number(product.stock || 0));
+            const maxAvailable = getProductVariantStock(product, selectedSize, selectedColor);
             const isMaxReached = quantity >= maxAvailable;
 
             return (
