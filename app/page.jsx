@@ -264,6 +264,14 @@ export default function SinglePageStreetwearStore() {
               </Link>
             </div>
 
+            {/* Hero Feature Highlights Ticker */}
+            <div className="hero-highlights-bar">
+              <span className="hero-h-tag">🔥 240 GSM HEAVYWEIGHT</span>
+              <span className="hero-h-tag">🎨 HIGH-DENSITY DTF PRINTS</span>
+              <span className="hero-h-tag">🚚 FREE ALL-INDIA SHIPPING</span>
+              <span className="hero-h-tag">⚡ CASH ON DELIVERY AVAILABLE</span>
+            </div>
+
             {/* Secondary Product Row Directly Below Hero */}
             {heroProductThumbnails.length > 0 && (
               <div className="hero-products-row-wrapper">
@@ -301,7 +309,7 @@ export default function SinglePageStreetwearStore() {
       {/* =========================================================================
          SECTION 2: LATEST DROPS
          ========================================================================= */}
-      <section className="latest-drops-section" id="latest-drops" style={{ padding: '5rem 0', background: '#09090b' }}>
+      <section className="latest-drops-section" id="latest-drops" style={{ padding: '5rem 0', background: 'var(--bg-primary)' }}>
         <div className="container">
           <div className="drops-header">
             <div>
@@ -338,9 +346,9 @@ export default function SinglePageStreetwearStore() {
               ))}
             </div>
           ) : filteredProducts.length === 0 ? (
-            <div className="subtle-empty-state text-center" style={{ padding: '3rem 1.5rem', background: '#121215', borderRadius: '16px', border: '1px dashed rgba(255,255,255,0.1)' }}>
+            <div className="subtle-empty-state text-center" style={{ padding: '3rem 1.5rem', background: 'var(--bg-secondary)', borderRadius: '16px', border: '1px dashed var(--border-color)' }}>
               <ShoppingBag size={28} style={{ color: '#dc2626', marginBottom: '0.5rem' }} />
-              <p style={{ fontSize: '0.95rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.4rem 0' }}>No products found in this category filter</p>
+              <p style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 0.4rem 0' }}>No products found in this category filter</p>
               {user && user.role === 'admin' && (
                 <Link href="/admin/products" className="btn-street-dark btn-sm mt-2">
                   Go to Admin Product Manager &rarr;
@@ -361,7 +369,7 @@ export default function SinglePageStreetwearStore() {
          SECTION: MEN'S COLLECTION SECTION (Hides completely if 0 products)
          ========================================================================= */}
       {(loadingProducts || mensProducts.length > 0) && (
-        <section className="latest-drops-section mens-collection-section" id="mens-collection" style={{ padding: '5rem 0', background: '#121215', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        <section className="latest-drops-section mens-collection-section" id="mens-collection" style={{ padding: '5rem 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)' }}>
           <div className="container">
             <div className="drops-header">
               <div>
@@ -396,7 +404,7 @@ export default function SinglePageStreetwearStore() {
          SECTION: WOMEN'S COLLECTION SECTION (Hides completely if 0 products)
          ========================================================================= */}
       {(loadingProducts || womensProducts.length > 0) && (
-        <section className="latest-drops-section womens-collection-section" id="womens-collection" style={{ padding: '5rem 0', background: '#09090b', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        <section className="latest-drops-section womens-collection-section" id="womens-collection" style={{ padding: '5rem 0', background: 'var(--bg-primary)', borderTop: '1px solid var(--border-color)' }}>
           <div className="container">
             <div className="drops-header">
               <div>
@@ -431,7 +439,7 @@ export default function SinglePageStreetwearStore() {
          SECTION: UNISEX COLLECTION SECTION (Hides completely if 0 products)
          ========================================================================= */}
       {(loadingProducts || unisexProducts.length > 0) && (
-        <section className="latest-drops-section unisex-collection-section" id="unisex-collection" style={{ padding: '5rem 0', background: '#121215', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        <section className="latest-drops-section unisex-collection-section" id="unisex-collection" style={{ padding: '5rem 0', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)' }}>
           <div className="container">
             <div className="drops-header">
               <div>

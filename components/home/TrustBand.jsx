@@ -1,7 +1,18 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Users, Instagram, Star, ShieldCheck } from 'lucide-react';
+import { Truck, RotateCcw, Users, Instagram, Star, ShieldCheck, Award, Sparkles } from 'lucide-react';
+
+const ICON_MAP = {
+  Truck,
+  RotateCcw,
+  Users,
+  Instagram,
+  Star,
+  ShieldCheck,
+  Award,
+  Sparkles,
+};
 
 export default function TrustBand() {
   const [settings, setSettings] = useState(null);
@@ -21,94 +32,114 @@ export default function TrustBand() {
     fetchSettings();
   }, []);
 
-  const happyCust = settings?.trustHappyCustomers || '15,000+';
-  const instaFol = settings?.trustInstagramFollowers || '45.8K+';
-  const instaUrl = settings?.trustInstagramUrl || 'https://www.instagram.com/grizzle.in?igsh=MWhqNnczNThqamdtYg==';
-  const reviewsTxt = settings?.trustReviewsText || '4.9 ★';
-  const secureTxt = settings?.trustSecureCheckoutText || '100%';
-
-  const stats = [
+  const defaultCards = [
     {
-      id: 1,
-      icon: Users,
-      value: happyCust,
+      iconName: 'Truck',
+      value: '24-48 HR DISPATCH',
+      label: 'EXPRESS DISPATCH',
+      sub: 'Pan-India shipping with live order tracking',
+      link: '/orders',
+    },
+    {
+      iconName: 'RotateCcw',
+      value: '7-DAY RETURNS',
+      label: 'EASY RETURNS & EXCHANGES',
+      sub: 'Hassle-free return policy with instant support',
+      link: '#return-policy',
+    },
+    {
+      iconName: 'Users',
+      value: settings?.trustHappyCustomers || '15,000+',
       label: 'HAPPY STREETWEAR CUSTOMERS',
       sub: 'Pan-India delivery across 19,000+ pincodes',
+      link: '',
     },
     {
-      id: 2,
-      icon: Instagram,
-      value: instaFol,
+      iconName: 'Instagram',
+      value: settings?.trustInstagramFollowers || '45.8K+',
       label: 'INSTAGRAM COMMUNITY',
       sub: 'Follow @grizzle.in for limited drop alerts',
-      link: instaUrl,
+      link: settings?.trustInstagramUrl || 'https://www.instagram.com/grizzle.in?igsh=MWhqNnczNThqamdtYg==',
     },
     {
-      id: 3,
-      icon: Star,
-      value: reviewsTxt,
+      iconName: 'Star',
+      value: settings?.trustReviewsText || '4.9 ★',
       label: '5-STAR VERIFIED REVIEWS',
-      sub: 'Verified customer ratings & feedback',
+      sub: 'Verified customer ratings & 240 GSM quality guarantee',
+      link: '#reviews',
     },
     {
-      id: 4,
-      icon: ShieldCheck,
-      value: secureTxt,
+      iconName: 'ShieldCheck',
+      value: settings?.trustSecureCheckoutText || '100% SECURE',
       label: 'SECURE CHECKOUT & COD',
       sub: '256-Bit Encrypted Payments & Cash on Delivery',
+      link: '',
     },
   ];
+
+  const cardsList = Array.isArray(settings?.featureCards) && settings.featureCards.length > 0
+    ? settings.featureCards
+    : defaultCards;
 
   return (
     <section className="trust-band-section">
       <div className="container">
         <div className="trust-band-header">
-          <span className="trust-badge-pill">JOIN THE COMMUNITY</span>
+          <span className="trust-badge-pill">WHY GRIZZLE APPAREL</span>
           <h2 className="trust-title">TRUSTED BY THE STREETS</h2>
-          <p className="trust-subtitle">Premium 240 GSM Heavyweight Cotton. No Compromises.</p>
+          <p className="trust-subtitle">240 GSM Heavyweight Combed Cotton • High-Density DTF Printing • Built to Last</p>
         </div>
 
-        <div className="trust-grid">
-          {stats.map((stat) => {
-            const IconComp = stat.icon;
-            const content = (
-              <div key={stat.id} className="trust-card glass-panel">
+        <div className="trust-grid-6">
+          {cardsList.map((card, idx) => {
+            const IconComp = ICON_MAP[card.iconName] || ICON_MAP.Sparkles;
+
+            const cardContent = (
+              <div className="trust-card glass-panel">
                 <div className="trust-icon-box">
-                  <IconComp size={24} color="var(--accent-primary, #dc2626)" />
+                  <IconComp size={22} color="#ffffff" />
                 </div>
                 <div className="trust-info">
-                  <h3 className="trust-stat-val">{stat.value}</h3>
-                  <span className="trust-stat-label">{stat.label}</span>
-                  <p className="trust-stat-sub">{stat.sub}</p>
+                  <h3 className="trust-stat-val">{card.value}</h3>
+                  <span className="trust-stat-label">{card.label}</span>
+                  <p className="trust-stat-sub">{card.sub}</p>
                 </div>
               </div>
             );
 
-            if (stat.link) {
+            if (card.link && card.link.startsWith('http')) {
               return (
                 <a
-                  key={stat.id}
-                  href={stat.link}
+                  key={idx}
+                  href={card.link}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="trust-card-link"
                 >
-                  {content}
+                  {cardContent}
                 </a>
               );
             }
 
-            return content;
+            if (card.link) {
+              return (
+                <a key={idx} href={card.link} className="trust-card-link">
+                  {cardContent}
+                </a>
+              );
+            }
+
+            return <div key={idx} className="trust-card-wrapper">{cardContent}</div>;
           })}
         </div>
       </div>
 
       <style jsx>{`
         .trust-band-section {
-          padding: 4rem 0;
-          background: linear-gradient(180deg, #09090b 0%, #121215 100%);
-          border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
-          border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+          padding: 4.5rem 0;
+          background: #09090b;
+          border-top: 1px solid rgba(255, 255, 255, 0.08);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .trust-band-header {
@@ -118,81 +149,86 @@ export default function TrustBand() {
 
         .trust-badge-pill {
           display: inline-block;
-          font-size: 0.72rem;
+          font-size: 0.68rem;
           font-weight: 900;
-          letter-spacing: 0.1em;
           color: #facc15;
-          background: rgba(250, 204, 21, 0.12);
-          padding: 4px 12px;
-          border-radius: 20px;
-          margin-bottom: 0.5rem;
+          background: rgba(250, 204, 21, 0.1);
+          border: 1px solid rgba(250, 204, 21, 0.25);
+          padding: 3px 10px;
+          border-radius: 99px;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          margin-bottom: 0.4rem;
         }
 
         .trust-title {
-          font-size: 2.2rem;
+          font-size: clamp(1.8rem, 3.5vw, 2.5rem);
           font-weight: 900;
-          color: #ffffff;
-          letter-spacing: -0.02em;
+          letter-spacing: 0.05em;
           text-transform: uppercase;
+          color: #ffffff;
           margin: 0;
         }
 
         .trust-subtitle {
-          font-size: 0.95rem;
-          color: var(--text-muted, #a1a1aa);
-          margin-top: 0.35rem;
+          font-size: 0.88rem;
+          color: #a1a1aa;
+          margin: 0.25rem 0 0 0;
         }
 
-        .trust-grid {
+        .trust-grid-6 {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(3, 1fr);
           gap: 1.25rem;
         }
 
-        @media (max-width: 992px) {
-          .trust-grid {
+        @media (max-width: 900px) {
+          .trust-grid-6 {
             grid-template-columns: repeat(2, 1fr);
           }
         }
 
         @media (max-width: 550px) {
-          .trust-grid {
+          .trust-grid-6 {
             grid-template-columns: 1fr;
+            gap: 1rem;
           }
         }
 
-        .trust-card-link {
+        .trust-card-link, .trust-card-wrapper {
           text-decoration: none;
           display: block;
         }
 
         .trust-card {
-          background: rgba(24, 24, 27, 0.6);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          border-radius: 16px;
-          padding: 1.5rem;
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           gap: 1rem;
-          transition: all 0.25s ease;
+          padding: 1.25rem 1.4rem;
+          border-radius: 14px;
+          background: #121215;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
           height: 100%;
         }
 
+        .trust-card-link:hover .trust-card,
         .trust-card:hover {
-          border-color: var(--accent-primary, #dc2626);
           transform: translateY(-4px);
-          background: rgba(24, 24, 27, 0.9);
-          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+          border-color: #dc2626;
+          box-shadow: 0 12px 30px rgba(220, 38, 38, 0.25);
         }
 
         .trust-icon-box {
-          background: rgba(220, 38, 38, 0.12);
-          padding: 12px;
+          width: 46px;
+          height: 46px;
           border-radius: 12px;
+          background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
+          box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
         }
 
         .trust-info {
@@ -201,26 +237,28 @@ export default function TrustBand() {
         }
 
         .trust-stat-val {
-          font-size: 1.6rem;
+          font-size: 1.1rem;
           font-weight: 900;
           color: #ffffff;
           margin: 0;
-          line-height: 1;
+          line-height: 1.2;
+          letter-spacing: -0.01em;
         }
 
         .trust-stat-label {
-          font-size: 0.75rem;
+          font-size: 0.72rem;
           font-weight: 800;
-          color: var(--accent-primary, #dc2626);
-          letter-spacing: 0.05em;
-          margin-top: 0.35rem;
+          color: #dc2626;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          margin-top: 2px;
         }
 
         .trust-stat-sub {
           font-size: 0.78rem;
-          color: var(--text-muted, #a1a1aa);
-          margin: 0.35rem 0 0 0;
-          line-height: 1.4;
+          color: #a1a1aa;
+          margin: 2px 0 0 0;
+          line-height: 1.35;
         }
       `}</style>
     </section>

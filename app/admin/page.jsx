@@ -248,6 +248,34 @@ export default function AdminDashboardPage() {
     });
   };
 
+  const handleAddFeatureCard = () => {
+    setStoreSettings((prev) => ({
+      ...prev,
+      featureCards: [
+        ...(prev.featureCards || []),
+        { iconName: 'Sparkles', value: '100% COTTON', label: 'PREMIUM QUALITY', sub: 'Bio-washed 240 GSM heavy cotton', link: '' },
+      ],
+    }));
+  };
+
+  const handleRemoveFeatureCard = (index) => {
+    setStoreSettings((prev) => {
+      const updated = [...(prev.featureCards || [])];
+      updated.splice(index, 1);
+      return { ...prev, featureCards: updated };
+    });
+  };
+
+  const handleFeatureCardChange = (index, field, value) => {
+    setStoreSettings((prev) => {
+      const updated = JSON.parse(JSON.stringify(prev.featureCards || []));
+      if (updated[index]) {
+        updated[index][field] = value;
+      }
+      return { ...prev, featureCards: updated };
+    });
+  };
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -484,74 +512,98 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Trust & Social Proof Band Customization */}
+        {/* Trust & Brand Feature Cards Builder */}
         <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem', marginTop: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
-              <h4 style={{ fontSize: '1.05rem', fontWeight: 800 }}>🛡️ Trust &amp; Social Proof Band Settings</h4>
-              <p className="subtext">Edit your live numbers, Instagram link, customer count, and security text.</p>
+              <h4 style={{ fontSize: '1.05rem', fontWeight: 800 }}>⚡ Homepage Brand Feature Cards (6-Item Grid Builder)</h4>
+              <p className="subtext">Add, delete, or edit the feature cards shown in the "Trusted by the Streets" band.</p>
             </div>
-            <button
-              type="button"
-              onClick={handleSaveStoreSettings}
-              disabled={savingSettings}
-              className="btn btn-primary btn-sm font-bold"
-            >
-              <Save size={14} /> {savingSettings ? 'Saving...' : 'Save Trust Settings'}
-            </button>
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={handleAddFeatureCard}
+                className="btn btn-secondary btn-sm"
+                style={{ fontWeight: 700 }}
+              >
+                + Add Feature Card
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveStoreSettings}
+                disabled={savingSettings}
+                className="btn btn-primary btn-sm font-bold"
+              >
+                <Save size={14} /> {savingSettings ? 'Saving...' : 'Save Feature Cards'}
+              </button>
+            </div>
           </div>
 
-          <div className="form-grid-3 mb-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-            <div className="form-group">
-              <label className="form-label">Happy Customers Stat</label>
-              <input
-                type="text"
-                placeholder="e.g. 15,000+"
-                className="form-input"
-                value={storeSettings.trustHappyCustomers || ''}
-                onChange={(e) => setStoreSettings((prev) => ({ ...prev, trustHappyCustomers: e.target.value }))}
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Instagram Followers Stat</label>
-              <input
-                type="text"
-                placeholder="e.g. 45.8K+"
-                className="form-input"
-                value={storeSettings.trustInstagramFollowers || ''}
-                onChange={(e) => setStoreSettings((prev) => ({ ...prev, trustInstagramFollowers: e.target.value }))}
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Instagram Profile URL</label>
-              <input
-                type="text"
-                placeholder="https://instagram.com/grizzle.in"
-                className="form-input"
-                value={storeSettings.trustInstagramUrl || ''}
-                onChange={(e) => setStoreSettings((prev) => ({ ...prev, trustInstagramUrl: e.target.value }))}
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Verified Rating Stat</label>
-              <input
-                type="text"
-                placeholder="e.g. 4.9 ★"
-                className="form-input"
-                value={storeSettings.trustReviewsText || ''}
-                onChange={(e) => setStoreSettings((prev) => ({ ...prev, trustReviewsText: e.target.value }))}
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Secure Checkout Stat</label>
-              <input
-                type="text"
-                placeholder="e.g. 100%"
-                className="form-input"
-                value={storeSettings.trustSecureCheckoutText || ''}
-                onChange={(e) => setStoreSettings((prev) => ({ ...prev, trustSecureCheckoutText: e.target.value }))}
-              />
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+            {(storeSettings.featureCards || []).map((card, idx) => (
+              <div key={idx} style={{ display: 'grid', gridTemplateColumns: '120px 140px 180px 1fr 140px 70px', gap: '0.5rem', alignItems: 'center', background: 'var(--bg-tertiary)', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+                <select
+                  value={card.iconName || 'Truck'}
+                  onChange={(e) => handleFeatureCardChange(idx, 'iconName', e.target.value)}
+                  className="form-select"
+                  style={{ fontSize: '0.78rem' }}
+                >
+                  <option value="Truck">🚚 Truck</option>
+                  <option value="RotateCcw">🔄 Return</option>
+                  <option value="Users">👥 Users</option>
+                  <option value="Instagram">📸 Insta</option>
+                  <option value="Star">⭐️ Star</option>
+                  <option value="ShieldCheck">🔒 Shield</option>
+                  <option value="Award">🏆 Award</option>
+                  <option value="Sparkles">✨ Sparkle</option>
+                </select>
+
+                <input
+                  type="text"
+                  placeholder="Stat (e.g. 24-48 HR)"
+                  value={card.value || ''}
+                  onChange={(e) => handleFeatureCardChange(idx, 'value', e.target.value)}
+                  className="form-input"
+                  style={{ fontSize: '0.78rem' }}
+                />
+
+                <input
+                  type="text"
+                  placeholder="Title (e.g. EXPRESS DISPATCH)"
+                  value={card.label || ''}
+                  onChange={(e) => handleFeatureCardChange(idx, 'label', e.target.value)}
+                  className="form-input"
+                  style={{ fontSize: '0.78rem' }}
+                />
+
+                <input
+                  type="text"
+                  placeholder="Subtitle (e.g. Pan-India shipping with live tracking)"
+                  value={card.sub || ''}
+                  onChange={(e) => handleFeatureCardChange(idx, 'sub', e.target.value)}
+                  className="form-input"
+                  style={{ fontSize: '0.78rem' }}
+                />
+
+                <input
+                  type="text"
+                  placeholder="Link URL (Optional)"
+                  value={card.link || ''}
+                  onChange={(e) => handleFeatureCardChange(idx, 'link', e.target.value)}
+                  className="form-input"
+                  style={{ fontSize: '0.78rem' }}
+                />
+
+                <button
+                  type="button"
+                  onClick={() => handleRemoveFeatureCard(idx)}
+                  className="btn btn-secondary btn-sm"
+                  style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)', padding: '0.4rem 0.5rem', fontSize: '0.75rem' }}
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
           </div>
         </div>
 

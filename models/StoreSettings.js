@@ -54,6 +54,61 @@ const StoreSettingsSchema = new mongoose.Schema(
       type: String,
       default: '100%',
     },
+    featureCards: {
+      type: [
+        {
+          iconName: { type: String, default: 'Truck' },
+          value: { type: String, default: '24-48 HR' },
+          label: { type: String, default: 'EXPRESS DISPATCH' },
+          sub: { type: String, default: 'Pan-India shipping with live tracking' },
+          link: { type: String, default: '/orders' },
+        },
+      ],
+      default: [
+        {
+          iconName: 'Truck',
+          value: '24-48 HR',
+          label: 'EXPRESS DISPATCH',
+          sub: 'Pan-India shipping with live order tracking',
+          link: '/orders',
+        },
+        {
+          iconName: 'RotateCcw',
+          value: '7-DAY RETURNS',
+          label: 'EASY RETURNS',
+          sub: 'Hassle-free exchanges & instant support',
+          link: '#return-policy',
+        },
+        {
+          iconName: 'Users',
+          value: '15,000+',
+          label: 'HAPPY CUSTOMERS',
+          sub: 'Pan-India delivery across 19,000+ pincodes',
+          link: '',
+        },
+        {
+          iconName: 'Instagram',
+          value: '45.8K+',
+          label: 'INSTAGRAM COMMUNITY',
+          sub: 'Follow @grizzle.in for drop alerts',
+          link: 'https://www.instagram.com/grizzle.in?igsh=MWhqNnczNThqamdtYg==',
+        },
+        {
+          iconName: 'Star',
+          value: '4.9 ★',
+          label: 'VERIFIED REVIEWS',
+          sub: '1,200+ ratings & 240 GSM quality guarantee',
+          link: '#reviews',
+        },
+        {
+          iconName: 'ShieldCheck',
+          value: '100% SECURE',
+          label: 'COD & SSL CHECKOUT',
+          sub: '256-Bit Encrypted Payments & Cash on Delivery',
+          link: '',
+        },
+      ],
+    },
     footerAboutText: {
       type: String,
       default: 'Self-Made High-Density DTF Printed Streetwear. Bio-Washed 240 GSM Premium Cotton Built for Style & Longevity.',

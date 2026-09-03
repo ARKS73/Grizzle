@@ -219,20 +219,20 @@
   font-weight: 900;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #ffffff;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .drops-subtitle {
   font-size: 0.88rem;
-  color: #a1a1aa;
+  color: var(--text-muted);
   margin: 0.25rem 0 0 0;
 }
 
 .filter-tab {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #a1a1aa;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
   padding: 0.55rem 1.25rem;
   border-radius: 99px;
   font-weight: 800;
@@ -244,9 +244,8 @@
 }
 
 .filter-tab:hover {
-  border-color: #ffffff;
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--text-primary);
+  color: var(--text-primary);
 }
 
 .filter-tab.active {
@@ -540,6 +539,30 @@
   gap: 0.5rem;
   padding: 1.1rem 2.2rem;
   font-size: 1.05rem;
+}
+
+/* Hero Feature Highlights Bar */
+.hero-highlights-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 1.25rem;
+  width: 100%;
+}
+
+.hero-h-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 4px 12px;
+  border-radius: 99px;
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Secondary Hero Row: Product Thumbnails */

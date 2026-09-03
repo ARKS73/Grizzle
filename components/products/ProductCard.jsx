@@ -210,16 +210,16 @@ export default function ProductCard({ product, onQuickView }) {
           flex-direction: column;
           border-radius: 16px;
           overflow: hidden;
-          background: #121215;
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-color);
           transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
           position: relative;
         }
 
         .streetwear-product-card:hover {
           transform: translateY(-6px);
-          box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
-          border-color: rgba(220, 38, 38, 0.4);
+          box-shadow: var(--shadow-xl);
+          border-color: #dc2626;
         }
 
         .card-media-box {
@@ -227,7 +227,7 @@ export default function ProductCard({ product, onQuickView }) {
           width: 100%;
           aspect-ratio: 4 / 5;
           overflow: hidden;
-          background: #09090b;
+          background: var(--bg-tertiary);
           cursor: pointer;
         }
 
@@ -354,7 +354,7 @@ export default function ProductCard({ product, onQuickView }) {
         @media (max-width: 768px) {
           .quick-add-hover-bar {
             transform: translateY(0);
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.75);
           }
         }
 
@@ -403,7 +403,7 @@ export default function ProductCard({ product, onQuickView }) {
         .card-category-tag {
           font-size: 0.65rem;
           font-weight: 800;
-          color: #71717a;
+          color: var(--text-muted);
           letter-spacing: 0.05em;
           text-transform: uppercase;
         }
@@ -412,7 +412,7 @@ export default function ProductCard({ product, onQuickView }) {
           display: flex;
           align-items: center;
           gap: 3px;
-          background: rgba(250, 204, 21, 0.1);
+          background: rgba(250, 204, 21, 0.12);
           padding: 2px 6px;
           border-radius: 4px;
         }
@@ -420,13 +420,13 @@ export default function ProductCard({ product, onQuickView }) {
         .rating-val {
           font-size: 0.72rem;
           font-weight: 800;
-          color: #facc15;
+          color: #d97706;
         }
 
         .card-product-title {
           font-size: 0.95rem;
           font-weight: 800;
-          color: #ffffff;
+          color: var(--text-primary);
           text-decoration: none;
           line-height: 1.35;
           display: -webkit-box;
@@ -437,7 +437,7 @@ export default function ProductCard({ product, onQuickView }) {
         }
 
         .card-product-title:hover {
-          color: #ef4444;
+          color: #dc2626;
         }
 
         .card-price-row {
@@ -456,12 +456,12 @@ export default function ProductCard({ product, onQuickView }) {
         .price-sale {
           font-size: 1.05rem;
           font-weight: 900;
-          color: #ffffff;
+          color: var(--text-primary);
         }
 
         .price-mrp {
           font-size: 0.8rem;
-          color: #71717a;
+          color: var(--text-muted);
           text-decoration: line-through;
         }
 
@@ -475,17 +475,17 @@ export default function ProductCard({ product, onQuickView }) {
           font-weight: 800;
           padding: 2px 5px;
           border-radius: 4px;
-          background: rgba(255, 255, 255, 0.06);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: #a1a1aa;
+          background: var(--bg-tertiary);
+          border: 1px solid var(--border-color);
+          color: var(--text-muted);
           cursor: pointer;
           transition: all 0.15s ease;
         }
 
         .mini-size-btn.active {
-          background: #ffffff;
-          color: #000000;
-          border-color: #ffffff;
+          background: var(--text-primary);
+          color: var(--text-inverse);
+          border-color: var(--text-primary);
         }
       `}</style>
     </div>
