@@ -226,31 +226,31 @@ export default function ProductCard({ product, onQuickView }) {
           display: flex;
           flex-direction: column;
           gap: 8px;
-          z-index: 5;
+          z-index: 10;
         }
         .action-btn {
           width: 36px;
           height: 36px;
-          border-radius: var(--radius-full);
-          border: 1px solid var(--border-color);
-          background: rgba(15, 23, 42, 0.65);
-          backdrop-filter: blur(8px);
-          color: var(--text-primary);
+          border-radius: 50%;
+          border: none;
+          background: rgba(255, 255, 255, 0.92);
+          backdrop-filter: blur(6px);
+          -webkit-backdrop-filter: blur(6px);
+          color: #1e293b;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          transition: all var(--transition-fast);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          transition: all 0.2s ease;
         }
         .action-btn:hover {
-          background: var(--bg-secondary);
-          color: var(--accent-primary);
-          transform: scale(1.08);
+          background: #ffffff;
+          transform: scale(1.1);
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
         }
         .action-btn.active, .action-btn.saved {
-          border-color: #ef4444;
-          background: rgba(239, 68, 68, 0.2);
-          color: #ef4444;
+          background: #ffffff;
         }
 
         .card-content {
