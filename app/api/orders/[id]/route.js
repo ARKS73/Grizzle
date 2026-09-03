@@ -63,6 +63,8 @@ export async function PATCH(request, { params }) {
       if (!isAdmin && !['Pending', 'Processing'].includes(order.status)) {
         return NextResponse.json({ success: false, message: 'This order cannot be cancelled at its current stage' }, { status: 400 });
       }
+
+      const previousStatus = order.status;
       order.status = status;
       await handleOrderStatusStockAdjustment(order, previousStatus, status);
     }
