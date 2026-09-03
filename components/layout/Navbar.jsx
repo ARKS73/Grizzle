@@ -34,23 +34,28 @@ import { useTheme } from '@/contexts/ThemeContext';
 import GrizzleLogo from '@/components/ui/GrizzleLogo';
 
 function DesktopNavLinks() {
-  const pathname = usePathname();
+  const pathname = usePathname() || '';
   const searchParams = useSearchParams();
-  const genderParam = searchParams?.get('gender') || '';
+  const genderParam = (searchParams?.get('gender') || '').toLowerCase();
+
+  const isHomeActive = pathname === '/';
+  const isMenActive = pathname.startsWith('/products') && genderParam === 'men';
+  const isWomenActive = pathname.startsWith('/products') && genderParam === 'women';
+  const isUnisexActive = pathname.startsWith('/products') && genderParam === 'unisex';
 
   return (
     <nav className="desktop-nav">
-      <Link href="/" className={`nav-link ${pathname === '/' ? 'active' : ''}`}>
+      <Link href="/" className={`nav-link ${isHomeActive ? 'active' : ''}`}>
         HOME
       </Link>
-      <Link href="/products?gender=Men" className={`nav-link ${pathname === '/products' && genderParam === 'Men' ? 'active' : ''}`}>
+      <Link href="/products?gender=Men" className={`nav-link ${isMenActive ? 'active' : ''}`}>
         MEN
       </Link>
-      <Link href="/products?gender=Women" className={`nav-link ${pathname === '/products' && genderParam === 'Women' ? 'active' : ''}`}>
+      <Link href="/products?gender=Women" className={`nav-link ${isWomenActive ? 'active' : ''}`}>
         WOMEN
       </Link>
-      <Link href="/products?gender=Unisex" className={`nav-link nav-highlight ${pathname === '/products' && genderParam === 'Unisex' ? 'active' : ''}`}>
-        <Shirt size={15} /> UNISEX
+      <Link href="/products?gender=Unisex" className={`nav-link ${isUnisexActive ? 'active' : ''}`}>
+        <Shirt size={14} /> UNISEX
       </Link>
     </nav>
   );

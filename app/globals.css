@@ -194,6 +194,54 @@ img {
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
 }
+/* Navigation Bar Pill Alignment & Active Page Indicator */
+.desktop-nav {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  background: var(--bg-tertiary) !important;
+  padding: 4px 6px !important;
+  border-radius: 9999px !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-sm) !important;
+  margin: 0 0.5rem !important;
+}
+
+.nav-link {
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  color: var(--text-secondary) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.35rem !important;
+  padding: 0.48rem 1.15rem !important;
+  border-radius: 9999px !important;
+  border: 1px solid transparent !important;
+  cursor: pointer !important;
+  letter-spacing: 0.05em !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
+}
+
+.nav-link:hover {
+  color: var(--accent-primary) !important;
+  background: var(--bg-secondary) !important;
+}
+
+.nav-link.active {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  border-color: transparent !important;
+  box-shadow: 0 3px 10px rgba(239, 68, 68, 0.35) !important;
+}
+
+.nav-link.active svg {
+  color: #ffffff !important;
+}
 
 /* Consolidated Shared Button System (Primary, Secondary, Ghost) */
 .btn, .btn-street-dark, .btn-street-light {
