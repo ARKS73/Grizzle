@@ -19,7 +19,6 @@ export default function QuickViewModal({ product, onClose }) {
 
   const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || 'M');
   const [selectedColor, setSelectedColor] = useState(defaultColor);
-  const [selectedImage, setSelectedImage] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [shareModalOpen, setShareModalOpen] = useState(false);
 
