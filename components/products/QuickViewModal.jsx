@@ -290,15 +290,15 @@ export default function QuickViewModal({ product, onClose }) {
                     </button>
                   </div>
 
-                  {/* View Full Product Page & Verified Reviews Button */}
+                  {/* Compact Small Pill Button for View Full Product Page */}
                   <Link
                     href={`/product/${product._id}`}
                     onClick={onClose}
                     className="btn-view-full-details"
                   >
-                    <Star size={15} fill="#f59e0b" color="#f59e0b" className="star-icon" />
+                    <Star size={13} fill="#f59e0b" color="#f59e0b" className="star-icon" />
                     <span>View Full Details &amp; Verified Reviews</span>
-                    <ArrowRight size={16} className="arrow-icon" />
+                    <ArrowRight size={13} className="arrow-icon" />
                   </Link>
                 </div>
               );
@@ -688,51 +688,49 @@ export default function QuickViewModal({ product, onClose }) {
           border-color: #ef4444 !important;
         }
 
-        /* Premium High-Impact Button for View Full Product Page */
+        /* Compact Sleek Pill Button for View Full Product Page */
         .btn-view-full-details {
-          display: flex;
+          display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 0.6rem;
-          width: 100%;
-          padding: 0.85rem 1.25rem;
-          margin-top: 1rem;
-          border-radius: 12px;
-          background: rgba(239, 68, 68, 0.08);
-          border: 2px solid #ef4444;
-          color: #ef4444;
-          font-size: 0.88rem;
-          font-weight: 800;
+          gap: 0.4rem;
+          width: fit-content;
+          align-self: flex-start;
+          padding: 0.45rem 0.95rem;
+          margin-top: 0.65rem;
+          border-radius: 99px;
+          background: var(--bg-tertiary);
+          border: 1px solid var(--border-color);
+          color: var(--text-primary);
+          font-size: 0.78rem;
+          font-weight: 700;
           text-decoration: none;
-          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-          box-shadow: 0 4px 14px rgba(239, 68, 68, 0.15);
-          letter-spacing: 0.01em;
+          transition: all 0.2s ease;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         }
 
         .btn-view-full-details:hover {
-          background: #ef4444;
-          color: #ffffff;
-          transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+          background: var(--accent-light);
+          border-color: var(--accent-primary);
+          color: var(--accent-primary);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
         }
 
         :global(.btn-view-full-details .star-icon) {
-          transition: transform 0.2s ease, fill 0.2s ease;
+          transition: transform 0.2s ease;
         }
 
         .btn-view-full-details:hover :global(.star-icon) {
-          fill: #ffffff;
-          color: #ffffff;
-          transform: scale(1.15) rotate(12deg);
+          transform: scale(1.15);
         }
 
         :global(.btn-view-full-details .arrow-icon) {
-          transition: transform 0.2s ease, color 0.2s ease;
+          transition: transform 0.2s ease;
         }
 
         .btn-view-full-details:hover :global(.arrow-icon) {
-          transform: translateX(5px);
-          color: #ffffff;
+          transform: translateX(3px);
         }
 
         /* Tablet & Intermediate Screen Sizing */
