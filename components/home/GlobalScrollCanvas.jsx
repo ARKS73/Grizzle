@@ -177,8 +177,8 @@ export default function GlobalScrollCanvas() {
           top: -10%; left: 15%;
           width: 550px; height: 550px;
           background: radial-gradient(circle,
-            rgba(99, 102, 241, 0.22) 0%,
-            rgba(236, 72, 153, 0.12) 50%,
+            rgba(220, 38, 38, 0.08) 0%,
+            rgba(0, 0, 0, 0.04) 50%,
             transparent 70%);
           animation: floatOrb 18s ease-in-out infinite alternate;
         }
@@ -186,8 +186,8 @@ export default function GlobalScrollCanvas() {
           bottom: -10%; right: 15%;
           width: 600px; height: 600px;
           background: radial-gradient(circle,
-            rgba(37, 99, 235, 0.25) 0%,
-            rgba(168, 85, 247, 0.15) 50%,
+            rgba(245, 158, 11, 0.06) 0%,
+            rgba(0, 0, 0, 0.04) 50%,
             transparent 70%);
           animation: floatOrb 22s ease-in-out infinite alternate-reverse;
         }
