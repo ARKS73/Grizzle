@@ -78,6 +78,9 @@ const collections = [
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const genderParam = searchParams?.get('gender') || '';
   const { user, logout } = useAuth();
   const { cartItems, addToCart, removeFromCart, getTotalPrice, getTotalCount } = useCart();
   const { wishlistItems, removeFromWishlist } = useWishlist();
