@@ -219,21 +219,21 @@ export default function ProductCard({ product, onQuickView }) {
           gap: 6px;
           z-index: 2;
         }
-        .media-actions {
+        .card-overlay-actions {
           position: absolute;
           top: 12px;
           right: 12px;
           display: flex;
           flex-direction: column;
           gap: 8px;
-          z-index: 2;
+          z-index: 5;
         }
         .action-btn {
           width: 36px;
           height: 36px;
           border-radius: var(--radius-full);
           border: 1px solid var(--border-color);
-          background: var(--bg-glass);
+          background: rgba(15, 23, 42, 0.65);
           backdrop-filter: blur(8px);
           color: var(--text-primary);
           display: flex;
@@ -245,9 +245,12 @@ export default function ProductCard({ product, onQuickView }) {
         .action-btn:hover {
           background: var(--bg-secondary);
           color: var(--accent-primary);
+          transform: scale(1.08);
         }
-        .action-btn.saved {
-          border-color: var(--danger);
+        .action-btn.active, .action-btn.saved {
+          border-color: #ef4444;
+          background: rgba(239, 68, 68, 0.2);
+          color: #ef4444;
         }
 
         .card-content {

@@ -5,12 +5,15 @@ import { useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/products/ProductCard';
 import ProductFilter from '@/components/products/ProductFilter';
 import QuickViewModal from '@/components/products/QuickViewModal';
-import { Search, SlidersHorizontal, ArrowUpDown, RefreshCw, X, RotateCcw, CheckCircle2 } from 'lucide-react';
+import { Search, SlidersHorizontal, ArrowUpDown, RefreshCw, X, RotateCcw, CheckCircle2, Heart } from 'lucide-react';
+import { useWishlist } from '@/contexts/WishlistContext';
 
 const productsQueryCache = new Map();
 
 function ProductsCatalogContent() {
   const searchParams = useSearchParams();
+
+  const { isInWishlist } = useWishlist();
 
   const [filters, setFilters] = useState({
     search: searchParams.get('search') || '',
@@ -21,6 +24,7 @@ function ProductsCatalogContent() {
     size: searchParams.get('size') || '',
     color: '',
     rating: 0,
+    wishlistOnly: false,
     sort: 'newest',
     page: 1,
   });
@@ -44,12 +48,17 @@ function ProductsCatalogContent() {
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [mobileSortOpen, setMobileSortOpen] = useState(false);
 
+  const displayedProducts = filters.wishlistOnly
+    ? products.filter((p) => isInWishlist(p._id))
+    : products;
+
   const activeCount = [
     filters.category,
     filters.gender,
     filters.size,
     filters.color,
     filters.search,
+    filters.wishlistOnly ? 'wishlist' : null,
     filters.rating > 0 ? filters.rating : null,
   ].filter(Boolean).length;
 
@@ -116,6 +125,7 @@ function ProductsCatalogContent() {
       size: '',
       color: '',
       rating: 0,
+      wishlistOnly: false,
       sort: 'newest',
       page: 1,
     });
@@ -172,7 +182,7 @@ function ProductsCatalogContent() {
             </div>
 
             <div className="results-count">
-              Showing <strong>{products.length}</strong> of <strong>{totalProducts}</strong> products
+              Showing <strong>{displayedProducts.length}</strong> of <strong>{totalProducts}</strong> products
             </div>
 
             <div className="sort-box">
@@ -191,13 +201,18 @@ function ProductsCatalogContent() {
           </div>
 
           {/* Active Filter Badges */}
-          {(filters.category || filters.gender || filters.size || filters.color || filters.search || filters.rating > 0) && (
+          {(filters.category || filters.gender || filters.size || filters.color || filters.search || filters.wishlistOnly || filters.rating > 0) && (
             <div className="active-filters-row">
               {filters.search && <span className="badge badge-info">Search: {filters.search}</span>}
               {filters.gender && <span className="badge badge-primary">Gender: {filters.gender}</span>}
               {filters.category && <span className="badge badge-primary">Category: {filters.category}</span>}
               {filters.size && <span className="badge badge-warning">Size: {filters.size}</span>}
               {filters.color && <span className="badge badge-success">Color: {filters.color}</span>}
+              {filters.wishlistOnly && (
+                <span className="badge badge-danger flex items-center gap-1">
+                  <Heart size={12} fill="#ef4444" /> Wishlisted Only
+                </span>
+              )}
               {filters.rating > 0 && <span className="badge badge-info">Min Rating: {filters.rating}★</span>}
               <button onClick={handleResetFilters} className="clear-all-btn">Clear All</button>
             </div>
@@ -210,17 +225,21 @@ function ProductsCatalogContent() {
                 <div key={i} className="skeleton-card skeleton" style={{ height: '360px' }} />
               ))}
             </div>
-          ) : products.length === 0 ? (
+          ) : displayedProducts.length === 0 ? (
             <div className="empty-catalog glass-panel">
               <h3>No matching clothes found</h3>
-              <p>Try resetting filters or adjusting search parameters.</p>
+              <p>
+                {filters.wishlistOnly
+                  ? 'No wishlisted products match your current filters.'
+                  : 'Try resetting filters or adjusting search parameters.'}
+              </p>
               <button onClick={handleResetFilters} className="btn btn-primary mt-3">
                 <RefreshCw size={16} /> Reset All Filters
               </button>
             </div>
           ) : (
             <div className="grid-products">
-              {products.map((product) => (
+              {displayedProducts.map((product) => (
                 <ProductCard
                   key={product._id}
                   product={product}

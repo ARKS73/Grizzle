@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { SlidersHorizontal, RotateCcw, Star, Check } from 'lucide-react';
+import { SlidersHorizontal, RotateCcw, Star, Check, Heart } from 'lucide-react';
+import { useWishlist } from '@/contexts/WishlistContext';
 
 const GENDERS = ['All', 'Men', 'Women', 'Unisex'];
 
@@ -18,6 +19,7 @@ const COLORS = [
 
 export default function ProductFilter({ filters, setFilters, onReset, hideHeader = false }) {
   const [categoriesList, setCategoriesList] = useState([]);
+  const { wishlistItems } = useWishlist();
 
   useEffect(() => {
     async function loadCategories() {
@@ -226,7 +228,61 @@ export default function ProductFilter({ filters, setFilters, onReset, hideHeader
         </div>
       </div>
 
+      {/* Wishlist Quick Filter */}
+      <div className="filter-group">
+        <h4>Wishlist & Saved Items</h4>
+        <button
+          onClick={() => setFilters((prev) => ({ ...prev, wishlistOnly: !prev.wishlistOnly, page: 1 }))}
+          className={`wishlist-filter-btn ${filters.wishlistOnly ? 'active' : ''}`}
+        >
+          <div className="wishlist-btn-left">
+            <Heart size={16} fill={filters.wishlistOnly ? '#ef4444' : 'none'} color={filters.wishlistOnly ? '#ef4444' : 'currentColor'} />
+            <span>Wishlisted Only</span>
+          </div>
+          {wishlistItems && wishlistItems.length > 0 && (
+            <span className="wishlist-badge">{wishlistItems.length}</span>
+          )}
+        </button>
+      </div>
+
       <style jsx>{`
+        .wishlist-filter-btn {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.6rem 0.85rem;
+          border-radius: var(--radius-md);
+          border: 1px solid var(--border-color);
+          background: var(--bg-secondary);
+          color: var(--text-primary);
+          font-size: 0.85rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all var(--transition-fast);
+        }
+        .wishlist-btn-left {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        .wishlist-filter-btn:hover {
+          background: var(--bg-tertiary);
+          border-color: #ef4444;
+        }
+        .wishlist-filter-btn.active {
+          background: rgba(239, 68, 68, 0.15);
+          border-color: #ef4444;
+          color: #ef4444;
+        }
+        .wishlist-badge {
+          background: #ef4444;
+          color: #fff;
+          font-size: 0.7rem;
+          font-weight: 700;
+          padding: 2px 7px;
+          border-radius: 20px;
+        }
         .filter-sidebar {
           padding: 1.5rem;
           border-radius: var(--radius-lg);
