@@ -296,7 +296,8 @@ export default function QuickViewModal({ product, onClose }) {
                     onClick={onClose}
                     className="btn-view-full-details"
                   >
-                    <span>View Full Product Page &amp; Verified Reviews</span>
+                    <Star size={15} fill="#f59e0b" color="#f59e0b" className="star-icon" />
+                    <span>View Full Details &amp; Verified Reviews</span>
                     <ArrowRight size={16} className="arrow-icon" />
                   </Link>
                 </div>
@@ -687,40 +688,51 @@ export default function QuickViewModal({ product, onClose }) {
           border-color: #ef4444 !important;
         }
 
-        /* Sleek Button for View Full Product Page */
+        /* Premium High-Impact Button for View Full Product Page */
         .btn-view-full-details {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 0.5rem;
+          gap: 0.6rem;
           width: 100%;
-          padding: 0.75rem 1.25rem;
-          margin-top: 0.85rem;
-          border-radius: 10px;
-          background: var(--bg-tertiary);
-          border: 1.5px solid var(--border-color);
-          color: var(--text-primary);
-          font-size: 0.85rem;
-          font-weight: 700;
+          padding: 0.85rem 1.25rem;
+          margin-top: 1rem;
+          border-radius: 12px;
+          background: rgba(239, 68, 68, 0.08);
+          border: 2px solid #ef4444;
+          color: #ef4444;
+          font-size: 0.88rem;
+          font-weight: 800;
           text-decoration: none;
-          transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
-          box-shadow: var(--shadow-xs);
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 4px 14px rgba(239, 68, 68, 0.15);
+          letter-spacing: 0.01em;
         }
 
         .btn-view-full-details:hover {
-          background: var(--accent-light);
-          border-color: var(--accent-primary);
-          color: var(--accent-primary);
+          background: #ef4444;
+          color: #ffffff;
           transform: translateY(-2px);
-          box-shadow: 0 4px 14px rgba(239, 68, 68, 0.18);
+          box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+        }
+
+        :global(.btn-view-full-details .star-icon) {
+          transition: transform 0.2s ease, fill 0.2s ease;
+        }
+
+        .btn-view-full-details:hover :global(.star-icon) {
+          fill: #ffffff;
+          color: #ffffff;
+          transform: scale(1.15) rotate(12deg);
         }
 
         :global(.btn-view-full-details .arrow-icon) {
-          transition: transform 0.2s ease;
+          transition: transform 0.2s ease, color 0.2s ease;
         }
 
         .btn-view-full-details:hover :global(.arrow-icon) {
-          transform: translateX(4px);
+          transform: translateX(5px);
+          color: #ffffff;
         }
 
         /* Tablet & Intermediate Screen Sizing */
