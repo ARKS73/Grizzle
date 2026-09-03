@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { X, Star, ShoppingBag, Heart, ArrowRight } from 'lucide-react';
+import { X, Star, ShoppingBag, Heart, ArrowRight, Share2 } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
+import ShareModal from '@/components/ui/ShareModal';
 import { getOptimizedImageUrl } from '@/utils/imageOptimizer';
 import { getProductVariantStock } from '@/utils/stockHelper';
 
@@ -18,7 +19,9 @@ export default function QuickViewModal({ product, onClose }) {
 
   const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || 'M');
   const [selectedColor, setSelectedColor] = useState(defaultColor);
+  const [selectedImage, setSelectedImage] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
 
   // Active color object
   const activeColorObj = product?.colors?.find((c) => c.name === selectedColor) || product?.colors?.[0];
@@ -288,6 +291,15 @@ export default function QuickViewModal({ product, onClose }) {
                         strokeWidth={2}
                       />
                     </button>
+
+                    <button
+                      onClick={() => setShareModalOpen(true)}
+                      className="wishlist-btn"
+                      title="Share Product"
+                      aria-label="Share"
+                    >
+                      <Share2 size={18} color="var(--text-primary)" />
+                    </button>
                   </div>
 
                   {/* Compact Small Pill Button for View Full Product Page */}
@@ -306,6 +318,13 @@ export default function QuickViewModal({ product, onClose }) {
           </div>
         </div>
       </div>
+
+      {/* Share Product Modal */}
+      <ShareModal
+        isOpen={shareModalOpen}
+        onClose={() => setShareModalOpen(false)}
+        product={product}
+      />
 
       <style jsx>{`
         :global(.quickview-modal-overlay) {
