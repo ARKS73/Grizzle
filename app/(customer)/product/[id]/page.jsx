@@ -376,7 +376,7 @@ export default function ProductDetailPage() {
 
                   <button
                     onClick={() => toggleWishlist(product)}
-                    className={`btn wishlist-btn ${isSaved ? 'saved' : ''}`}
+                    className={`wishlist-btn ${isSaved ? 'saved' : ''}`}
                     title="Save to Wishlist"
                   >
                     <Heart size={22} fill={isSaved ? '#ef4444' : 'none'} color="#ef4444" stroke="#ef4444" strokeWidth={2.2} />
@@ -384,7 +384,7 @@ export default function ProductDetailPage() {
 
                   <button
                     onClick={() => setShareModalOpen(true)}
-                    className="btn share-btn"
+                    className="share-btn"
                     title="Share Product"
                   >
                     <Share2 size={22} color="#ef4444" stroke="#ef4444" strokeWidth={2.2} />
@@ -807,68 +807,49 @@ export default function ProductDetailPage() {
           box-shadow: none;
         }
 
-        .wishlist-btn {
-          width: 48px;
-          height: 48px;
-          border-radius: var(--radius-md);
-          background: #ffffff !important;
+        .wishlist-btn, .share-btn {
+          width: 48px !important;
+          height: 48px !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          border-radius: 12px !important;
+          background: var(--bg-secondary) !important;
           border: 1.5px solid #ef4444 !important;
           color: #ef4444 !important;
           display: inline-flex !important;
           align-items: center !important;
           justify-content: center !important;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          flex-shrink: 0;
-          box-shadow: 0 2px 6px rgba(239, 68, 68, 0.12);
-        }
-        .wishlist-btn :global(svg) {
-          width: 22px !important;
-          height: 22px !important;
-          stroke: #ef4444 !important;
-          stroke-width: 2.2px !important;
-          color: #ef4444 !important;
-          display: block !important;
-        }
-        .wishlist-btn:hover {
-          background: rgba(239, 68, 68, 0.1) !important;
-          transform: scale(1.05);
-        }
-        .wishlist-btn.saved {
-          background: rgba(239, 68, 68, 0.18) !important;
-          border-color: #ef4444 !important;
-        }
-        .wishlist-btn.saved :global(svg) {
-          fill: #ef4444 !important;
-          stroke: #ef4444 !important;
+          cursor: pointer !important;
+          transition: all 0.2s ease !important;
+          flex-shrink: 0 !important;
+          box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15) !important;
         }
 
-        .share-btn {
-          width: 48px;
-          height: 48px;
-          border-radius: var(--radius-md);
-          background: #ffffff !important;
-          border: 1.5px solid #ef4444 !important;
-          color: #ef4444 !important;
-          display: inline-flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          flex-shrink: 0;
-          box-shadow: 0 2px 6px rgba(239, 68, 68, 0.12);
+        .wishlist-btn:hover, .share-btn:hover {
+          background: rgba(239, 68, 68, 0.15) !important;
+          transform: scale(1.06) !important;
+          border-color: #ef4444 !important;
         }
-        .share-btn :global(svg) {
+
+        .wishlist-btn.saved {
+          background: rgba(239, 68, 68, 0.22) !important;
+          border-color: #ef4444 !important;
+        }
+
+        :global(.wishlist-btn svg), :global(.share-btn svg) {
           width: 22px !important;
           height: 22px !important;
+          min-width: 22px !important;
+          min-height: 22px !important;
           stroke: #ef4444 !important;
-          stroke-width: 2.2px !important;
           color: #ef4444 !important;
+          stroke-width: 2.2px !important;
           display: block !important;
         }
-        .share-btn:hover {
-          background: rgba(239, 68, 68, 0.1) !important;
-          transform: scale(1.05);
+
+        :global(.wishlist-btn.saved svg) {
+          fill: #ef4444 !important;
+          stroke: #ef4444 !important;
         }
 
         .guarantees-grid {
@@ -1210,15 +1191,12 @@ export default function ProductDetailPage() {
             border-radius: 10px;
             flex: 1;
           }
-          .wishlist-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
-          }
-          .share-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
+          .wishlist-btn, .share-btn {
+            width: 44px !important;
+            height: 44px !important;
+            min-width: 44px !important;
+            padding: 0 !important;
+            border-radius: 10px !important;
           }
           .tabs-container {
             padding: 0.85rem;
