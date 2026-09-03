@@ -55,12 +55,29 @@ export default function ProductDetailPage() {
 
         // Fetch related products & reviews asynchronously in parallel background
         Promise.all([
-          fetch(`/api/products?category=${encodeURIComponent(prod.category)}&limit=4`).then((r) => r.json()).catch(() => null),
+          fetch(`/api/products?category=${encodeURIComponent(prod.category)}&limit=8`).then((r) => r.json()).catch(() => null),
           fetch(`/api/reviews?productId=${prod._id}`).then((r) => r.json()).catch(() => null),
-        ]).then(([relData, revData]) => {
-          if (relData?.success) {
-            setRelatedProducts((relData.products || []).filter((p) => p._id !== prod._id));
+        ]).then(async ([relData, revData]) => {
+          let related = (relData?.success && relData.products)
+            ? relData.products.filter((p) => p._id !== prod._id)
+            : [];
+
+          // Fallback: If fewer than 4 products in same category, load general catalog products
+          if (related.length < 4) {
+            try {
+              const genRes = await fetch('/api/products?limit=12');
+              const genData = await genRes.json();
+              if (genData?.success && genData.products) {
+                const extra = genData.products.filter((p) => p._id !== prod._id && !related.some((r) => r._id === p._id));
+                related = [...related, ...extra];
+              }
+            } catch (err) {
+              console.error('Fetch fallback products error:', err);
+            }
           }
+
+          setRelatedProducts(related.slice(0, 8));
+
           if (revData?.success) {
             setReviews(revData.reviews || []);
           }
@@ -415,11 +432,15 @@ export default function ProductDetailPage() {
         onReviewAdded={fetchProductData}
       />
 
-      {/* Related Products Carousel Grid */}
+      {/* Suggested & Recommended Grizzle Products */}
       {relatedProducts.length > 0 && (
-        <section className="related-section">
-          <h2>Complete The Look (Related Clothes)</h2>
-          <div className="grid-products mt-3">
+        <section className="related-section glass-panel p-4 rounded-xl mt-5">
+          <div className="related-header mb-4">
+            <span className="badge badge-primary font-bold">Grizzle Streetwear Collection</span>
+            <h2 className="related-title font-black text-2xl mt-1">🔥 You Might Also Like</h2>
+            <p className="text-sm text-muted m-0">Handpicked heavyweight 240 GSM bio-washed graphic t-shirts & streetwear drops</p>
+          </div>
+          <div className="grid-products">
             {relatedProducts.map((rel) => (
               <ProductCard key={rel._id} product={rel} />
             ))}
