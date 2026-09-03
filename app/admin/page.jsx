@@ -517,7 +517,7 @@ export default function AdminDashboardPage() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
               <h4 style={{ fontSize: '1.05rem', fontWeight: 800 }}>⚡ Homepage Brand Feature Cards (6-Item Grid Builder)</h4>
-              <p className="subtext">Add, delete, or edit the feature cards shown in the "Trusted by the Streets" band.</p>
+              <p className="subtext">Add, delete, or edit the feature cards shown in the &quot;Trusted by the Streets&quot; band.</p>
             </div>
             <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
               <button
