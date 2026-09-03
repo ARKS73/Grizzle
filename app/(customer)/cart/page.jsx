@@ -56,6 +56,8 @@ export default function CartPage() {
     return acc;
   }, 0);
 
+  const combinedSavings = totalSavings + discount;
+
   const handleCouponSubmit = async (e) => {
     e.preventDefault();
     if (couponInput) {
@@ -200,17 +202,10 @@ export default function CartPage() {
               <span>₹{subtotal.toFixed(0)}</span>
             </div>
 
-            {totalSavings > 0 && (
+            {combinedSavings > 0 && (
               <div className="summary-row text-success font-bold">
                 <span>🎉 Total Savings</span>
-                <span>-₹{totalSavings.toFixed(0)}</span>
-              </div>
-            )}
-
-            {discount > 0 && (
-              <div className="summary-row text-success font-bold">
-                <span>Coupon Discount</span>
-                <span>-₹{discount.toFixed(0)}</span>
+                <span>-₹{combinedSavings.toFixed(0)}</span>
               </div>
             )}
 

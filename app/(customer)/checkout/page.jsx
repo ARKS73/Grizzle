@@ -206,6 +206,17 @@ export default function CheckoutPage() {
   const shipping = calculateCityShippingFee(formData.city);
   const totalPrice = Math.max(0, subtotal - discount + shipping);
 
+  const productSavings = cartItems.reduce((acc, item) => {
+    const orig = item.product?.originalPrice || item.product?.price || 0;
+    const curr = item.product?.price || 0;
+    if (orig > curr) {
+      return acc + ((orig - curr) * item.quantity);
+    }
+    return acc;
+  }, 0);
+
+  const combinedSavings = productSavings + discount;
+
   if (cartItems.length === 0) {
     return (
       <div className="container text-center py-5">
@@ -631,10 +642,10 @@ export default function CheckoutPage() {
 
             <div className="summary-breakdown">
               <div className="row"><span>Items Subtotal</span><span>₹{subtotal.toFixed(0)}</span></div>
-              {discount > 0 && (
+              {combinedSavings > 0 && (
                 <div className="row text-success font-bold">
-                  <span>🎟️ Coupon Discount ({appliedCoupon?.code})</span>
-                  <span>-₹{discount.toFixed(0)}</span>
+                  <span>🎉 Total Savings</span>
+                  <span>-₹{combinedSavings.toFixed(0)}</span>
                 </div>
               )}
               <div className="row">
