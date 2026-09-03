@@ -379,7 +379,7 @@ export default function ProductDetailPage() {
                     className={`btn wishlist-btn ${isSaved ? 'saved' : ''}`}
                     title="Save to Wishlist"
                   >
-                    <Heart size={20} fill={isSaved ? '#ef4444' : 'none'} color="#ef4444" stroke="#ef4444" />
+                    <Heart size={22} fill={isSaved ? '#ef4444' : 'none'} color="#ef4444" stroke="#ef4444" strokeWidth={2.2} />
                   </button>
 
                   <button
@@ -387,7 +387,7 @@ export default function ProductDetailPage() {
                     className="btn share-btn"
                     title="Share Product"
                   >
-                    <Share2 size={20} />
+                    <Share2 size={22} color="#ef4444" stroke="#ef4444" strokeWidth={2.2} />
                   </button>
                 </div>
 
@@ -811,47 +811,63 @@ export default function ProductDetailPage() {
           width: 48px;
           height: 48px;
           border-radius: var(--radius-md);
-          background: var(--bg-secondary);
+          background: #ffffff !important;
           border: 1.5px solid #ef4444 !important;
           color: #ef4444 !important;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
           cursor: pointer;
           transition: all 0.2s ease;
           flex-shrink: 0;
+          box-shadow: 0 2px 6px rgba(239, 68, 68, 0.12);
         }
-        .wishlist-btn svg {
+        .wishlist-btn :global(svg) {
+          width: 22px !important;
+          height: 22px !important;
           stroke: #ef4444 !important;
+          stroke-width: 2.2px !important;
           color: #ef4444 !important;
+          display: block !important;
         }
         .wishlist-btn:hover {
-          background: rgba(239, 68, 68, 0.12);
+          background: rgba(239, 68, 68, 0.1) !important;
           transform: scale(1.05);
         }
         .wishlist-btn.saved {
           background: rgba(239, 68, 68, 0.18) !important;
           border-color: #ef4444 !important;
         }
+        .wishlist-btn.saved :global(svg) {
+          fill: #ef4444 !important;
+          stroke: #ef4444 !important;
+        }
 
         .share-btn {
           width: 48px;
           height: 48px;
           border-radius: var(--radius-md);
-          background: var(--bg-secondary);
-          border: 1.5px solid var(--border-color);
-          color: var(--text-primary);
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
+          background: #ffffff !important;
+          border: 1.5px solid #ef4444 !important;
+          color: #ef4444 !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
           cursor: pointer;
           transition: all 0.2s ease;
           flex-shrink: 0;
+          box-shadow: 0 2px 6px rgba(239, 68, 68, 0.12);
+        }
+        .share-btn :global(svg) {
+          width: 22px !important;
+          height: 22px !important;
+          stroke: #ef4444 !important;
+          stroke-width: 2.2px !important;
+          color: #ef4444 !important;
+          display: block !important;
         }
         .share-btn:hover {
-          border-color: var(--accent-primary);
-          background: var(--accent-light);
-          color: var(--accent-primary);
+          background: rgba(239, 68, 68, 0.1) !important;
           transform: scale(1.05);
         }
 
