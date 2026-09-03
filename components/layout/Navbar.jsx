@@ -829,45 +829,48 @@ export default function Navbar() {
           margin-top: 0.35rem;
         }
 
-        /* Desktop Nav */
+        /* Desktop Nav Alignment & Vibrant Active Color Pill Effect */
         .desktop-nav {
           display: flex;
           align-items: center;
-          gap: 1.25rem;
+          gap: 0.35rem;
+          background: var(--bg-tertiary);
+          padding: 4px 6px;
+          border-radius: var(--radius-full);
+          border: 1px solid var(--border-color);
+          box-shadow: var(--shadow-sm);
         }
         .nav-link {
-          font-size: 0.85rem;
+          font-size: 0.82rem;
           font-weight: 700;
           color: var(--text-secondary);
-          transition: all var(--transition-fast);
+          transition: all 0.2s ease;
           text-decoration: none;
-          display: flex;
+          display: inline-flex;
           align-items: center;
+          justify-content: center;
           gap: 0.35rem;
-          background: none;
-          border: none;
+          padding: 0.5rem 1.1rem;
+          border-radius: var(--radius-full);
+          border: 1px solid transparent;
           cursor: pointer;
-          padding: 0.4rem 0;
-          letter-spacing: 0.5px;
-          position: relative;
+          letter-spacing: 0.05em;
+          white-space: nowrap;
+          line-height: 1;
         }
         .nav-link:hover {
           color: var(--accent-primary);
+          background: var(--bg-secondary);
         }
         .nav-link.active {
-          color: var(--accent-primary);
+          background: var(--accent-gradient) !important;
+          color: #ffffff !important;
           font-weight: 800;
+          border-color: transparent !important;
+          box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
         }
-        .nav-link.active::after {
-          content: '';
-          position: absolute;
-          bottom: -2px;
-          left: 0;
-          width: 100%;
-          height: 2px;
-          background: var(--accent-primary);
-          border-radius: 2px;
-          box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+        .nav-link.active svg {
+          color: #ffffff !important;
         }
         .nav-link-all {
           color: var(--text-primary);
