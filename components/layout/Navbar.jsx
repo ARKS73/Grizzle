@@ -249,20 +249,18 @@ export default function Navbar() {
         </div>
 
         {/* Simple & Clean Desktop Nav Links */}
-        <nav className="desktop-nav">
-          <Link href="/" className={`nav-link ${pathname === '/' ? 'active' : ''}`}>
-            HOME
-          </Link>
-          <Link href="/products?gender=Men" className={`nav-link ${pathname === '/products' && genderParam === 'Men' ? 'active' : ''}`}>
-            MEN
-          </Link>
-          <Link href="/products?gender=Women" className={`nav-link ${pathname === '/products' && genderParam === 'Women' ? 'active' : ''}`}>
-            WOMEN
-          </Link>
-          <Link href="/products?gender=Unisex" className={`nav-link nav-highlight ${pathname === '/products' && genderParam === 'Unisex' ? 'active' : ''}`}>
-            <Shirt size={15} /> UNISEX
-          </Link>
-        </nav>
+        <Suspense
+          fallback={
+            <nav className="desktop-nav">
+              <Link href="/" className="nav-link">HOME</Link>
+              <Link href="/products?gender=Men" className="nav-link">MEN</Link>
+              <Link href="/products?gender=Women" className="nav-link">WOMEN</Link>
+              <Link href="/products?gender=Unisex" className="nav-link nav-highlight"><Shirt size={15} /> UNISEX</Link>
+            </nav>
+          }
+        >
+          <DesktopNavLinks />
+        </Suspense>
 
         {/* Actions & User Controls */}
         <div className="nav-actions">
