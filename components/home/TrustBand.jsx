@@ -136,24 +136,24 @@ export default function TrustBand() {
 
       <style jsx>{`
         .trust-band-section {
-          padding: 4.5rem 0;
-          background: #09090b;
-          border-top: 1px solid rgba(255, 255, 255, 0.08);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          padding: 3rem 0;
+          background: var(--bg-primary);
+          border-top: 1px solid var(--border-color);
+          border-bottom: 1px solid var(--border-color);
         }
 
         .trust-band-header {
           text-align: center;
-          margin-bottom: 2.5rem;
+          margin-bottom: 2rem;
         }
 
         .trust-badge-pill {
           display: inline-block;
           font-size: 0.68rem;
           font-weight: 900;
-          color: #facc15;
-          background: rgba(250, 204, 21, 0.1);
-          border: 1px solid rgba(250, 204, 21, 0.25);
+          color: #d97706;
+          background: rgba(250, 204, 21, 0.12);
+          border: 1px solid rgba(250, 204, 21, 0.3);
           padding: 3px 10px;
           border-radius: 99px;
           letter-spacing: 0.08em;
@@ -166,13 +166,13 @@ export default function TrustBand() {
           font-weight: 900;
           letter-spacing: 0.05em;
           text-transform: uppercase;
-          color: #ffffff;
+          color: var(--text-primary);
           margin: 0;
         }
 
         .trust-subtitle {
           font-size: 0.88rem;
-          color: #a1a1aa;
+          color: var(--text-muted);
           margin: 0.25rem 0 0 0;
         }
 
@@ -206,8 +206,8 @@ export default function TrustBand() {
           gap: 1rem;
           padding: 1.25rem 1.4rem;
           border-radius: 14px;
-          background: #121215;
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-color);
           transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
           height: 100%;
         }
@@ -216,7 +216,7 @@ export default function TrustBand() {
         .trust-card:hover {
           transform: translateY(-4px);
           border-color: #dc2626;
-          box-shadow: 0 12px 30px rgba(220, 38, 38, 0.25);
+          box-shadow: 0 12px 30px rgba(220, 38, 38, 0.18);
         }
 
         .trust-icon-box {
@@ -239,7 +239,7 @@ export default function TrustBand() {
         .trust-stat-val {
           font-size: 1.1rem;
           font-weight: 900;
-          color: #ffffff;
+          color: var(--text-primary);
           margin: 0;
           line-height: 1.2;
           letter-spacing: -0.01em;
@@ -256,7 +256,7 @@ export default function TrustBand() {
 
         .trust-stat-sub {
           font-size: 0.78rem;
-          color: #a1a1aa;
+          color: var(--text-muted);
           margin: 2px 0 0 0;
           line-height: 1.35;
         }

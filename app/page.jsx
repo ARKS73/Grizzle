@@ -299,17 +299,9 @@ export default function SinglePageStreetwearStore() {
       </section>
 
       {/* =========================================================================
-         SECTION: TRENDING NOW / FASTEST SELLING CAROUSEL
-         ========================================================================= */}
-      <TrendingCarousel products={allProducts.filter((p) => p.isTrending || p.isBestSeller || p.ratings >= 4.5)} />
-
-      {/* =========================================================================
-         SECTION 2: LATEST DROPS (Matching Image Section 2)
-         ========================================================================= */}
-      {/* =========================================================================
          SECTION 2: LATEST DROPS
          ========================================================================= */}
-      <section className="latest-drops-section" id="latest-drops" style={{ padding: '5rem 0', background: 'var(--bg-primary)' }}>
+      <section className="latest-drops-section" id="latest-drops" style={{ padding: '3rem 0', background: 'var(--bg-primary)' }}>
         <div className="container">
           <div className="drops-header">
             <div>
@@ -660,8 +652,8 @@ export default function SinglePageStreetwearStore() {
         .single-page-wrapper {
           display: flex;
           flex-direction: column;
-          gap: 4rem;
-          padding-bottom: 3rem;
+          gap: 0;
+          padding-bottom: 0;
           background: transparent;
         }
 

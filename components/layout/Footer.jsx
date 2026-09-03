@@ -232,7 +232,7 @@ export default function Footer() {
           background: #09090b;
           color: #f4f4f5;
           border-top: 1px solid rgba(255, 255, 255, 0.1);
-          margin-top: 4rem;
+          margin-top: 0;
         }
 
         /* Newsletter Band */

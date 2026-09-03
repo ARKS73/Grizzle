@@ -11,12 +11,12 @@
 
 :root,
 [data-theme='light'] {
-  /* Color Palette - Titanium Off-White & Dark Slate Streetwear Palette */
-  --bg-primary: #f4f4f7;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #ebecef;
+  /* Color Palette - Pure Clean White Studio Streetwear Palette */
+  --bg-primary: #ffffff;
+  --bg-secondary: #fafafa;
+  --bg-tertiary: #f4f4f7;
   --bg-elevated: #ffffff;
-  --bg-glass: rgba(255, 255, 255, 0.94);
+  --bg-glass: rgba(255, 255, 255, 0.96);
   
   --text-primary: #09090b;
   --text-secondary: #27272a;
@@ -125,11 +125,8 @@ html, body {
 }
 
 [data-theme='light'] body {
-  background: #f4f4f7 !important;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(220, 38, 38, 0.03) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(9, 9, 11, 0.04) 0px, transparent 50%) !important;
-  background-attachment: fixed !important;
+  background: #ffffff !important;
+  background-image: none !important;
 }
 
 .main-layout {
