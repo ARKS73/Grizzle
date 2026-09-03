@@ -186,9 +186,15 @@ export default function SinglePageStreetwearStore() {
   }, [allProducts]);
 
   const heroProductThumbnails = useMemo(() => {
-    if (!allProducts || allProducts.length === 0) return [];
-    return allProducts.slice(0, 6);
-  }, [allProducts]);
+    if (!heroSettings?.showHeroProductsRow || !allProducts || allProducts.length === 0) return [];
+    
+    if (Array.isArray(heroSettings.heroFeaturedProductIds) && heroSettings.heroFeaturedProductIds.length > 0) {
+      const selected = allProducts.filter((p) => heroSettings.heroFeaturedProductIds.includes(p._id));
+      if (selected.length > 0) return selected;
+    }
+    
+    return [];
+  }, [allProducts, heroSettings]);
 
   const pastelColors = [
     '#d8d8fa', // Pastel Purple/Lavender

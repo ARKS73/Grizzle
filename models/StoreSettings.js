@@ -26,6 +26,14 @@ const StoreSettingsSchema = new mongoose.Schema(
       type: String,
       default: 'LIMITED TO 100 PIECES GLOBALLY',
     },
+    showHeroProductsRow: {
+      type: Boolean,
+      default: false,
+    },
+    heroFeaturedProductIds: {
+      type: [String],
+      default: [],
+    },
     defaultShippingFee: {
       type: Number,
       default: 49,

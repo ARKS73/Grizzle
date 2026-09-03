@@ -70,6 +70,7 @@ export default function AdminDashboardPage() {
   const [monthlySales, setMonthlySales] = useState([]);
   const [loading, setLoading] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
+  const [adminProductsList, setAdminProductsList] = useState([]);
   const { addToast } = useToast();
 
   const fileInputRef = useRef(null);
@@ -295,6 +296,12 @@ export default function AdminDashboardPage() {
         if (settingsData.success && settingsData.settings) {
           setStoreSettings(settingsData.settings);
         }
+
+        const prodRes = await fetch('/api/products');
+        const prodData = await prodRes.json();
+        if (prodData.success && Array.isArray(prodData.products)) {
+          setAdminProductsList(prodData.products);
+        }
       } catch (e) {
         console.error(e);
       } finally {
@@ -509,6 +516,53 @@ export default function AdminDashboardPage() {
                 onChange={(e) => setStoreSettings((prev) => ({ ...prev, heroTapeNote: e.target.value }))}
               />
             </div>
+
+            {/* Quick-Access Hero Products Row Settings */}
+            <div className="form-group mb-3" style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1rem', marginTop: '1rem' }}>
+              <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontWeight: 800 }}>
+                <input
+                  type="checkbox"
+                  checked={!!storeSettings.showHeroProductsRow}
+                  onChange={(e) => setStoreSettings((prev) => ({ ...prev, showHeroProductsRow: e.target.checked }))}
+                />
+                Enable Quick-Access Trending Products Row in Hero Banner
+              </label>
+              <p className="subtext">Disabled by default. If enabled, ONLY the specific products you select below will be displayed in the hero banner. No random items.</p>
+            </div>
+
+            {storeSettings.showHeroProductsRow && (
+              <div className="form-group mb-3">
+                <label className="form-label font-bold">Select Products to Display in Hero Quick Access Row:</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '0.5rem', maxHeight: '220px', overflowY: 'auto', background: 'var(--bg-tertiary)', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+                  {adminProductsList.length === 0 ? (
+                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>No products in database yet.</p>
+                  ) : (
+                    adminProductsList.map((prod) => {
+                      const isFeatured = (storeSettings.heroFeaturedProductIds || []).includes(prod._id);
+                      return (
+                        <label key={prod._id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', cursor: 'pointer', background: 'var(--bg-secondary)', padding: '0.4rem 0.6rem', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
+                          <input
+                            type="checkbox"
+                            checked={isFeatured}
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              setStoreSettings((prev) => {
+                                const existing = prev.heroFeaturedProductIds || [];
+                                const updated = checked
+                                  ? [...existing, prod._id]
+                                  : existing.filter((id) => id !== prod._id);
+                                return { ...prev, heroFeaturedProductIds: updated };
+                              });
+                            }}
+                          />
+                          <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{prod.name} (₹{prod.price})</span>
+                        </label>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
