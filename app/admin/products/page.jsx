@@ -69,12 +69,16 @@ export default function AdminProductsPage() {
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Modal State
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [customHexInput, setCustomHexInput] = useState('#000000');
   const [customNameInput, setCustomNameInput] = useState('');
+  const [newImageUrl, setNewImageUrl] = useState('');
+  const [colorUrlInputs, setColorUrlInputs] = useState({});
 
   const [formData, setFormData] = useState({
     name: '',
@@ -424,8 +428,6 @@ export default function AdminProductsPage() {
     }
   };
 
-  const [newImageUrl, setNewImageUrl] = useState('');
-
   const handleMultipleFileUpload = async (e) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
@@ -496,8 +498,6 @@ export default function AdminProductsPage() {
       images: (prev.images || []).filter((_, i) => i !== index),
     }));
   };
-
-  const [colorUrlInputs, setColorUrlInputs] = useState({});
 
   const handleColorMultipleFileUpload = async (colorIdx, filesList) => {
     const files = Array.from(filesList || []);
