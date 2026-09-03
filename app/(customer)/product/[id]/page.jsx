@@ -685,20 +685,37 @@ export default function ProductDetailPage() {
 
         .cta-box {
           display: flex;
-          gap: 1rem;
+          flex-direction: column;
+          gap: 0.75rem;
           margin-top: 0.5rem;
         }
+
+        .cta-controls-group {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .cta-buttons-group {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          width: 100%;
+        }
+
         .quantity-picker {
           display: flex;
           align-items: center;
           border: 1.5px solid var(--border-color);
           border-radius: var(--radius-md);
           overflow: hidden;
+          background: var(--bg-tertiary);
+          height: 48px;
         }
         .quantity-picker button {
           width: 44px;
           height: 48px;
-          background: var(--bg-tertiary);
+          background: transparent;
           border: none;
           font-weight: 800;
           font-size: 1.1rem;
@@ -710,7 +727,70 @@ export default function ProductDetailPage() {
           text-align: center;
           font-weight: 800;
         }
-        .add-btn { flex: 1; }
+
+        .add-btn {
+          flex: 1;
+          height: 48px;
+          border-radius: var(--radius-md);
+          font-size: 1rem;
+          font-weight: 800;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+
+        .buy-now-btn {
+          flex: 1;
+          height: 48px;
+          border-radius: var(--radius-md);
+          background: var(--accent-gradient);
+          color: #ffffff;
+          border: none;
+          font-size: 1rem;
+          font-weight: 900;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          cursor: pointer;
+          box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+          transition: all 0.2s ease;
+          text-transform: uppercase;
+          letter-spacing: 0.02em;
+        }
+        .buy-now-btn:hover:not(:disabled) {
+          opacity: 0.95;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+        }
+        .buy-now-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          box-shadow: none;
+        }
+
+        .wishlist-btn {
+          width: 48px;
+          height: 48px;
+          border-radius: var(--radius-md);
+          background: var(--bg-secondary);
+          border: 1.5px solid var(--border-color);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          flex-shrink: 0;
+        }
+        .wishlist-btn:hover {
+          border-color: var(--accent-primary);
+          background: var(--accent-light);
+        }
+        .wishlist-btn.saved {
+          background: rgba(239, 68, 68, 0.12) !important;
+          border-color: #ef4444 !important;
+        }
 
         .guarantees-grid {
           display: grid;
@@ -958,45 +1038,79 @@ export default function ProductDetailPage() {
             position: sticky;
             bottom: 0;
             z-index: 99;
-            margin: 0.75rem -0.75rem 0 -0.75rem;
+            margin: 0.75rem -0.75rem -0.75rem -0.75rem;
             padding: 0.75rem 1rem;
-            background: var(--bg-secondary, #0f172a);
-            backdrop-filter: blur(12px);
-            border-top: 1px solid var(--border-color);
-            box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.2);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1.5px solid var(--border-color);
+            box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
             gap: 0.5rem;
             width: calc(100% + 1.5rem);
-            align-items: center;
+            box-sizing: border-box;
           }
+
+          .cta-controls-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+          }
+
+          .cta-buttons-group {
+            display: flex;
+            gap: 0.45rem;
+            width: 100%;
+          }
+
           .quantity-picker {
             border: 1.5px solid var(--border-color);
             border-radius: var(--radius-md);
             background: var(--bg-tertiary);
-            height: 42px;
+            height: 40px;
           }
           .quantity-picker button {
-            width: 34px;
-            height: 42px;
+            width: 32px;
+            height: 40px;
             background: transparent;
             font-size: 1rem;
             font-weight: 800;
             color: var(--text-primary);
           }
           .quantity-picker span {
-            width: 32px;
+            width: 28px;
             font-size: 0.88rem;
             font-weight: 800;
             color: var(--text-primary);
           }
           .add-btn {
-            font-size: 0.88rem !important;
-            padding: 0.65rem 1rem !important;
-            height: 42px;
+            font-size: 0.8rem !important;
+            padding: 0 0.4rem !important;
+            height: 44px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            border-radius: var(--radius-md);
+            gap: 4px;
+            border-radius: 10px;
+            flex: 1;
+          }
+          .buy-now-btn {
+            font-size: 0.82rem !important;
+            padding: 0 0.4rem !important;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            border-radius: 10px;
+            flex: 1;
+          }
+          .wishlist-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
           }
           .tabs-container {
             padding: 0.85rem;
