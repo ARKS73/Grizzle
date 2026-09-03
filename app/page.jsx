@@ -270,14 +270,6 @@ export default function SinglePageStreetwearStore() {
               </Link>
             </div>
 
-            {/* Hero Feature Highlights Ticker */}
-            <div className="hero-highlights-bar">
-              <span className="hero-h-tag">🔥 240 GSM HEAVYWEIGHT</span>
-              <span className="hero-h-tag">🎨 HIGH-DENSITY DTF PRINTS</span>
-              <span className="hero-h-tag">🚚 FREE ALL-INDIA SHIPPING</span>
-              <span className="hero-h-tag">⚡ CASH ON DELIVERY AVAILABLE</span>
-            </div>
-
             {/* Secondary Product Row Directly Below Hero */}
             {heroProductThumbnails.length > 0 && (
               <div className="hero-products-row-wrapper">

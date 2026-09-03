@@ -38,43 +38,6 @@ export default function Footer() {
 
   return (
     <footer className="footer-wrapper">
-      {/* Upper Newsletter Band */}
-      <div className="newsletter-band">
-        <div className="container newsletter-container">
-          <div className="newsletter-text">
-            <span className="newsletter-badge">BE THE FIRST TO KNOW</span>
-            <h3 className="newsletter-title">GET EARLY ACCESS TO NEW DROPS</h3>
-            <p className="newsletter-desc">Subscribe to get exclusive drop alerts, secret discount codes & VIP invites.</p>
-          </div>
-
-          <form onSubmit={handleNewsletterSubmit} className="newsletter-form">
-            {subscribed ? (
-              <div className="subscribed-success">
-                <CheckCircle2 size={18} />
-                <span>You&apos;re on the VIP drop list! Check your inbox soon.</span>
-              </div>
-            ) : (
-              <div className="newsletter-input-group">
-                <div className="input-with-icon">
-                  <Mail size={18} className="mail-icon" />
-                  <input
-                    type="email"
-                    placeholder="Enter your email address..."
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="newsletter-input"
-                    required
-                  />
-                </div>
-                <button type="submit" className="newsletter-btn">
-                  JOIN VIP LIST <ArrowRight size={16} />
-                </button>
-              </div>
-            )}
-          </form>
-        </div>
-      </div>
-
       {/* Main 4-Column Restructured Footer */}
       <div className="container footer-content-grid">
         {/* Column 1: Brand Info */}
@@ -83,10 +46,9 @@ export default function Footer() {
             <GrizzleLogo size="medium" />
           </Link>
           <p className="brand-tagline">
-            Self-Made High-Density DTF Printed Streetwear. 240 GSM Premium Combed Heavy Cotton Built for Style &amp; Longevity.
+            Self-Made High-Density DTF Printed Streetwear. Bio-Washed Premium Cotton Built for Style &amp; Longevity.
           </p>
           <div className="brand-badges">
-            <span className="b-badge">240 GSM HEAVYWEIGHT</span>
             <span className="b-badge">BIO-WASHED</span>
           </div>
         </div>
@@ -211,7 +173,6 @@ export default function Footer() {
           </p>
           <div className="bottom-badges">
             <span className="pay-tag">💵 CASH ON DELIVERY AVAILABLE</span>
-            <span className="pay-tag">⚡ FAST ALL-INDIA SHIPPING</span>
           </div>
         </div>
       </div>

@@ -99,13 +99,20 @@ export default function ReviewSection({ productId, reviews = [], onReviewAdded }
           <p className="subtext" style={{ fontSize: '0.88rem', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>Verified customer feedback from street enthusiasts</p>
         </div>
 
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="btn btn-primary"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.4rem', borderRadius: '10px', fontWeight: 800 }}
-        >
-          <MessageSquarePlus size={18} /> Write a Review
-        </button>
+        {canReview ? (
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="btn btn-primary"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.4rem', borderRadius: '10px', fontWeight: 800 }}
+          >
+            <MessageSquarePlus size={18} /> Write a Review
+          </button>
+        ) : (
+          <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', background: 'var(--bg-tertiary)', padding: '0.5rem 0.9rem', borderRadius: '8px', border: '1px solid var(--border-color)', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+            <CheckCircle size={14} color="#10b981" />
+            <span>Verified Buyers Only (Review unlocks after delivery)</span>
+          </div>
+        )}
       </div>
 
       {/* Star Rating Breakdown Band (Shown when reviews exist) */}

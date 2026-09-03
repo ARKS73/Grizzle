@@ -164,11 +164,13 @@ export default function ProductCard({ product, onQuickView }) {
       {/* Card Info Content */}
       <div className="card-info-box">
         <div className="category-meta-row">
-          <span className="card-category-tag">{product.category || '240 GSM HEAVYWEIGHT'}</span>
-          <div className="rating-pill">
-            <Star size={11} fill="#facc15" color="#facc15" />
-            <span className="rating-val">{product.numReviews > 0 ? Number(product.ratings || 0).toFixed(1) : '5.0'}</span>
-          </div>
+          <span className="card-category-tag">{product.category || 'Streetwear'}</span>
+          {Boolean(product.numReviews > 0 && product.ratings > 0) && (
+            <div className="rating-pill">
+              <Star size={11} fill="#facc15" color="#facc15" />
+              <span className="rating-val">{Number(product.ratings).toFixed(1)}</span>
+            </div>
+          )}
         </div>
 
         <Link href={`/product/${product._id}`} className="card-product-title">
