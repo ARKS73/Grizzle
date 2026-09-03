@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import {
   ShoppingBag,
   Heart,
@@ -229,16 +229,16 @@ export default function Navbar() {
 
         {/* Simple & Clean Desktop Nav Links */}
         <nav className="desktop-nav">
-          <Link href="/" className="nav-link">
+          <Link href="/" className={`nav-link ${pathname === '/' ? 'active' : ''}`}>
             HOME
           </Link>
-          <Link href="/products?gender=Men" className="nav-link">
+          <Link href="/products?gender=Men" className={`nav-link ${pathname === '/products' && genderParam === 'Men' ? 'active' : ''}`}>
             MEN
           </Link>
-          <Link href="/products?gender=Women" className="nav-link">
+          <Link href="/products?gender=Women" className={`nav-link ${pathname === '/products' && genderParam === 'Women' ? 'active' : ''}`}>
             WOMEN
           </Link>
-          <Link href="/products?gender=Unisex" className="nav-link nav-highlight">
+          <Link href="/products?gender=Unisex" className={`nav-link nav-highlight ${pathname === '/products' && genderParam === 'Unisex' ? 'active' : ''}`}>
             <Shirt size={15} /> UNISEX
           </Link>
         </nav>
@@ -820,7 +820,7 @@ export default function Navbar() {
           font-size: 0.85rem;
           font-weight: 700;
           color: var(--text-secondary);
-          transition: color var(--transition-fast);
+          transition: all var(--transition-fast);
           text-decoration: none;
           display: flex;
           align-items: center;
@@ -830,9 +830,25 @@ export default function Navbar() {
           cursor: pointer;
           padding: 0.4rem 0;
           letter-spacing: 0.5px;
+          position: relative;
         }
-        .nav-link:hover, .nav-link.active {
+        .nav-link:hover {
           color: var(--accent-primary);
+        }
+        .nav-link.active {
+          color: var(--accent-primary);
+          font-weight: 800;
+        }
+        .nav-link.active::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background: var(--accent-primary);
+          border-radius: 2px;
+          box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
         }
         .nav-link-all {
           color: var(--text-primary);

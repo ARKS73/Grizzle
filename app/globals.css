@@ -197,49 +197,66 @@ img {
 
 .btn {
   display: inline-flex;
+/* Consolidated Shared Button System (Primary, Secondary, Ghost) */
+.btn, .btn-street-dark, .btn-street-light {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
-  font-size: 0.95rem;
+  padding: 0.65rem 1.4rem;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.88rem;
   border-radius: var(--radius-md);
   border: 1px solid transparent;
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
+  text-decoration: none;
+  line-height: 1.25;
 }
 
-.btn-primary {
-  background: var(--accent-gradient);
-  color: #ffffff;
+.btn-sm, .btn-street-dark.btn-sm, .btn-street-light.btn-sm {
+  padding: 0.45rem 0.95rem;
+  font-size: 0.8rem;
+  border-radius: var(--radius-sm);
+}
+
+/* Variant 1: Primary Button */
+.btn-primary, .btn-street-dark {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--text-primary);
+}
+.btn-primary:hover, .btn-street-dark:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
 
-.btn-primary:hover {
-  opacity: 0.95;
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-glow);
-}
-
-.btn-secondary {
-  background-color: var(--bg-tertiary);
+/* Variant 2: Secondary Button */
+.btn-secondary, .btn-street-light {
+  background: var(--bg-secondary);
   color: var(--text-primary);
-  border-color: var(--border-color);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
 }
-
-.btn-secondary:hover {
-  background-color: var(--border-hover);
-}
-
-.btn-outline {
-  background: transparent;
+.btn-secondary:hover, .btn-street-light:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-hover);
   color: var(--accent-primary);
-  border-color: var(--accent-primary);
 }
 
-.btn-outline:hover {
+/* Variant 3: Ghost Button */
+.btn-ghost, .btn-outline {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+}
+.btn-ghost:hover, .btn-outline:hover {
   background: var(--accent-light);
+  color: var(--accent-primary);
 }
 
 .btn-danger {
@@ -249,6 +266,32 @@ img {
 
 .btn-danger:hover {
   opacity: 0.9;
+}
+
+/* Subtle, Compact Empty States */
+.subtle-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.75rem 1.25rem;
+  background: var(--bg-secondary);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  margin: 1rem auto;
+  max-width: 450px;
+  gap: 0.5rem;
+}
+.subtle-empty-state .empty-icon {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+.subtle-empty-state .empty-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0;
 }
 
 .btn-icon {

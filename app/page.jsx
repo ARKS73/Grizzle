@@ -25,6 +25,7 @@ import QuickViewModal from '@/components/products/QuickViewModal';
 import GlobalScrollCanvas from '@/components/home/GlobalScrollCanvas';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toast';
 import { getOptimizedImageUrl } from '@/utils/imageOptimizer';
 
@@ -38,6 +39,7 @@ const globalPageCache = {
 };
 
 export default function SinglePageStreetwearStore() {
+  const { user } = useAuth();
   const [categories, setCategories] = useState(globalPageCache.categories);
   const [allProducts, setAllProducts] = useState(globalPageCache.allProducts);
   const [globalReviews, setGlobalReviews] = useState(globalPageCache.globalReviews);
@@ -251,7 +253,7 @@ export default function SinglePageStreetwearStore() {
           <div className="drops-header">
             <div>
               <h2 className="drops-title">LATEST DROPS</h2>
-              <p className="drops-subtitle">OFFICIAL 2026 COLLECTION / WINTER 2026</p>
+              <p className="drops-subtitle">Official 2026 Collection / Winter 2026</p>
             </div>
 
             {/* Filter Pills */}
@@ -282,13 +284,14 @@ export default function SinglePageStreetwearStore() {
               ))}
             </div>
           ) : filteredProducts.length === 0 ? (
-            <div className="glass-panel text-center p-5" style={{ borderRadius: '24px', padding: '3.5rem 2rem' }}>
-              <ShoppingBag size={48} style={{ opacity: 0.4, marginBottom: '1rem' }} />
-              <h3 style={{ fontSize: '1.4rem', fontWeight: 800 }}>No Seller Products Added Yet</h3>
-              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Your MongoDB seller database is online and connected. Add clothing products from the Admin Dashboard to display them live!</p>
-              <Link href="/admin/products" className="btn-street-dark">
-                Go to Admin Product Manager &rarr;
-              </Link>
+            <div className="subtle-empty-state">
+              <ShoppingBag size={24} className="empty-icon" />
+              <p className="empty-title">No products found in this drop</p>
+              {user && user.role === 'admin' && (
+                <Link href="/admin/products" className="btn-street-dark btn-sm mt-2">
+                  Go to Admin Product Manager &rarr;
+                </Link>
+              )}
             </div>
           ) : (
             <div className="pastel-products-grid">
@@ -378,7 +381,7 @@ export default function SinglePageStreetwearStore() {
           <div className="drops-header">
             <div>
               <h2 className="drops-title">MEN&apos;S COLLECTION</h2>
-              <p className="drops-subtitle">240 GSM HEAVYWEIGHT TEES, OVERSIZED CUTS & DESI GRAPHICS</p>
+              <p className="drops-subtitle">240 GSM heavyweight tees, oversized cuts & desi graphics</p>
             </div>
 
             <Link href="/products?gender=Men" className="header-cta-pill">
@@ -393,13 +396,14 @@ export default function SinglePageStreetwearStore() {
               ))}
             </div>
           ) : mensProducts.length === 0 ? (
-            <div className="glass-panel text-center p-5" style={{ borderRadius: '24px', padding: '3rem 2rem' }}>
-              <ShoppingBag size={40} style={{ opacity: 0.4, marginBottom: '1rem' }} />
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 800 }}>No Men&apos;s Products Added Yet</h3>
-              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Products created by the seller in Admin Dashboard will be displayed live here.</p>
-              <Link href="/admin/products" className="btn-street-dark">
-                Go to Admin Product Manager &rarr;
-              </Link>
+            <div className="subtle-empty-state">
+              <ShoppingBag size={24} className="empty-icon" />
+              <p className="empty-title">No Men&apos;s products added yet</p>
+              {user && user.role === 'admin' && (
+                <Link href="/admin/products" className="btn-street-dark btn-sm mt-2">
+                  Go to Admin Product Manager &rarr;
+                </Link>
+              )}
             </div>
           ) : (
             <div className="pastel-products-grid">
@@ -478,7 +482,7 @@ export default function SinglePageStreetwearStore() {
           <div className="drops-header">
             <div>
               <h2 className="drops-title">WOMEN&apos;S COLLECTION</h2>
-              <p className="drops-subtitle">AESTHETIC MINIMALIST LINE ART, PASTELS & SOFT BIO-WASHED TEES</p>
+              <p className="drops-subtitle">Aesthetic minimalist line art, pastels & soft bio-washed tees</p>
             </div>
 
             <Link href="/products?gender=Women" className="header-cta-pill">
@@ -493,13 +497,14 @@ export default function SinglePageStreetwearStore() {
               ))}
             </div>
           ) : womensProducts.length === 0 ? (
-            <div className="glass-panel text-center p-5" style={{ borderRadius: '24px', padding: '3rem 2rem' }}>
-              <ShoppingBag size={40} style={{ opacity: 0.4, marginBottom: '1rem' }} />
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 800 }}>No Women&apos;s Products Added Yet</h3>
-              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Products created by the seller in Admin Dashboard will be displayed live here.</p>
-              <Link href="/admin/products" className="btn-street-light">
-                Go to Admin Product Manager &rarr;
-              </Link>
+            <div className="subtle-empty-state">
+              <ShoppingBag size={24} className="empty-icon" />
+              <p className="empty-title">No Women&apos;s products added yet</p>
+              {user && user.role === 'admin' && (
+                <Link href="/admin/products" className="btn-street-light btn-sm mt-2">
+                  Go to Admin Product Manager &rarr;
+                </Link>
+              )}
             </div>
           ) : (
             <div className="pastel-products-grid">
@@ -578,7 +583,7 @@ export default function SinglePageStreetwearStore() {
           <div className="drops-header">
             <div>
               <h2 className="drops-title">UNISEX COLLECTION</h2>
-              <p className="drops-subtitle">VERSATILE FIT TEES FOR EVERYONE, ALL STYLES & ALL SIZES</p>
+              <p className="drops-subtitle">Versatile fit tees for everyone, all styles & all sizes</p>
             </div>
 
             <Link href="/products?gender=Unisex" className="header-cta-pill">
@@ -593,13 +598,14 @@ export default function SinglePageStreetwearStore() {
               ))}
             </div>
           ) : unisexProducts.length === 0 ? (
-            <div className="glass-panel text-center p-5" style={{ borderRadius: '24px', padding: '3rem 2rem' }}>
-              <ShoppingBag size={40} style={{ opacity: 0.4, marginBottom: '1rem' }} />
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 800 }}>No Unisex Products Added Yet</h3>
-              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Products created by the seller in Admin Dashboard will be displayed live here.</p>
-              <Link href="/admin/products" className="btn-street-dark">
-                Go to Admin Product Manager &rarr;
-              </Link>
+            <div className="subtle-empty-state">
+              <ShoppingBag size={24} className="empty-icon" />
+              <p className="empty-title">No Unisex products added yet</p>
+              {user && user.role === 'admin' && (
+                <Link href="/admin/products" className="btn-street-dark btn-sm mt-2">
+                  Go to Admin Product Manager &rarr;
+                </Link>
+              )}
             </div>
           ) : (
             <div className="pastel-products-grid">
@@ -678,17 +684,18 @@ export default function SinglePageStreetwearStore() {
           <div className="drops-header" style={{ textAlign: 'center', display: 'block', marginBottom: '2.5rem' }}>
             <span className="bento-tag-pill" style={{ display: 'inline-block', marginBottom: '0.5rem' }}>EXPLORE ALL</span>
             <h2 className="drops-title" style={{ fontSize: '2.5rem' }}>ALL DTF PRINTED COLLECTIONS</h2>
-            <p className="drops-subtitle">SELECT A CATEGORY BELOW TO OPEN THE FULL INTERACTIVE FILTERS PAGE</p>
+            <p className="drops-subtitle">Select a category below to browse full interactive collection</p>
           </div>
 
           {categories.length === 0 ? (
-            <div className="glass-panel text-center p-5 mb-4" style={{ borderRadius: '24px', padding: '3rem 2rem' }}>
-              <Layers size={40} style={{ opacity: 0.4, marginBottom: '1rem' }} />
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 800 }}>No Categories Created Yet</h3>
-              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Create custom categories in the Admin Dashboard to organize your seller products.</p>
-              <Link href="/admin/categories" className="btn-street-dark">
-                Go to Admin Category Manager &rarr;
-              </Link>
+            <div className="subtle-empty-state mb-4">
+              <Layers size={24} className="empty-icon" />
+              <p className="empty-title">No categories created yet</p>
+              {user && user.role === 'admin' && (
+                <Link href="/admin/categories" className="btn-street-dark btn-sm mt-2">
+                  Go to Admin Category Manager &rarr;
+                </Link>
+              )}
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>

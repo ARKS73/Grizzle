@@ -47,8 +47,10 @@ const StoreSettingsSchema = new mongoose.Schema(
       ],
       default: [
         { label: '📐 Size Chart & Fit Guide', url: '#size-chart' },
-        { label: '🚚 Shipping & Delivery Policy', url: '/products' },
-        { label: '🔄 Returns & Refund Policy', url: '/orders' },
+        { label: '🚚 Shipping & Delivery Policy', url: '#shipping-policy' },
+        { label: '🔄 Returns & Refund Policy', url: '#return-policy' },
+        { label: '💬 Contact Us on WhatsApp', url: 'https://wa.me/919176281858?text=Hi%20Grizzle%20Support%2C%20I%20have%20an%20inquiry' },
+        { label: '📦 Track Your Order', url: '/orders' },
       ],
     },
     sizeChartData: {
