@@ -273,13 +273,14 @@ export default function QuickViewModal({ product, onClose }) {
                     </button>
                   </div>
 
-                  {/* View Full Product Page Link */}
+                  {/* View Full Product Page & Verified Reviews Button */}
                   <Link
                     href={`/product/${product._id}`}
                     onClick={onClose}
-                    className="view-full-page-link"
+                    className="btn-view-full-details"
                   >
-                    View Full Product Page &amp; Verified Reviews &rarr;
+                    <span>View Full Product Page &amp; Verified Reviews</span>
+                    <ArrowRight size={16} className="arrow-icon" />
                   </Link>
                 </div>
               );
@@ -296,22 +297,23 @@ export default function QuickViewModal({ product, onClose }) {
         }
 
         .quickview-card {
-          max-width: 680px;
+          max-width: 900px;
           width: 92%;
-          padding: 1.25rem 1.5rem;
-          border-radius: 16px;
+          padding: 1.75rem 2rem;
+          border-radius: 20px;
           position: relative;
           max-height: calc(88vh - 80px);
           overflow-y: auto;
           margin-top: 0;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
         }
 
         .modal-close-btn {
           position: absolute;
-          top: 10px;
-          right: 10px;
-          width: 34px;
-          height: 34px;
+          top: 14px;
+          right: 14px;
+          width: 36px;
+          height: 36px;
           border-radius: 50%;
           background: #ffffff !important;
           border: 2px solid var(--accent-primary) !important;
@@ -332,16 +334,16 @@ export default function QuickViewModal({ product, onClose }) {
 
         .quickview-grid {
           display: grid;
-          grid-template-columns: 240px 1fr;
-          gap: 1.25rem;
+          grid-template-columns: 350px 1fr;
+          gap: 2rem;
           align-items: start;
         }
 
         .main-image-box {
           position: relative;
           width: 100%;
-          height: 270px;
-          border-radius: 10px;
+          height: 390px;
+          border-radius: 14px;
           overflow: hidden;
           background: var(--bg-tertiary);
           border: 1px solid var(--border-color);
@@ -358,16 +360,16 @@ export default function QuickViewModal({ product, onClose }) {
 
         .thumbnails-row {
           display: flex;
-          gap: 0.4rem;
+          gap: 0.5rem;
           overflow-x: auto;
-          margin-top: 0.5rem;
-          padding-bottom: 0.2rem;
+          margin-top: 0.75rem;
+          padding-bottom: 0.25rem;
         }
 
         .thumb-btn {
-          width: 50px;
-          height: 60px;
-          border-radius: 6px;
+          width: 60px;
+          height: 72px;
+          border-radius: 8px;
           overflow: hidden;
           border: 2px solid var(--border-color);
           background: var(--bg-tertiary);
@@ -378,8 +380,8 @@ export default function QuickViewModal({ product, onClose }) {
         }
         .thumb-btn.active {
           border-color: var(--accent-primary) !important;
-          box-shadow: 0 0 8px rgba(220, 38, 38, 0.4);
-          transform: scale(1.03);
+          box-shadow: 0 0 10px rgba(220, 38, 38, 0.4);
+          transform: scale(1.04);
         }
         .thumb-btn img {
           width: 100%;
@@ -390,12 +392,12 @@ export default function QuickViewModal({ product, onClose }) {
         .quickview-details {
           display: flex;
           flex-direction: column;
-          gap: 0.45rem;
+          gap: 0.6rem;
         }
 
         .product-title {
-          font-size: 1.12rem;
-          font-weight: 700;
+          font-size: 1.35rem;
+          font-weight: 800;
           line-height: 1.25;
           color: var(--text-primary);
           margin: 0;
@@ -411,31 +413,31 @@ export default function QuickViewModal({ product, onClose }) {
           gap: 2px;
         }
         .rating-text {
-          font-size: 0.78rem;
+          font-size: 0.8rem;
         }
 
         .price-row {
           display: flex;
           align-items: baseline;
-          gap: 0.5rem;
+          gap: 0.6rem;
         }
         .price-current {
-          font-size: 1.25rem;
-          font-weight: 800;
+          font-size: 1.45rem;
+          font-weight: 900;
           color: var(--text-primary);
         }
         .price-original {
-          font-size: 0.85rem;
+          font-size: 0.95rem;
           color: var(--text-muted);
           text-decoration: line-through;
         }
 
         .description {
-          font-size: 0.8rem;
-          line-height: 1.4;
+          font-size: 0.85rem;
+          line-height: 1.5;
           color: var(--text-secondary);
           display: -webkit-box;
-          -webkit-line-clamp: 2;
+          -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
           overflow: hidden;
           margin: 0;
@@ -444,12 +446,12 @@ export default function QuickViewModal({ product, onClose }) {
         .variant-group {
           display: flex;
           flex-direction: column;
-          gap: 0.25rem;
+          gap: 0.35rem;
         }
 
         .variant-label {
-          font-size: 0.8rem;
-          font-weight: 600;
+          font-size: 0.82rem;
+          font-weight: 700;
           color: var(--text-primary);
         }
         .selected-color-name {
@@ -460,18 +462,18 @@ export default function QuickViewModal({ product, onClose }) {
         .colors-picker {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.35rem;
+          gap: 0.4rem;
         }
         .color-pill {
           display: inline-flex;
           align-items: center;
-          gap: 0.3rem;
-          padding: 0.35rem 0.75rem;
+          gap: 0.35rem;
+          padding: 0.4rem 0.85rem;
           border-radius: 99px;
           background: var(--bg-secondary);
           border: 1px solid var(--border-color);
           color: var(--text-primary);
-          font-size: 0.78rem;
+          font-size: 0.8rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.2s ease;
@@ -484,8 +486,8 @@ export default function QuickViewModal({ product, onClose }) {
           box-shadow: 0 0 0 1px var(--accent-primary);
         }
         .color-dot {
-          width: 10px;
-          height: 10px;
+          width: 12px;
+          height: 12px;
           border-radius: 50%;
           border: 1px solid rgba(0, 0, 0, 0.2);
         }
@@ -493,20 +495,20 @@ export default function QuickViewModal({ product, onClose }) {
         .sizes-picker {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.35rem;
+          gap: 0.4rem;
         }
         .size-btn {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          min-width: 36px;
-          height: 36px;
-          padding: 0 0.6rem;
-          border-radius: 6px;
+          min-width: 40px;
+          height: 40px;
+          padding: 0 0.75rem;
+          border-radius: 8px;
           background: var(--bg-secondary);
           border: 1px solid var(--border-color);
           color: var(--text-primary);
-          font-size: 0.8rem;
+          font-size: 0.85rem;
           font-weight: 700;
           cursor: pointer;
           transition: all 0.2s ease;
@@ -526,15 +528,15 @@ export default function QuickViewModal({ product, onClose }) {
         }
 
         .selected-size-stock-badge {
-          margin-top: 0.2rem;
+          margin-top: 0.25rem;
         }
         .stock-pill {
           display: inline-flex;
           align-items: center;
           gap: 0.35rem;
-          padding: 0.25rem 0.65rem;
+          padding: 0.3rem 0.75rem;
           border-radius: 99px;
-          font-size: 0.74rem;
+          font-size: 0.76rem;
           font-weight: 700;
         }
         .stock-in {
@@ -562,26 +564,26 @@ export default function QuickViewModal({ product, onClose }) {
         .action-row {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          margin-top: 0.5rem;
+          gap: 0.6rem;
+          margin-top: 0.75rem;
         }
 
         .quantity-control {
           display: inline-flex;
           align-items: center;
-          border: 1px solid var(--border-color);
-          border-radius: 6px;
+          border: 1.5px solid var(--border-color);
+          border-radius: 8px;
           overflow: hidden;
           background: var(--bg-tertiary);
-          height: 38px;
+          height: 42px;
         }
         .quantity-control button {
-          width: 30px;
+          width: 34px;
           height: 100%;
           border: none;
           background: transparent;
           color: var(--text-primary);
-          font-size: 1rem;
+          font-size: 1.1rem;
           font-weight: 700;
           cursor: pointer;
           transition: background 0.2s ease;
@@ -590,26 +592,26 @@ export default function QuickViewModal({ product, onClose }) {
           background: var(--border-color);
         }
         .quantity-control span {
-          width: 28px;
+          width: 32px;
           text-align: center;
           font-weight: 800;
-          font-size: 0.88rem;
+          font-size: 0.92rem;
           color: var(--text-primary);
         }
 
         .add-to-cart-btn {
           flex: 1;
-          height: 38px;
+          height: 42px;
           border-radius: 8px;
           background: var(--accent-gradient);
           color: #ffffff;
           border: none;
-          font-size: 0.88rem;
+          font-size: 0.92rem;
           font-weight: 800;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 0.4rem;
+          gap: 0.45rem;
           cursor: pointer;
           box-shadow: var(--shadow-sm);
           transition: all 0.2s ease;
@@ -621,8 +623,8 @@ export default function QuickViewModal({ product, onClose }) {
         }
 
         .wishlist-btn {
-          width: 38px;
-          height: 38px;
+          width: 42px;
+          height: 42px;
           border-radius: 8px;
           background: var(--bg-secondary);
           border: 1.5px solid var(--border-color);
@@ -644,18 +646,55 @@ export default function QuickViewModal({ product, onClose }) {
           border-color: #ef4444 !important;
         }
 
-        .view-full-page-link {
-          color: var(--accent-primary);
-          font-size: 0.8rem;
+        /* Sleek Button for View Full Product Page */
+        .btn-view-full-details {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          width: 100%;
+          padding: 0.75rem 1.25rem;
+          margin-top: 0.85rem;
+          border-radius: 10px;
+          background: var(--bg-tertiary);
+          border: 1.5px solid var(--border-color);
+          color: var(--text-primary);
+          font-size: 0.85rem;
           font-weight: 700;
           text-decoration: none;
-          margin-top: 0.5rem;
-          display: inline-block;
-          transition: color 0.2s ease;
+          transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+          box-shadow: var(--shadow-xs);
         }
-        .view-full-page-link:hover {
-          text-decoration: underline;
-          color: var(--accent-hover);
+
+        .btn-view-full-details:hover {
+          background: var(--accent-light);
+          border-color: var(--accent-primary);
+          color: var(--accent-primary);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 14px rgba(239, 68, 68, 0.18);
+        }
+
+        :global(.btn-view-full-details .arrow-icon) {
+          transition: transform 0.2s ease;
+        }
+
+        .btn-view-full-details:hover :global(.arrow-icon) {
+          transform: translateX(4px);
+        }
+
+        /* Tablet & Intermediate Screen Sizing */
+        @media (max-width: 960px) and (min-width: 769px) {
+          .quickview-card {
+            max-width: 760px;
+            padding: 1.35rem 1.5rem;
+          }
+          .quickview-grid {
+            grid-template-columns: 290px 1fr;
+            gap: 1.5rem;
+          }
+          .main-image-box {
+            height: 320px;
+          }
         }
 
         /* Mobile Optimization */
