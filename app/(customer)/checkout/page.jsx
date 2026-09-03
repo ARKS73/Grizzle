@@ -155,6 +155,7 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [cityRates, setCityRates] = useState([]);
   const [defaultShippingFee, setDefaultShippingFee] = useState(49);
+  const [freeShippingMode, setFreeShippingMode] = useState(false);
 
   useEffect(() => {
     async function fetchShippingRates() {
@@ -166,6 +167,7 @@ export default function CheckoutPage() {
           if (data.defaultShippingFee !== undefined) {
             setDefaultShippingFee(data.defaultShippingFee);
           }
+          setFreeShippingMode(Boolean(data.freeShippingMode));
         }
       } catch (err) {
         console.error('Failed to load shipping rates:', err);
@@ -191,6 +193,7 @@ export default function CheckoutPage() {
 
   // Calculate Shipping Fee based on Admin defined City Rate or Default Rate
   const calculateCityShippingFee = (city) => {
+    if (freeShippingMode) return 0;
     if (!city) return defaultShippingFee;
     const target = (city === 'Other' ? customCity : city).trim().toLowerCase();
     const found = cityRates.find((r) => r.city.trim().toLowerCase() === target);

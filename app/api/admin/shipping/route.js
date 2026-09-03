@@ -3,6 +3,7 @@ import connectDB from '@/lib/mongodb';
 import CityShipping from '@/models/CityShipping';
 import StoreSettings from '@/models/StoreSettings';
 import { getAuthUser } from '@/lib/jwt';
+import { clearStoreCache } from '@/lib/storeCache';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,18 +25,20 @@ export async function GET(request) {
       settings = await StoreSettings.create({});
     }
     const defaultShippingFee = settings.defaultShippingFee !== undefined ? settings.defaultShippingFee : 49;
+    const freeShippingMode = Boolean(settings.freeShippingMode);
 
     return NextResponse.json({
       success: true,
       rates,
       defaultShippingFee,
+      freeShippingMode,
     });
   } catch (error) {
     return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }
 
-// POST: Add new city shipping rate OR update default shipping fee
+// POST: Add new city shipping rate OR update default shipping fee OR toggle free shipping mode
 export async function POST(request) {
   try {
     if (!checkAdmin(request)) {
@@ -43,6 +46,24 @@ export async function POST(request) {
     }
     const body = await request.json();
     await connectDB();
+
+    // Toggle free shipping mode
+    if (body.action === 'update_free_shipping') {
+      const { freeShippingMode } = body;
+      let settings = await StoreSettings.findOne();
+      if (!settings) {
+        settings = await StoreSettings.create({ freeShippingMode: Boolean(freeShippingMode) });
+      } else {
+        settings.freeShippingMode = Boolean(freeShippingMode);
+        await settings.save();
+      }
+      clearStoreCache();
+      return NextResponse.json({
+        success: true,
+        message: `Free Shipping Mode is now ${settings.freeShippingMode ? 'ON (Free for all orders)' : 'OFF (Standard rates active)'}`,
+        freeShippingMode: settings.freeShippingMode,
+      });
+    }
 
     // If updating default global fee
     if (body.action === 'update_default') {
@@ -54,6 +75,7 @@ export async function POST(request) {
         settings.defaultShippingFee = Number(defaultShippingFee) || 0;
         await settings.save();
       }
+      clearStoreCache();
       return NextResponse.json({
         success: true,
         message: 'Default shipping fee updated successfully',

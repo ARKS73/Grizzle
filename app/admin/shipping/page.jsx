@@ -7,6 +7,8 @@ import { useToast } from '@/components/ui/Toast';
 export default function AdminShippingPage() {
   const [rates, setRates] = useState([]);
   const [defaultFee, setDefaultFee] = useState(49);
+  const [freeShippingMode, setFreeShippingMode] = useState(false);
+  const [togglingFreeShipping, setTogglingFreeShipping] = useState(false);
   const [loading, setLoading] = useState(true);
   const [savingDefault, setSavingDefault] = useState(false);
   const [submittingCity, setSubmittingCity] = useState(false);
@@ -30,6 +32,7 @@ export default function AdminShippingPage() {
       if (data.success) {
         setRates(data.rates || []);
         setDefaultFee(data.defaultShippingFee !== undefined ? data.defaultShippingFee : 49);
+        setFreeShippingMode(Boolean(data.freeShippingMode));
       } else {
         addToast(data.message || 'Failed to fetch shipping rates', 'error');
       }
@@ -44,6 +47,31 @@ export default function AdminShippingPage() {
   useEffect(() => {
     fetchRates();
   }, []);
+
+  const handleToggleFreeShipping = async (newVal) => {
+    try {
+      setTogglingFreeShipping(true);
+      const res = await fetch('/api/admin/shipping', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update_free_shipping',
+          freeShippingMode: newVal,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setFreeShippingMode(data.freeShippingMode);
+        addToast(data.message, 'success');
+      } else {
+        addToast(data.message || 'Failed to update free shipping mode', 'error');
+      }
+    } catch (err) {
+      addToast('Error toggling free shipping mode', 'error');
+    } finally {
+      setTogglingFreeShipping(false);
+    }
+  };
 
   const handleUpdateDefaultFee = async (e) => {
     e.preventDefault();
@@ -165,6 +193,51 @@ export default function AdminShippingPage() {
         <button onClick={fetchRates} className="btn btn-secondary btn-sm flex items-center gap-1">
           <RefreshCw size={14} /> Refresh
         </button>
+      </div>
+
+      {/* Free Shipping Global Switch Card */}
+      <div className={`glass-panel p-4 rounded-xl border mb-6 transition-all ${freeShippingMode ? 'border-emerald-500/50 bg-emerald-500/10' : 'border-white/10'}`}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className={`p-3 rounded-xl ${freeShippingMode ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/10 text-muted'}`}>
+              <Truck size={24} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="font-extrabold text-lg m-0">Free Shipping Mode</h2>
+                <span className={`px-2.5 py-0.5 rounded-full text-xs font-black uppercase tracking-wider ${freeShippingMode ? 'bg-emerald-500 text-slate-950' : 'bg-slate-700 text-slate-200'}`}>
+                  {freeShippingMode ? 'ACTIVE (FREE FOR ALL ORDERS)' : 'INACTIVE (STANDARD RATES APPLY)'}
+                </span>
+              </div>
+              <p className="text-xs text-muted mt-1 m-0">
+                {freeShippingMode
+                  ? '🎉 All delivery charges across the entire store are set to ₹0 (FREE Shipping for every customer).'
+                  : 'City-wise custom rates and default shipping fees apply at customer checkout.'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 self-end sm:self-center">
+            <span className="text-xs font-bold text-muted">
+              {freeShippingMode ? 'Free Shipping ON' : 'Free Shipping OFF'}
+            </span>
+            <button
+              type="button"
+              disabled={togglingFreeShipping}
+              onClick={() => handleToggleFreeShipping(!freeShippingMode)}
+              className={`relative inline-flex h-8 w-16 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                freeShippingMode ? 'bg-emerald-500' : 'bg-slate-700'
+              }`}
+              title="Toggle Free Shipping ON or OFF for Admin"
+            >
+              <span
+                className={`pointer-events-none inline-block h-7 w-7 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                  freeShippingMode ? 'translate-x-8' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">

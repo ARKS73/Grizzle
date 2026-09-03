@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Trash2, ShoppingBag, ArrowRight, Tag, Truck, ShieldCheck } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
@@ -22,10 +22,28 @@ export default function CartPage() {
 
   const [couponInput, setCouponInput] = useState('');
   const [submittingCoupon, setSubmittingCoupon] = useState(false);
+  const [shippingFee, setShippingFee] = useState(49);
+  const [freeShippingMode, setFreeShippingMode] = useState(false);
+
+  useEffect(() => {
+    async function fetchShipping() {
+      try {
+        const res = await fetch('/api/shipping');
+        const data = await res.json();
+        if (data.success) {
+          setShippingFee(data.defaultShippingFee !== undefined ? data.defaultShippingFee : 49);
+          setFreeShippingMode(Boolean(data.freeShippingMode));
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    fetchShipping();
+  }, []);
 
   const subtotal = getSubtotal();
   const discount = getDiscountAmount();
-  const shipping = subtotal === 0 ? 0 : 49;
+  const shipping = (subtotal === 0 || freeShippingMode) ? 0 : shippingFee;
   const totalPrice = Math.max(0, subtotal - discount + shipping);
 
   const handleCouponSubmit = async (e) => {

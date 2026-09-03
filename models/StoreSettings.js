@@ -30,6 +30,10 @@ const StoreSettingsSchema = new mongoose.Schema(
       type: Number,
       default: 49,
     },
+    freeShippingMode: {
+      type: Boolean,
+      default: false,
+    },
     footerAboutText: {
       type: String,
       default: 'Self-Made High-Density DTF Printed Streetwear. Bio-Washed 240 GSM Premium Cotton Built for Style & Longevity.',
