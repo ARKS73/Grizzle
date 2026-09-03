@@ -1441,12 +1441,23 @@ export default function AdminProductsPage() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Fabric & Fit Details (Optional - shown only if written)</label>
+                <label className="form-label">Fabric & Fit Details (Optional)</label>
                 <textarea
                   rows={3}
                   value={formData.fabricFit || ''}
                   onChange={(e) => setFormData({ ...formData, fabricFit: e.target.value })}
                   placeholder="e.g. 100% Organic Combed Heavyweight Cotton (240 GSM), Boxy Fit, Double-needle reinforced seams..."
+                  className="form-textarea"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Design Story & Artwork Concept (Optional)</label>
+                <textarea
+                  rows={3}
+                  value={formData.designStory || ''}
+                  onChange={(e) => setFormData({ ...formData, designStory: e.target.value })}
+                  placeholder="e.g. Inspired by 90s cyber-aesthetics. Direct-to-Film high density back print..."
                   className="form-textarea"
                 />
               </div>

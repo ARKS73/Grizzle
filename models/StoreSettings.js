@@ -34,6 +34,26 @@ const StoreSettingsSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    trustHappyCustomers: {
+      type: String,
+      default: '15,000+',
+    },
+    trustInstagramFollowers: {
+      type: String,
+      default: '45.8K+',
+    },
+    trustInstagramUrl: {
+      type: String,
+      default: 'https://www.instagram.com/grizzle.in?igsh=MWhqNnczNThqamdtYg==',
+    },
+    trustReviewsText: {
+      type: String,
+      default: '4.9 ★',
+    },
+    trustSecureCheckoutText: {
+      type: String,
+      default: '100%',
+    },
     footerAboutText: {
       type: String,
       default: 'Self-Made High-Density DTF Printed Streetwear. Bio-Washed 240 GSM Premium Cotton Built for Style & Longevity.',

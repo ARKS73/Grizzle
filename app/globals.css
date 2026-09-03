@@ -11,26 +11,26 @@
 
 :root,
 [data-theme='light'] {
-  /* Color Palette - Liquid White & Sky Light Blue Theme */
-  --bg-primary: #f0f7ff;
+  /* Color Palette - Titanium Off-White & Dark Slate Streetwear Palette */
+  --bg-primary: #f4f4f7;
   --bg-secondary: #ffffff;
-  --bg-tertiary: #e2f0fe;
+  --bg-tertiary: #ebecef;
   --bg-elevated: #ffffff;
-  --bg-glass: rgba(255, 255, 255, 0.88);
+  --bg-glass: rgba(255, 255, 255, 0.94);
   
-  --text-primary: #0f172a;
-  --text-secondary: #334155;
-  --text-muted: #64748b;
+  --text-primary: #09090b;
+  --text-secondary: #27272a;
+  --text-muted: #71717a;
   --text-inverse: #ffffff;
 
-  --border-color: rgba(56, 189, 248, 0.25);
-  --border-hover: rgba(37, 99, 235, 0.4);
+  --border-color: rgba(9, 9, 11, 0.12);
+  --border-hover: #dc2626;
 
   --accent-primary: #dc2626;
   --accent-hover: #b91c1c;
   --accent-light: rgba(220, 38, 38, 0.08);
-  --accent-gradient: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
-  --accent-gradient-secondary: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
+  --accent-gradient: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  --accent-gradient-secondary: linear-gradient(135deg, #18181b 0%, #09090b 100%);
 
   --accent-gold: #d97706;
   --accent-gold-light: rgba(217, 119, 6, 0.12);
@@ -44,10 +44,10 @@
   --info: #0284c7;
   --info-light: #f0f9ff;
 
-  --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
-  --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.08);
-  --shadow-xl: 0 20px 35px rgba(15, 23, 42, 0.1);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.09);
+  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.12);
   --shadow-glow: 0 0 25px rgba(220, 38, 38, 0.25);
   --shadow-gold-glow: 0 0 25px rgba(245, 158, 11, 0.3);
 
@@ -125,7 +125,10 @@ html, body {
 }
 
 [data-theme='light'] body {
-  background: linear-gradient(180deg, #ffffff 0%, #e0f2fe 35%, #f0f9ff 100%) !important;
+  background: #f4f4f7 !important;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(220, 38, 38, 0.03) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(9, 9, 11, 0.04) 0px, transparent 50%) !important;
   background-attachment: fixed !important;
 }
 
@@ -180,11 +183,11 @@ img {
 }
 
 [data-theme='light'] .glass-panel {
-  background: rgba(255, 255, 255, 0.88) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.95) !important;
-  box-shadow: 0 12px 40px rgba(56, 189, 248, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.95) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(24px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+  border: 1px solid rgba(9, 9, 11, 0.1) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03) !important;
 }
 
 [data-theme='dark'] .glass-panel {
@@ -490,4 +493,81 @@ img {
 ::-webkit-scrollbar-thumb {
   background: var(--border-hover);
   border-radius: 4px;
+}
+
+/* Mobile Sticky Bottom CTA Bar for Product Detail Page */
+.pdp-mobile-sticky-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .pdp-mobile-sticky-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(15, 15, 18, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 0.75rem 1rem;
+    z-index: 1000;
+    box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.5);
+  }
+
+  .pdp-sticky-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin-right: 0.5rem;
+  }
+
+  .pdp-sticky-name {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pdp-sticky-price {
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: var(--accent-primary);
+  }
+
+  .pdp-sticky-btns {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+  }
+
+  .pdp-btn-cart {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 0.6rem 0.85rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+  }
+
+  .pdp-btn-buy {
+    background: var(--accent-primary);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 900;
+    padding: 0.6rem 0.95rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
 }

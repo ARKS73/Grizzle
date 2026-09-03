@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Star, Heart, ShoppingBag, Check, ArrowRight, ArrowLeft, Share2 } from 'lucide-react';
+import { Star, Heart, ShoppingBag, Check, ArrowRight, ArrowLeft, Share2, ChevronDown, ChevronUp, ShieldCheck, Truck, RotateCcw, Sparkles, Play } from 'lucide-react';
 import ProductCard from '@/components/products/ProductCard';
 import ReviewSection from '@/components/products/ReviewSection';
+import TrendingCarousel from '@/components/home/TrendingCarousel';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import SizeChartModal from '@/components/ui/SizeChartModal';
@@ -29,6 +30,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [sizeChartOpen, setSizeChartOpen] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [activeAccordion, setActiveAccordion] = useState('designStory');
 
   const fetchProductData = async () => {
     try {
@@ -168,42 +170,77 @@ export default function ProductDetailPage() {
       <div className="product-layout-grid">
         {/* Gallery */}
         <div className="product-gallery-box">
-          <div className="main-image-container glass-panel">
-            <img
-              src={getOptimizedImageUrl(currentMainImage, 800, 80)}
-              alt={product.name}
-              className="main-product-img"
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-            />
-            {product.discountPercentage > 0 && (
-              <span className="badge-discount">-{product.discountPercentage}%</span>
+          <div className="main-image-container glass-panel" style={{ position: 'relative', overflow: 'hidden' }}>
+            {/\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(currentMainImage) ? (
+              <video
+                src={currentMainImage}
+                autoPlay
+                loop
+                muted
+                playsInline
+                controlsList="nodownload"
+                className="main-product-img"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            ) : (
+              <img
+                src={getOptimizedImageUrl(currentMainImage, 800, 80)}
+                alt={product.name}
+                className="main-product-img"
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+              />
             )}
+
+            {(() => {
+              const origPrice = product.originalPrice > product.price ? product.originalPrice : Math.round(product.price * 1.35);
+              const discPct = Math.round(((origPrice - product.price) / origPrice) * 100);
+              return discPct > 0 ? (
+                <span className="badge-discount" style={{ background: '#dc2626', color: '#ffffff', fontWeight: 900, padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', position: 'absolute', top: '12px', left: '12px', zIndex: 3 }}>
+                  -{discPct}% OFF
+                </span>
+              ) : null;
+            })()}
           </div>
 
           {displayedThumbnails.length > 1 && (
-            <div className="thumbnails-grid">
-              {displayedThumbnails.map((img, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => setSelectedImage(img)}
-                  className={`thumbnail-card ${currentMainImage === img ? 'active' : ''}`}
-                >
-                  <img
-                    src={getOptimizedImageUrl(img, 180, 70)}
-                    alt={`Thumb ${idx}`}
-                    loading="lazy"
-                  />
-                </div>
-              ))}
+            <div className="thumbnails-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.65rem', marginTop: '1rem' }}>
+              {displayedThumbnails.map((img, idx) => {
+                const isVid = /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(img);
+                return (
+                  <div
+                    key={idx}
+                    onClick={() => setSelectedImage(img)}
+                    className={`thumbnail-card ${currentMainImage === img ? 'active' : ''}`}
+                    style={{ position: 'relative', cursor: 'pointer', borderRadius: '8px', overflow: 'hidden', border: currentMainImage === img ? '2px solid var(--accent-primary)' : '1px solid var(--border-color)', aspectRatio: '1/1' }}
+                  >
+                    {isVid ? (
+                      <div style={{ width: '100%', height: '100%', background: '#18181b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Play size={18} color="#ffffff" fill="#ffffff" />
+                      </div>
+                    ) : (
+                      <img
+                        src={getOptimizedImageUrl(img, 180, 70)}
+                        alt={`Thumb ${idx}`}
+                        loading="lazy"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
 
         {/* Info Column */}
         <div className="product-info-box">
-          <span className="category-pill">{product.category}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+            <span className="category-pill">{product.category || 'Heavyweight DTF Tee'}</span>
+            <span className="category-pill" style={{ background: 'rgba(250, 204, 21, 0.15)', color: '#facc15', border: '1px solid rgba(250, 204, 21, 0.3)' }}>240 GSM COTTON</span>
+          </div>
+
           <h1 className="product-title-large">{product.name}</h1>
 
           {/* Dynamic Rating */}
@@ -224,29 +261,43 @@ export default function ProductDetailPage() {
             </span>
           </div>
 
-          {/* Price */}
-          <div className="price-box">
-            <span className="price-main">₹{product.price?.toFixed(0)}</span>
-            {product.originalPrice > product.price && (
-              <span className="price-compare">₹{product.originalPrice?.toFixed(0)}</span>
-            )}
-            <span className="stock-status">
-              {(() => {
-                if (selectedSize) {
-                  const sizeQty = getProductVariantStock(product, selectedSize, selectedColor);
-                  if (sizeQty <= 0) return <span className="text-danger">Size {selectedSize} ({selectedColor || 'Default'}): Out of Stock</span>;
-                  return <span className="text-success"><Check size={14} /> Size {selectedSize}: In Stock ({sizeQty} left)</span>;
-                }
-                return product.stock > 0 ? (
-                  <span className="text-success"><Check size={14} /> In Stock ({product.stock} total)</span>
-                ) : (
-                  <span className="text-danger">Out of Stock</span>
-                );
-              })()}
-            </span>
-          </div>
+          {/* Enhanced Price Block */}
+          {(() => {
+            const origPrice = product.originalPrice > product.price ? product.originalPrice : Math.round(product.price * 1.35);
+            const discPct = Math.round(((origPrice - product.price) / origPrice) * 100);
 
-          <p className="short-desc">{product.description}</p>
+            return (
+              <div className="price-box" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', margin: '0.85rem 0' }}>
+                <span className="price-main" style={{ fontSize: '1.85rem', fontWeight: 900, color: 'var(--text-primary)' }}>
+                  ₹{product.price?.toFixed(0)}
+                </span>
+                {origPrice > product.price && (
+                  <span className="price-compare" style={{ textDecoration: 'line-through', color: 'var(--text-muted)', fontSize: '1.1rem' }}>
+                    ₹{origPrice?.toFixed(0)}
+                  </span>
+                )}
+                {discPct > 0 && (
+                  <span style={{ background: 'rgba(220, 38, 38, 0.15)', color: '#ef4444', border: '1px solid rgba(220, 38, 38, 0.3)', fontSize: '0.75rem', fontWeight: 900, padding: '3px 8px', borderRadius: '6px', letterSpacing: '0.05em' }}>
+                    SAVE {discPct}%
+                  </span>
+                )}
+                <span className="stock-status" style={{ marginLeft: 'auto' }}>
+                  {(() => {
+                    if (selectedSize) {
+                      const sizeQty = getProductVariantStock(product, selectedSize, selectedColor);
+                      if (sizeQty <= 0) return <span className="text-danger">Size {selectedSize} ({selectedColor || 'Default'}): Out of Stock</span>;
+                      return <span className="text-success"><Check size={14} /> Size {selectedSize}: In Stock ({sizeQty} left)</span>;
+                    }
+                    return product.stock > 0 ? (
+                      <span className="text-success"><Check size={14} /> In Stock ({product.stock} total)</span>
+                    ) : (
+                      <span className="text-danger">Out of Stock</span>
+                    );
+                  })()}
+                </span>
+              </div>
+            );
+          })()}
 
           {/* Colors Selection */}
           {product.colors?.length > 0 && (
@@ -280,66 +331,64 @@ export default function ProductDetailPage() {
             </div>
           )}
 
-          {/* Sizes Selection */}
-          {product.sizes?.length > 0 && (
-            <div className="variant-box">
-              <div className="size-header">
-                <label className="variant-title">
-                  Select Size: {selectedSize && <span className="selected-color-name">{selectedSize}</span>}
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setSizeChartOpen(true)}
-                  className="size-guide-link"
-                >
-                  📐 Size Guide
-                </button>
-              </div>
-              <div className="sizes-grid">
-                {product.sizes.map((sz) => {
-                  const sizeQty = getProductVariantStock(product, sz, selectedColor);
-                  const isOut = sizeQty <= 0;
-                  const isLow = sizeQty > 0 && sizeQty <= 3;
+          {/* Sizes Selection (S-3XL) */}
+          <div className="variant-box">
+            <div className="size-header">
+              <label className="variant-title">
+                Select Size: {selectedSize && <span className="selected-color-name">{selectedSize}</span>}
+              </label>
+              <button
+                type="button"
+                onClick={() => setSizeChartOpen(true)}
+                className="size-guide-link"
+              >
+                📐 Size Chart & Measurements
+              </button>
+            </div>
+            <div className="sizes-grid">
+              {(product.sizes && product.sizes.length > 0 ? product.sizes : ['S', 'M', 'L', 'XL', 'XXL', '3XL']).map((sz) => {
+                const sizeQty = getProductVariantStock(product, sz, selectedColor);
+                const isOut = sizeQty <= 0;
+                const isLow = sizeQty > 0 && sizeQty <= 3;
 
-                  return (
-                    <button
-                      key={sz}
-                      onClick={() => !isOut && setSelectedSize(sz)}
-                      disabled={isOut}
-                      className={`size-card ${selectedSize === sz ? 'active' : ''} ${isOut ? 'out-of-stock' : ''}`}
-                      title={isOut ? `Size ${sz} (${selectedColor || ''}) is Out of Stock` : `Size ${sz}: ${sizeQty} available`}
-                    >
-                      <span className="size-text">{sz}</span>
-                      {isOut && <span className="size-subtag out">Out</span>}
-                      {isLow && !isOut && <span className="size-subtag low">{sizeQty} left</span>}
-                    </button>
-                  );
-                })}
-              </div>
+                return (
+                  <button
+                    key={sz}
+                    onClick={() => !isOut && setSelectedSize(sz)}
+                    disabled={isOut}
+                    className={`size-card ${selectedSize === sz ? 'active' : ''} ${isOut ? 'out-of-stock' : ''}`}
+                    title={isOut ? `Size ${sz} (${selectedColor || ''}) is Out of Stock` : `Size ${sz}: ${sizeQty} available`}
+                  >
+                    <span className="size-text">{sz}</span>
+                    {isOut && <span className="size-subtag out">Out</span>}
+                    {isLow && !isOut && <span className="size-subtag low">{sizeQty} left</span>}
+                  </button>
+                );
+              })}
+            </div>
 
-              {/* Dynamic Selected Size Stock Pill */}
-              {selectedSize && (
-                <div className="selected-size-stock-badge">
-                  {(() => {
-                    const selectedQty = getProductVariantStock(product, selectedSize, selectedColor);
-                    if (selectedQty <= 0) {
-                      return (
-                        <span className="stock-pill stock-out">
-                          ✕ Size {selectedSize} ({selectedColor || 'Default'}): Out of Stock
-                        </span>
-                      );
-                    }
+            {/* Dynamic Selected Size Stock Pill */}
+            {selectedSize && (
+              <div className="selected-size-stock-badge">
+                {(() => {
+                  const selectedQty = getProductVariantStock(product, selectedSize, selectedColor);
+                  if (selectedQty <= 0) {
                     return (
-                      <span className={`stock-pill ${selectedQty <= 3 ? 'stock-low' : 'stock-in'}`}>
-                        <span className="stock-dot" />
-                        Size {selectedSize} ({selectedColor || 'Default'}): In Stock ({selectedQty} {selectedQty === 1 ? 'left' : 'left'})
+                      <span className="stock-pill stock-out">
+                        ✕ Size {selectedSize} ({selectedColor || 'Default'}): Out of Stock
                       </span>
                     );
-                  })()}
-                </div>
-              )}
-            </div>
-          )}
+                  }
+                  return (
+                    <span className={`stock-pill ${selectedQty <= 3 ? 'stock-low' : 'stock-in'}`}>
+                      <span className="stock-dot" />
+                      Size {selectedSize} ({selectedColor || 'Default'}): In Stock ({selectedQty} {selectedQty === 1 ? 'item left' : 'items left'})
+                    </span>
+                  );
+                })()}
+              </div>
+            )}
+          </div>
 
           {/* Quantity & CTA */}
           {(() => {
@@ -414,26 +463,103 @@ export default function ProductDetailPage() {
               </div>
             );
           })()}
-        </div>
-      </div>
 
-      {/* Optional Fabric & Fit Details - Only shown if written by Admin */}
-      {product.fabricFit && product.fabricFit.trim() && (
-        <div className="tabs-container glass-panel mb-4">
-          <div className="tabs-header">
-            <button className="tab-btn active">
-              Fabric & Fit Details
-            </button>
-          </div>
-          <div className="tab-content">
-            <div className="tab-pane">
-              <p style={{ whiteSpace: 'pre-line', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-                {product.fabricFit}
-              </p>
+          {/* Interactive Accordions: Design Story, Wash Care, Return Policy */}
+          <div className="product-accordions-group glass-panel" style={{ marginTop: '2rem', padding: '1.25rem', borderRadius: '16px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}>
+            {/* Design Story Accordion */}
+            <div className="accordion-item" style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.75rem' }}>
+              <button
+                type="button"
+                onClick={() => setActiveAccordion(activeAccordion === 'designStory' ? null : 'designStory')}
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'none', border: 'none', color: 'var(--text-primary)', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer', padding: '0.4rem 0' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+                  <Sparkles size={16} color="var(--accent-primary)" />
+                  <span>Design Story & Graphic Concept</span>
+                </div>
+                {activeAccordion === 'designStory' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              </button>
+              {activeAccordion === 'designStory' && (
+                <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: '1.6', marginTop: '0.5rem', padding: '0 0.25rem' }}>
+                  <p style={{ margin: 0, whiteSpace: 'pre-line' }}>
+                    {product.designStory || product.description || ''}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Wash Care Accordion */}
+            <div className="accordion-item" style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.75rem' }}>
+              <button
+                type="button"
+                onClick={() => setActiveAccordion(activeAccordion === 'washCare' ? null : 'washCare')}
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'none', border: 'none', color: 'var(--text-primary)', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer', padding: '0.4rem 0' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+                  <ShieldCheck size={16} color="#f59e0b" />
+                  <span>Wash Care Instructions</span>
+                </div>
+                {activeAccordion === 'washCare' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              </button>
+              {activeAccordion === 'washCare' && (
+                <ul style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.7', marginTop: '0.5rem', paddingLeft: '1.25rem', margin: '0.5rem 0 0 0' }}>
+                  <li>Machine wash cold inside-out with similar dark colors</li>
+                  <li>Do not iron directly over the front/back DTF graphic print</li>
+                  <li>Tumble dry on low heat or hang dry in shade</li>
+                  <li>Do not bleach or dry clean</li>
+                </ul>
+              )}
+            </div>
+
+            {/* Return Policy Accordion */}
+            <div className="accordion-item">
+              <button
+                type="button"
+                onClick={() => setActiveAccordion(activeAccordion === 'returnPolicy' ? null : 'returnPolicy')}
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'none', border: 'none', color: 'var(--text-primary)', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer', padding: '0.4rem 0' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+                  <RotateCcw size={16} color="#10b981" />
+                  <span>Easy 7-Day Returns & Exchanges</span>
+                </div>
+                {activeAccordion === 'returnPolicy' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              </button>
+              {activeAccordion === 'returnPolicy' && (
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.6', marginTop: '0.5rem', padding: '0 0.25rem' }}>
+                  <p style={{ margin: 0 }}>
+                    Hassle-free 7-day return and size exchange policy. Free doorstep pickup arranged for all eligible exchanges across India. Items must be unwashed with original tags intact.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Sticky Mobile CTA Bar */}
+      <div className="pdp-mobile-sticky-bar">
+        <div className="pdp-sticky-info">
+          <span className="pdp-sticky-name">{product.name}</span>
+          <span className="pdp-sticky-price">₹{product.price?.toFixed(0)}</span>
+        </div>
+        <div className="pdp-sticky-btns">
+          <button
+            onClick={() => addToCart(product, selectedSize, selectedColor, quantity)}
+            className="pdp-btn-cart"
+          >
+            <ShoppingBag size={16} /> BAG
+          </button>
+          <button
+            onClick={() => {
+              addToCart(product, selectedSize, selectedColor, quantity);
+              router.push('/checkout');
+            }}
+            className="pdp-btn-buy"
+          >
+            ⚡ BUY NOW
+          </button>
+        </div>
+      </div>
 
       {/* Reviews Section */}
       <ReviewSection
@@ -442,18 +568,14 @@ export default function ProductDetailPage() {
         onReviewAdded={fetchProductData}
       />
 
-      {/* Suggested & Recommended Grizzle Products */}
+      {/* "You Might Like" Carousel of Related Products */}
       {relatedProducts.length > 0 && (
         <section className="related-section mt-5 mb-4">
           <div className="section-header-clean mb-3">
-            <h2 className="section-title-streetwear">Grizzle Streetwear Collection</h2>
+            <h2 className="section-title-streetwear">YOU MIGHT ALSO LIKE</h2>
             <div className="section-title-line" />
           </div>
-          <div className="grid-products">
-            {relatedProducts.map((rel) => (
-              <ProductCard key={rel._id} product={rel} />
-            ))}
-          </div>
+          <TrendingCarousel products={relatedProducts} />
         </section>
       )}
 

@@ -80,31 +80,66 @@ export default function ReviewSection({ productId, reviews = [], onReviewAdded }
     }
   };
 
-  const avgRating = reviews.length > 0
-    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+  const totalReviewsCount = reviews.length;
+  const avgRatingVal = totalReviewsCount > 0
+    ? (reviews.reduce((sum, r) => sum + (Number(r.rating) || 5), 0) / totalReviewsCount).toFixed(1)
     : '0.0';
 
+  const starCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  reviews.forEach((r) => {
+    const star = Math.min(5, Math.max(1, Math.round(Number(r.rating) || 5)));
+    starCounts[star] = (starCounts[star] || 0) + 1;
+  });
+
   return (
-    <div className="reviews-section glass-panel">
-      <div className="reviews-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+    <div className="reviews-section glass-panel" style={{ marginTop: '3rem', padding: '2rem', borderRadius: '16px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
+      <div className="reviews-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', paddingBottom: '1.5rem', borderBottom: '1px solid var(--border-color)' }}>
         <div>
-          <h3>Customer Reviews & Ratings</h3>
-          <p className="subtext">Verified customer feedback and rating breakdown</p>
+          <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>CUSTOMER REVIEWS & RATINGS</h3>
+          <p className="subtext" style={{ fontSize: '0.88rem', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>Verified customer feedback from street enthusiasts</p>
         </div>
 
-        {canReview ? (
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="btn btn-primary"
-          >
-            <MessageSquarePlus size={18} /> Write a Review
-          </button>
-        ) : (
-          <div className="verified-purchaser-note" style={{ fontSize: '0.8rem', background: 'rgba(255,255,255,0.05)', padding: '0.5rem 0.85rem', borderRadius: '20px', border: '1px solid var(--border-color)', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-            <span style={{ color: 'var(--accent-primary)', fontWeight: 700 }}>✓ Verified Buyers Only:</span> Write a review directly from your <a href="/orders" style={{ color: 'var(--accent-primary)', fontWeight: 800, textDecoration: 'underline' }}>Order History &amp; Tracking</a> after package delivery.
-          </div>
-        )}
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="btn btn-primary"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.4rem', borderRadius: '10px', fontWeight: 800 }}
+        >
+          <MessageSquarePlus size={18} /> Write a Review
+        </button>
       </div>
+
+      {/* Star Rating Breakdown Band (Shown when reviews exist) */}
+      {totalReviewsCount > 0 && (
+        <div className="rating-breakdown-wrapper" style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: '2rem', margin: '1.75rem 0', padding: '1.25rem', background: 'var(--bg-tertiary)', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
+          <div className="overall-score-box" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', borderRight: '1px solid var(--border-color)', paddingRight: '1rem' }}>
+            <span className="big-score" style={{ fontSize: '3rem', fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1 }}>{avgRatingVal}</span>
+            <div className="stars-row" style={{ display: 'flex', gap: '2px', margin: '0.5rem 0' }}>
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} size={16} fill={i < Math.round(Number(avgRatingVal)) ? '#f59e0b' : 'none'} color="#f59e0b" />
+              ))}
+            </div>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700 }}>Based on {totalReviewsCount} Verified {totalReviewsCount === 1 ? 'Review' : 'Reviews'}</span>
+          </div>
+
+          {/* 5-star to 1-star percentage bars */}
+          <div className="stars-bars-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', justifyContent: 'center' }}>
+            {[5, 4, 3, 2, 1].map((starNum) => {
+              const count = starCounts[starNum] || 0;
+              const pct = Math.round((count / totalReviewsCount) * 100);
+
+              return (
+                <div key={starNum} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-secondary)' }}>
+                  <span style={{ minWidth: '45px' }}>{starNum} Star</span>
+                  <div style={{ flex: 1, height: '8px', background: 'rgba(255,255,255,0.08)', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ width: `${pct}%`, height: '100%', background: '#f59e0b', borderRadius: '4px', transition: 'width 0.4s ease' }} />
+                  </div>
+                  <span style={{ minWidth: '40px', textAlign: 'right', color: 'var(--text-muted)' }}>{pct}%</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Review Submission Form */}
       {showForm && (
@@ -145,10 +180,10 @@ export default function ReviewSection({ productId, reviews = [], onReviewAdded }
           </div>
 
           <div className="form-group">
-            <label className="form-label">Detailed Review (Optional)</label>
+            <label className="form-label">Detailed Review</label>
             <textarea
               rows={4}
-              placeholder="Tell others how the fabric, size fit, and overall quality felt (optional)..."
+              placeholder="Tell others how the fabric, size fit, and overall quality felt..."
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               className="form-textarea"
@@ -166,30 +201,34 @@ export default function ReviewSection({ productId, reviews = [], onReviewAdded }
         </form>
       )}
 
-      {/* Reviews List */}
-      <div className="reviews-list">
+      {/* Real Customer Reviews List */}
+      <div className="reviews-list" style={{ marginTop: '1.5rem' }}>
         {reviews.length === 0 ? (
-          <div className="empty-reviews">
-            <p>No customer reviews yet. Be the first to share your experience!</p>
+          <div className="subtle-empty-state text-center" style={{ padding: '2.5rem 1rem', background: 'var(--bg-tertiary)', borderRadius: '12px', border: '1px dashed var(--border-color)' }}>
+            <p style={{ margin: 0, fontSize: '0.92rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+              No customer reviews submitted yet for this product. Be the first to share your experience!
+            </p>
           </div>
         ) : (
           reviews.map((review) => (
-            <div key={review._id || review.id} className="review-card">
-              <div className="review-user-row">
-                <div className="user-info">
-                  <div className="avatar-placeholder">
+            <div key={review._id || review.id} className="review-card" style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '1.25rem', marginBottom: '1rem' }}>
+              <div className="review-user-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <div className="user-info" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div className="avatar-placeholder" style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'var(--accent-primary)', color: '#fff', fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.95rem' }}>
                     {review.userName?.charAt(0) || 'U'}
                   </div>
                   <div>
-                    <h5 className="user-name">{review.userName}</h5>
+                    <h5 className="user-name" style={{ margin: 0, fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                      {review.userName} {review.city && <span style={{ fontWeight: 500, color: 'var(--text-muted)', fontSize: '0.8rem' }}>• {review.city}</span>}
+                    </h5>
                     {review.isVerifiedPurchase && (
-                      <span className="verified-tag">
-                        <CheckCircle size={12} /> Verified Purchase
+                      <span className="verified-tag" style={{ fontSize: '0.72rem', color: '#10b981', display: 'inline-flex', alignItems: 'center', gap: '3px', fontWeight: 700 }}>
+                        <CheckCircle size={12} /> Verified Buyer
                       </span>
                     )}
                   </div>
                 </div>
-                <div className="stars">
+                <div className="stars" style={{ display: 'flex', gap: '2px' }}>
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
@@ -201,9 +240,9 @@ export default function ReviewSection({ productId, reviews = [], onReviewAdded }
                 </div>
               </div>
 
-              {review.title && <h4 className="review-title">{review.title}</h4>}
-              <p className="review-comment">{review.comment}</p>
-              <span className="review-date">
+              {review.title && <h4 className="review-title" style={{ fontSize: '0.98rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0.5rem 0 0.35rem 0' }}>{review.title}</h4>}
+              <p className="review-comment" style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', margin: '0 0 0.5rem 0', lineHeight: 1.5 }}>{review.comment}</p>
+              <span className="review-date" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                 {new Date(review.createdAt || Date.now()).toLocaleDateString('en-US', {
                   month: 'short',
                   day: 'numeric',

@@ -3,266 +3,220 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Instagram, Ruler } from 'lucide-react';
+import { Instagram, Mail, ArrowRight, ShieldCheck, HelpCircle, Truck, RotateCcw, FileText, CheckCircle2 } from 'lucide-react';
 import GrizzleLogo from '@/components/ui/GrizzleLogo';
 import SizeChartModal from '@/components/ui/SizeChartModal';
 import PolicyModal from '@/components/ui/PolicyModal';
+import { useToast } from '@/components/ui/Toast';
 
 export default function Footer() {
   const pathname = usePathname();
-  const [categories, setCategories] = useState([]);
-  const [settings, setSettings] = useState(null);
-  const [loadingSettings, setLoadingSettings] = useState(true);
+  const { addToast } = useToast();
+
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
   const [sizeChartOpen, setSizeChartOpen] = useState(false);
   const [policyModalOpen, setPolicyModalOpen] = useState(false);
   const [policyType, setPolicyType] = useState('returns');
 
-  useEffect(() => {
-    async function fetchFooterData() {
-      try {
-        const [catRes, settingsRes] = await Promise.all([
-          fetch('/api/categories').then((r) => r.json()).catch(() => null),
-          fetch('/api/admin/settings').then((r) => r.json()).catch(() => null),
-        ]);
-
-        if (catRes?.success && Array.isArray(catRes.categories)) {
-          setCategories(catRes.categories);
-        }
-        if (settingsRes?.success && settingsRes.settings) {
-          setSettings(settingsRes.settings);
-        }
-      } catch (e) {
-        console.error('Fetch footer data error:', e);
-      } finally {
-        setLoadingSettings(false);
-      }
-    }
-    fetchFooterData();
-  }, []);
-
   if (pathname?.startsWith('/admin')) return null;
 
-  const defaultLinks = [
-    { label: '📐 Size Chart & Fit Guide', url: '#size-chart' },
-    { label: '🚚 Shipping & Delivery Policy', url: '#shipping-policy' },
-    { label: '🔄 Returns & Refund Policy', url: '#return-policy' },
-    { label: '💬 Contact Us on WhatsApp', url: 'https://wa.me/919176281858?text=Hi%20Grizzle%20Support%2C%20I%20have%20an%20inquiry' },
-    { label: '📦 Track Your Order', url: '/orders' },
-  ];
+  const handleNewsletterSubmit = (e) => {
+    e.preventDefault();
+    if (!email.trim() || !email.includes('@')) {
+      if (addToast) addToast('Please enter a valid email address', 'error');
+      return;
+    }
+    setSubscribed(true);
+    if (addToast) addToast("🎉 Subscribed! You'll get early access to upcoming drops.", 'success');
+  };
 
-  let customLinks = settings?.footerCustomLinks && settings.footerCustomLinks.length > 0
-    ? [...settings.footerCustomLinks]
-    : [...defaultLinks];
-
-  // Guarantee that Contact Us is always available in customer links if missing from admin settings
-  const hasContactLink = customLinks.some((item) => {
-    const l = (item.label || '').toLowerCase();
-    const u = (item.url || '').toLowerCase();
-    return l.includes('contact') || l.includes('whatsapp') || u.includes('wa.me') || u.includes('whatsapp');
-  });
-
-  if (!hasContactLink) {
-    customLinks.push({
-      label: '💬 Contact Us on WhatsApp',
-      url: 'https://wa.me/919176281858?text=Hi%20Grizzle%20Support%2C%20I%20have%20an%20inquiry',
-    });
-  }
-
-  const brandDesc = settings?.footerAboutText ||
-    'Self-Made High-Density DTF Printed Streetwear. Bio-Washed 240 GSM Premium Cotton Built for Style & Longevity.';
-
-  const copyrightText = settings?.footerCopyrightText ||
-    `© ${new Date().getFullYear()} Grizzle Apparel India. All rights reserved. Self-Made Printed T-Shirts.`;
+  const openPolicy = (type) => {
+    setPolicyType(type);
+    setPolicyModalOpen(true);
+  };
 
   return (
     <footer className="footer-wrapper">
-      {/* ── Main columns ── */}
-      <div className="container footer-content">
-        {/* Brand */}
-        <div className="footer-brand">
-          <Link href="/" style={{ textDecoration: 'none', display: 'inline-block' }}>
+      {/* Upper Newsletter Band */}
+      <div className="newsletter-band">
+        <div className="container newsletter-container">
+          <div className="newsletter-text">
+            <span className="newsletter-badge">BE THE FIRST TO KNOW</span>
+            <h3 className="newsletter-title">GET EARLY ACCESS TO NEW DROPS</h3>
+            <p className="newsletter-desc">Subscribe to get exclusive drop alerts, secret discount codes & VIP invites.</p>
+          </div>
+
+          <form onSubmit={handleNewsletterSubmit} className="newsletter-form">
+            {subscribed ? (
+              <div className="subscribed-success">
+                <CheckCircle2 size={18} />
+                <span>You&apos;re on the VIP drop list! Check your inbox soon.</span>
+              </div>
+            ) : (
+              <div className="newsletter-input-group">
+                <div className="input-with-icon">
+                  <Mail size={18} className="mail-icon" />
+                  <input
+                    type="email"
+                    placeholder="Enter your email address..."
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="newsletter-input"
+                    required
+                  />
+                </div>
+                <button type="submit" className="newsletter-btn">
+                  JOIN VIP LIST <ArrowRight size={16} />
+                </button>
+              </div>
+            )}
+          </form>
+        </div>
+      </div>
+
+      {/* Main 4-Column Restructured Footer */}
+      <div className="container footer-content-grid">
+        {/* Column 1: Brand Info */}
+        <div className="footer-col footer-col-brand">
+          <Link href="/" className="footer-logo-link">
             <GrizzleLogo size="medium" />
           </Link>
-          <p className="brand-description">{brandDesc}</p>
-          <div className="social-links">
-            <a
-              href="https://wa.me/919176281858?text=Hi%20Grizzle%20Support%2C%20I%20have%20an%20inquiry"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="social-icon whatsapp-icon"
-              title="Contact Us on WhatsApp (+91 91762 81858)"
-              onClick={(e) => {
-                e.preventDefault();
-                window.open('https://wa.me/919176281858?text=Hi%20Grizzle%20Support%2C%20I%20have%20an%20inquiry', '_blank');
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-              </svg>
-            </a>
+          <p className="brand-tagline">
+            Self-Made High-Density DTF Printed Streetwear. 240 GSM Premium Combed Heavy Cotton Built for Style &amp; Longevity.
+          </p>
+          <div className="brand-badges">
+            <span className="b-badge">240 GSM HEAVYWEIGHT</span>
+            <span className="b-badge">BIO-WASHED</span>
+          </div>
+        </div>
+
+        {/* Column 2: Customer Service */}
+        <div className="footer-col">
+          <h4 className="col-heading">CUSTOMER SERVICE</h4>
+          <ul className="footer-links-list">
+            <li>
+              <a
+                href="https://wa.me/919176281858?text=Hi%20Grizzle%20Support%2C%20I%20have%20an%20inquiry"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-link-item highlight-link"
+              >
+                💬 Contact Us (WhatsApp)
+              </a>
+            </li>
+            <li>
+              <Link href="/orders" className="footer-link-item">
+                <HelpCircle size={14} /> FAQ &amp; Support
+              </Link>
+            </li>
+            <li>
+              <Link href="/orders" className="footer-link-item">
+                <Truck size={14} /> Track Order Status
+              </Link>
+            </li>
+            <li>
+              <button
+                type="button"
+                onClick={() => setSizeChartOpen(true)}
+                className="footer-btn-link"
+              >
+                📐 Size Guide &amp; Chart
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        {/* Column 3: Company */}
+        <div className="footer-col">
+          <h4 className="col-heading">COMPANY</h4>
+          <ul className="footer-links-list">
+            <li>
+              <Link href="/" className="footer-link-item">
+                About Grizzle Apparel
+              </Link>
+            </li>
+            <li>
+              <button
+                type="button"
+                onClick={() => openPolicy('privacy')}
+                className="footer-btn-link"
+              >
+                Privacy Policy
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                onClick={() => openPolicy('shipping')}
+                className="footer-btn-link"
+              >
+                Shipping &amp; Delivery Policy
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                onClick={() => openPolicy('returns')}
+                className="footer-btn-link"
+              >
+                Terms &amp; 7-Day Return Conditions
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        {/* Column 4: Follow Us */}
+        <div className="footer-col">
+          <h4 className="col-heading">FOLLOW US</h4>
+          <p className="follow-desc">Connect with the official Grizzle streetwear community:</p>
+
+          <div className="social-column-btns">
             <a
               href="https://www.instagram.com/grizzle.in?igsh=MWhqNnczNThqamdtYg=="
               target="_blank"
               rel="noopener noreferrer"
-              className="social-icon instagram-icon"
-              title="Instagram (@grizzle.in)"
+              className="social-col-btn insta-col-btn"
             >
-              <Instagram size={16} />
+              <Instagram size={18} />
+              <div className="social-btn-text">
+                <span className="social-btn-title">Instagram</span>
+                <span className="social-btn-sub">@grizzle.in</span>
+              </div>
+            </a>
+
+            <a
+              href="https://wa.me/919176281858?text=Hi%20Grizzle%20Support%2C%20I%20have%20an%20inquiry"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-col-btn wa-col-btn"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+              </svg>
+              <div className="social-btn-text">
+                <span className="social-btn-title">WhatsApp Support</span>
+                <span className="social-btn-sub">+91 91762 81858</span>
+              </div>
             </a>
           </div>
         </div>
-
-        {/* Shop Categories */}
-        {categories.length > 0 && (
-          <div className="footer-links-group">
-            <h4 className="col-heading">Shop Collections</h4>
-            {categories.map((cat) => (
-              <Link key={cat._id} href={`/products?category=${encodeURIComponent(cat.name)}`}>
-                {cat.name}
-              </Link>
-            ))}
-          </div>
-        )}
-
-        {/* Admin Managed Custom Footer Links & Customer Care */}
-        <div className="footer-links-group">
-          <h4 className="col-heading">Customer Care &amp; Links</h4>
-          {loadingSettings ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', opacity: 0.6 }}>
-              <div className="skeleton" style={{ height: '14px', width: '140px', borderRadius: '4px' }} />
-              <div className="skeleton" style={{ height: '14px', width: '160px', borderRadius: '4px' }} />
-              <div className="skeleton" style={{ height: '14px', width: '130px', borderRadius: '4px' }} />
-            </div>
-          ) : (
-            customLinks.map((item, idx) => {
-            const rawUrl = (item.url || '').trim();
-            const lowerUrl = rawUrl.toLowerCase();
-            const lowerLabel = (item.label || '').toLowerCase();
-
-            // 1. Check if link is Size Chart modal trigger
-            if (rawUrl === '#size-chart' || lowerLabel.includes('size chart')) {
-              return (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setSizeChartOpen(true)}
-                  className="footer-btn-link"
-                >
-                  {item.label}
-                </button>
-              );
-            }
-
-            // 2. Check if link is Returns Policy modal trigger
-            if (rawUrl === '#return-policy' || lowerUrl.includes('return') || lowerUrl.includes('refund') || lowerLabel.includes('return') || lowerLabel.includes('refund')) {
-              return (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => { setPolicyType('returns'); setPolicyModalOpen(true); }}
-                  className="footer-btn-link"
-                >
-                  {item.label}
-                </button>
-              );
-            }
-
-            // 3. Check if link is Shipping Policy modal trigger
-            if (rawUrl === '#shipping-policy' || lowerUrl.includes('shipping') || lowerUrl.includes('delivery') || lowerLabel.includes('shipping') || lowerLabel.includes('delivery')) {
-              return (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => { setPolicyType('shipping'); setPolicyModalOpen(true); }}
-                  className="footer-btn-link"
-                >
-                  {item.label}
-                </button>
-              );
-            }
-
-            // 4. Contact Us / WhatsApp link handling
-            const isContact =
-              lowerLabel.includes('contact') ||
-              lowerLabel.includes('whatsapp') ||
-              lowerUrl.includes('wa.me') ||
-              lowerUrl.includes('whatsapp') ||
-              lowerUrl === '#contact' ||
-              lowerUrl === 'contact' ||
-              lowerUrl === '/contact';
-
-            if (isContact) {
-              let whatsappUrl = 'https://wa.me/919176281858?text=Hi%20Grizzle%20Support%2C%20I%20have%20an%20inquiry';
-              if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
-                whatsappUrl = rawUrl;
-              } else if (rawUrl.startsWith('wa.me')) {
-                whatsappUrl = `https://${rawUrl}`;
-              }
-
-              return (
-                <a
-                  key={idx}
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="whatsapp-contact-link"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
-                  }}
-                >
-                  {item.label}
-                </a>
-              );
-            }
-
-            // 5. General External URL handling
-            const isExternal =
-              lowerUrl.startsWith('http://') ||
-              lowerUrl.startsWith('https://') ||
-              lowerUrl.startsWith('www.') ||
-              lowerUrl.startsWith('mailto:') ||
-              lowerUrl.startsWith('tel:') ||
-              item.isExternal;
-
-            if (isExternal) {
-              let finalHref = rawUrl;
-              if (lowerUrl.startsWith('www.')) {
-                finalHref = `https://${rawUrl}`;
-              }
-
-              return (
-                <a
-                  key={idx}
-                  href={finalHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {item.label}
-                </a>
-              );
-            }
-
-            return (
-              <Link key={idx} href={rawUrl || '#'}>
-                {item.label}
-              </Link>
-            );
-          }))}
-        </div>
       </div>
 
-      {/* ── Bottom bar ── */}
-      <div className="footer-bottom">
-        <div className="container bottom-container">
-          <p>{copyrightText}</p>
-          <div className="payment-badges">
-            <span className="pay-badge">COD AVAILABLE</span>
+      {/* Bottom Bar */}
+      <div className="footer-bottom-bar">
+        <div className="container bottom-bar-container">
+          <p className="copyright-text">
+            © {new Date().getFullYear()} Grizzle Apparel India (grizzle.in). All rights reserved. Self-Made DTF Printed T-Shirts.
+          </p>
+          <div className="bottom-badges">
+            <span className="pay-tag">💵 CASH ON DELIVERY AVAILABLE</span>
+            <span className="pay-tag">⚡ FAST ALL-INDIA SHIPPING</span>
           </div>
         </div>
       </div>
 
-      {/* Size Chart & Policy Modals */}
+      {/* Modals */}
       <SizeChartModal
         isOpen={sizeChartOpen}
         onClose={() => setSizeChartOpen(false)}
@@ -274,167 +228,317 @@ export default function Footer() {
       />
 
       <style jsx>{`
-        /* ── Wrapper ── */
         .footer-wrapper {
-          position: relative;
-          z-index: 10;
-          background: var(--bg-glass);
-          backdrop-filter: blur(24px) saturate(190%);
-          border-top: 1px solid var(--border-color);
-          box-shadow: var(--shadow-xl);
-          margin-top: 5rem;
-          color: var(--text-primary);
+          background: #09090b;
+          color: #f4f4f5;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          margin-top: 4rem;
         }
 
-        /* ── Feature bar ── */
-        .features-bar {
-          padding: 1.4rem 0;
-          background: var(--bg-tertiary);
-          border-bottom: 1px solid var(--border-color);
-        }
-        .features-grid {
-          display: flex;
-          align-items: center;
-          gap: 2rem;
-          flex-wrap: wrap;
-        }
-        .feature-item {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-        }
-        .feature-icon { color: var(--accent-primary); flex-shrink: 0; }
-        .feature-item h4 { font-size: 0.9rem; font-weight: 700; line-height: 1.3; }
-        .feature-item p  { font-size: 0.78rem; color: var(--text-muted); line-height: 1.3; }
-
-        /* ── Main grid ── */
-        .footer-content {
-          display: grid;
-          grid-template-columns: 2fr 1fr 1.2fr;
-          gap: 3rem;
-          padding: 3.5rem 1.5rem 3rem;
-          align-items: start;
+        /* Newsletter Band */
+        .newsletter-band {
+          background: linear-gradient(90deg, #121215 0%, #18181c 50%, #121215 100%);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          padding: 2.5rem 0;
         }
 
-        /* ── Brand column ── */
-        .footer-brand { display: flex; flex-direction: column; gap: 0; }
-        .brand-description {
-          font-size: 0.82rem;
-          color: var(--text-secondary);
-          line-height: 1.65;
-          margin: 1rem 0 1.25rem;
-          max-width: 320px;
-        }
-        .social-links { display: flex; gap: 0.6rem; }
-        .social-icon {
-          width: 34px; height: 34px;
-          border-radius: var(--radius-full);
-          border: 1px solid var(--border-color);
-          display: flex; align-items: center; justify-content: center;
-          color: var(--text-secondary);
-          transition: all var(--transition-fast);
-          flex-shrink: 0;
-        }
-        .social-icon:hover {
-          color: var(--accent-primary);
-          border-color: var(--accent-primary);
-          background: var(--accent-light);
-        }
-
-        /* ── Link columns ── */
-        .col-heading {
-          font-size: 0.9rem;
-          font-weight: 700;
-          color: var(--text-primary);
-          margin-bottom: 0.85rem;
-          text-transform: uppercase;
-          letter-spacing: 0.06em;
-        }
-        .footer-links-group {
-          display: flex;
-          flex-direction: column;
-          gap: 0.6rem;
-        }
-        .footer-links-group a, .footer-btn-link {
-          font-size: 0.85rem;
-          color: var(--text-secondary);
-          transition: color var(--transition-fast);
-          line-height: 1.4;
-          white-space: nowrap;
-        }
-        .footer-btn-link {
-          background: none;
-          border: none;
-          padding: 0;
-          margin: 0;
-          text-align: left;
-          font: inherit;
-          cursor: pointer;
-        }
-        .footer-links-group a:hover, .footer-btn-link:hover { color: var(--accent-primary); }
-
-        .social-icon.whatsapp-icon:hover {
-          color: #25d366;
-          border-color: #25d366;
-          background: rgba(37, 211, 102, 0.12);
-        }
-        .social-icon.instagram-icon:hover {
-          color: #e1306c;
-          border-color: #e1306c;
-          background: rgba(225, 48, 108, 0.12);
-        }
-        .whatsapp-contact-link {
-          color: #25d366 !important;
-          font-weight: 700 !important;
-        }
-        .whatsapp-contact-link:hover {
-          text-decoration: underline;
-        }
-
-        /* ── Bottom bar ── */
-        .footer-bottom {
-          border-top: 1px solid var(--border-color);
-          padding: 1.2rem 0;
-        }
-        .bottom-container {
+        .newsletter-container {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          font-size: 0.82rem;
-          color: var(--text-muted);
+          gap: 2rem;
           flex-wrap: wrap;
-          gap: 1rem;
         }
-        .payment-badges {
+
+        .newsletter-text {
+          max-width: 500px;
+        }
+
+        .newsletter-badge {
+          font-size: 0.68rem;
+          font-weight: 900;
+          color: #facc15;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+        }
+
+        .newsletter-title {
+          font-size: 1.4rem;
+          font-weight: 900;
+          color: #ffffff;
+          margin: 0.25rem 0 0.35rem;
+          letter-spacing: -0.01em;
+        }
+
+        .newsletter-desc {
+          font-size: 0.85rem;
+          color: #a1a1aa;
+          margin: 0;
+        }
+
+        .newsletter-form {
+          flex: 1;
+          max-width: 460px;
+        }
+
+        .newsletter-input-group {
           display: flex;
           gap: 0.5rem;
         }
-        .pay-badge {
-          padding: 0.25rem 0.65rem;
-          background: var(--bg-tertiary);
-          color: var(--text-secondary);
-          border-radius: 4px;
-          font-size: 0.72rem;
-          font-weight: 700;
-          border: 1px solid var(--border-color);
-          letter-spacing: 0.04em;
+
+        .input-with-icon {
+          position: relative;
+          flex: 1;
+          display: flex;
+          align-items: center;
         }
 
-        /* ── Responsive ── */
-        @media (max-width: 1024px) {
-          .footer-content {
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-          }
-          .brand-description { max-width: 100%; }
+        .mail-icon {
+          position: absolute;
+          left: 12px;
+          color: #71717a;
         }
-        @media (max-width: 600px) {
-          .footer-content {
-            grid-template-columns: 1fr;
-            gap: 2rem;
-            padding: 2.5rem 1.5rem 2rem;
+
+        .newsletter-input {
+          width: 100%;
+          padding: 0.75rem 0.75rem 0.75rem 2.4rem;
+          background: #09090b;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          border-radius: 8px;
+          color: #ffffff;
+          font-size: 0.88rem;
+          outline: none;
+          transition: border-color 0.2s ease;
+        }
+
+        .newsletter-input:focus {
+          border-color: #dc2626;
+        }
+
+        .newsletter-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: #dc2626;
+          color: #ffffff;
+          font-size: 0.78rem;
+          font-weight: 900;
+          padding: 0.75rem 1.25rem;
+          border-radius: 8px;
+          border: none;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: background 0.2s ease;
+        }
+
+        .newsletter-btn:hover {
+          background: #b91c1c;
+        }
+
+        .subscribed-success {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: rgba(16, 185, 129, 0.15);
+          color: #10b981;
+          border: 1px solid rgba(16, 185, 129, 0.3);
+          padding: 0.75rem 1rem;
+          border-radius: 8px;
+          font-size: 0.85rem;
+          font-weight: 800;
+        }
+
+        /* 4 Column Grid */
+        .footer-content-grid {
+          display: grid;
+          grid-template-columns: 1.3fr 1fr 1fr 1.1fr;
+          gap: 2.5rem;
+          padding: 3.5rem 1rem;
+        }
+
+        @media (max-width: 900px) {
+          .footer-content-grid {
+            grid-template-columns: repeat(2, 1fr);
           }
-          .footer-links-group a { white-space: normal; }
+        }
+
+        @media (max-width: 550px) {
+          .footer-content-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .footer-col-brand {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .brand-tagline {
+          font-size: 0.85rem;
+          color: #a1a1aa;
+          line-height: 1.6;
+          margin: 1rem 0 1.25rem;
+        }
+
+        .brand-badges {
+          display: flex;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+        }
+
+        .b-badge {
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          color: #e4e4e7;
+          font-size: 0.65rem;
+          font-weight: 800;
+          padding: 3px 8px;
+          border-radius: 4px;
+          letter-spacing: 0.05em;
+        }
+
+        .col-heading {
+          font-size: 0.88rem;
+          font-weight: 900;
+          color: #ffffff;
+          letter-spacing: 0.06em;
+          margin: 0 0 1.25rem 0;
+          text-transform: uppercase;
+        }
+
+        .footer-links-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .footer-link-item {
+          color: #a1a1aa;
+          font-size: 0.88rem;
+          font-weight: 600;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          transition: color 0.2s ease;
+        }
+
+        .footer-link-item:hover {
+          color: #ffffff;
+        }
+
+        .highlight-link {
+          color: #25d366 !important;
+          font-weight: 800;
+        }
+
+        .footer-btn-link {
+          background: none;
+          border: none;
+          color: #a1a1aa;
+          font-size: 0.88rem;
+          font-weight: 600;
+          cursor: pointer;
+          padding: 0;
+          text-align: left;
+          transition: color 0.2s ease;
+        }
+
+        .footer-btn-link:hover {
+          color: #ffffff;
+        }
+
+        .follow-desc {
+          font-size: 0.82rem;
+          color: #a1a1aa;
+          margin: 0 0 1rem 0;
+        }
+
+        .social-column-btns {
+          display: flex;
+          flex-direction: column;
+          gap: 0.65rem;
+        }
+
+        .social-col-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 0.65rem 0.85rem;
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          color: #ffffff;
+          text-decoration: none;
+          transition: all 0.2s ease;
+        }
+
+        .insta-col-btn:hover {
+          background: rgba(225, 48, 108, 0.15);
+          border-color: #e1306c;
+          color: #e1306c;
+        }
+
+        .wa-col-btn:hover {
+          background: rgba(37, 211, 102, 0.15);
+          border-color: #25d366;
+          color: #25d366;
+        }
+
+        .social-btn-text {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .social-btn-title {
+          font-size: 0.82rem;
+          font-weight: 800;
+          line-height: 1.2;
+        }
+
+        .social-btn-sub {
+          font-size: 0.72rem;
+          color: #a1a1aa;
+        }
+
+        /* Bottom Bar */
+        .footer-bottom-bar {
+          border-top: 1px solid rgba(255, 255, 255, 0.08);
+          padding: 1.25rem 0;
+          background: #000000;
+        }
+
+        .bottom-bar-container {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          flex-wrap: wrap;
+        }
+
+        .copyright-text {
+          font-size: 0.78rem;
+          color: #71717a;
+          margin: 0;
+        }
+
+        .bottom-badges {
+          display: flex;
+          gap: 0.65rem;
+          flex-wrap: wrap;
+        }
+
+        .pay-tag {
+          font-size: 0.68rem;
+          font-weight: 900;
+          color: #facc15;
+          background: rgba(250, 204, 21, 0.1);
+          padding: 3px 8px;
+          border-radius: 4px;
+          letter-spacing: 0.05em;
         }
       `}</style>
     </footer>

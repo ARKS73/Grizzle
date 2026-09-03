@@ -23,6 +23,8 @@ import {
 import ProductCard from '@/components/products/ProductCard';
 import QuickViewModal from '@/components/products/QuickViewModal';
 import GlobalScrollCanvas from '@/components/home/GlobalScrollCanvas';
+import TrendingCarousel from '@/components/home/TrendingCarousel';
+import TrustBand from '@/components/home/TrustBand';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -175,6 +177,19 @@ export default function SinglePageStreetwearStore() {
     );
   }, [allProducts]);
 
+  const heroMinPrice = useMemo(() => {
+    if (!allProducts || allProducts.length === 0) return 599;
+    const prices = allProducts
+      .map((p) => p.price)
+      .filter((p) => typeof p === 'number' && p > 0);
+    return prices.length > 0 ? Math.min(...prices) : 599;
+  }, [allProducts]);
+
+  const heroProductThumbnails = useMemo(() => {
+    if (!allProducts || allProducts.length === 0) return [];
+    return allProducts.slice(0, 6);
+  }, [allProducts]);
+
   const pastelColors = [
     '#d8d8fa', // Pastel Purple/Lavender
     '#fcdada', // Soft Blush Pink
@@ -216,7 +231,7 @@ export default function SinglePageStreetwearStore() {
         />
 
         <div className="container hero-street-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', width: '100%' }}>
-          <div className="hero-text-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', width: '100%', maxWidth: '800px', margin: '0 auto' }}>
+          <div className="hero-text-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', width: '100%', maxWidth: '850px', margin: '0 auto' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: '#fff', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '0.75rem', textAlign: 'center' }}>
               <Sparkles size={14} style={{ color: '#93c5fd' }} />
               <span>{heroSettings.heroBadge}</span>
@@ -229,31 +244,70 @@ export default function SinglePageStreetwearStore() {
               </span>
             </h1>
 
-            <p className="hero-street-desc" style={{ textAlign: 'center', margin: '1rem auto 1.5rem', maxWidth: '600px' }}>
+            <p className="hero-street-desc" style={{ textAlign: 'center', margin: '0.75rem auto 0.5rem', maxWidth: '650px' }}>
               {heroSettings.heroDesc}
             </p>
 
+            {/* Price Anchor Subheadline */}
+            <div className="hero-price-anchor">
+              <span className="price-tag-badge">SPECIAL DROP</span>
+              <span>240 GSM Heavyweight DTF Tees • <strong>Starting at ₹{heroMinPrice}</strong></span>
+            </div>
+
+            {/* Hero CTAs */}
             <div className="hero-btn-group" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', width: '100%' }}>
-              <a href="#latest-drops" className="btn-street-dark">
-                SHOP DROPS
+              <a href="#latest-drops" className="btn-street-dark btn-hero-primary">
+                EXPLORE DROPS — FROM ₹{heroMinPrice} <ArrowRight size={18} />
               </a>
               <Link href="/products" className="btn-street-light">
                 ALL COLLECTIONS
               </Link>
             </div>
+
+            {/* Secondary Product Row Directly Below Hero */}
+            {heroProductThumbnails.length > 0 && (
+              <div className="hero-products-row-wrapper">
+                <div className="hero-products-row-label">🔥 TRENDING DROPS — QUICK ACCESS</div>
+                <div className="hero-products-thumb-grid">
+                  {heroProductThumbnails.map((prod) => (
+                    <Link key={prod._id} href={`/product/${prod._id}`} className="hero-product-thumb-card">
+                      <img src={prod.images?.[0] || ''} alt={prod.name} className="hero-thumb-img" />
+                      <div className="hero-thumb-details">
+                        <span className="hero-thumb-name">{prod.name}</span>
+                        <div className="hero-thumb-price-wrap">
+                          <span className="hero-thumb-price">₹{prod.price?.toFixed(0)}</span>
+                          {prod.originalPrice > prod.price && (
+                            <span className="hero-thumb-mrp">₹{prod.originalPrice?.toFixed(0)}</span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
       {/* =========================================================================
+         SECTION: TRENDING NOW / FASTEST SELLING CAROUSEL
+         ========================================================================= */}
+      <TrendingCarousel products={allProducts.filter((p) => p.isTrending || p.isBestSeller || p.ratings >= 4.5)} />
+
+      {/* =========================================================================
          SECTION 2: LATEST DROPS (Matching Image Section 2)
          ========================================================================= */}
-      <section className="latest-drops-section" id="latest-drops">
+      {/* =========================================================================
+         SECTION 2: LATEST DROPS
+         ========================================================================= */}
+      <section className="latest-drops-section" id="latest-drops" style={{ padding: '5rem 0', background: '#09090b' }}>
         <div className="container">
           <div className="drops-header">
             <div>
+              <span className="section-kicker-badge">OFFICIAL 2026 DROPS</span>
               <h2 className="drops-title">LATEST DROPS</h2>
-              <p className="drops-subtitle">Official 2026 Collection / Winter 2026</p>
+              <p className="drops-subtitle">240 GSM Heavyweight Combed Cotton • High-Density DTF Prints</p>
             </div>
 
             {/* Filter Pills */}
@@ -264,7 +318,7 @@ export default function SinglePageStreetwearStore() {
               >
                 ALL
               </button>
-              {categories.map(cat => (
+              {categories.map((cat) => (
                 <button
                   key={cat._id || cat.slug}
                   className={`filter-tab ${activeCategory === cat.name ? 'active' : ''}`}
@@ -276,17 +330,17 @@ export default function SinglePageStreetwearStore() {
             </div>
           </div>
 
-          {/* Pastel Product Grid */}
+          {/* Product Grid */}
           {loadingProducts ? (
-            <div className="pastel-products-grid">
+            <div className="streetwear-products-grid">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="skeleton" style={{ height: '340px', borderRadius: '24px' }} />
+                <div key={i} className="skeleton" style={{ height: '380px', borderRadius: '16px' }} />
               ))}
             </div>
           ) : filteredProducts.length === 0 ? (
-            <div className="subtle-empty-state">
-              <ShoppingBag size={24} className="empty-icon" />
-              <p className="empty-title">No products found in this drop</p>
+            <div className="subtle-empty-state text-center" style={{ padding: '3rem 1.5rem', background: '#121215', borderRadius: '16px', border: '1px dashed rgba(255,255,255,0.1)' }}>
+              <ShoppingBag size={28} style={{ color: '#dc2626', marginBottom: '0.5rem' }} />
+              <p style={{ fontSize: '0.95rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.4rem 0' }}>No products found in this category filter</p>
               {user && user.role === 'admin' && (
                 <Link href="/admin/products" className="btn-street-dark btn-sm mt-2">
                   Go to Admin Product Manager &rarr;
@@ -294,387 +348,119 @@ export default function SinglePageStreetwearStore() {
               )}
             </div>
           ) : (
-            <div className="pastel-products-grid">
-              {filteredProducts.slice(0, 8).map((product, idx) => {
-                const isSaved = isInWishlist(product._id);
-
-                return (
-                  <div key={product._id} className="pastel-card-wrapper">
-                    {/* Uniform Image Block */}
-                    <div
-                      className="pastel-image-block"
-                      onClick={() => setQuickViewProduct(product)}
-                      title="Click to view product details"
-                    >
-                      <img
-                        src={(product.images || []).find((img) => img && img !== '/logo2.png') || product.images?.[0] || ''}
-                        alt={product.name}
-                        className="pastel-product-img"
-                      />
-
-                      {/* Action Overlay */}
-                      <div className="pastel-action-overlay">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleWishlist(product);
-                          }}
-                          className={`pastel-icon-btn ${isSaved ? 'saved' : ''}`}
-                          title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
-                        >
-                          <Heart size={16} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : '#1e293b'} />
-                        </button>
-                      </div>
-
-                      {/* Tag Badge */}
-                      {product.isBestSeller && (
-                        <span className="pastel-tag-badge">BESTSELLER</span>
-                      )}
-                      {product.isTrending && (
-                        <span className="pastel-tag-badge badge-trending">TRENDING</span>
-                      )}
-                    </div>
-
-                    {/* Bottom Dark Info Bar */}
-                    <div className="pastel-card-info">
-                      <div
-                        className="info-text-box"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setQuickViewProduct(product)}
-                      >
-                        <h4 className="pastel-card-title">{product.name}</h4>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '2px' }}>
-                          <span className="pastel-card-price">₹{product.price?.toFixed(0)}</span>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginLeft: 'auto' }}>
-                            <Star size={11} fill="#f59e0b" color="#f59e0b" />
-                            <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-secondary)' }}>
-                              {product.numReviews > 0 ? Number(product.ratings || 0).toFixed(1) : '0.0'}
-                            </span>
-                            <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
-                              ({product.numReviews || 0})
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => addToCart(product, product.sizes?.[0] || 'M', product.colors?.[0]?.name || 'Default', 1)}
-                        className="pastel-add-btn"
-                        title="Add to Cart"
-                      >
-                        <ShoppingBag size={15} />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="streetwear-products-grid">
+              {filteredProducts.slice(0, 8).map((product) => (
+                <ProductCard key={product._id} product={product} onQuickView={setQuickViewProduct} />
+              ))}
             </div>
           )}
         </div>
       </section>
 
       {/* =========================================================================
-         SECTION: MEN'S COLLECTION SECTION
+         SECTION: MEN'S COLLECTION SECTION (Hides completely if 0 products)
          ========================================================================= */}
-      <section className="latest-drops-section mens-collection-section" id="mens-collection" style={{ padding: '3rem 0' }}>
-        <div className="container">
-          <div className="drops-header">
-            <div>
-              <h2 className="drops-title">MEN&apos;S COLLECTION</h2>
-              <p className="drops-subtitle">240 GSM heavyweight tees, oversized cuts & desi graphics</p>
+      {(loadingProducts || mensProducts.length > 0) && (
+        <section className="latest-drops-section mens-collection-section" id="mens-collection" style={{ padding: '5rem 0', background: '#121215', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="container">
+            <div className="drops-header">
+              <div>
+                <span className="section-kicker-badge">STREETWEAR CUTS</span>
+                <h2 className="drops-title">MEN&apos;S COLLECTION</h2>
+                <p className="drops-subtitle">240 GSM boxy drop-shoulder tees, anime graphics & desi typography</p>
+              </div>
+
+              <Link href="/products?gender=Men" className="header-cta-pill">
+                SHOP MEN&apos;S COLLECTION &rarr;
+              </Link>
             </div>
 
-            <Link href="/products?gender=Men" className="header-cta-pill">
-              SHOP MEN&apos;S COLLECTION &rarr;
-            </Link>
+            {loadingProducts ? (
+              <div className="streetwear-products-grid">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="skeleton" style={{ height: '380px', borderRadius: '16px' }} />
+                ))}
+              </div>
+            ) : (
+              <div className="streetwear-products-grid">
+                {mensProducts.slice(0, 4).map((product) => (
+                  <ProductCard key={product._id} product={product} onQuickView={setQuickViewProduct} />
+                ))}
+              </div>
+            )}
           </div>
-
-          {loadingProducts ? (
-            <div className="pastel-products-grid">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="skeleton" style={{ height: '340px', borderRadius: '24px' }} />
-              ))}
-            </div>
-          ) : mensProducts.length === 0 ? (
-            <div className="subtle-empty-state">
-              <ShoppingBag size={24} className="empty-icon" />
-              <p className="empty-title">No Men&apos;s products added yet</p>
-              {user && user.role === 'admin' && (
-                <Link href="/admin/products" className="btn-street-dark btn-sm mt-2">
-                  Go to Admin Product Manager &rarr;
-                </Link>
-              )}
-            </div>
-          ) : (
-            <div className="pastel-products-grid">
-              {mensProducts.slice(0, 4).map((product, idx) => {
-                const isSaved = isInWishlist(product._id);
-
-                return (
-                  <div key={product._id} className="pastel-card-wrapper">
-                    <div
-                      className="pastel-image-block"
-                      onClick={() => setQuickViewProduct(product)}
-                      title="Click to view product details"
-                    >
-                      <img
-                        src={(product.images || []).find((img) => img && img !== '/logo2.png') || product.images?.[0] || ''}
-                        alt={product.name}
-                        className="pastel-product-img"
-                      />
-                      <div className="pastel-action-overlay">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleWishlist(product);
-                          }}
-                          className={`pastel-icon-btn ${isSaved ? 'saved' : ''}`}
-                          title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
-                        >
-                          <Heart size={16} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : '#1e293b'} />
-                        </button>
-                      </div>
-                      {product.isBestSeller && <span className="pastel-tag-badge">BESTSELLER</span>}
-                    </div>
-
-                    <div className="pastel-card-info">
-                      <div
-                        className="info-text-box"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setQuickViewProduct(product)}
-                      >
-                        <h4 className="pastel-card-title">{product.name}</h4>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '2px' }}>
-                          <span className="pastel-card-price">₹{product.price?.toFixed(0)}</span>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginLeft: 'auto' }}>
-                            <Star size={11} fill="#f59e0b" color="#f59e0b" />
-                            <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-secondary)' }}>
-                              {product.numReviews > 0 ? Number(product.ratings || 0).toFixed(1) : '0.0'}
-                            </span>
-                            <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
-                              ({product.numReviews || 0})
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => addToCart(product, product.sizes?.[0] || 'M', product.colors?.[0]?.name || 'Default', 1)}
-                        className="pastel-add-btn"
-                        title="Add to Cart"
-                      >
-                        <ShoppingBag size={15} />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* =========================================================================
-         SECTION: WOMEN'S COLLECTION SECTION
+         SECTION: WOMEN'S COLLECTION SECTION (Hides completely if 0 products)
          ========================================================================= */}
-      <section className="latest-drops-section womens-collection-section" id="womens-collection" style={{ background: 'var(--bg-secondary)', padding: '3rem 0' }}>
-        <div className="container">
-          <div className="drops-header">
-            <div>
-              <h2 className="drops-title">WOMEN&apos;S COLLECTION</h2>
-              <p className="drops-subtitle">Aesthetic minimalist line art, pastels & soft bio-washed tees</p>
+      {(loadingProducts || womensProducts.length > 0) && (
+        <section className="latest-drops-section womens-collection-section" id="womens-collection" style={{ padding: '5rem 0', background: '#09090b', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="container">
+            <div className="drops-header">
+              <div>
+                <span className="section-kicker-badge">FEMME & OVERSIZED</span>
+                <h2 className="drops-title">WOMEN&apos;S COLLECTION</h2>
+                <p className="drops-subtitle">Aesthetic graphic art, minimal chest prints & soft bio-washed cotton</p>
+              </div>
+
+              <Link href="/products?gender=Women" className="header-cta-pill">
+                SHOP WOMEN&apos;S COLLECTION &rarr;
+              </Link>
             </div>
 
-            <Link href="/products?gender=Women" className="header-cta-pill">
-              SHOP WOMEN&apos;S COLLECTION &rarr;
-            </Link>
+            {loadingProducts ? (
+              <div className="streetwear-products-grid">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="skeleton" style={{ height: '380px', borderRadius: '16px' }} />
+                ))}
+              </div>
+            ) : (
+              <div className="streetwear-products-grid">
+                {womensProducts.slice(0, 4).map((product) => (
+                  <ProductCard key={product._id} product={product} onQuickView={setQuickViewProduct} />
+                ))}
+              </div>
+            )}
           </div>
-
-          {loadingProducts ? (
-            <div className="pastel-products-grid">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="skeleton" style={{ height: '340px', borderRadius: '24px' }} />
-              ))}
-            </div>
-          ) : womensProducts.length === 0 ? (
-            <div className="subtle-empty-state">
-              <ShoppingBag size={24} className="empty-icon" />
-              <p className="empty-title">No Women&apos;s products added yet</p>
-              {user && user.role === 'admin' && (
-                <Link href="/admin/products" className="btn-street-light btn-sm mt-2">
-                  Go to Admin Product Manager &rarr;
-                </Link>
-              )}
-            </div>
-          ) : (
-            <div className="pastel-products-grid">
-              {womensProducts.slice(0, 4).map((product, idx) => {
-                const isSaved = isInWishlist(product._id);
-
-                return (
-                  <div key={product._id} className="pastel-card-wrapper">
-                    <div
-                      className="pastel-image-block"
-                      onClick={() => setQuickViewProduct(product)}
-                      title="Click to view product details"
-                    >
-                      <img
-                        src={(product.images || []).find((img) => img && img !== '/logo2.png') || product.images?.[0] || ''}
-                        alt={product.name}
-                        className="pastel-product-img"
-                      />
-                      <div className="pastel-action-overlay">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleWishlist(product);
-                          }}
-                          className={`pastel-icon-btn ${isSaved ? 'saved' : ''}`}
-                          title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
-                        >
-                          <Heart size={16} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : '#1e293b'} />
-                        </button>
-                      </div>
-                      {product.isTrending && <span className="pastel-tag-badge badge-trending">TRENDING</span>}
-                    </div>
-
-                    <div className="pastel-card-info">
-                      <div
-                        className="info-text-box"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setQuickViewProduct(product)}
-                      >
-                        <h4 className="pastel-card-title">{product.name}</h4>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '2px' }}>
-                          <span className="pastel-card-price">₹{product.price?.toFixed(0)}</span>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginLeft: 'auto' }}>
-                            <Star size={11} fill="#f59e0b" color="#f59e0b" />
-                            <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-secondary)' }}>
-                              {product.numReviews > 0 ? Number(product.ratings || 0).toFixed(1) : '0.0'}
-                            </span>
-                            <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
-                              ({product.numReviews || 0})
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => addToCart(product, product.sizes?.[0] || 'M', product.colors?.[0]?.name || 'Default', 1)}
-                        className="pastel-add-btn"
-                        title="Add to Cart"
-                      >
-                        <ShoppingBag size={15} />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* =========================================================================
-         SECTION: UNISEX COLLECTION SECTION
+         SECTION: UNISEX COLLECTION SECTION (Hides completely if 0 products)
          ========================================================================= */}
-      <section className="latest-drops-section unisex-collection-section" id="unisex-collection" style={{ padding: '3rem 0' }}>
-        <div className="container">
-          <div className="drops-header">
-            <div>
-              <h2 className="drops-title">UNISEX COLLECTION</h2>
-              <p className="drops-subtitle">Versatile fit tees for everyone, all styles & all sizes</p>
+      {(loadingProducts || unisexProducts.length > 0) && (
+        <section className="latest-drops-section unisex-collection-section" id="unisex-collection" style={{ padding: '5rem 0', background: '#121215', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="container">
+            <div className="drops-header">
+              <div>
+                <span className="section-kicker-badge">ALL GENDERS</span>
+                <h2 className="drops-title">UNISEX COLLECTION</h2>
+                <p className="drops-subtitle">Universal boxy cuts for everyone • Available in sizes S to 3XL</p>
+              </div>
+
+              <Link href="/products?gender=Unisex" className="header-cta-pill">
+                SHOP UNISEX COLLECTION &rarr;
+              </Link>
             </div>
 
-            <Link href="/products?gender=Unisex" className="header-cta-pill">
-              SHOP UNISEX COLLECTION &rarr;
-            </Link>
+            {loadingProducts ? (
+              <div className="streetwear-products-grid">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="skeleton" style={{ height: '380px', borderRadius: '16px' }} />
+                ))}
+              </div>
+            ) : (
+              <div className="streetwear-products-grid">
+                {unisexProducts.slice(0, 4).map((product) => (
+                  <ProductCard key={product._id} product={product} onQuickView={setQuickViewProduct} />
+                ))}
+              </div>
+            )}
           </div>
-
-          {loadingProducts ? (
-            <div className="pastel-products-grid">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="skeleton" style={{ height: '340px', borderRadius: '24px' }} />
-              ))}
-            </div>
-          ) : unisexProducts.length === 0 ? (
-            <div className="subtle-empty-state">
-              <ShoppingBag size={24} className="empty-icon" />
-              <p className="empty-title">No Unisex products added yet</p>
-              {user && user.role === 'admin' && (
-                <Link href="/admin/products" className="btn-street-dark btn-sm mt-2">
-                  Go to Admin Product Manager &rarr;
-                </Link>
-              )}
-            </div>
-          ) : (
-            <div className="pastel-products-grid">
-              {unisexProducts.slice(0, 4).map((product, idx) => {
-                const isSaved = isInWishlist(product._id);
-
-                return (
-                  <div key={product._id} className="pastel-card-wrapper">
-                    <div
-                      className="pastel-image-block"
-                      onClick={() => setQuickViewProduct(product)}
-                      title="Click to view product details"
-                    >
-                      <img
-                        src={(product.images || []).find((img) => img && img !== '/logo2.png') || product.images?.[0] || ''}
-                        alt={product.name}
-                        className="pastel-product-img"
-                      />
-                      <div className="pastel-action-overlay">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleWishlist(product);
-                          }}
-                          className={`pastel-icon-btn ${isSaved ? 'saved' : ''}`}
-                          title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
-                        >
-                          <Heart size={16} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : '#1e293b'} />
-                        </button>
-                      </div>
-                      {product.isBestSeller && <span className="pastel-tag-badge">BESTSELLER</span>}
-                    </div>
-
-                    <div className="pastel-card-info">
-                      <div
-                        className="info-text-box"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setQuickViewProduct(product)}
-                      >
-                        <h4 className="pastel-card-title">{product.name}</h4>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '2px' }}>
-                          <span className="pastel-card-price">₹{product.price?.toFixed(0)}</span>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginLeft: 'auto' }}>
-                            <Star size={11} fill="#f59e0b" color="#f59e0b" />
-                            <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-secondary)' }}>
-                              {product.numReviews > 0 ? Number(product.ratings || 0).toFixed(1) : '0.0'}
-                            </span>
-                            <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
-                              ({product.numReviews || 0})
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => addToCart(product, product.sizes?.[0] || 'M', product.colors?.[0]?.name || 'Default', 1)}
-                        className="pastel-add-btn"
-                        title="Add to Cart"
-                      >
-                        <ShoppingBag size={15} />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* =========================================================================
          SECTION: ALL COLLECTIONS SECTION
@@ -688,61 +474,71 @@ export default function SinglePageStreetwearStore() {
           </div>
 
           {categories.length === 0 ? (
-            <div className="subtle-empty-state mb-4">
-              <Layers size={24} className="empty-icon" />
-              <p className="empty-title">No categories created yet</p>
-              {user && user.role === 'admin' && (
-                <Link href="/admin/categories" className="btn-street-dark btn-sm mt-2">
-                  Go to Admin Category Manager &rarr;
+            <div className="subtle-empty-state text-center" style={{ padding: '3rem 1.5rem', background: 'var(--bg-secondary)', borderRadius: '16px', border: '1px dashed var(--border-color)', marginBottom: '2.5rem' }}>
+              <Layers size={28} style={{ color: 'var(--accent-primary)', marginBottom: '0.5rem' }} />
+              <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 0.4rem 0' }}>No Categories Added Yet</h4>
+              <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', margin: '0 0 1rem 0' }}>
+                Add your real product categories in the Admin Dashboard to feature them here.
+              </p>
+              {user && user.role === 'admin' ? (
+                <Link href="/admin/categories" className="btn-street-dark btn-sm">
+                  + Add Categories in Admin Panel &rarr;
+                </Link>
+              ) : (
+                <Link href="/products" className="btn-street-dark btn-sm">
+                  Browse All Products Catalog &rarr;
                 </Link>
               )}
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
               {categories.map((cat) => {
-                // Find all admin-added products belonging to this category
-                const catProds = allProducts.filter(p =>
-                  p.category?.toLowerCase() === cat.name?.toLowerCase()
+                const catProds = allProducts.filter(
+                  (p) => p.category?.toLowerCase() === cat.name?.toLowerCase()
                 );
 
-                // Pick image from admin-added products in this category
                 let displayImg = cat.image && cat.image !== '/logo2.png' ? cat.image : null;
                 if (!displayImg && catProds.length > 0) {
-                  const randomProd = catProds[Math.floor(Math.random() * catProds.length)];
-                  displayImg = randomProd.images?.[0] || null;
+                  displayImg = catProds[0].images?.[0] || null;
                 }
-
-                // Fallback to any admin product image if available, else logo2.png
                 if (!displayImg && allProducts.length > 0) {
-                  displayImg = allProducts[0].images?.[0] || '/logo2.png';
+                  displayImg = allProducts[0].images?.[0] || null;
                 }
-                if (!displayImg) displayImg = '/logo2.png';
+                if (!displayImg) displayImg = '/icon.png';
 
                 return (
                   <Link
-                    key={cat._id || cat.slug}
+                    key={cat._id || cat.name}
                     href={`/products?category=${encodeURIComponent(cat.name)}`}
                     className="glass-panel"
                     style={{
-                      padding: '1.5rem',
-                      borderRadius: 'var(--radius-lg)',
+                      padding: '1.25rem',
+                      borderRadius: '16px',
                       textDecoration: 'none',
                       color: 'var(--text-primary)',
                       display: 'flex',
                       flexDirection: 'column',
                       gap: '0.75rem',
-                      transition: 'transform 0.2s, box-shadow 0.2s',
+                      transition: 'all 0.25s ease',
                       background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border-color)',
                     }}
                   >
-                    <img
-                      src={displayImg}
-                      alt={cat.name}
-                      style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: 'var(--radius-md)' }}
-                    />
-                    <h4 style={{ fontSize: '1rem', fontWeight: '800' }}>{cat.name}</h4>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: '700' }}>
-                      {catProds.length > 0 ? `${catProds.length} Drops Live →` : 'Explore Filters →'}
+                    <div style={{ width: '100%', height: '160px', borderRadius: '12px', overflow: 'hidden', position: 'relative' }}>
+                      <img
+                        src={displayImg}
+                        alt={cat.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.35s ease' }}
+                      />
+                    </div>
+                    <div>
+                      <h4 style={{ fontSize: '1.05rem', fontWeight: '900', color: 'var(--text-primary)', margin: 0 }}>{cat.name}</h4>
+                      {cat.description && (
+                        <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>{cat.description}</p>
+                      )}
+                    </div>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: '800', marginTop: 'auto' }}>
+                      {catProds.length > 0 ? `${catProds.length} Live Drops →` : 'Explore Category →'}
                     </span>
                   </Link>
                 );
@@ -757,6 +553,11 @@ export default function SinglePageStreetwearStore() {
           </div>
         </div>
       </section>
+
+      {/* =========================================================================
+         SECTION: TRUST / SOCIAL PROOF BAND
+         ========================================================================= */}
+      <TrustBand />
 
 
 

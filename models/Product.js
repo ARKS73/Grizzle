@@ -44,7 +44,7 @@ const ProductSchema = new mongoose.Schema(
     },
     sizes: {
       type: [String],
-      enum: ['S', 'M', 'L', 'XL', 'XXL'],
+      enum: ['S', 'M', 'L', 'XL', 'XXL', '3XL'],
       default: ['S', 'M', 'L', 'XL'],
     },
     colors: [ColorSchema],
@@ -78,6 +78,10 @@ const ProductSchema = new mongoose.Schema(
       default: 0,
     },
     fabricFit: {
+      type: String,
+      default: '',
+    },
+    designStory: {
       type: String,
       default: '',
     },

@@ -477,8 +477,79 @@ export default function AdminDashboardPage() {
               <input
                 type="text"
                 className="form-input"
-                value={storeSettings.heroTapeNote}
+                value={storeSettings.heroTapeNote || ''}
                 onChange={(e) => setStoreSettings((prev) => ({ ...prev, heroTapeNote: e.target.value }))}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Trust & Social Proof Band Customization */}
+        <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem', marginTop: '1.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <h4 style={{ fontSize: '1.05rem', fontWeight: 800 }}>🛡️ Trust &amp; Social Proof Band Settings</h4>
+              <p className="subtext">Edit your live numbers, Instagram link, customer count, and security text.</p>
+            </div>
+            <button
+              type="button"
+              onClick={handleSaveStoreSettings}
+              disabled={savingSettings}
+              className="btn btn-primary btn-sm font-bold"
+            >
+              <Save size={14} /> {savingSettings ? 'Saving...' : 'Save Trust Settings'}
+            </button>
+          </div>
+
+          <div className="form-grid-3 mb-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+            <div className="form-group">
+              <label className="form-label">Happy Customers Stat</label>
+              <input
+                type="text"
+                placeholder="e.g. 15,000+"
+                className="form-input"
+                value={storeSettings.trustHappyCustomers || ''}
+                onChange={(e) => setStoreSettings((prev) => ({ ...prev, trustHappyCustomers: e.target.value }))}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Instagram Followers Stat</label>
+              <input
+                type="text"
+                placeholder="e.g. 45.8K+"
+                className="form-input"
+                value={storeSettings.trustInstagramFollowers || ''}
+                onChange={(e) => setStoreSettings((prev) => ({ ...prev, trustInstagramFollowers: e.target.value }))}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Instagram Profile URL</label>
+              <input
+                type="text"
+                placeholder="https://instagram.com/grizzle.in"
+                className="form-input"
+                value={storeSettings.trustInstagramUrl || ''}
+                onChange={(e) => setStoreSettings((prev) => ({ ...prev, trustInstagramUrl: e.target.value }))}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Verified Rating Stat</label>
+              <input
+                type="text"
+                placeholder="e.g. 4.9 ★"
+                className="form-input"
+                value={storeSettings.trustReviewsText || ''}
+                onChange={(e) => setStoreSettings((prev) => ({ ...prev, trustReviewsText: e.target.value }))}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Secure Checkout Stat</label>
+              <input
+                type="text"
+                placeholder="e.g. 100%"
+                className="form-input"
+                value={storeSettings.trustSecureCheckoutText || ''}
+                onChange={(e) => setStoreSettings((prev) => ({ ...prev, trustSecureCheckoutText: e.target.value }))}
               />
             </div>
           </div>
