@@ -374,10 +374,10 @@ export default function ProductDetailPage() {
 
                   <button
                     onClick={() => toggleWishlist(product)}
-                    className={`btn btn-secondary wishlist-btn ${isSaved ? 'saved' : ''}`}
+                    className={`btn wishlist-btn ${isSaved ? 'saved' : ''}`}
                     title="Save to Wishlist"
                   >
-                    <Heart size={20} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : 'currentColor'} />
+                    <Heart size={20} fill={isSaved ? '#ef4444' : 'none'} color="#ef4444" stroke="#ef4444" />
                   </button>
                 </div>
 
@@ -434,11 +434,10 @@ export default function ProductDetailPage() {
 
       {/* Suggested & Recommended Grizzle Products */}
       {relatedProducts.length > 0 && (
-        <section className="related-section glass-panel p-4 rounded-xl mt-5">
-          <div className="related-header mb-4">
-            <span className="badge badge-primary font-bold">Grizzle Streetwear Collection</span>
-            <h2 className="related-title font-black text-2xl mt-1">🔥 You Might Also Like</h2>
-            <p className="text-sm text-muted m-0">Handpicked heavyweight 240 GSM bio-washed graphic t-shirts & streetwear drops</p>
+        <section className="related-section mt-5 mb-4">
+          <div className="section-header-clean mb-3">
+            <h2 className="section-title-streetwear">Grizzle Streetwear Collection</h2>
+            <div className="section-title-line" />
           </div>
           <div className="grid-products">
             {relatedProducts.map((rel) => (
@@ -796,7 +795,8 @@ export default function ProductDetailPage() {
           height: 48px;
           border-radius: var(--radius-md);
           background: var(--bg-secondary);
-          border: 1.5px solid var(--border-color);
+          border: 1.5px solid #ef4444 !important;
+          color: #ef4444 !important;
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -804,12 +804,16 @@ export default function ProductDetailPage() {
           transition: all 0.2s ease;
           flex-shrink: 0;
         }
+        .wishlist-btn svg {
+          stroke: #ef4444 !important;
+          color: #ef4444 !important;
+        }
         .wishlist-btn:hover {
-          border-color: var(--accent-primary);
-          background: var(--accent-light);
+          background: rgba(239, 68, 68, 0.12);
+          transform: scale(1.05);
         }
         .wishlist-btn.saved {
-          background: rgba(239, 68, 68, 0.12) !important;
+          background: rgba(239, 68, 68, 0.18) !important;
           border-color: #ef4444 !important;
         }
 
@@ -878,7 +882,30 @@ export default function ProductDetailPage() {
           border-color: var(--accent-primary, #ef4444);
         }
 
-        .related-section { margin-top: 4rem; }
+        .section-header-clean {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.35rem;
+          padding-left: 2px;
+        }
+        .section-title-streetwear {
+          font-size: 1.45rem;
+          font-weight: 900;
+          font-family: 'Outfit', sans-serif;
+          text-transform: uppercase;
+          letter-spacing: -0.01em;
+          color: var(--text-primary);
+          margin: 0;
+        }
+        .section-title-line {
+          width: 44px;
+          height: 3px;
+          background: var(--accent-primary, #ef4444);
+          border-radius: 99px;
+        }
+
+        .related-section { margin-top: 3.5rem; }
 
         @media (max-width: 900px) {
           .product-detail-wrapper {
@@ -891,12 +918,14 @@ export default function ProductDetailPage() {
           }
           .product-info-box {
             width: 100%;
-            overflow: hidden;
+            overflow: visible !important;
             word-break: break-word;
             overflow-wrap: break-word;
             display: flex;
             flex-direction: column;
             gap: 0.65rem;
+            padding: 0 4px;
+            box-sizing: border-box;
           }
           .main-image-container {
             max-height: 320px;
@@ -1056,20 +1085,19 @@ export default function ProductDetailPage() {
             font-size: 0.75rem;
           }
           .cta-box {
-            position: sticky;
-            bottom: 0;
-            z-index: 99;
-            margin: 0.75rem -0.75rem -0.75rem -0.75rem;
-            padding: 0.75rem 1rem;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-top: 1.5px solid var(--border-color);
-            box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
+            position: relative;
+            z-index: 10;
+            margin: 1.25rem 0 0 0;
+            padding: 0 !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
-            width: calc(100% + 1.5rem);
+            gap: 0.65rem;
+            width: 100% !important;
             box-sizing: border-box;
           }
 
@@ -1082,7 +1110,7 @@ export default function ProductDetailPage() {
 
           .cta-buttons-group {
             display: flex;
-            gap: 0.45rem;
+            gap: 0.5rem;
             width: 100%;
           }
 
@@ -1090,47 +1118,47 @@ export default function ProductDetailPage() {
             border: 1.5px solid var(--border-color);
             border-radius: var(--radius-md);
             background: var(--bg-tertiary);
-            height: 40px;
+            height: 42px;
           }
           .quantity-picker button {
-            width: 32px;
-            height: 40px;
+            width: 36px;
+            height: 42px;
             background: transparent;
             font-size: 1rem;
             font-weight: 800;
             color: var(--text-primary);
           }
           .quantity-picker span {
-            width: 28px;
+            width: 30px;
             font-size: 0.88rem;
             font-weight: 800;
             color: var(--text-primary);
           }
           .add-btn {
-            font-size: 0.8rem !important;
-            padding: 0 0.4rem !important;
-            height: 44px;
+            font-size: 0.84rem !important;
+            padding: 0 0.5rem !important;
+            height: 46px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 6px;
             border-radius: 10px;
             flex: 1;
           }
           .buy-now-btn {
-            font-size: 0.82rem !important;
-            padding: 0 0.4rem !important;
-            height: 44px;
+            font-size: 0.84rem !important;
+            padding: 0 0.5rem !important;
+            height: 46px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 6px;
             border-radius: 10px;
             flex: 1;
           }
           .wishlist-btn {
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: 10px;
           }
           .tabs-container {
