@@ -3,12 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Star, Heart, ShoppingBag, Check, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Star, Heart, ShoppingBag, Check, ArrowRight, ArrowLeft, Share2 } from 'lucide-react';
 import ProductCard from '@/components/products/ProductCard';
 import ReviewSection from '@/components/products/ReviewSection';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import SizeChartModal from '@/components/ui/SizeChartModal';
+import ShareModal from '@/components/ui/ShareModal';
 import { getOptimizedImageUrl } from '@/utils/imageOptimizer';
 import { getProductVariantStock } from '@/utils/stockHelper';
 
@@ -27,6 +28,7 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [sizeChartOpen, setSizeChartOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
 
   const fetchProductData = async () => {
     try {
@@ -379,6 +381,14 @@ export default function ProductDetailPage() {
                   >
                     <Heart size={20} fill={isSaved ? '#ef4444' : 'none'} color="#ef4444" stroke="#ef4444" />
                   </button>
+
+                  <button
+                    onClick={() => setShareModalOpen(true)}
+                    className="btn share-btn"
+                    title="Share Product"
+                  >
+                    <Share2 size={20} />
+                  </button>
                 </div>
 
                 <div className="cta-buttons-group">
@@ -452,6 +462,13 @@ export default function ProductDetailPage() {
         product={product}
         isOpen={sizeChartOpen}
         onClose={() => setSizeChartOpen(false)}
+      />
+
+      {/* Share Product Modal */}
+      <ShareModal
+        isOpen={shareModalOpen}
+        onClose={() => setShareModalOpen(false)}
+        product={product}
       />
 
       <style jsx>{`
@@ -817,6 +834,27 @@ export default function ProductDetailPage() {
           border-color: #ef4444 !important;
         }
 
+        .share-btn {
+          width: 48px;
+          height: 48px;
+          border-radius: var(--radius-md);
+          background: var(--bg-secondary);
+          border: 1.5px solid var(--border-color);
+          color: var(--text-primary);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          flex-shrink: 0;
+        }
+        .share-btn:hover {
+          border-color: var(--accent-primary);
+          background: var(--accent-light);
+          color: var(--accent-primary);
+          transform: scale(1.05);
+        }
+
         .guarantees-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
@@ -1157,6 +1195,11 @@ export default function ProductDetailPage() {
             flex: 1;
           }
           .wishlist-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+          }
+          .share-btn {
             width: 42px;
             height: 42px;
             border-radius: 10px;
