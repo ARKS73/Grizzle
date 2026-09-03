@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Trash2, ShoppingBag, ArrowRight, Tag, Truck, ShieldCheck } from 'lucide-react';
+import { Trash2, ShoppingBag, ArrowRight, Tag, Truck, ShieldCheck, Sparkles } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { getProductVariantStock } from '@/utils/stockHelper';
 
@@ -46,6 +46,16 @@ export default function CartPage() {
   const shipping = (subtotal === 0 || freeShippingMode) ? 0 : shippingFee;
   const totalPrice = Math.max(0, subtotal - discount + shipping);
 
+  // Calculate total savings from Original Price (MRP) vs Current Selling Price
+  const totalSavings = cartItems.reduce((acc, item) => {
+    const orig = item.product?.originalPrice || item.product?.price || 0;
+    const curr = item.product?.price || 0;
+    if (orig > curr) {
+      return acc + ((orig - curr) * item.quantity);
+    }
+    return acc;
+  }, 0);
+
   const handleCouponSubmit = async (e) => {
     e.preventDefault();
     if (couponInput) {
@@ -59,7 +69,7 @@ export default function CartPage() {
     return (
       <div className="container empty-cart-container text-center">
         <div className="empty-cart-card glass-panel">
-          <ShoppingBag size={64} className="empty-icon text-muted" />
+          <ShoppingBag size={64} className="empty-icon text-muted mb-3" />
           <h2>Your Cart is Empty</h2>
           <p>Explore our self-made printed t-shirts, anime graphics & oversized tees.</p>
           <Link href="/products" className="btn btn-primary btn-lg mt-3">
@@ -74,32 +84,49 @@ export default function CartPage() {
 
   return (
     <div className="container cart-page-wrapper">
-      <h1 className="cart-title">Your Cart ({totalItemCount} {totalItemCount === 1 ? 'item' : 'items'})</h1>
+      {/* Header Banner with Total Savings */}
+      <div className="cart-header-banner">
+        <h1 className="cart-title">
+          Your Cart <span className="item-count-badge">({totalItemCount} {totalItemCount === 1 ? 'item' : 'items'})</span>
+        </h1>
+
+        {totalSavings > 0 && (
+          <div className="savings-badge">
+            <Sparkles size={16} /> Total Savings: <strong>₹{totalSavings.toFixed(0)}</strong>
+          </div>
+        )}
+      </div>
 
       <div className="cart-layout">
         {/* Items List */}
         <div className="cart-items-list">
-          {cartItems.map((item, index) => (
-            <div key={`${item.product._id}-${item.size}-${item.color}-${index}`} className="cart-item-card glass-panel">
-              <img src={item.product.images?.[0]} alt={item.product.name} className="item-img" />
+          {cartItems.map((item, index) => {
+            const maxStock = getProductVariantStock(item.product, item.size, item.color);
+            const isMax = item.quantity >= maxStock;
+            const origPrice = item.product.originalPrice || item.product.price;
+            const hasDiscount = origPrice > item.product.price;
 
-              <div className="item-info">
-                <Link href={`/product/${item.product._id}`} className="item-name">
-                  {item.product.name}
-                </Link>
-                <div className="item-variants">
-                  <span className="badge badge-secondary">SIZE: {item.size}</span>
-                  <span className="badge badge-secondary">COLOR: {item.color}</span>
+            return (
+              <div key={`${item.product._id}-${item.size}-${item.color}-${index}`} className="cart-item-card glass-panel">
+                <img src={item.product.images?.[0]} alt={item.product.name} className="item-img" />
+
+                <div className="item-info">
+                  <Link href={`/product/${item.product._id}`} className="item-name">
+                    {item.product.name}
+                  </Link>
+                  <div className="item-variants">
+                    <span className="badge badge-secondary">SIZE: {item.size}</span>
+                    {item.color && <span className="badge badge-secondary">COLOR: {item.color}</span>}
+                  </div>
+                  <div className="item-price-line">
+                    <span className="item-unit-price">₹{item.product.price?.toFixed(0)}</span>
+                    {hasDiscount && (
+                      <span className="item-orig-price">₹{origPrice.toFixed(0)}</span>
+                    )}
+                  </div>
                 </div>
-                <span className="item-unit-price">₹{item.product.price?.toFixed(0)} each</span>
-              </div>
 
-              {/* Quantity Controls */}
-              {(() => {
-                const maxStock = getProductVariantStock(item.product, item.size, item.color);
-                const isMax = item.quantity >= maxStock;
-
-                return (
+                <div className="item-controls-row">
                   <div className="quantity-control">
                     <button onClick={() => updateQuantity(item.product._id, item.size, item.color, item.quantity - 1)}>-</button>
                     <span>{item.quantity}</span>
@@ -107,8 +134,6 @@ export default function CartPage() {
                       onClick={() => {
                         if (!isMax) {
                           updateQuantity(item.product._id, item.size, item.color, item.quantity + 1);
-                        } else if (addToast) {
-                          addToast(`Only ${maxStock} item(s) left in stock for Size ${item.size} (${item.color})`, 'info');
                         }
                       }}
                       disabled={isMax}
@@ -117,12 +142,10 @@ export default function CartPage() {
                       +
                     </button>
                   </div>
-                );
-              })()}
 
-              {/* Line Total & Remove */}
-              <div className="item-actions">
-                <span className="item-line-total">₹{(item.product.price * item.quantity).toFixed(0)}</span>
+                  <span className="item-line-total">₹{(item.product.price * item.quantity).toFixed(0)}</span>
+                </div>
+
                 <button
                   onClick={() => removeFromCart(item.product._id, item.size, item.color)}
                   className="remove-btn"
@@ -131,8 +154,8 @@ export default function CartPage() {
                   <Trash2 size={18} />
                 </button>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           <div className="cart-list-footer">
             <button onClick={clearCart} className="btn btn-secondary btn-sm">Clear Cart</button>
@@ -152,10 +175,10 @@ export default function CartPage() {
                 <Tag size={16} className="tag-icon" />
                 <input
                   type="text"
-                  
                   value={couponInput}
                   onChange={(e) => setCouponInput(e.target.value)}
                   className="form-input"
+                  placeholder="Enter code"
                 />
                 <button type="submit" disabled={submittingCoupon} className="btn btn-primary btn-sm">
                   Apply
@@ -177,9 +200,16 @@ export default function CartPage() {
               <span>₹{subtotal.toFixed(0)}</span>
             </div>
 
+            {totalSavings > 0 && (
+              <div className="summary-row text-success font-bold">
+                <span>🎉 Total Savings</span>
+                <span>-₹{totalSavings.toFixed(0)}</span>
+              </div>
+            )}
+
             {discount > 0 && (
-              <div className="summary-row text-success">
-                <span>Discount</span>
+              <div className="summary-row text-success font-bold">
+                <span>Coupon Discount</span>
                 <span>-₹{discount.toFixed(0)}</span>
               </div>
             )}
@@ -214,10 +244,39 @@ export default function CartPage() {
           width: 100%;
           box-sizing: border-box;
         }
-        .cart-title {
+
+        .cart-header-banner {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
           margin-bottom: 1.5rem;
+          flex-wrap: wrap;
+        }
+
+        .cart-title {
           font-size: clamp(1.4rem, 4vw, 2.2rem);
-          word-break: break-word;
+          font-weight: 900;
+          margin: 0;
+          color: var(--text-primary);
+        }
+        .item-count-badge {
+          font-size: 1.2rem;
+          color: var(--accent-primary);
+          font-weight: 700;
+        }
+
+        .savings-badge {
+          display: flex;
+          align-items: center;
+          gap: 0.45rem;
+          background: rgba(16, 185, 129, 0.12);
+          color: #10b981;
+          border: 1px solid rgba(16, 185, 129, 0.3);
+          padding: 0.5rem 0.9rem;
+          border-radius: var(--radius-full, 99px);
+          font-size: 0.88rem;
+          font-weight: 700;
         }
 
         .cart-layout {
@@ -233,6 +292,7 @@ export default function CartPage() {
           gap: 1rem;
           width: 100%;
         }
+
         .cart-item-card {
           display: flex;
           align-items: center;
@@ -240,14 +300,19 @@ export default function CartPage() {
           padding: 1.25rem;
           width: 100%;
           box-sizing: border-box;
+          position: relative;
+          border-radius: var(--radius-lg);
+          background: var(--bg-secondary);
         }
+
         .item-img {
           width: 80px;
-          height: 90px;
+          height: 95px;
           object-fit: cover;
           border-radius: var(--radius-md);
           flex-shrink: 0;
         }
+
         .item-info {
           flex: 1;
           display: flex;
@@ -262,50 +327,90 @@ export default function CartPage() {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          color: var(--text-primary);
+          text-decoration: none;
         }
-        .item-variants { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-        .item-unit-price { font-size: 0.85rem; color: var(--text-muted); }
+        .item-name:hover {
+          color: var(--accent-primary);
+        }
+
+        .item-variants {
+          display: flex;
+          gap: 0.4rem;
+          flex-wrap: wrap;
+        }
+
+        .item-price-line {
+          display: flex;
+          align-items: baseline;
+          gap: 0.5rem;
+        }
+        .item-unit-price {
+          font-size: 0.92rem;
+          font-weight: 800;
+          color: var(--text-primary);
+        }
+        .item-orig-price {
+          font-size: 0.78rem;
+          color: var(--text-muted);
+          text-decoration: line-through;
+        }
+
+        .item-controls-row {
+          display: flex;
+          align-items: center;
+          gap: 1.25rem;
+        }
 
         .quantity-control {
           display: flex;
           align-items: center;
-          border: 1px solid var(--border-color);
+          border: 1.5px solid var(--border-color);
           border-radius: var(--radius-md);
           overflow: hidden;
           flex-shrink: 0;
+          background: var(--bg-tertiary);
         }
         .quantity-control button {
           width: 32px;
           height: 36px;
-          background: var(--bg-tertiary);
+          background: transparent;
           border: none;
-          font-weight: 700;
+          font-weight: 800;
+          font-size: 1rem;
           cursor: pointer;
+          color: var(--text-primary);
         }
         .quantity-control span {
-          width: 36px;
+          width: 34px;
           text-align: center;
-          font-weight: 700;
+          font-weight: 800;
+          color: var(--text-primary);
         }
 
-        .item-actions {
-          display: flex;
-          align-items: center;
-          gap: 1.25rem;
-          flex-shrink: 0;
-        }
         .item-line-total {
           font-size: 1.15rem;
-          font-weight: 800;
+          font-weight: 900;
+          color: var(--text-primary);
+          white-space: nowrap;
         }
+
         .remove-btn {
           background: none;
           border: none;
           color: var(--text-muted);
           cursor: pointer;
-          padding: 4px;
+          padding: 6px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s ease;
         }
-        .remove-btn:hover { color: var(--danger); }
+        .remove-btn:hover {
+          background: rgba(239, 68, 68, 0.12);
+          color: var(--danger);
+        }
 
         .cart-list-footer {
           display: flex;
@@ -319,8 +424,9 @@ export default function CartPage() {
         .continue-shopping {
           font-size: 0.9rem;
           color: var(--accent-primary);
-          font-weight: 600;
+          font-weight: 700;
           white-space: nowrap;
+          text-decoration: none;
         }
 
         .order-summary-sidebar {
@@ -331,16 +437,14 @@ export default function CartPage() {
           height: fit-content;
           width: 100%;
           box-sizing: border-box;
+          border-radius: var(--radius-lg);
         }
+
         .coupon-input-box {
           position: relative;
           display: flex;
           gap: 0.5rem;
           width: 100%;
-        }
-        .coupon-input-box input {
-          flex: 1;
-          min-width: 0;
         }
         .tag-icon {
           position: absolute;
@@ -349,7 +453,9 @@ export default function CartPage() {
           color: var(--text-muted);
         }
         .coupon-input-box input {
-          padding-left: 2rem;
+          padding-left: 2.2rem;
+          flex: 1;
+          min-width: 0;
         }
 
         .applied-coupon-tag {
@@ -387,7 +493,7 @@ export default function CartPage() {
         }
         .total-row {
           font-size: 1.3rem;
-          font-weight: 800;
+          font-weight: 900;
           color: var(--text-primary);
         }
 
@@ -408,27 +514,75 @@ export default function CartPage() {
           .cart-layout { grid-template-columns: 1fr; }
         }
 
+        /* Responsive Mobile Layout Fixes - Zero Edge Clipping */
         @media (max-width: 640px) {
           .cart-page-wrapper {
             padding-top: 1rem;
             padding-bottom: 2.5rem;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+            overflow-x: hidden;
           }
+
+          .cart-header-banner {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+          }
+
           .cart-item-card {
+            display: grid;
+            grid-template-columns: 75px 1fr;
+            grid-template-rows: auto auto;
+            gap: 0.5rem 0.85rem;
             padding: 0.85rem;
-            gap: 0.75rem;
+            position: relative;
+            border-radius: 14px;
+            width: 100%;
+            box-sizing: border-box;
           }
+
           .item-img {
-            width: 70px;
-            height: 80px;
+            width: 75px;
+            height: 90px;
+            grid-row: 1 / 3;
+            border-radius: 10px;
           }
+
+          .item-info {
+            grid-column: 2;
+            padding-right: 32px;
+          }
+
           .item-name {
             font-size: 0.92rem;
             white-space: normal;
+            line-height: 1.25;
           }
+
+          .item-controls-row {
+            grid-column: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            width: 100%;
+            margin-top: 0.2rem;
+          }
+
+          .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 6px;
+            background: rgba(239, 68, 68, 0.08);
+            color: #ef4444;
+          }
+
           .cart-list-footer {
             flex-direction: column-reverse;
             align-items: center;
-            gap: 1rem;
+            gap: 0.85rem;
             text-align: center;
           }
           .cart-list-footer button,
@@ -436,9 +590,6 @@ export default function CartPage() {
             width: 100%;
             text-align: center;
             display: block;
-          }
-          .coupon-input-box input {
-            font-size: 0.85rem;
           }
         }
       `}</style>
