@@ -706,49 +706,55 @@ export default function QuickViewModal({ product, onClose }) {
           border-color: #ef4444 !important;
         }
 
-        /* Compact Sleek Pill Button for View Full Product Page */
+        /* High-Contrast Distinct Button for View Full Product Page */
         .btn-view-full-details {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.4rem;
-          width: fit-content;
-          align-self: flex-start;
-          padding: 0.45rem 0.95rem;
-          margin-top: 0.65rem;
-          border-radius: 99px;
-          background: var(--bg-tertiary);
-          border: 1px solid var(--border-color);
-          color: var(--text-primary);
-          font-size: 0.78rem;
-          font-weight: 700;
-          text-decoration: none;
-          transition: all 0.2s ease;
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 0.5rem !important;
+          width: 100% !important;
+          padding: 0.65rem 1rem !important;
+          margin-top: 0.85rem !important;
+          border-radius: 10px !important;
+          background: #ffffff !important;
+          border: 2px solid #ef4444 !important;
+          color: #ef4444 !important;
+          font-size: 0.82rem !important;
+          font-weight: 800 !important;
+          text-decoration: none !important;
+          box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15) !important;
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+          letter-spacing: 0.01em !important;
         }
 
         .btn-view-full-details:hover {
-          background: var(--accent-light);
-          border-color: var(--accent-primary);
-          color: var(--accent-primary);
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+          background: #ef4444 !important;
+          color: #ffffff !important;
+          border-color: #ef4444 !important;
+          transform: translateY(-2px) !important;
+          box-shadow: 0 6px 18px rgba(239, 68, 68, 0.35) !important;
         }
 
         :global(.btn-view-full-details .star-icon) {
-          transition: transform 0.2s ease;
+          fill: #f59e0b !important;
+          color: #f59e0b !important;
+          transition: transform 0.2s ease !important;
         }
 
         .btn-view-full-details:hover :global(.star-icon) {
-          transform: scale(1.15);
+          fill: #ffffff !important;
+          color: #ffffff !important;
+          transform: scale(1.2) rotate(15deg) !important;
         }
 
         :global(.btn-view-full-details .arrow-icon) {
-          transition: transform 0.2s ease;
+          transition: transform 0.2s ease !important;
+          color: inherit !important;
         }
 
         .btn-view-full-details:hover :global(.arrow-icon) {
-          transform: translateX(3px);
+          transform: translateX(4px) !important;
+          color: #ffffff !important;
         }
 
         /* Tablet & Intermediate Screen Sizing */
