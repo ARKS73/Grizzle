@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Order from '@/models/Order';
+import { handleOrderStatusStockAdjustment } from '@/utils/stockHelper';
 
 export const dynamic = 'force-dynamic';
 
@@ -37,7 +38,9 @@ export async function POST(request) {
       return NextResponse.json({ success: false, message: 'Order not found' }, { status: 404 });
     }
 
+    const previousStatus = order.status;
     order.status = status;
+    await handleOrderStatusStockAdjustment(order, previousStatus, status);
     await order.save();
 
     console.log(`[Google Sheet Sync] Order ${order.invoiceNumber} status updated to: ${status}`);

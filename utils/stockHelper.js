@@ -69,3 +69,80 @@ export function calculateTotalVariantStock(variantStock = {}, sizeStock = {}, si
 
   return 0;
 }
+
+/**
+ * Replenish stock when an order is cancelled, or re-deduct if status is reinstated from Cancelled.
+ * 
+ * @param {Object} order - Mongoose Order document or plain Object with items
+ * @param {string} previousStatus - Status before update (e.g. 'Pending', 'Processing')
+ * @param {string} newStatus - New status being set (e.g. 'Cancelled')
+ */
+export async function handleOrderStatusStockAdjustment(order, previousStatus, newStatus) {
+  if (!order || previousStatus === newStatus) return;
+
+  const items = order.items || order.orderItems || [];
+  if (!Array.isArray(items) || items.length === 0) return;
+
+  // Scenario 1: Order is being CANCELLED (was not Cancelled before, now is Cancelled) -> Replenish stock
+  const isCancelling = previousStatus !== 'Cancelled' && newStatus === 'Cancelled';
+
+  // Scenario 2: Order is being UN-CANCELLED (was Cancelled, now reinstated) -> Deduct stock again
+  const isUncancelling = previousStatus === 'Cancelled' && newStatus !== 'Cancelled';
+
+  if (!isCancelling && !isUncancelling) return;
+
+  const multiplier = isCancelling ? 1 : -1;
+
+  try {
+    const Product = (await import('@/models/Product')).default;
+
+    for (const item of items) {
+      const prodId = item.product ? String(item.product) : null;
+      if (!prodId || prodId.length !== 24) continue;
+
+      const targetProd = await Product.findById(prodId);
+      if (!targetProd) continue;
+
+      const qty = parseInt(item.quantity || 1, 10);
+
+      // 1. Adjust overall stock
+      const currentStock = typeof targetProd.stock === 'number' ? targetProd.stock : 20;
+      targetProd.stock = Math.max(0, currentStock + (qty * multiplier));
+
+      // 2. Adjust variantStock (Color + Size)
+      if (item.color && item.size) {
+        const cName = String(item.color).trim();
+        const sName = String(item.size).trim();
+        const varKey = `${cName}_${sName}`;
+        const currentVarStock = targetProd.variantStock || {};
+        const currentVarQty = currentVarStock[varKey] !== undefined ? parseInt(currentVarStock[varKey], 10) : currentStock;
+
+        targetProd.variantStock = {
+          ...currentVarStock,
+          [varKey]: Math.max(0, currentVarQty + (qty * multiplier)),
+        };
+        targetProd.markModified('variantStock');
+      }
+
+      // 3. Adjust sizeStock (Size)
+      if (item.size) {
+        const sName = String(item.size).trim().toUpperCase();
+        const currentSizeStock = targetProd.sizeStock || {};
+        const currentSizeQty = currentSizeStock[sName] !== undefined ? parseInt(currentSizeStock[sName], 10) : currentStock;
+
+        targetProd.sizeStock = {
+          ...currentSizeStock,
+          [sName]: Math.max(0, currentSizeQty + (qty * multiplier)),
+        };
+        targetProd.markModified('sizeStock');
+      }
+
+      await targetProd.save();
+    }
+
+    const { clearStoreCache } = await import('@/lib/storeCache');
+    clearStoreCache();
+  } catch (err) {
+    console.error('Error adjusting stock on order cancellation:', err);
+  }
+}

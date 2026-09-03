@@ -3,6 +3,8 @@ import connectDB from '@/lib/mongodb';
 import Order from '@/models/Order';
 import { getAuthUser } from '@/lib/jwt';
 
+import { handleOrderStatusStockAdjustment } from '@/utils/stockHelper';
+
 export const dynamic = 'force-dynamic';
 
 export async function GET(request, { params }) {
@@ -62,6 +64,7 @@ export async function PATCH(request, { params }) {
         return NextResponse.json({ success: false, message: 'This order cannot be cancelled at its current stage' }, { status: 400 });
       }
       order.status = status;
+      await handleOrderStatusStockAdjustment(order, previousStatus, status);
     }
 
     await order.save();
