@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import {
@@ -33,7 +33,28 @@ import { useWishlist } from '@/contexts/WishlistContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import GrizzleLogo from '@/components/ui/GrizzleLogo';
 
+function DesktopNavLinks() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const genderParam = searchParams?.get('gender') || '';
 
+  return (
+    <nav className="desktop-nav">
+      <Link href="/" className={`nav-link ${pathname === '/' ? 'active' : ''}`}>
+        HOME
+      </Link>
+      <Link href="/products?gender=Men" className={`nav-link ${pathname === '/products' && genderParam === 'Men' ? 'active' : ''}`}>
+        MEN
+      </Link>
+      <Link href="/products?gender=Women" className={`nav-link ${pathname === '/products' && genderParam === 'Women' ? 'active' : ''}`}>
+        WOMEN
+      </Link>
+      <Link href="/products?gender=Unisex" className={`nav-link nav-highlight ${pathname === '/products' && genderParam === 'Unisex' ? 'active' : ''}`}>
+        <Shirt size={15} /> UNISEX
+      </Link>
+    </nav>
+  );
+}
 
 const featuredTshirt = {
   name: 'Cyberpunk Neon Oversized Tee',
