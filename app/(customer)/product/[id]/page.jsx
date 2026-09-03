@@ -327,48 +327,66 @@ export default function ProductDetailPage() {
             const maxAvailable = getProductVariantStock(product, selectedSize, selectedColor);
             const isMaxReached = quantity >= maxAvailable;
 
+            const handleBuyNow = () => {
+              if (maxAvailable <= 0) return;
+              const finalQty = Math.min(quantity, maxAvailable);
+              addToCart(product, selectedSize, selectedColor, finalQty);
+              router.push('/checkout');
+            };
+
             return (
               <div className="cta-box">
-                <div className="quantity-picker">
-                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
-                  <span>{quantity}</span>
+                <div className="cta-controls-group">
+                  <div className="quantity-picker">
+                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
+                    <span>{quantity}</span>
+                    <button
+                      onClick={() => {
+                        if (!isMaxReached) {
+                          setQuantity(quantity + 1);
+                        } else if (addToast) {
+                          addToast(`Only ${maxAvailable} item(s) available in stock for Size ${selectedSize || ''}`, 'info');
+                        }
+                      }}
+                      disabled={isMaxReached || maxAvailable <= 0}
+                      title={isMaxReached ? `Only ${maxAvailable} in stock` : ''}
+                    >
+                      +
+                    </button>
+                  </div>
+
                   <button
-                    onClick={() => {
-                      if (!isMaxReached) {
-                        setQuantity(quantity + 1);
-                      } else if (addToast) {
-                        addToast(`Only ${maxAvailable} item(s) available in stock for Size ${selectedSize || ''}`, 'info');
-                      }
-                    }}
-                    disabled={isMaxReached || maxAvailable <= 0}
-                    title={isMaxReached ? `Only ${maxAvailable} in stock` : ''}
+                    onClick={() => toggleWishlist(product)}
+                    className={`btn btn-secondary wishlist-btn ${isSaved ? 'saved' : ''}`}
+                    title="Save to Wishlist"
                   >
-                    +
+                    <Heart size={20} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : 'currentColor'} />
                   </button>
                 </div>
 
-                <button
-                  onClick={() => {
-                    const finalQty = Math.min(quantity, maxAvailable);
-                    addToCart(product, selectedSize, selectedColor, finalQty);
-                  }}
-                  disabled={maxAvailable <= 0}
-                  className="btn btn-primary btn-lg add-btn font-bold"
-                  style={{ fontSize: '1.08rem', padding: '0.85rem 1.4rem' }}
-                >
-                  <ShoppingBag size={20} /> {maxAvailable <= 0 ? 'Out of Stock' : `Add to Cart (${Math.min(quantity, maxAvailable)})`} <ArrowRight size={18} />
-                </button>
+                <div className="cta-buttons-group">
+                  <button
+                    onClick={() => {
+                      const finalQty = Math.min(quantity, maxAvailable);
+                      addToCart(product, selectedSize, selectedColor, finalQty);
+                    }}
+                    disabled={maxAvailable <= 0}
+                    className="btn btn-secondary add-btn font-bold"
+                  >
+                    <ShoppingBag size={18} /> {maxAvailable <= 0 ? 'Out of Stock' : `Add to Cart (${Math.min(quantity, maxAvailable)})`}
+                  </button>
 
-            <button
-              onClick={() => toggleWishlist(product)}
-              className={`btn btn-secondary btn-lg wishlist-btn ${isSaved ? 'saved' : ''}`}
-              title="Save to Wishlist"
-            >
-              <Heart size={20} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : 'currentColor'} />
-            </button>
-          </div>
-        );
-      })()}
+                  <button
+                    onClick={handleBuyNow}
+                    disabled={maxAvailable <= 0}
+                    className="btn buy-now-btn font-bold"
+                  >
+                    ⚡ Buy It Now <ArrowRight size={18} />
+                  </button>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </div>
 
