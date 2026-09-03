@@ -195,16 +195,24 @@ img {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
 }
 /* Navigation Bar Pill Alignment & Active Page Indicator */
-.desktop-nav {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 0.35rem !important;
-  background: var(--bg-tertiary) !important;
-  padding: 4px 6px !important;
-  border-radius: 9999px !important;
-  border: 1px solid var(--border-color) !important;
-  box-shadow: var(--shadow-sm) !important;
-  margin: 0 0.5rem !important;
+@media (max-width: 992px) {
+  .desktop-nav {
+    display: none !important;
+  }
+}
+
+@media (min-width: 993px) {
+  .desktop-nav {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+    background: var(--bg-tertiary) !important;
+    padding: 4px 6px !important;
+    border-radius: 9999px !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: var(--shadow-sm) !important;
+    margin: 0 0.5rem !important;
+  }
 }
 
 .nav-link {
