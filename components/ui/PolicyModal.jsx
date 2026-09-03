@@ -83,7 +83,7 @@ export default function PolicyModal({ isOpen, onClose, initialType = 'returns' }
             <div className="policy-card">
               <div className="policy-head">
                 <RotateCcw size={18} color="var(--accent-primary)" />
-                <h4>7-Day Return &amp; Hassle-Free Exchange Guarantee</h4>
+                <h4>Return &amp; Hassle-Free Exchange Guarantee</h4>
               </div>
               <p className="policy-content">{returnPolicy}</p>
             </div>

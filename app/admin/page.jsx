@@ -900,7 +900,7 @@ export default function AdminDashboardPage() {
 
           <div className="form-grid-2 mb-3">
             <div className="form-group">
-              <label className="form-label">7-Day Returns &amp; Refund Policy Text</label>
+              <label className="form-label">Returns &amp; Refund Policy Text</label>
               <textarea
                 className="form-input"
                 rows={3}

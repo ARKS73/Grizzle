@@ -178,11 +178,11 @@ export default function SinglePageStreetwearStore() {
   }, [allProducts]);
 
   const heroMinPrice = useMemo(() => {
-    if (!allProducts || allProducts.length === 0) return 599;
+    if (!allProducts || allProducts.length === 0) return null;
     const prices = allProducts
       .map((p) => p.price)
       .filter((p) => typeof p === 'number' && p > 0);
-    return prices.length > 0 ? Math.min(...prices) : 599;
+    return prices.length > 0 ? Math.min(...prices) : null;
   }, [allProducts]);
 
   const heroProductThumbnails = useMemo(() => {
@@ -254,16 +254,18 @@ export default function SinglePageStreetwearStore() {
               {heroSettings.heroDesc}
             </p>
 
-            {/* Price Anchor Subheadline */}
-            <div className="hero-price-anchor">
-              <span className="price-tag-badge">SPECIAL DROP</span>
-              <span>240 GSM Heavyweight DTF Tees • <strong>Starting at ₹{heroMinPrice}</strong></span>
-            </div>
+            {/* Price Anchor Subheadline — Only shown when database products exist */}
+            {heroMinPrice && (
+              <div className="hero-price-anchor">
+                <span className="price-tag-badge">OFFICIAL DROPS</span>
+                <span>Starting at <strong>₹{heroMinPrice}</strong></span>
+              </div>
+            )}
 
             {/* Hero CTAs */}
             <div className="hero-btn-group" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', width: '100%' }}>
               <a href="#latest-drops" className="btn-street-dark btn-hero-primary">
-                EXPLORE DROPS — FROM ₹{heroMinPrice} <ArrowRight size={18} />
+                {heroMinPrice ? `EXPLORE DROPS — FROM ₹${heroMinPrice}` : 'EXPLORE DROPS'} <ArrowRight size={18} />
               </a>
               <Link href="/products" className="btn-street-light">
                 ALL COLLECTIONS

@@ -520,14 +520,14 @@ export default function ProductDetailPage() {
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
                   <RotateCcw size={16} color="#10b981" />
-                  <span>Easy 7-Day Returns & Exchanges</span>
+                  <span>Easy Returns & Exchanges</span>
                 </div>
                 {activeAccordion === 'returnPolicy' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
               </button>
               {activeAccordion === 'returnPolicy' && (
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.6', marginTop: '0.5rem', padding: '0 0.25rem' }}>
                   <p style={{ margin: 0 }}>
-                    Hassle-free 7-day return and size exchange policy. Free doorstep pickup arranged for all eligible exchanges across India. Items must be unwashed with original tags intact.
+                    Hassle-free return and size exchange policy. Free doorstep pickup arranged for all eligible exchanges across India. Items must be unwashed with original tags intact.
                   </p>
                 </div>
               )}

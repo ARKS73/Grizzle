@@ -129,7 +129,7 @@ export default function Footer() {
                 onClick={() => openPolicy('returns')}
                 className="footer-btn-link"
               >
-                7-Day Return Policy
+                Return &amp; Exchange Policy
               </button>
             </li>
             {customLinks.map((lnk, idx) => (
