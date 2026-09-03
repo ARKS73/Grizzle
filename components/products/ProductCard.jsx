@@ -101,10 +101,10 @@ export default function ProductCard({ product, onQuickView }) {
               e.stopPropagation();
               toggleWishlist(product);
             }}
-            className={`action-btn ${isSaved ? 'active' : ''}`}
+            className={`action-btn ${isSaved ? 'saved active' : ''}`}
             title={isSaved ? 'Remove from Wishlist' : 'Add to Wishlist'}
           >
-            <Heart size={18} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : 'currentColor'} />
+            <Heart size={16} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : '#1e293b'} />
           </button>
           <button
             onClick={(e) => {
@@ -114,7 +114,7 @@ export default function ProductCard({ product, onQuickView }) {
             className="action-btn"
             title="Quick View"
           >
-            <Eye size={18} />
+            <Eye size={16} color="#1e293b" />
           </button>
         </div>
       </div>
