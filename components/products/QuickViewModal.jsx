@@ -226,6 +226,15 @@ export default function QuickViewModal({ product, onClose }) {
               const maxAvailable = getProductVariantStock(product, selectedSize, selectedColor);
               const isMaxReached = quantity >= maxAvailable;
 
+              const handleBuyNow = () => {
+                if (maxAvailable <= 0) return;
+                const finalQty = Math.min(quantity, maxAvailable);
+                const finalColor = selectedColor || product?.colors?.[0]?.name || 'Standard';
+                addToCart(product, selectedSize, finalColor, finalQty);
+                onClose();
+                router.push('/checkout');
+              };
+
               return (
                 <div>
                   <div className="action-row">
@@ -253,9 +262,17 @@ export default function QuickViewModal({ product, onClose }) {
                         onClose();
                       }}
                       disabled={maxAvailable <= 0}
-                      className="btn btn-primary add-to-cart-btn"
+                      className="btn btn-secondary add-to-cart-btn font-bold"
                     >
-                      <ShoppingBag size={16} /> {maxAvailable <= 0 ? 'Out of Stock' : `Add to Cart (${Math.min(quantity, maxAvailable)})`} <ArrowRight size={14} />
+                      <ShoppingBag size={16} /> {maxAvailable <= 0 ? 'Out of Stock' : `Add to Cart`}
+                    </button>
+
+                    <button
+                      onClick={handleBuyNow}
+                      disabled={maxAvailable <= 0}
+                      className="btn buy-now-btn font-bold"
+                    >
+                      ⚡ Buy Now
                     </button>
 
                     <button
@@ -620,6 +637,30 @@ export default function QuickViewModal({ product, onClose }) {
           opacity: 0.95;
           transform: translateY(-1px);
           box-shadow: var(--shadow-glow);
+        }
+
+        .buy-now-btn {
+          flex: 1;
+          height: 42px;
+          border-radius: 8px;
+          background: var(--accent-gradient);
+          color: #ffffff;
+          border: none;
+          font-size: 0.92rem;
+          font-weight: 900;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.45rem;
+          cursor: pointer;
+          box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+          transition: all 0.2s ease;
+          text-transform: uppercase;
+        }
+        .buy-now-btn:hover:not(:disabled) {
+          opacity: 0.95;
+          transform: translateY(-1px);
+          box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
         }
 
         .wishlist-btn {
