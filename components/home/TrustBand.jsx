@@ -188,10 +188,19 @@ export default function TrustBand() {
           }
         }
 
+        @media (max-width: 768px) {
+          .trust-band-section {
+            padding: 1.5rem 0 !important;
+          }
+          .trust-band-header {
+            margin-bottom: 1.25rem !important;
+          }
+        }
+
         @media (max-width: 550px) {
           .trust-grid-6 {
             grid-template-columns: 1fr;
-            gap: 1rem;
+            gap: 0.75rem;
           }
         }
 
