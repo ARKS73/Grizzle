@@ -294,7 +294,7 @@ export default function CheckoutPage() {
 
       const data = await res.json();
       if (data.success && data.order) {
-        addToast('Order placed successfully! Order confirmation code generated.', 'success');
+        addToast('Order placed successfully! Delivery details saved to your profile.', 'success');
         clearCart();
         if (refreshUser) refreshUser();
         router.push(`/orders/${data.order._id}`);
@@ -312,28 +312,28 @@ export default function CheckoutPage() {
   return (
     <div className="checkout-clean-container">
       <div className="container">
-        {/* 1. Header & Progress Indicator Bar */}
+        {/* 1. Header & Clean Stepper Bar */}
         <header className="checkout-header-bar">
           <div className="brand-title-wrap">
             <Link href="/" className="brand-logo-txt">GRIZZLE</Link>
-            <span className="secure-tag"><Lock size={13} /> SECURE CHECKOUT</span>
+            <span className="secure-tag"><Lock size={12} /> SECURE CHECKOUT</span>
           </div>
 
-          {/* 3-Step Progress Steps */}
+          {/* Clean 3-Step Stepper Navigation */}
           <nav className="checkout-steps-stepper">
             <Link href="/cart" className="step-item step-completed">
-              <span className="step-num">✓</span>
-              <span className="step-lbl">1. Bag</span>
+              <span className="step-badge">✓</span>
+              <span className="step-name">Bag</span>
             </Link>
             <div className="step-connector active" />
             <div className="step-item step-active">
-              <span className="step-num">2</span>
-              <span className="step-lbl">2. Details &amp; Shipping</span>
+              <span className="step-badge">2</span>
+              <span className="step-name">Details</span>
             </div>
             <div className="step-connector" />
             <div className="step-item step-pending">
-              <span className="step-num">3</span>
-              <span className="step-lbl">3. Confirmation</span>
+              <span className="step-badge">3</span>
+              <span className="step-name">Payment</span>
             </div>
           </nav>
         </header>
@@ -351,7 +351,7 @@ export default function CheckoutPage() {
                   <img
                     key={idx}
                     src={it.product?.images?.[0] || '/icon.png'}
-                    alt="Item"
+                    alt="Item thumbnail"
                     className="stack-img"
                     style={{ zIndex: 3 - idx }}
                   />
@@ -367,13 +367,17 @@ export default function CheckoutPage() {
             </div>
           </button>
 
-          {/* Expanded Mobile Summary Content */}
+          {/* Expanded Mobile Summary Content — Clean Mini UI */}
           {mobileSummaryExpanded && (
             <div className="mobile-summary-expand-content">
               <div className="items-list-compact">
                 {cartItems.map((item, idx) => (
                   <div key={idx} className="item-row-compact">
-                    <img src={item.product?.images?.[0] || '/icon.png'} alt={item.product?.name} className="item-img-sm" />
+                    <img
+                      src={item.product?.images?.[0] || '/icon.png'}
+                      alt={item.product?.name}
+                      className="item-img-sm"
+                    />
                     <div className="item-info-sm">
                       <span className="item-title-sm">{item.product?.name}</span>
                       <span className="item-meta-sm">Size: {item.size} • Qty: {item.quantity}</span>
@@ -383,13 +387,13 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
-              {/* Coupon Box Mobile */}
+              {/* Promo Coupon Box Mobile */}
               <div className="coupon-box-wrap mt-3">
                 {appliedCoupon ? (
                   <div className="applied-coupon-row">
                     <div className="coupon-txt-info">
-                      <Tag size={14} className="text-emerald-500" />
-                      <span>{appliedCoupon.code} applied</span>
+                      <Tag size={13} className="text-emerald-500" />
+                      <span>{appliedCoupon.code} applied ({appliedCoupon.discountType === 'percentage' ? `${appliedCoupon.discountValue}% OFF` : `₹${appliedCoupon.discountValue} OFF`})</span>
                     </div>
                     <button type="button" onClick={removeCoupon} className="remove-coupon-btn">Remove</button>
                   </div>
@@ -415,9 +419,12 @@ export default function CheckoutPage() {
                 )}
               </div>
 
-              {/* Price Breakdown */}
+              {/* Price Breakdown Rows */}
               <div className="price-breakdown-rows mt-3">
-                <div className="p-row"><span>Items Subtotal</span><span>₹{subtotal.toFixed(0)}</span></div>
+                <div className="p-row">
+                  <span>Items Subtotal</span>
+                  <span>₹{subtotal.toFixed(0)}</span>
+                </div>
                 {combinedSavings > 0 && (
                   <div className="p-row text-success font-bold">
                     <span>🎉 Total Savings</span>
@@ -430,7 +437,7 @@ export default function CheckoutPage() {
                 </div>
                 <div className="p-row p-total-row">
                   <span>Total Payable</span>
-                  <span>₹{totalPrice.toFixed(0)}</span>
+                  <span className="p-total-val">₹{totalPrice.toFixed(0)}</span>
                 </div>
               </div>
             </div>
@@ -832,22 +839,22 @@ export default function CheckoutPage() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding-bottom: 1.5rem;
-          margin-bottom: 2rem;
+          padding-bottom: 1.25rem;
+          margin-bottom: 1.5rem;
           border-bottom: 1px solid var(--border-color);
           flex-wrap: wrap;
-          gap: 1rem;
+          gap: 0.75rem;
         }
 
         .brand-title-wrap {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
+          gap: 0.65rem;
         }
 
         .brand-logo-txt {
           font-family: 'Outfit', sans-serif;
-          font-size: 1.6rem;
+          font-size: 1.5rem;
           font-weight: 900;
           letter-spacing: 0.08em;
           color: var(--text-primary);
@@ -858,12 +865,12 @@ export default function CheckoutPage() {
           display: inline-flex;
           align-items: center;
           gap: 4px;
-          font-size: 0.68rem;
+          font-size: 0.65rem;
           font-weight: 800;
           color: #10b981;
           background: rgba(16, 185, 129, 0.1);
           border: 1px solid rgba(16, 185, 129, 0.25);
-          padding: 3px 9px;
+          padding: 3px 8px;
           border-radius: 99px;
           letter-spacing: 0.05em;
         }
@@ -871,20 +878,21 @@ export default function CheckoutPage() {
         .checkout-steps-stepper {
           display: flex;
           align-items: center;
-          gap: 0.6rem;
+          gap: 0.5rem;
         }
 
         .step-item {
           display: flex;
           align-items: center;
-          gap: 6px;
+          gap: 5px;
           text-decoration: none;
-          font-size: 0.82rem;
+          font-size: 0.8rem;
           font-weight: 700;
           color: var(--text-muted);
+          white-space: nowrap;
         }
 
-        .step-num {
+        .step-badge {
           width: 22px;
           height: 22px;
           border-radius: 50%;
@@ -893,14 +901,15 @@ export default function CheckoutPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 0.72rem;
-          font-weight: 800;
+          font-size: 0.7rem;
+          font-weight: 900;
+          flex-shrink: 0;
         }
 
         .step-completed {
           color: #10b981;
         }
-        .step-completed .step-num {
+        .step-completed .step-badge {
           background: #10b981;
           color: #ffffff;
           border-color: #10b981;
@@ -909,16 +918,17 @@ export default function CheckoutPage() {
         .step-active {
           color: var(--text-primary);
         }
-        .step-active .step-num {
+        .step-active .step-badge {
           background: var(--accent-primary, #dc2626);
           color: #ffffff;
           border-color: var(--accent-primary, #dc2626);
         }
 
         .step-connector {
-          width: 28px;
+          width: 24px;
           height: 2px;
           background: var(--border-color);
+          flex-shrink: 0;
         }
         .step-connector.active {
           background: #10b981;
@@ -930,7 +940,7 @@ export default function CheckoutPage() {
           background: var(--bg-secondary);
           border: 1px solid var(--border-color);
           border-radius: 12px;
-          margin-bottom: 1.5rem;
+          margin-bottom: 1.25rem;
           overflow: hidden;
         }
 
@@ -939,7 +949,7 @@ export default function CheckoutPage() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 0.85rem 1rem;
+          padding: 0.75rem 0.95rem;
           background: transparent;
           border: none;
           color: var(--text-primary);
@@ -955,33 +965,171 @@ export default function CheckoutPage() {
         .thumb-stack-mini {
           display: flex;
           align-items: center;
-          margin-right: 4px;
+          margin-right: 2px;
         }
 
         .stack-img {
-          width: 28px;
-          height: 34px;
+          width: 26px;
+          height: 32px;
           object-fit: cover;
           border-radius: 4px;
-          margin-right: -10px;
+          margin-right: -8px;
           border: 1.5px solid var(--bg-secondary);
         }
 
         .summary-qty-lbl {
-          font-size: 0.82rem;
+          font-size: 0.8rem;
           font-weight: 700;
         }
 
         .toggle-total-price {
-          font-size: 1rem;
+          font-size: 0.95rem;
           font-weight: 900;
           color: var(--accent-primary, #dc2626);
         }
 
         .mobile-summary-expand-content {
-          padding: 1rem;
+          padding: 0.85rem 0.95rem 1rem;
           border-top: 1px solid var(--border-color);
           background: var(--bg-tertiary);
+        }
+
+        .items-list-compact {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .item-row-compact {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .item-img-sm {
+          width: 48px !important;
+          height: 58px !important;
+          object-fit: cover !important;
+          border-radius: 8px !important;
+          border: 1px solid var(--border-color) !important;
+          flex-shrink: 0 !important;
+        }
+
+        .item-info-sm {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+
+        .item-title-sm {
+          font-size: 0.8rem;
+          font-weight: 700;
+          color: var(--text-primary);
+          line-height: 1.25;
+        }
+
+        .item-meta-sm {
+          font-size: 0.72rem;
+          color: var(--text-muted);
+        }
+
+        .item-price-sm {
+          font-size: 0.85rem;
+          font-weight: 800;
+          color: var(--accent-primary, #dc2626);
+          flex-shrink: 0;
+        }
+
+        .coupon-box-wrap {
+          margin-top: 0.75rem;
+        }
+
+        .coupon-input-form {
+          display: flex;
+          gap: 0.5rem;
+        }
+
+        .coupon-input-field {
+          flex: 1;
+          padding: 0.45rem 0.65rem;
+          background: var(--bg-primary);
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+          font-size: 0.78rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          outline: none;
+        }
+
+        .coupon-apply-btn {
+          padding: 0.45rem 0.85rem;
+          background: var(--text-primary);
+          color: var(--bg-primary);
+          font-size: 0.75rem;
+          font-weight: 800;
+          border-radius: 8px;
+          border: none;
+          cursor: pointer;
+        }
+
+        .applied-coupon-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.5rem 0.75rem;
+          background: rgba(16, 185, 129, 0.1);
+          border: 1px solid rgba(16, 185, 129, 0.25);
+          border-radius: 8px;
+          font-size: 0.75rem;
+        }
+
+        .coupon-txt-info {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-weight: 700;
+          color: #10b981;
+        }
+
+        .remove-coupon-btn {
+          background: none;
+          border: none;
+          color: #ef4444;
+          font-size: 0.72rem;
+          font-weight: 800;
+          cursor: pointer;
+        }
+
+        .price-breakdown-rows {
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+          margin-top: 0.75rem;
+          padding-top: 0.65rem;
+          border-top: 1px dashed var(--border-color);
+        }
+
+        .p-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 0.8rem;
+          color: var(--text-secondary);
+        }
+
+        .p-total-row {
+          font-size: 0.92rem;
+          font-weight: 900;
+          color: var(--text-primary);
+          border-top: 1px solid var(--border-color);
+          padding-top: 0.45rem;
+          margin-top: 0.35rem;
+        }
+
+        .p-total-val {
+          color: var(--accent-primary, #dc2626);
+          font-size: 1.05rem;
         }
 
         /* ------------------ MAIN 2-COLUMN GRID ------------------ */
@@ -1529,9 +1677,40 @@ export default function CheckoutPage() {
 
         /* ------------------ RESPONSIVE BREAKPOINTS ------------------ */
         @media (max-width: 900px) {
+          .checkout-header-bar {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding-bottom: 0.85rem;
+            margin-bottom: 1rem;
+          }
+
+          .checkout-steps-stepper {
+            width: 100%;
+            justify-content: space-between;
+            gap: 0.25rem;
+          }
+
+          .step-item {
+            font-size: 0.72rem;
+            gap: 3px;
+          }
+
+          .step-badge {
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+          }
+
+          .step-connector {
+            width: auto;
+            flex: 1;
+            min-width: 8px;
+          }
+
           .checkout-main-grid {
             grid-template-columns: 1fr;
-            gap: 1.5rem;
+            gap: 1.25rem;
           }
 
           .checkout-summary-column {
@@ -1543,7 +1722,7 @@ export default function CheckoutPage() {
           }
 
           .form-section-block {
-            padding: 1.25rem;
+            padding: 1.1rem;
           }
 
           .clean-form-grid {
