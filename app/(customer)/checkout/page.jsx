@@ -662,21 +662,23 @@ export default function CheckoutPage() {
                     <span className="badge-cod-tag">POPULAR</span>
                   </div>
 
-                  {/* Option 2: Online Express Payment */}
+                  {/* Option 2: Online Express Payment (Disabled / Coming Soon) */}
                   <div
-                    onClick={() => setPaymentMethod('Online Payment (UPI / Cards)')}
-                    className={`payment-option-card ${paymentMethod === 'Online Payment (UPI / Cards)' ? 'active-option' : ''}`}
+                    onClick={() => {
+                      addToast('Online Payment (UPI/Cards) is temporarily unavailable. Cash on Delivery is active for your order.', 'info');
+                    }}
+                    className="payment-option-card disabled-option"
                   >
-                    <div className="option-radio-dot">
-                      {paymentMethod === 'Online Payment (UPI / Cards)' && <div className="radio-inner" />}
+                    <div className="option-radio-dot disabled-dot">
                     </div>
                     <div className="option-icon-box">
-                      <CreditCard size={22} color={paymentMethod === 'Online Payment (UPI / Cards)' ? '#dc2626' : 'var(--text-muted)'} />
+                      <CreditCard size={22} color="var(--text-muted)" />
                     </div>
                     <div className="option-text">
-                      <div className="option-title">UPI / Cards / NetBanking</div>
-                      <div className="option-subtitle">Instant payment via GPay, PhonePe, Paytm, Cards</div>
+                      <div className="option-title text-muted">UPI / Cards / NetBanking</div>
+                      <div className="option-subtitle">GPay, PhonePe, Paytm &amp; Cards (Under Maintenance)</div>
                     </div>
+                    <span className="badge-coming-soon-tag">TEMPORARILY OFF</span>
                   </div>
                 </div>
               </div>
@@ -1403,6 +1405,29 @@ export default function CheckoutPage() {
           padding: 2px 7px;
           border-radius: 4px;
           letter-spacing: 0.05em;
+        }
+
+        .payment-option-card.disabled-option {
+          opacity: 0.65;
+          cursor: not-allowed;
+          background: var(--bg-tertiary);
+          border-style: dashed;
+        }
+
+        .payment-option-card.disabled-option:hover {
+          border-color: var(--border-color);
+        }
+
+        .badge-coming-soon-tag {
+          font-size: 0.62rem;
+          font-weight: 900;
+          color: #9ca3af;
+          background: rgba(156, 163, 175, 0.15);
+          border: 1px solid rgba(156, 163, 175, 0.3);
+          padding: 2px 7px;
+          border-radius: 4px;
+          letter-spacing: 0.05em;
+          white-space: nowrap;
         }
 
         /* ------------------ BUTTONS & TRUST STRIP ------------------ */
