@@ -699,10 +699,11 @@ export default function Navbar() {
           border-top: none;
           border-left: none;
           border-right: none;
-          background: var(--bg-glass);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          box-shadow: var(--shadow-md);
+          background: #09090b !important;
+          backdrop-filter: blur(20px) saturate(180%);
+          -webkit-backdrop-filter: blur(20px) saturate(180%);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+          box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6) !important;
         }
         .nav-container {
           display: flex;
@@ -718,7 +719,7 @@ export default function Navbar() {
           gap: 0.5rem;
           font-size: 1.35rem;
           font-weight: 900;
-          color: var(--text-primary);
+          color: #ffffff !important;
           letter-spacing: -0.5px;
           text-decoration: none;
         }
@@ -758,13 +759,16 @@ export default function Navbar() {
           width: 100%;
           padding: 0.65rem 2.5rem 0.65rem 2.8rem;
           border-radius: var(--radius-full);
-          border: 1.5px solid var(--border-color);
-          background: var(--bg-secondary);
-          color: var(--text-primary);
+          border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+          background: rgba(255, 255, 255, 0.08) !important;
+          color: #ffffff !important;
           outline: none;
           transition: all var(--transition-normal);
           font-size: 0.9rem;
           font-weight: 500;
+        }
+        .search-input::placeholder {
+          color: rgba(255, 255, 255, 0.5) !important;
         }
         .search-input:focus {
           border-color: var(--accent-primary);
@@ -1238,9 +1242,9 @@ export default function Navbar() {
           width: 40px;
           height: 40px;
           border-radius: var(--radius-full);
-          border: 1px solid var(--border-color);
-          background: var(--bg-secondary);
-          color: var(--text-primary);
+          border: 1px solid rgba(255, 255, 255, 0.18) !important;
+          background: rgba(255, 255, 255, 0.08) !important;
+          color: #ffffff !important;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1249,8 +1253,9 @@ export default function Navbar() {
           position: relative;
         }
         .icon-btn:hover {
-          border-color: var(--accent-primary);
-          color: var(--accent-primary);
+          border-color: #dc2626 !important;
+          color: #ffffff !important;
+          background: rgba(220, 38, 38, 0.25) !important;
         }
         .icon-sun { color: #f59e0b; }
         .icon-moon { color: #818cf8; }
