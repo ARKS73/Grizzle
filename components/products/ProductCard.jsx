@@ -46,29 +46,31 @@ export default function ProductCard({ product, onQuickView }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Card Media Container */}
-      <Link
-        href={`/product/${product._id}`}
-        className="card-media-box"
-      >
-        {/* Primary Image */}
-        <img
-          src={getOptimizedImageUrl(primaryImg, 600, 85)}
-          alt={product.name}
-          className={`card-img-primary ${isHovered && secondaryImg ? 'hide-on-hover' : ''} ${isHovered && !secondaryImg ? 'zoom-on-hover' : ''}`}
-          loading="eager"
-          decoding="async"
-        />
-
-        {/* Secondary Hover Image (Swap effect) */}
-        {secondaryImg && (
+      <div className="card-media-box">
+        <Link
+          href={`/product/${product._id}`}
+          className="card-media-link"
+        >
+          {/* Primary Image */}
           <img
-            src={getOptimizedImageUrl(secondaryImg, 600, 85)}
-            alt={`${product.name} back view`}
-            className={`card-img-secondary ${isHovered ? 'show-on-hover' : ''}`}
-            loading="lazy"
+            src={getOptimizedImageUrl(primaryImg, 600, 85)}
+            alt={product.name}
+            className={`card-img-primary ${isHovered && secondaryImg ? 'hide-on-hover' : ''} ${isHovered && !secondaryImg ? 'zoom-on-hover' : ''}`}
+            loading="eager"
             decoding="async"
           />
-        )}
+
+          {/* Secondary Hover Image (Swap effect) */}
+          {secondaryImg && (
+            <img
+              src={getOptimizedImageUrl(secondaryImg, 600, 85)}
+              alt={`${product.name} back view`}
+              className={`card-img-secondary ${isHovered ? 'show-on-hover' : ''}`}
+              loading="lazy"
+              decoding="async"
+            />
+          )}
+        </Link>
 
         {/* Brand Tag Badges */}
         <div className="card-badge-row">
@@ -139,7 +141,7 @@ export default function ProductCard({ product, onQuickView }) {
             </button>
           )}
         </div>
-      </Link>
+      </div>
 
       {/* Card Info Content */}
       <div className="card-info-box">
@@ -212,6 +214,13 @@ export default function ProductCard({ product, onQuickView }) {
           overflow: hidden;
           background: var(--bg-tertiary);
           cursor: pointer;
+        }
+
+        .card-media-link {
+          display: block;
+          width: 100%;
+          height: 100%;
+          text-decoration: none;
         }
 
         .card-img-primary {
@@ -478,17 +487,17 @@ export default function ProductCard({ product, onQuickView }) {
             gap: 0.15rem !important;
           }
           .card-product-title {
-            font-size: 0.68rem !important;
-            line-height: 1.2 !important;
+            font-size: 0.65rem !important;
+            line-height: 1.18 !important;
             font-weight: 700 !important;
-            max-height: 1.7rem !important;
+            max-height: 1.58rem !important;
             min-height: auto !important;
             display: -webkit-box !important;
             -webkit-line-clamp: 2 !important;
             -webkit-box-orient: vertical !important;
             overflow: hidden !important;
             word-break: break-word !important;
-            margin: 2px 0 !important;
+            margin: 1px 0 !important;
           }
           .card-category-tag {
             font-size: 0.52rem !important;
