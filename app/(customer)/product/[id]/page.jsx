@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Star, Heart, ShoppingBag, Check, ArrowRight, ArrowLeft, Share2, ChevronDown, ChevronUp, ShieldCheck, Truck, RotateCcw, Sparkles, Play } from 'lucide-react';
 import ProductCard from '@/components/products/ProductCard';
@@ -17,15 +17,19 @@ import { getProductVariantStock } from '@/utils/stockHelper';
 export default function ProductDetailPage() {
   const { id } = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const queryImg = searchParams?.get('img');
+  const queryColor = searchParams?.get('color');
+
   const { addToCart, getTotalCount } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [relatedProducts, setRelatedProducts] = useState([]);
-  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedImage, setSelectedImage] = useState(queryImg || '');
   const [selectedSize, setSelectedSize] = useState('M');
-  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedColor, setSelectedColor] = useState(queryColor || '');
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [sizeChartOpen, setSizeChartOpen] = useState(false);
@@ -44,11 +48,12 @@ export default function ProductDetailPage() {
         const cleanImages = (prod.images || []).filter((img) => img && img !== '/logo2.png');
         const defaultColor = prod.colors?.[0]?.name || '';
         const defaultColorObj = prod.colors?.[0];
-        const initialImg = defaultColorObj?.image || cleanImages[0] || prod.images?.[0] || '';
+        const initialImg = queryImg || defaultColorObj?.image || cleanImages[0] || prod.images?.[0] || '';
+        const initialColor = queryColor || defaultColor;
 
         setSelectedImage(initialImg);
         setSelectedSize(prod.sizes?.[0] || 'M');
-        setSelectedColor(defaultColor);
+        setSelectedColor(initialColor);
         setLoading(false); // Unblock UI immediately for instant rendering
 
         // Preload primary Cloudinary image in browser cache for 0ms delay
@@ -101,8 +106,29 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="container product-detail-wrapper mt-5">
-        <div className="skeleton" style={{ height: '500px', borderRadius: '16px' }} />
+      <div className="container product-detail-wrapper mt-4">
+        <div className="product-layout-grid">
+          <div className="product-gallery-box">
+            <div className="main-image-container glass-panel" style={{ position: 'relative', overflow: 'hidden', aspectRatio: '4/5' }}>
+              {queryImg ? (
+                <img
+                  src={getOptimizedImageUrl(queryImg, 800, 80)}
+                  alt="Product preview"
+                  className="main-product-img"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              ) : (
+                <div className="skeleton" style={{ width: '100%', height: '100%', borderRadius: '16px' }} />
+              )}
+            </div>
+          </div>
+          <div className="product-info-box">
+            <div className="skeleton" style={{ height: '24px', width: '35%', borderRadius: '8px', marginBottom: '0.75rem' }} />
+            <div className="skeleton" style={{ height: '40px', width: '85%', borderRadius: '8px', marginBottom: '0.75rem' }} />
+            <div className="skeleton" style={{ height: '20px', width: '40%', borderRadius: '8px', marginBottom: '1rem' }} />
+            <div className="skeleton" style={{ height: '50px', width: '50%', borderRadius: '8px' }} />
+          </div>
+        </div>
       </div>
     );
   }
