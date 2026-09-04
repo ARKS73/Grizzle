@@ -105,7 +105,7 @@ const StoreSettingsSchema = new mongoose.Schema(
           iconName: 'Sparkles',
           value: 'HIGH DENSITY PRINTS',
           label: 'DTF PRINT COLLECTIVE',
-          sub: 'Vibrant detailed graphics engineered for 50+ washes',
+          sub: 'Vibrant detailed graphics engineered for long-lasting premium wear',
           link: '',
         },
         {

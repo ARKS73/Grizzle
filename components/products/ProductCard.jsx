@@ -49,8 +49,6 @@ export default function ProductCard({ product, onQuickView }) {
       <Link
         href={`/product/${product._id}`}
         className="card-media-box"
-        onTouchStart={() => setIsHovered(true)}
-        onTouchEnd={() => setTimeout(() => setIsHovered(false), 300)}
       >
         {/* Primary Image */}
         <img
@@ -339,6 +337,38 @@ export default function ProductCard({ product, onQuickView }) {
           .quick-add-hover-bar {
             transform: translateY(0);
             background: rgba(0, 0, 0, 0.75);
+            padding: 6px;
+          }
+          .quick-add-btn {
+            padding: 6px 8px;
+            font-size: 0.68rem;
+          }
+          .card-info-box {
+            padding: 0.65rem 0.75rem;
+            gap: 0.2rem;
+          }
+          .card-product-title {
+            font-size: 0.8rem;
+            line-height: 1.25;
+            min-height: 2rem;
+            max-height: 2.5rem;
+            -webkit-line-clamp: 2;
+          }
+          .card-category-tag {
+            font-size: 0.6rem;
+          }
+          .price-sale {
+            font-size: 0.9rem;
+          }
+          .price-mrp {
+            font-size: 0.72rem;
+          }
+          .card-size-pills {
+            gap: 2px;
+          }
+          .mini-size-btn {
+            font-size: 0.58rem;
+            padding: 1px 4px;
           }
         }
 

@@ -167,7 +167,7 @@ export default function ScrollTshirtShowcase() {
             </span>
             <h3 className="story-title">ULTRA-VIBRANT GRAPHICS</h3>
             <p className="story-desc">
-              High-fidelity digital transfer technology resisting cracking and fading for 50+ washes.
+              High-fidelity digital transfer technology resisting cracking and fading with proper care.
             </p>
           </div>
 

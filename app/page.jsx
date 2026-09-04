@@ -589,7 +589,7 @@ export default function SinglePageStreetwearStore() {
               <div className="manifesto-body">
                 <p>1. Heavyweight organic Indian cotton sourced directly from sustainable mills.</p>
                 <p>2. Limited print runs of 100 numbered pieces per colorway to prevent overproduction.</p>
-                <p>3. High-density screen prints and custom DTF ink formulas that resist cracking for 50+ washes.</p>
+                <p>3. High-density screen prints and custom DTF ink formulas engineered for long-lasting vibrancy.</p>
                 <p>4. Direct profit sharing with independent graphic artists & street painters across India.</p>
               </div>
               <button
