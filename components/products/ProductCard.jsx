@@ -206,6 +206,7 @@ export default function ProductCard({ product, onQuickView }) {
 
         .card-media-box {
           position: relative;
+          display: block;
           width: 100%;
           aspect-ratio: 4 / 5;
           overflow: hidden;
@@ -465,43 +466,57 @@ export default function ProductCard({ product, onQuickView }) {
 
         /* Responsive Mobile Scaling — Highest Priority Specificity Overrides */
         @media (max-width: 768px) {
+          .card-media-box {
+            position: relative !important;
+            display: block !important;
+            width: 100% !important;
+            aspect-ratio: 4 / 5 !important;
+            overflow: hidden !important;
+          }
           .card-info-box {
-            padding: 0.5rem 0.6rem !important;
+            padding: 0.45rem 0.55rem !important;
             gap: 0.15rem !important;
           }
           .card-product-title {
-            font-size: 0.74rem !important;
-            line-height: 1.25 !important;
-            font-weight: 800 !important;
-            max-height: 1.95rem !important;
+            font-size: 0.68rem !important;
+            line-height: 1.2 !important;
+            font-weight: 700 !important;
+            max-height: 1.7rem !important;
             min-height: auto !important;
             display: -webkit-box !important;
             -webkit-line-clamp: 2 !important;
             -webkit-box-orient: vertical !important;
             overflow: hidden !important;
             word-break: break-word !important;
+            margin: 2px 0 !important;
           }
           .card-category-tag {
-            font-size: 0.56rem !important;
+            font-size: 0.52rem !important;
           }
           .price-sale {
-            font-size: 0.82rem !important;
+            font-size: 0.78rem !important;
           }
           .price-mrp {
-            font-size: 0.65rem !important;
-          }
-          .quick-add-hover-bar {
-            transform: translateY(0) !important;
-            background: rgba(0, 0, 0, 0.75) !important;
-            padding: 4px 6px !important;
-          }
-          .quick-add-btn {
-            padding: 5px 8px !important;
             font-size: 0.62rem !important;
           }
+          .quick-add-hover-bar {
+            position: absolute !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            transform: translateY(0) !important;
+            background: rgba(0, 0, 0, 0.8) !important;
+            padding: 4px 6px !important;
+            z-index: 4 !important;
+          }
+          .quick-add-btn {
+            padding: 4px 6px !important;
+            font-size: 0.60rem !important;
+            border-radius: 6px !important;
+          }
           .mini-size-btn {
-            font-size: 0.56rem !important;
-            padding: 1px 4px !important;
+            font-size: 0.52rem !important;
+            padding: 1px 3px !important;
           }
         }
       `}</style>
