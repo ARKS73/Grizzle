@@ -274,159 +274,155 @@ export default function Navbar() {
             {theme === 'dark' ? <Sun size={20} className="icon-sun" /> : <Moon size={20} className="icon-moon" />}
           </button>
 
-          {/* Wishlist & Shopping Cart Dropdowns - ONLY visible when user is logged in */}
-          {user && (
-            <>
-              {/* Wishlist Dropdown */}
-              <div
-                className="icon-dropdown-wrapper"
-                ref={wishlistRef}
-                onMouseEnter={() => setWishlistDropdownOpen(true)}
-                onMouseLeave={() => setWishlistDropdownOpen(false)}
-              >
-                <Link
-                  href="/wishlist"
-                  className="icon-btn badge-container"
-                  title="Wishlist"
-                  onClick={closeAllMenus}
-                >
-                  <Heart size={20} />
-                  {wishlistItems.length > 0 && (
-                    <span className="nav-badge badge-heart">{wishlistItems.length}</span>
-                  )}
-                </Link>
+          {/* Wishlist & Shopping Cart Dropdowns - ALWAYS visible for all users */}
+          {/* Wishlist Dropdown */}
+          <div
+            className="icon-dropdown-wrapper"
+            ref={wishlistRef}
+            onMouseEnter={() => setWishlistDropdownOpen(true)}
+            onMouseLeave={() => setWishlistDropdownOpen(false)}
+          >
+            <Link
+              href="/wishlist"
+              className="icon-btn badge-container"
+              title="Wishlist"
+              onClick={closeAllMenus}
+            >
+              <Heart size={20} color="#ffffff" />
+              {wishlistItems.length > 0 && (
+                <span className="nav-badge badge-heart">{wishlistItems.length}</span>
+              )}
+            </Link>
 
-                {wishlistDropdownOpen && (
-                  <div className="quick-preview-menu glass-panel">
-                    <div className="preview-header">
-                      <span className="preview-title"><Heart size={14} className="text-danger" fill="#ef4444" /> Saved Wishlist ({wishlistItems.length})</span>
-                      <Link href="/wishlist" onClick={closeAllMenus} className="preview-link">View All</Link>
-                    </div>
-                    <div className="preview-divider"></div>
-                    {wishlistItems.length === 0 ? (
-                      <div className="preview-empty">
-                        <p>Your wishlist is empty.</p>
-                        <Link href="/products" onClick={closeAllMenus} className="btn btn-secondary btn-sm mt-2">Explore T-Shirts</Link>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="preview-items-list">
-                          {wishlistItems.slice(0, 4).map((item) => (
-                            <div key={item._id} className="preview-item">
-                              <img src={item.images?.[0]} alt={item.name} className="preview-img" />
-                              <div className="preview-info">
-                                <span className="preview-item-name">{item.name}</span>
-                                <span className="preview-item-price">₹{item.price?.toFixed(0)}</span>
-                              </div>
-                              <button
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  addToCart(item, item.sizes?.[0] || 'M', item.colors?.[0]?.name || 'Pitch Black', 1);
-                                  removeFromWishlist(item._id);
-                                }}
-                                className="btn btn-primary btn-xs"
-                                title="Move to Cart"
-                              >
-                                + Cart
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                        {wishlistItems.length > 4 && (
-                          <p className="preview-more-count">+ {wishlistItems.length - 4} more saved items</p>
-                        )}
-                        <div className="preview-divider"></div>
-                        <Link href="/wishlist" onClick={closeAllMenus} className="btn btn-primary btn-sm preview-action-btn">
-                          Go to Wishlist Page
-                        </Link>
-                      </>
-                    )}
+            {wishlistDropdownOpen && (
+              <div className="quick-preview-menu glass-panel">
+                <div className="preview-header">
+                  <span className="preview-title"><Heart size={14} className="text-danger" fill="#ef4444" color="#ef4444" /> Saved Wishlist ({wishlistItems.length})</span>
+                  <Link href="/wishlist" onClick={closeAllMenus} className="preview-link">View All</Link>
+                </div>
+                <div className="preview-divider"></div>
+                {wishlistItems.length === 0 ? (
+                  <div className="preview-empty">
+                    <p>Your wishlist is empty.</p>
+                    <Link href="/products" onClick={closeAllMenus} className="btn btn-secondary btn-sm mt-2">Explore T-Shirts</Link>
                   </div>
+                ) : (
+                  <>
+                    <div className="preview-items-list">
+                      {wishlistItems.slice(0, 4).map((item) => (
+                        <div key={item._id} className="preview-item">
+                          <img src={item.images?.[0]} alt={item.name} className="preview-img" />
+                          <div className="preview-info">
+                            <span className="preview-item-name">{item.name}</span>
+                            <span className="preview-item-price">₹{item.price?.toFixed(0)}</span>
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              addToCart(item, item.sizes?.[0] || 'M', item.colors?.[0]?.name || 'Pitch Black', 1);
+                              removeFromWishlist(item._id);
+                            }}
+                            className="btn btn-primary btn-xs"
+                            title="Move to Cart"
+                          >
+                            + Cart
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    {wishlistItems.length > 4 && (
+                      <p className="preview-more-count">+ {wishlistItems.length - 4} more saved items</p>
+                    )}
+                    <div className="preview-divider"></div>
+                    <Link href="/wishlist" onClick={closeAllMenus} className="btn btn-primary btn-sm preview-action-btn">
+                      Go to Wishlist Page
+                    </Link>
+                  </>
                 )}
               </div>
+            )}
+          </div>
 
-              {/* Shopping Cart Dropdown */}
-              <div
-                className="icon-dropdown-wrapper"
-                ref={cartRef}
-                onMouseEnter={() => setCartDropdownOpen(true)}
-                onMouseLeave={() => setCartDropdownOpen(false)}
-              >
-                <Link
-                  href="/cart"
-                  className="icon-btn badge-container"
-                  title="Cart"
-                  onClick={closeAllMenus}
-                >
-                  <ShoppingBag size={20} />
-                  {getTotalCount() > 0 && (
-                    <span className="nav-badge badge-cart">{getTotalCount()}</span>
-                  )}
-                </Link>
+          {/* Shopping Cart Dropdown */}
+          <div
+            className="icon-dropdown-wrapper"
+            ref={cartRef}
+            onMouseEnter={() => setCartDropdownOpen(true)}
+            onMouseLeave={() => setCartDropdownOpen(false)}
+          >
+            <Link
+              href="/cart"
+              className="icon-btn badge-container"
+              title="Cart"
+              onClick={closeAllMenus}
+            >
+              <ShoppingBag size={20} color="#ffffff" />
+              {getTotalCount() > 0 && (
+                <span className="nav-badge badge-cart">{getTotalCount()}</span>
+              )}
+            </Link>
 
-                {cartDropdownOpen && (
-                  <div className="quick-preview-menu glass-panel">
-                    <div className="preview-header">
-                      <span className="preview-title">
-                        <ShoppingBag size={14} className="text-primary" /> Cart ({getTotalCount()})
-                      </span>
-                      <Link href="/cart" onClick={closeAllMenus} className="preview-link">View Cart</Link>
-                    </div>
-                    <div className="preview-divider"></div>
-                    {cartItems.length === 0 ? (
-                      <div className="preview-empty">
-                        <p>Your cart is empty.</p>
-                        <Link href="/products" onClick={closeAllMenus} className="btn btn-primary btn-sm mt-2">
-                          Start Shopping
-                        </Link>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="preview-items-list">
-                          {cartItems.slice(0, 4).map((item, idx) => (
-                            <div key={`${item.product._id}-${item.size}-${idx}`} className="preview-item">
-                              <img src={item.product.images?.[0]} alt={item.product.name} className="preview-img" />
-                              <div className="preview-info">
-                                <span className="preview-item-name">{item.product.name}</span>
-                                <span className="preview-item-meta">{item.size} &bull; Qty {item.quantity}</span>
-                                <span className="preview-item-price">₹{(item.product.price * item.quantity).toFixed(0)}</span>
-                              </div>
-                              <button
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  removeFromCart(item.product._id, item.size, item.color);
-                                }}
-                                className="preview-remove-btn"
-                                title="Remove"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                        {cartItems.length > 4 && (
-                          <p className="preview-more-count">+ {cartItems.length - 4} more items</p>
-                        )}
-                        <div className="preview-divider"></div>
-                        <div className="preview-subtotal-row">
-                          <span>Total:</span>
-                          <strong>₹{getTotalPrice().toFixed(0)}</strong>
-                        </div>
-                        <div className="preview-actions">
-                          <Link href="/cart" onClick={closeAllMenus} className="btn btn-secondary btn-sm flex-1 text-center">
-                            View Bag
-                          </Link>
-                          <Link href="/checkout" onClick={closeAllMenus} className="btn btn-primary btn-sm flex-1 text-center">
-                            Checkout
-                          </Link>
-                        </div>
-                      </>
-                    )}
+            {cartDropdownOpen && (
+              <div className="quick-preview-menu glass-panel">
+                <div className="preview-header">
+                  <span className="preview-title">
+                    <ShoppingBag size={14} className="text-primary" color="#ef4444" /> Cart ({getTotalCount()})
+                  </span>
+                  <Link href="/cart" onClick={closeAllMenus} className="preview-link">View Cart</Link>
+                </div>
+                <div className="preview-divider"></div>
+                {cartItems.length === 0 ? (
+                  <div className="preview-empty">
+                    <p>Your cart is empty.</p>
+                    <Link href="/products" onClick={closeAllMenus} className="btn btn-primary btn-sm mt-2">
+                      Start Shopping
+                    </Link>
                   </div>
+                ) : (
+                  <>
+                    <div className="preview-items-list">
+                      {cartItems.slice(0, 4).map((item, idx) => (
+                        <div key={`${item.product._id}-${item.size}-${idx}`} className="preview-item">
+                          <img src={item.product.images?.[0]} alt={item.product.name} className="preview-img" />
+                          <div className="preview-info">
+                            <span className="preview-item-name">{item.product.name}</span>
+                            <span className="preview-item-meta">{item.size} &bull; Qty {item.quantity}</span>
+                            <span className="preview-item-price">₹{(item.product.price * item.quantity).toFixed(0)}</span>
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              removeFromCart(item.product._id, item.size, item.color);
+                            }}
+                            className="preview-remove-btn"
+                            title="Remove"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    {cartItems.length > 4 && (
+                      <p className="preview-more-count">+ {cartItems.length - 4} more items</p>
+                    )}
+                    <div className="preview-divider"></div>
+                    <div className="preview-subtotal-row">
+                      <span>Total:</span>
+                      <strong>₹{getTotalPrice().toFixed(0)}</strong>
+                    </div>
+                    <div className="preview-actions">
+                      <Link href="/cart" onClick={closeAllMenus} className="btn btn-secondary btn-sm flex-1 text-center">
+                        View Bag
+                      </Link>
+                      <Link href="/checkout" onClick={closeAllMenus} className="btn btn-primary btn-sm flex-1 text-center">
+                        Checkout
+                      </Link>
+                    </div>
+                  </>
                 )}
               </div>
-            </>
-          )}
+            )}
+          </div>
 
 
 
@@ -752,7 +748,9 @@ export default function Navbar() {
         .search-icon {
           position: absolute;
           left: 16px;
-          color: var(--accent-primary);
+          color: #ef4444 !important;
+          z-index: 3 !important;
+          pointer-events: none;
           transition: transform var(--transition-fast);
         }
         .search-input {
@@ -771,9 +769,10 @@ export default function Navbar() {
           color: rgba(255, 255, 255, 0.5) !important;
         }
         .search-input:focus {
-          border-color: var(--accent-primary);
-          background: var(--bg-primary);
-          box-shadow: 0 0 0 4px var(--accent-light), var(--shadow-md);
+          border-color: #dc2626 !important;
+          background: #18181b !important;
+          color: #ffffff !important;
+          box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.25) !important;
         }
         .search-clear {
           position: absolute;
