@@ -475,6 +475,12 @@ export default function ProductCard({ product, onQuickView }) {
 
         /* Responsive Mobile Scaling — Highest Priority Specificity Overrides */
         @media (max-width: 768px) {
+          .card-img-secondary {
+            display: none !important;
+          }
+          .card-img-primary.hide-on-hover {
+            opacity: 1 !important;
+          }
           .card-media-box {
             position: relative !important;
             display: block !important;
