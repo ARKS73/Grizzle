@@ -676,8 +676,26 @@
   text-decoration: line-through;
 }
 
-/* Mobile Heading Font Size Scaling */
+/* Mobile Heading Font Size Scaling & Connected Flush Hero Photo */
 @media (max-width: 768px) {
+  .hero-section-street {
+    border-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 2.25rem !important;
+    padding-bottom: 2.5rem !important;
+    width: 100% !important;
+  }
+  .hero-athlete-bg-img {
+    border-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
   .hero-street-title {
     font-size: clamp(1.8rem, 5.5vw, 2.3rem) !important;
     line-height: 1.15 !important;
@@ -700,6 +718,18 @@
 }
 
 @media (max-width: 480px) {
+  .hero-section-street {
+    border-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 1.75rem !important;
+  }
+  .hero-athlete-bg-img {
+    border-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+  }
   .hero-street-title {
     font-size: 1.65rem !important;
   }
