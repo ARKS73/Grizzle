@@ -1624,9 +1624,20 @@ export default function SinglePageStreetwearStore() {
           .pastel-products-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.75rem !important; }
           .vibe-bento-grid { grid-template-columns: 1fr; }
           .lookbook-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
-          .collective-form { flex-direction: column; }
+          .latest-drops-section {
+            padding: 2rem 0 !important;
+          }
+          .mens-collection-section,
+          .womens-collection-section,
+          .unisex-collection-section {
+            padding: 2.25rem 0 !important;
+          }
+          .all-collections-section {
+            padding: 1.75rem 0 1rem 0 !important;
+          }
           .collection-cta-wrapper {
-            margin-top: 1.25rem;
+            margin-top: 0.75rem !important;
+            margin-bottom: 0 !important;
             width: 100%;
           }
           .collection-filter-cta-btn {
