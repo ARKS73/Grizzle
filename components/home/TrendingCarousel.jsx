@@ -109,10 +109,12 @@ export default function TrendingCarousel({ products = [] }) {
                     {original > product.price && (
                       <span className="trending-mrp-price">₹{original.toFixed(0)}</span>
                     )}
-                    <div className="trending-rating-tag">
-                      <Star size={11} fill="#f59e0b" color="#f59e0b" />
-                      <span>{product.ratings ? Number(product.ratings).toFixed(1) : '4.9'}</span>
-                    </div>
+                    {Boolean(product.numReviews > 0 && product.ratings > 0) && (
+                      <div className="trending-rating-tag">
+                        <Star size={11} fill="#f59e0b" color="#f59e0b" />
+                        <span>{Number(product.ratings).toFixed(1)}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

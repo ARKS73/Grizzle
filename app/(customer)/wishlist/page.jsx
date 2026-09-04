@@ -133,21 +133,23 @@ export default function WishlistPage() {
                   {product.name}
                 </Link>
 
-                <div className="rating-row">
-                  <div className="stars">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        size={13}
-                        fill={i < Math.round(product.ratings || 0) ? '#f59e0b' : 'none'}
-                        color="#f59e0b"
-                      />
-                    ))}
+                {Boolean(product.numReviews > 0 && product.ratings > 0) && (
+                  <div className="rating-row">
+                    <div className="stars">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          size={13}
+                          fill={i < Math.round(product.ratings || 0) ? '#f59e0b' : 'none'}
+                          color="#f59e0b"
+                        />
+                      ))}
+                    </div>
+                    <span className="rating-val">
+                      {Number(product.ratings || 0).toFixed(1)}
+                    </span>
                   </div>
-                  <span className="rating-val">
-                    {product.numReviews > 0 ? Number(product.ratings || 0).toFixed(1) : '0.0'}
-                  </span>
-                </div>
+                )}
 
                 {/* Price Display */}
                 <div className="price-row">
