@@ -188,19 +188,18 @@ export default function Navbar() {
 
   return (
     <header className="navbar-header glass-panel">
-      <div className="container nav-container" ref={megaMenuRef}>
-        {/* Mobile Toggle & Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="icon-btn mobile-toggle"
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-          
-          <div onClick={closeAllMenus}>
-            <GrizzleLogo size="medium" />
-          </div>
+        {/* Mobile Toggle Button */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="icon-btn mobile-toggle"
+          aria-label="Toggle navigation menu"
+        >
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+        
+        {/* Brand Logo Wrapper */}
+        <div className="brand-logo-wrapper" onClick={closeAllMenus}>
+          <GrizzleLogo size="large" />
         </div>
 
         {/* Live Search Bar */}
@@ -1767,6 +1766,12 @@ export default function Navbar() {
           text-align: left;
         }
 
+        .brand-logo-wrapper {
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+        }
+
         @media (max-width: 1100px) {
           .mega-dropdown {
             width: 95vw;
@@ -1777,6 +1782,19 @@ export default function Navbar() {
           }
         }
         @media (max-width: 950px) {
+          .nav-container {
+            position: relative !important;
+          }
+          .brand-logo-wrapper {
+            position: absolute !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            z-index: 2 !important;
+          }
+          .brand-logo-wrapper :global(.grizzle-brand-logo-img) {
+            height: 42px !important;
+            max-width: 240px !important;
+          }
           .desktop-nav { display: none; }
           .search-wrapper { max-width: 260px; }
           .theme-toggle-desktop { display: none !important; }
@@ -1786,6 +1804,10 @@ export default function Navbar() {
         @media (max-width: 600px) {
           .search-wrapper { display: none; }
           .user-name-short { display: none; }
+          .brand-logo-wrapper :global(.grizzle-brand-logo-img) {
+            height: 40px !important;
+            max-width: 220px !important;
+          }
         }
       `}</style>
     </header>
