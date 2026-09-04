@@ -745,11 +745,16 @@ export default function Navbar() {
           display: flex;
           align-items: center;
         }
-        .search-icon {
+        .search-icon,
+        .search-icon :global(path),
+        .search-icon path,
+        .search-icon circle,
+        .search-icon line {
           position: absolute;
           left: 16px;
-          color: #ef4444 !important;
-          z-index: 3 !important;
+          color: #ffffff !important;
+          stroke: #ffffff !important;
+          z-index: 10 !important;
           pointer-events: none;
           transition: transform var(--transition-fast);
         }
