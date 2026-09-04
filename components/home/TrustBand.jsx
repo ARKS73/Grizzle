@@ -190,10 +190,10 @@ export default function TrustBand() {
 
         @media (max-width: 768px) {
           .trust-band-section {
-            padding: 1.5rem 0 !important;
+            padding: 0.75rem 0 !important;
           }
           .trust-band-header {
-            margin-bottom: 1.25rem !important;
+            margin-bottom: 0.75rem !important;
           }
         }
 
