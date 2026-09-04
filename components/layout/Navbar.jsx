@@ -206,7 +206,7 @@ export default function Navbar() {
         {/* Live Search Bar */}
         <div className="search-wrapper" ref={searchRef}>
           <form onSubmit={handleSearchSubmit} className="search-form">
-            <Search className="search-icon" size={18} />
+            <Search className="search-icon" size={18} color="#ffffff" />
             <input
               type="text"
               placeholder="Search T-Shirts, Anime, Oversized..."
@@ -584,7 +584,7 @@ export default function Navbar() {
           {/* Search Bar */}
           <div className="mobile-search-box" style={{ marginBottom: '1rem' }}>
             <form onSubmit={handleSearchSubmit} className="search-form">
-              <Search className="search-icon" size={18} />
+              <Search className="search-icon" size={18} color="#ffffff" />
               <input
                 type="text"
                 placeholder="Search..."
