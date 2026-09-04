@@ -597,64 +597,64 @@ export default function Navbar() {
 
           {/* Clean minimal Category List with right arrow chevron */}
           <div className="mobile-category-list" style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-            <Link href="/" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid var(--border-color)', textDecoration: 'none', color: 'var(--text-primary)', boxSizing: 'border-box' }}>
+            <Link href="/" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid rgba(255, 255, 255, 0.12)', textDecoration: 'none', color: '#ffffff', boxSizing: 'border-box' }}>
               <span>HOME</span>
-              <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto' }} />
+              <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto', color: '#ffffff' }} />
             </Link>
 
-            <Link href="/products?sort=newest" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid var(--border-color)', textDecoration: 'none', color: 'var(--text-primary)', boxSizing: 'border-box' }}>
+            <Link href="/products?sort=newest" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid rgba(255, 255, 255, 0.12)', textDecoration: 'none', color: '#ffffff', boxSizing: 'border-box' }}>
               <span>NEW ARRIVALS</span>
-              <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto' }} />
+              <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto', color: '#ffffff' }} />
             </Link>
 
-            <Link href="/products?gender=Men" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid var(--border-color)', textDecoration: 'none', color: 'var(--text-primary)', boxSizing: 'border-box' }}>
+            <Link href="/products?gender=Men" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid rgba(255, 255, 255, 0.12)', textDecoration: 'none', color: '#ffffff', boxSizing: 'border-box' }}>
               <span>MEN</span>
-              <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto' }} />
+              <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto', color: '#ffffff' }} />
             </Link>
 
-            <Link href="/products?gender=Women" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid var(--border-color)', textDecoration: 'none', color: 'var(--text-primary)', boxSizing: 'border-box' }}>
+            <Link href="/products?gender=Women" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid rgba(255, 255, 255, 0.12)', textDecoration: 'none', color: '#ffffff', boxSizing: 'border-box' }}>
               <span>WOMEN</span>
-              <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto' }} />
+              <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto', color: '#ffffff' }} />
             </Link>
 
-            <Link href="/products?gender=Unisex" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid var(--border-color)', textDecoration: 'none', color: 'var(--text-primary)', boxSizing: 'border-box' }}>
+            <Link href="/products?gender=Unisex" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid rgba(255, 255, 255, 0.12)', textDecoration: 'none', color: '#ffffff', boxSizing: 'border-box' }}>
               <span>UNISEX</span>
-              <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto' }} />
+              <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto', color: '#ffffff' }} />
             </Link>
 
-            <Link href="/products" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid var(--border-color)', textDecoration: 'none', color: 'var(--text-primary)', boxSizing: 'border-box' }}>
+            <Link href="/products" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid rgba(255, 255, 255, 0.12)', textDecoration: 'none', color: '#ffffff', boxSizing: 'border-box' }}>
               <span>ALL COLLECTIONS</span>
-              <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto' }} />
+              <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto', color: '#ffffff' }} />
             </Link>
 
             {user ? (
               <>
-                <Link href="/orders" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid var(--border-color)', textDecoration: 'none', color: 'var(--text-primary)', boxSizing: 'border-box' }}>
+                <Link href="/orders" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid rgba(255, 255, 255, 0.12)', textDecoration: 'none', color: '#ffffff', boxSizing: 'border-box' }}>
                   <span>MY ORDERS</span>
-                  <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto' }} />
+                  <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto', color: '#ffffff' }} />
                 </Link>
 
                 {user.role === 'admin' && (
-                  <Link href="/admin" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid var(--border-color)', textDecoration: 'none', color: 'var(--accent-primary)', boxSizing: 'border-box' }}>
+                  <Link href="/admin" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid rgba(255, 255, 255, 0.12)', textDecoration: 'none', color: '#ef4444', boxSizing: 'border-box' }}>
                     <span>ADMIN DASHBOARD</span>
-                    <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto' }} />
+                    <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto', color: '#ef4444' }} />
                   </Link>
                 )}
 
                 <button
                   onClick={() => { logout(); closeAllMenus(); }}
                   className="mobile-category-row"
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid var(--border-color)', background: 'none', border: 'none', color: 'var(--danger)', cursor: 'pointer', textAlign: 'left', boxSizing: 'border-box' }}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid rgba(255, 255, 255, 0.12)', background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', textAlign: 'left', boxSizing: 'border-box' }}
                 >
                   <span>LOGOUT</span>
-                  <LogOut size={18} style={{ flexShrink: 0, marginLeft: 'auto' }} />
+                  <LogOut size={18} style={{ flexShrink: 0, marginLeft: 'auto', color: '#ef4444' }} />
                 </button>
               </>
             ) : (
               <>
-                <Link href="/login" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid var(--border-color)', textDecoration: 'none', color: 'var(--accent-primary)', fontWeight: 800, boxSizing: 'border-box' }}>
+                <Link href="/login" onClick={closeAllMenus} className="mobile-category-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0.95rem 0.35rem', borderBottom: '1px solid rgba(255, 255, 255, 0.12)', textDecoration: 'none', color: '#ef4444', fontWeight: 800, boxSizing: 'border-box' }}>
                   <span>SIGN IN / REGISTER</span>
-                  <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto' }} />
+                  <ChevronRight size={18} style={{ flexShrink: 0, marginLeft: 'auto', color: '#ef4444' }} />
                 </Link>
               </>
             )}
