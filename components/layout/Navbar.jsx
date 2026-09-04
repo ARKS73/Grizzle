@@ -188,6 +188,7 @@ export default function Navbar() {
 
   return (
     <header className="navbar-header glass-panel">
+      <div className="container nav-container" ref={megaMenuRef}>
         {/* Mobile Toggle Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
