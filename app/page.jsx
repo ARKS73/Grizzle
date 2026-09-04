@@ -465,7 +465,7 @@ export default function SinglePageStreetwearStore() {
       {/* =========================================================================
          SECTION: ALL COLLECTIONS SECTION
          ========================================================================= */}
-      <section className="all-collections-section" id="all-collections" style={{ padding: '4rem 0' }}>
+      <section className="all-collections-section" id="all-collections">
         <div className="container">
           <div className="drops-header" style={{ textAlign: 'center', display: 'block', marginBottom: '2.5rem' }}>
             <span className="bento-tag-pill" style={{ display: 'inline-block', marginBottom: '0.5rem' }}>EXPLORE ALL</span>
@@ -1633,10 +1633,10 @@ export default function SinglePageStreetwearStore() {
             padding: 2.25rem 0 !important;
           }
           .all-collections-section {
-            padding: 1.75rem 0 1rem 0 !important;
+            padding: 1.25rem 0 0.25rem 0 !important;
           }
           .collection-cta-wrapper {
-            margin-top: 0.75rem !important;
+            margin-top: 0.5rem !important;
             margin-bottom: 0 !important;
             width: 100%;
           }
