@@ -156,7 +156,7 @@ export default function ScrollTshirtShowcase() {
             </span>
             <h3 className="story-title">SCROLL TO UNRAVEL THE DESIGN</h3>
             <p className="story-desc">
-              240 GSM Bio-Washed Heavyweight Cotton engineered for structural luxury & breathability.
+              Bio-Washed Heavyweight Cotton engineered for structural luxury &amp; breathability.
             </p>
           </div>
 

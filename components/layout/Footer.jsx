@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Instagram, HelpCircle, Truck, ShieldCheck, CheckCircle2, MessageCircle, ExternalLink } from 'lucide-react';
+import { Instagram, Truck, ShieldCheck, CheckCircle2, MessageCircle, ExternalLink } from 'lucide-react';
 import GrizzleLogo from '@/components/ui/GrizzleLogo';
 import SizeChartModal from '@/components/ui/SizeChartModal';
 import PolicyModal from '@/components/ui/PolicyModal';
@@ -40,11 +40,10 @@ export default function Footer() {
   const aboutText = settings?.footerAboutText || 'Self-Made High-Density DTF Printed Streetwear. Bio-Washed Premium Cotton Built for Style & Longevity.';
   const copyrightText = settings?.footerCopyrightText || `© ${new Date().getFullYear()} Grizzle Apparel India (grizzle.in). All rights reserved.`;
   const customLinks = Array.isArray(settings?.footerCustomLinks) && settings.footerCustomLinks.length > 0
-    ? settings.footerCustomLinks
+    ? settings.footerCustomLinks.filter(l => !l.label.toLowerCase().includes('privacy') && !l.label.toLowerCase().includes('faq'))
     : [
-        { label: '📐 Size Chart & Fit Guide', url: '#size-chart' },
         { label: '🚚 Shipping & Delivery Policy', url: '#shipping-policy' },
-        { label: '🔄 Returns & Refund Policy', url: '#return-policy' },
+        { label: '🔄 Return & Exchange Policy', url: '#return-policy' },
       ];
 
   const instaUrl = settings?.trustInstagramUrl || 'https://www.instagram.com/grizzle.in?igsh=MWhqNnczNThqamdtYg==';
@@ -81,11 +80,6 @@ export default function Footer() {
             </li>
             <li>
               <Link href="/orders" className="footer-link-item">
-                <HelpCircle size={14} /> FAQ &amp; Order Support
-              </Link>
-            </li>
-            <li>
-              <Link href="/orders" className="footer-link-item">
                 <Truck size={14} /> Track Order Status
               </Link>
             </li>
@@ -101,26 +95,17 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Column 3: Company & Admin Custom Links */}
+        {/* Column 3: Policies */}
         <div className="footer-col">
-          <h4 className="col-heading">COMPANY & POLICIES</h4>
+          <h4 className="col-heading">POLICIES</h4>
           <ul className="footer-links-list">
-            <li>
-              <button
-                type="button"
-                onClick={() => openPolicy('privacy')}
-                className="footer-btn-link"
-              >
-                Privacy Policy
-              </button>
-            </li>
             <li>
               <button
                 type="button"
                 onClick={() => openPolicy('shipping')}
                 className="footer-btn-link"
               >
-                Shipping Policy
+                🚚 Shipping &amp; Delivery Policy
               </button>
             </li>
             <li>
@@ -129,36 +114,9 @@ export default function Footer() {
                 onClick={() => openPolicy('returns')}
                 className="footer-btn-link"
               >
-                Return &amp; Exchange Policy
+                🔄 Return &amp; Exchange Policy
               </button>
             </li>
-            {customLinks.map((lnk, idx) => (
-              <li key={idx}>
-                {lnk.url.startsWith('#') ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (lnk.url.includes('size')) setSizeChartOpen(true);
-                      else if (lnk.url.includes('return')) openPolicy('returns');
-                      else if (lnk.url.includes('shipping')) openPolicy('shipping');
-                      else openPolicy('privacy');
-                    }}
-                    className="footer-btn-link"
-                  >
-                    {lnk.label}
-                  </button>
-                ) : (
-                  <a
-                    href={lnk.url}
-                    target={lnk.url.startsWith('http') ? '_blank' : '_self'}
-                    rel="noopener noreferrer"
-                    className="footer-link-item"
-                  >
-                    {lnk.label} {lnk.url.startsWith('http') && <ExternalLink size={12} />}
-                  </a>
-                )}
-              </li>
-            ))}
           </ul>
         </div>
 

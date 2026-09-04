@@ -78,7 +78,7 @@ export default function SizeChartModal({ isOpen, onClose, product }) {
             </div>
             <div>
               <h3 className="modal-title">{product?.name ? `${product.name} Size Guide` : 'Size Chart & Fit Guide'}</h3>
-              <p className="modal-sub">{product?.fabricFit || '240 GSM Bio-Washed Heavyweight Cotton'}</p>
+              <p className="modal-sub">{product?.fabricFit || 'Bio-Washed Heavyweight Cotton'}</p>
             </div>
           </div>
           <button onClick={onClose} className="btn-close-circle" title="Close">

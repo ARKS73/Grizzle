@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Star, Heart, Eye, ShoppingBag, ArrowRight } from 'lucide-react';
@@ -21,32 +21,7 @@ export default function ProductCard({ product, onQuickView }) {
   const cartItemForProduct = cartItems?.find((item) => item.product?._id === product._id);
   const itemCountInCart = cartItemForProduct ? cartItemForProduct.quantity : 1;
 
-  const pressTimerRef = useRef(null);
-  const isLongPressRef = useRef(false);
 
-  const startPressTimer = () => {
-    isLongPressRef.current = false;
-    if (pressTimerRef.current) clearTimeout(pressTimerRef.current);
-    pressTimerRef.current = setTimeout(() => {
-      isLongPressRef.current = true;
-      if (onQuickView) onQuickView(product);
-    }, 1200);
-  };
-
-  const clearPressTimer = () => {
-    if (pressTimerRef.current) {
-      clearTimeout(pressTimerRef.current);
-      pressTimerRef.current = null;
-    }
-  };
-
-  const handleMediaClick = () => {
-    if (isLongPressRef.current) {
-      isLongPressRef.current = false;
-      return;
-    }
-    router.push(`/product/${product._id}`);
-  };
 
   // Find primary and secondary hover images
   const validImages = (product.images || []).filter((img) => img && img !== '/logo2.png');
@@ -71,14 +46,11 @@ export default function ProductCard({ product, onQuickView }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Card Media Container */}
-      <div
+      <Link
+        href={`/product/${product._id}`}
         className="card-media-box"
-        onMouseDown={startPressTimer}
-        onMouseUp={clearPressTimer}
-        onTouchStart={startPressTimer}
-        onTouchEnd={clearPressTimer}
-        onTouchCancel={clearPressTimer}
-        onClick={handleMediaClick}
+        onTouchStart={() => setIsHovered(true)}
+        onTouchEnd={() => setTimeout(() => setIsHovered(false), 300)}
       >
         {/* Primary Image */}
         <img
@@ -116,7 +88,9 @@ export default function ProductCard({ product, onQuickView }) {
         {/* Wishlist & Quick View Floating Buttons */}
         <div className="card-floating-actions">
           <button
+            type="button"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               toggleWishlist(product);
             }}
@@ -126,7 +100,9 @@ export default function ProductCard({ product, onQuickView }) {
             <Heart size={16} fill={isSaved ? '#ef4444' : 'none'} color={isSaved ? '#ef4444' : '#ffffff'} />
           </button>
           <button
+            type="button"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               if (onQuickView) onQuickView(product);
             }}
@@ -140,16 +116,22 @@ export default function ProductCard({ product, onQuickView }) {
         {/* Quick Add To Bag Hover Bar (Desktop Hover & Always visible on Mobile) */}
         <div className="quick-add-hover-bar">
           {isInCart ? (
-            <Link
-              href="/cart"
-              onClick={(e) => e.stopPropagation()}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                router.push('/cart');
+              }}
               className="quick-add-btn added-state"
             >
               IN BAG ({itemCountInCart}) — VIEW CART <ArrowRight size={14} />
-            </Link>
+            </button>
           ) : (
             <button
+              type="button"
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 addToCart(product, selectedSize, product.colors?.[0]?.name || 'Default', 1);
               }}
@@ -159,7 +141,7 @@ export default function ProductCard({ product, onQuickView }) {
             </button>
           )}
         </div>
-      </div>
+      </Link>
 
       {/* Card Info Content */}
       <div className="card-info-box">

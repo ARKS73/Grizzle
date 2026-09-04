@@ -87,7 +87,7 @@ export default function TrustBand() {
         <div className="trust-band-header">
           <span className="trust-badge-pill">WHY GRIZZLE APPAREL</span>
           <h2 className="trust-title">TRUSTED BY THE STREETS</h2>
-          <p className="trust-subtitle">240 GSM Heavyweight Combed Cotton • High-Density DTF Printing • Built to Last</p>
+          <p className="trust-subtitle">Heavyweight Combed Cotton • High-Density DTF Printing • Built to Last</p>
         </div>
 
         <div className="trust-grid-6">

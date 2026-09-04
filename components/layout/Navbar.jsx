@@ -67,14 +67,14 @@ const featuredTshirt = {
   image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80',
   price: 699,
   originalPrice: 999,
-  badge: '240 GSM PREMIUM',
+  badge: 'HEAVYWEIGHT PREMIUM',
   link: '/products?category=Oversized+Printed+Tees'
 };
 
 const collections = [
   {
     title: 'Heavyweight DTF Tees',
-    subtitle: '240 GSM Boxy Drop-Shoulder Tees',
+    subtitle: 'Boxy Drop-Shoulder Tees',
     image: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=400&q=80',
     link: '/products?category=Oversized+Printed+Tees',
     tag: 'MOST POPULAR'

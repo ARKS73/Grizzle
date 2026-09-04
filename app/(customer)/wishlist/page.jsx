@@ -52,7 +52,7 @@ export default function WishlistPage() {
           </div>
           <h2 className="empty-title">Your Wishlist is Empty</h2>
           <p className="empty-subtitle">
-            Keep track of your favorite high-density DTF printed tees, anime drop art & 240 GSM heavy hoodies in one place.
+            Keep track of your favorite high-density DTF printed tees, anime drop art & heavy hoodies in one place.
           </p>
           <Link href="/products" className="btn btn-primary btn-lg mt-4 shadow-glow explore-btn">
             Explore T-Shirts & Drops <ArrowRight size={18} />

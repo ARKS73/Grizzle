@@ -32,7 +32,7 @@ export default function TrendingCarousel({ products = [] }) {
               <span>FASTEST SELLING DROPS</span>
             </div>
             <h2 className="trending-title">TRENDING NOW</h2>
-            <p className="trending-subtitle">High-demand 240 GSM tees selling out fast</p>
+            <p className="trending-subtitle">High-demand tees selling out fast</p>
           </div>
 
           <div className="carousel-nav-btns">

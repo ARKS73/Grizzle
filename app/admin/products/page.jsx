@@ -286,7 +286,7 @@ export default function AdminProductsPage() {
 
     setFormData({
       name: '',
-      description: 'High-quality 240 GSM bio-washed combed cotton t-shirt with durable DTF print.',
+      description: 'High-quality bio-washed combed cotton t-shirt with durable DTF print.',
       fabricFit: '',
       category: categories[0]?.name || 'T-Shirts',
       gender: 'Men',
@@ -1446,7 +1446,7 @@ export default function AdminProductsPage() {
                   rows={3}
                   value={formData.fabricFit || ''}
                   onChange={(e) => setFormData({ ...formData, fabricFit: e.target.value })}
-                  placeholder="e.g. 100% Organic Combed Heavyweight Cotton (240 GSM), Boxy Fit, Double-needle reinforced seams..."
+                  placeholder="e.g. 100% Organic Combed Heavyweight Cotton, Boxy Fit, Double-needle reinforced seams..."
                   className="form-textarea"
                 />
               </div>

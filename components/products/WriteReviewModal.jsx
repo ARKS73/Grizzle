@@ -127,7 +127,7 @@ export default function WriteReviewModal({ product, onClose, onReviewSubmitted }
             <label className="form-label">Review Headline / Summary</label>
             <input
               type="text"
-              placeholder="e.g., Amazing heavyweight 240 GSM print and perfect fit!"
+              placeholder="e.g., Amazing heavyweight print and perfect fit!"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="form-input"

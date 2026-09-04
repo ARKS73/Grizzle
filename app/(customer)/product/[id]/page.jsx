@@ -238,7 +238,7 @@ export default function ProductDetailPage() {
         <div className="product-info-box">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <span className="category-pill">{product.category || 'Heavyweight DTF Tee'}</span>
-            <span className="category-pill" style={{ background: 'rgba(250, 204, 21, 0.15)', color: '#facc15', border: '1px solid rgba(250, 204, 21, 0.3)' }}>240 GSM COTTON</span>
+            <span className="category-pill" style={{ background: 'rgba(250, 204, 21, 0.15)', color: '#facc15', border: '1px solid rgba(250, 204, 21, 0.3)' }}>PREMIUM COTTON</span>
           </div>
 
           <h1 className="product-title-large">{product.name}</h1>

@@ -307,7 +307,7 @@ export default function SinglePageStreetwearStore() {
             <div>
               <span className="section-kicker-badge">OFFICIAL 2026 DROPS</span>
               <h2 className="drops-title">LATEST DROPS</h2>
-              <p className="drops-subtitle">240 GSM Heavyweight Combed Cotton • High-Density DTF Prints</p>
+              <p className="drops-subtitle">Heavyweight Combed Cotton • High-Density DTF Prints</p>
             </div>
 
             {/* Filter Pills */}
@@ -367,7 +367,7 @@ export default function SinglePageStreetwearStore() {
               <div>
                 <span className="section-kicker-badge">STREETWEAR CUTS</span>
                 <h2 className="drops-title">MEN&apos;S COLLECTION</h2>
-                <p className="drops-subtitle">240 GSM boxy drop-shoulder tees, anime graphics & desi typography</p>
+                <p className="drops-subtitle">Boxy drop-shoulder tees, anime graphics &amp; desi typography</p>
               </div>
 
               <Link href="/products?gender=Men" className="header-cta-pill">
@@ -587,7 +587,7 @@ export default function SinglePageStreetwearStore() {
                 &ldquo;We don&apos;t design for mass production. We design for the 1% who treat clothing as a canvas of personal identity.&rdquo;
               </p>
               <div className="manifesto-body">
-                <p>1. Heavyweight 240 GSM organic Indian cotton sourced directly from sustainable mills.</p>
+                <p>1. Heavyweight organic Indian cotton sourced directly from sustainable mills.</p>
                 <p>2. Limited print runs of 100 numbered pieces per colorway to prevent overproduction.</p>
                 <p>3. High-density screen prints and custom DTF ink formulas that resist cracking for 50+ washes.</p>
                 <p>4. Direct profit sharing with independent graphic artists & street painters across India.</p>
@@ -739,12 +739,12 @@ export default function SinglePageStreetwearStore() {
           box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
         }
         .hero-street-title {
-          font-size: 3.8rem;
-          line-height: 1.05;
+          font-size: clamp(1.8rem, 5.5vw, 3.8rem);
+          line-height: 1.08;
           font-weight: 900;
           font-family: 'Outfit', sans-serif;
           letter-spacing: -0.03em;
-          margin-bottom: 1.5rem;
+          margin-bottom: 1.25rem;
           color: #ffffff !important;
           text-transform: uppercase;
           text-align: left;

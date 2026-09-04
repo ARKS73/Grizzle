@@ -79,9 +79,9 @@ export default function AdminDashboardPage() {
     heroBadge: 'NEW DROP | SEASON 2026',
     heroTitle: 'HIGH-DENSITY DTF PRINTS',
     heroAccentTitle: 'YOU CAN WEAR',
-    heroDesc: 'Merging high-fidelity DTF printing with 240 GSM bio-washed heavy cotton. Vibrant prints built to last for 50+ washes.',
+    heroDesc: 'Merging high-fidelity DTF printing with bio-washed heavy cotton. Vibrant prints built to last for 50+ washes.',
     heroTapeNote: 'LIMITED TO 100 PIECES GLOBALLY',
-    footerAboutText: 'Self-Made High-Density DTF Printed Streetwear. Bio-Washed 240 GSM Premium Cotton Built for Style & Longevity.',
+    footerAboutText: 'Self-Made High-Density DTF Printed Streetwear. Bio-Washed Premium Cotton Built for Style & Longevity.',
     footerCopyrightText: '© 2026 Grizzle Apparel India. All rights reserved. Self-Made Printed T-Shirts.',
     footerCustomLinks: [
       { label: '📐 Size Chart & Fit Guide', url: '#size-chart' },
@@ -254,7 +254,7 @@ export default function AdminDashboardPage() {
       ...prev,
       featureCards: [
         ...(prev.featureCards || []),
-        { iconName: 'Sparkles', value: '100% COTTON', label: 'PREMIUM QUALITY', sub: 'Bio-washed 240 GSM heavy cotton', link: '' },
+        { iconName: 'Sparkles', value: '100% COTTON', label: 'PREMIUM QUALITY', sub: 'Bio-washed heavy cotton', link: '' },
       ],
     }));
   };
