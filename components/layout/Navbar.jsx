@@ -1288,8 +1288,9 @@ export default function Navbar() {
           right: 0;
           width: 320px;
           padding: 1rem;
-          box-shadow: var(--shadow-xl);
-          background: var(--bg-elevated);
+          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.12);
+          background: #121218 !important;
+          color: #ffffff !important;
           z-index: 1000;
           border-radius: var(--radius-lg);
           animation: previewFadeIn 0.2s ease;
@@ -1306,7 +1307,7 @@ export default function Navbar() {
         .preview-title {
           font-size: 0.85rem;
           font-weight: 800;
-          color: var(--text-primary);
+          color: #ffffff !important;
           display: flex;
           align-items: center;
           gap: 0.4rem;
@@ -1319,14 +1320,14 @@ export default function Navbar() {
         }
         .preview-divider {
           height: 1px;
-          background: var(--border-color);
+          background: rgba(255, 255, 255, 0.12) !important;
           margin: 0.65rem 0;
         }
         .preview-empty {
           text-align: center;
           padding: 1rem 0;
           font-size: 0.85rem;
-          color: var(--text-muted);
+          color: #94a3b8 !important;
         }
         .preview-items-list {
           display: flex;
@@ -1341,7 +1342,8 @@ export default function Navbar() {
           gap: 0.65rem;
           padding: 0.35rem;
           border-radius: var(--radius-md);
-          background: var(--bg-secondary);
+          background: rgba(255, 255, 255, 0.06) !important;
+          color: #ffffff !important;
         }
         .preview-img {
           width: 44px;
@@ -1444,8 +1446,9 @@ export default function Navbar() {
           width: 240px;
           min-width: 240px;
           padding: 0.85rem;
-          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
-          background: var(--bg-elevated);
+          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.12);
+          background: #121218 !important;
+          color: #ffffff !important;
           z-index: 1000;
           border-radius: var(--radius-lg);
           display: flex !important;
@@ -1455,7 +1458,7 @@ export default function Navbar() {
         }
         .dropdown-user-header {
           padding: 0.35rem 0.65rem 0.65rem 0.65rem;
-          border-bottom: 1px solid var(--border-color);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
           margin-bottom: 0.35rem;
           display: flex;
           flex-direction: column;
@@ -1464,7 +1467,7 @@ export default function Navbar() {
         .dropdown-user-name {
           font-weight: 800;
           font-size: 0.92rem;
-          color: var(--text-primary);
+          color: #ffffff !important;
           line-height: 1.2;
           white-space: nowrap;
           overflow: hidden;
@@ -1472,7 +1475,7 @@ export default function Navbar() {
         }
         .dropdown-user-email {
           font-size: 0.78rem;
-          color: var(--text-muted);
+          color: #94a3b8 !important;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -1485,7 +1488,7 @@ export default function Navbar() {
         }
         .dropdown-divider {
           height: 1px;
-          background: var(--border-color);
+          background: rgba(255, 255, 255, 0.12) !important;
           margin: 0.35rem 0;
         }
         .dropdown-item {
@@ -1497,7 +1500,7 @@ export default function Navbar() {
           border-radius: var(--radius-md) !important;
           font-size: 0.88rem !important;
           font-weight: 600 !important;
-          color: var(--text-secondary);
+          color: #e2e8f0 !important;
           transition: all 0.2s ease;
           width: 100% !important;
           border: none;
@@ -1509,8 +1512,8 @@ export default function Navbar() {
           box-sizing: border-box;
         }
         .dropdown-item:hover {
-          background: var(--bg-tertiary);
-          color: var(--text-primary);
+          background: rgba(255, 255, 255, 0.1) !important;
+          color: #ffffff !important;
           transform: translateX(3px);
         }
         .dropdown-item-icon {
@@ -1538,20 +1541,21 @@ export default function Navbar() {
         /* MOBILE DRAWER STYLING */
         .mobile-drawer {
           padding: 1.25rem;
-          border-top: 1px solid var(--border-color);
+          border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
           max-height: calc(85vh - 72px);
           overflow-y: auto;
-          background: var(--bg-elevated) !important;
-          color: var(--text-primary) !important;
-          box-shadow: var(--shadow-xl);
+          background: #09090b !important;
+          color: #ffffff !important;
+          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8) !important;
         }
 
         .mobile-account-card {
-          background: var(--bg-tertiary);
-          border: 1px solid var(--border-color);
+          background: rgba(255, 255, 255, 0.06) !important;
+          border: 1px solid rgba(255, 255, 255, 0.12) !important;
           border-radius: var(--radius-lg);
           padding: 1rem;
           margin-bottom: 0.85rem;
+          color: #ffffff !important;
         }
         .mobile-user-profile {
           display: flex;
