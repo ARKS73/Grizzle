@@ -28,6 +28,24 @@ export default function ProductCard({ product, onQuickView }) {
   const primaryImg = validImages[0] || product.images?.[0] || '';
   const secondaryImg = validImages[1] || null;
 
+  const [cardDisplayImg, setCardDisplayImg] = useState(primaryImg);
+  const [cardColor, setCardColor] = useState(product.colors?.[0]?.name || '');
+
+  // Preload all product variant images in browser cache for instant 0ms swap
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const preimages = [
+      primaryImg,
+      secondaryImg,
+      ...(product.colors || []).flatMap((c) => (Array.isArray(c.images) && c.images.length > 0 ? c.images : [c.image])),
+    ].filter(Boolean);
+
+    preimages.forEach((src) => {
+      const img = new window.Image();
+      img.src = getOptimizedImageUrl(src, 600, 85);
+    });
+  }, [product, primaryImg, secondaryImg]);
+
   const originalPriceVal = product.originalPrice > product.price
     ? product.originalPrice
     : Math.round(product.price * 1.3);
@@ -36,15 +54,18 @@ export default function ProductCard({ product, onQuickView }) {
     ? product.discountPercentage
     : Math.round(((originalPriceVal - product.price) / originalPriceVal) * 100);
 
+  const activeImgUrl = cardDisplayImg || primaryImg;
+  const pdpTargetUrl = `/product/${product._id}?img=${encodeURIComponent(activeImgUrl)}${cardColor ? `&color=${encodeURIComponent(cardColor)}` : ''}`;
+
   return (
     <div
       className="streetwear-product-card glass-panel"
       onMouseEnter={() => {
         setIsHovered(true);
-        if (product?._id) router.prefetch(`/product/${product._id}`);
+        if (product?._id) router.prefetch(pdpTargetUrl);
       }}
       onTouchStart={() => {
-        if (product?._id) router.prefetch(`/product/${product._id}`);
+        if (product?._id) router.prefetch(pdpTargetUrl);
       }}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -53,20 +74,20 @@ export default function ProductCard({ product, onQuickView }) {
         className="card-media-box"
         onClick={(e) => {
           if (!e.defaultPrevented && product?._id) {
-            router.push(`/product/${product._id}`);
+            router.push(pdpTargetUrl);
           }
         }}
       >
         <Link
-          href={`/product/${product._id}`}
+          href={pdpTargetUrl}
           prefetch={true}
           className="card-media-link"
         >
-          {/* Primary Image */}
+          {/* Primary / Active Swapped Image */}
           <img
-            src={getOptimizedImageUrl(primaryImg, 600, 85)}
+            src={getOptimizedImageUrl(activeImgUrl, 600, 85)}
             alt={product.name}
-            className={`card-img-primary ${isHovered && secondaryImg ? 'hide-on-hover' : ''} ${isHovered && !secondaryImg ? 'zoom-on-hover' : ''}`}
+            className={`card-img-primary ${isHovered && secondaryImg && !cardDisplayImg ? 'hide-on-hover' : ''} ${isHovered && !secondaryImg ? 'zoom-on-hover' : ''}`}
             loading="eager"
             decoding="async"
           />
@@ -144,7 +165,7 @@ export default function ProductCard({ product, onQuickView }) {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                addToCart(product, selectedSize, product.colors?.[0]?.name || 'Default', 1);
+                addToCart(product, selectedSize, cardColor || product.colors?.[0]?.name || 'Default', 1);
               }}
               className="quick-add-btn"
             >
@@ -165,6 +186,45 @@ export default function ProductCard({ product, onQuickView }) {
             </div>
           )}
         </div>
+
+        {/* Optional Variant Color Swatches with instant snappy image swap */}
+        {product.colors && product.colors.length > 1 && (
+          <div className="card-color-swatches-row" style={{ display: 'flex', gap: '6px', margin: '4px 0 2px 0' }}>
+            {product.colors.slice(0, 4).map((c) => {
+              const cImg = c.images?.[0] || c.image || primaryImg;
+              const isSelected = cardColor === c.name || cardDisplayImg === cImg;
+              return (
+                <button
+                  key={c.name}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setCardDisplayImg(cImg);
+                    setCardColor(c.name);
+                    const target = `/product/${product._id}?img=${encodeURIComponent(cImg)}&color=${encodeURIComponent(c.name)}`;
+                    router.prefetch(target);
+                    setTimeout(() => {
+                      router.push(target);
+                    }, 100);
+                  }}
+                  className={`card-swatch-btn ${isSelected ? 'active' : ''}`}
+                  style={{
+                    width: '18px',
+                    height: '18px',
+                    borderRadius: '50%',
+                    background: c.hex || '#18181b',
+                    border: isSelected ? '2px solid #dc2626' : '1px solid rgba(255,255,255,0.3)',
+                    cursor: 'pointer',
+                    padding: 0,
+                    flexShrink: 0
+                  }}
+                  title={c.name}
+                />
+              );
+            })}
+          </div>
+        )}
 
         <Link href={`/product/${product._id}`} className="card-product-title">
           {product.name}
