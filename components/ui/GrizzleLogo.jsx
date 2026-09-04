@@ -37,11 +37,7 @@ export default function GrizzleLogo({ size = 'medium', href = '/' }) {
 
         .grizzle-brand-logo-img {
           transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
-          filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.2));
-        }
-
-        [data-theme='dark'] .grizzle-brand-logo-img {
-          filter: invert(1) brightness(1.2) drop-shadow(0 0 10px rgba(239, 68, 68, 0.6));
+          filter: invert(1) brightness(1.2) drop-shadow(0 0 10px rgba(239, 68, 68, 0.6)) !important;
         }
 
         .grizzle-brand-logo-container:hover .grizzle-brand-logo-img {
