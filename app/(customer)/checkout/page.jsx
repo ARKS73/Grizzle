@@ -1,100 +1,58 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { CreditCard, Truck, ShieldCheck, CheckCircle2, ArrowRight, Lock, MapPin, Phone, Search, X } from 'lucide-react';
+import {
+  Lock,
+  Truck,
+  ShieldCheck,
+  CheckCircle2,
+  ArrowRight,
+  MapPin,
+  Phone,
+  Search,
+  X,
+  ChevronDown,
+  ChevronUp,
+  ShoppingBag,
+  Tag,
+  CreditCard,
+  Banknote,
+  MessageCircle,
+  HelpCircle
+} from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/components/ui/Toast';
 
 const INDIAN_STATES_CITIES = {
   'Tamil Nadu': [
-    'Aarkadu', 'Adirampattinam', 'Adiyakkamangalam', 'Aduthurai', 'Alangudi', 'Alwarthirunagiri', 'Alāndurai', 'Ambasamudram', 'Ambaturai', 'Ambur',
-    'Ammaianayakkanur', 'Anaikatti', 'Anaimalai', 'Anakkara', 'Anandathandavapuram', 'Anangur', 'Andampallam', 'Andevanahalli', 'Andipatti', 'Anekal',
-    'Annur', 'Anuppampattu', 'Anvarthikanpettei', 'Arakkonam', 'Aralvaimozhi', 'Arani', 'Aranthangi', 'Ariyalur', 'Ariyanoor', 'Arumuganeri',
-    'Aruppukkottai', 'Attadi', 'Attur', 'Auroville', 'Avinashi', 'Ayandur', 'Ayodhiyapatinam', 'Ayyampalayam', 'Ayyampettai', 'Banavarm',
-    'Bangarapet', 'Batlagundu', 'Belukkurichchi', 'Bengaluru', 'Bhavani', 'Bhel Township', 'Bhutapandi', 'Bodinayakanur', 'Bommayapalayam', 'Bommidi',
-    'Booluvampatti', 'Budalur', 'Buddireddipatti', 'Chalakudy', 'Chamarajanagara', 'Chellarcovil', 'Chengalpattu', 'Chengam', 'Chennai', 'Cherambadi',
-    'Cheranmahadevi', 'Chettippattu', 'Cheyyur', 'Chidambaram', 'Chinna Salem', 'Chinnakanal', 'Chitra Nagar', 'Chittar Lake', 'Chittoor', 'Chittur',
-    'Chittāmūr', 'Coimbatore', 'Colachel', 'Coonoor', 'Courtallam', 'Cuddalore', 'Cuddalore-Puducherry Administrative Boundary', 'Cumbum', 'Danishpet', 'Dasampatti',
-    'Denkanikota', 'Devakottai', 'Devala', 'Devikolam', 'Dhanushkodi', 'Dhārāpuram', 'Eachangadu', 'Egattur', 'Elanthoppu', 'Elavur',
-    'Eraniel', 'Eriyodu', 'Erode', 'Ethapur', 'Ganapathichettikulam', 'Gangaikonda Cholapuram', 'Genguvarpatti', 'Gingee', 'Gobichettipalayam', 'Golden Rock',
-    'Gudalur', 'Gudiyatham', 'Guduvancheri', 'Gummidipundi', 'Gundlupet', 'Gvanagar', 'Harur', 'Hogenakkal', 'Hoskote', 'Hosur',
-    'Huligal', 'Ilaiyankudi', 'Ingur', 'Iravanpatti', 'Ithalar', 'Jolarpet', 'Kadambattur', 'Kadambur', 'Kadayam', 'Kadayanallur',
-    'Kaduvanur', 'Kalambur', 'Kalanivasal', 'Kalapet', 'Kalial', 'Kallagam', 'Kallakkurichi', 'Kallal', 'Kallidaikurichi', 'Kambarasampettai',
-    'Kamudi', 'Kanakammachattram', 'Kanakapura', 'Kanchipuram', 'Kaniyambadi', 'Kannamangalam', 'Kannan Devan Hills', 'Kanyakumari', 'Karaikal', 'Karaikudi',
-    'Karambavayal', 'Karumattampatti', 'Karungulam', 'Karunya Nagar', 'Karuppur', 'Karur', 'Kathadimattam', 'Katpadi', 'Kattankulathur', 'Kattumannarkoil',
-    'Kavanur', 'Kilvelur', 'Kizha Ambur', 'Kodaikanal', 'Kollegal', 'Kollidam', 'Konni', 'Koolipalayam', 'Koonimedu', 'Koradacheri',
-    'Korampallam', 'Kotagiri', 'Kothamangalam', 'Kottachchedu', 'Kottagudi', 'Kottakuppam', 'Kovilampoondi', 'Kovilpatti', 'Krishna Karanai', 'Krishnagiri',
-    'Kuchanur', 'Kuilapalayam', 'Kulattur', 'Kulithalai', 'Kumaran Nagar', 'Kumbakonam', 'Kumily', 'Kuppam', 'Kurumbur', 'Kuthalam',
-    'Kuthambakkam', 'Kuzhithurai', 'Kālpākkam', 'Kānādukāttān', 'Kāramadai', 'Kāverippattanam', 'Kāveripāk', 'Lalgudi', 'Latteri', 'Lokur',
-    'Lovedale', 'Madurai', 'Madurantakam', 'Magudanchavadi', 'Mahabalipuram', 'Mailam', 'Malaiyāndipattanam', 'Malampuzha-I', 'Mallur', 'Malur',
-    'Mambalapattu', 'Manamadurai', 'Manamedu', 'Manapparai', 'Manavur', 'Mandapam', 'Mandavi', 'Mangalam', 'Manganallur', 'Manimutharu',
-    'Maniyachi', 'Manjakuppam', 'Manjakuttai', 'Mannargudi', 'Mannarkkad', 'Maraimalai Nagar', 'Marie Oulgaret', 'Marthandam', 'Marungai', 'Marungoor',
-    'Masinagudi', 'Mattur', 'Mavelipalayam', 'Mayiladuthurai', 'Mekkarai', 'Melmaruvathur', 'Melnariyappanur', 'Melpattampakkam', 'Melpatti', 'Melur',
-    'Mettupalayam', 'Mettur', 'Minjur', 'Mohanur', 'Morappur', 'Moratandi', 'Mudukulattur', 'Mudumalai', 'Mulligoor', 'Mundiyampakkam',
-    'Munthal', 'Musiri', 'Muthalamada', 'Muthupet', 'Naduhatty', 'Nagapattinam', 'Nagercoil', 'Nagore', 'Namakkal', 'Nandhiyan Kudikkadu',
-    'Nanguneri', 'Nannilam', 'Nattam', 'Nazareth', 'Nedumangad', 'Needamangalam', 'Nellikuppam', 'Nerinjippettai', 'Nettapakkam', 'Neyveli',
-    'Neyyattinkara', 'Nidur', 'Nilakkottai', 'Nilambur', 'Oddanchatram', 'Olakur', 'Omalur', 'Ooty', 'Oragadam', 'Orattanadu',
-    'Ottapidaram', 'Pachakuppam', 'Padavayal', 'Palakkad', 'Palakkodu', 'Palani', 'Palayam', 'Palayankottai', 'Palladam', 'Pallapatti',
-    'Pallipalayam', 'Pallippattu', 'Palliyadi', 'Palmaner', 'Pamba Kovil Shandy', 'Panagudi', 'Panambakkam', 'Panangudi', 'Panruti', 'Papanasam',
-    'Papasanam', 'Paramakudi', 'Parangipettai', 'Parassala', 'Pattukkottai', 'Pedda Nayakkanpalaiyam', 'Peermade', 'Pennadam', 'Pennagaram', 'Peralam',
-    'Perambalūr', 'Perani', 'Peravurani', 'Periyakulam', 'Perumal Kovil Pathy', 'Perumālmalai', 'Perundurai', 'Pollachi', 'Polur', 'Ponneri',
-    'Ponnirai', 'Poondi', 'Poondithangal', 'Poothurai', 'Poovar', 'Potheri', 'Pottaveli', 'Pudi', 'Puducherry', 'Pudukkottai',
-    'Pudukudi', 'Pudumund', 'Pukkiravari', 'Puliyūr', 'Punalur', 'Punjai Puliyampatti', 'Pushpagiri', 'Puthiamputhur', 'Puttur', 'Pykara',
-    'Pāchchalūr', 'Pālamedu', 'Radhapuram', 'Rajapalayam', 'Ramakkalmedu', 'Ramanathapuram', 'Rameshwaram', 'Ranipet', 'Rasipuram', 'Salem',
-    'Saliamangalam', 'Samalpatti', 'Samayanallur', 'Samayapuram', 'Samudram', 'Sankagiri', 'Sankarankovil', 'Sannanallur', 'Saranthangi', 'Saravanampatty',
-    'Sathyamangalam', 'Sattankulam', 'Sattiyakudi', 'Sattur', 'Satyavedu', 'Sembatti', 'Sendurai', 'Sengulam', 'Sethumadai', 'Sevoor',
-    'Seydunganallur', 'Shenkottai', 'Shimla', 'Sholavandan', 'Silaiman', 'Sillakkudi', 'Singanallur', 'Singaperumal Koil', 'Sirkazhi', 'Sirumalai',
-    'Sirumugai', 'Siruseri', 'Sivaganga', 'Sivagiri', 'Sivakasi', 'Solagampatti', 'Somanur', 'Sorapattu', 'Sriharikota', 'Sriperumbudur',
-    'Srivaikuntam', 'Srivilliputhur', 'Srīrangam', 'Suchindram', 'Sulerikadu', 'Sulthan Bathery', 'Swamimalai', 'Tada', 'Taingapatam', 'Taiyūr',
-    'Takkolam', 'Tarangambadi', 'Tenkasi', 'Thadikombu', 'Thalaivasal', 'Thalayathimund', 'Thanjavur', 'Tharumapuri', 'Thekkady', 'Theni',
-    'Thindal', 'Thindukkal', 'Thirukadaiyur', 'Thirukkadaiyur', 'Thirumayam', 'Thirunageswaram', 'Thirunallar', 'Thirunankovil', 'Thiruparankundram', 'Thiruthangal',
-    'Thiruthani', 'Thiruthuraipoondi', 'Thiruthuraiyur', 'Thiruvaiyaru', 'Thiruvalangadu', 'Thiruvallam', 'Thiruvarur', 'Thiruvavaduthurai', 'Thiruverumbur', 'Thiruvidaimarudur',
-    'Thiruvisanallur', 'Thoothukudi', 'Thovalai', 'Thuckalay', 'Thuraiyur', 'Tindivanam', 'Tiruchendur', 'Tiruchengode', 'Tiruchirappalli', 'Tiruchuli',
-    'Tirukoilur', 'Tirumalaisamudram', 'Tirumalpur', 'Tirumangalam', 'Tirunelveli', 'Tirupattur', 'Tiruppattur', 'Tirupporur', 'Tiruppuvanam', 'Tirupur',
-    'Tiruvadanai', 'Tiruvannamalai', 'Tiruvettipuram', 'Tiruvādūr', 'Tozhuppedu', 'Tranquebar', 'Uchipuli', 'Udaiyarpalaiyam', 'Udumalaipettai', 'Udumbanchola',
-    'Ulundurpet', 'Umayalparamancheri', 'Usilampatti', 'Uthamapalayam', 'Uthukuli', 'Uttangarai', 'Uttiramerur', 'Uttukkottai', 'Vadavalli', 'Vadipatti',
-    'Vaduvanchal', 'Vaithīsvarankoil', 'Vallam', 'Vallampadugai', 'Vallioor', 'Valparai', 'Vandavasi', 'Vaniyambadi', 'Vannarpet', 'Varakalpattu',
-    'Vasavasamudram', 'Vazhapadi', 'Vedasandur', 'Veerarakiyam', 'Velankanni', 'Velayuthampalayam', 'Velliyanai', 'Vellore', 'Veppadai', 'Vijayamanagaram',
-    'Vijayamangalam', 'Vikravandi', 'Vilattikulam', 'Villiyanallur', 'Vilpatti', 'Viluppuram', 'Vinnamangalam', 'Virudhunagar', 'Vriddhachalam', 'Vythiri',
-    'Walajabad', 'Walajapet', 'Walayar', 'West Mere', 'Yelagiri', 'Yercaud', 'Other'
+    'Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem', 'Tiruppur', 'Erode', 'Vellore',
+    'Tirunelveli', 'Thanjavur', 'Kanchipuram', 'Nagercoil', 'Cuddalore', 'Dindigul', 'Hosur',
+    'Kumbakonam', 'Karaikudi', 'Neyveli', 'Ambur', 'Pudukkottai', 'Nagapattinam', 'Other'
   ],
-  'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Thane', 'Nashik', 'Kalyan-Dombivli', 'Vasai-Virar', 'Aurangabad', 'Solapur', 'Amravati', 'Kolhapur', 'Navi Mumbai', 'Nanded', 'Sangli', 'Latur', 'Other'],
-  'Karnataka': ['Bengaluru', 'Mysuru', 'Hubballi-Dharwad', 'Mangaluru', 'Belagavi', 'Gulbarga', 'Davanagere', 'Bellary', 'Shimoga', 'Tumakuru', 'Udupi', 'Bidar', 'Hospet', 'Other'],
-  'Delhi': ['New Delhi', 'North Delhi', 'South Delhi', 'East Delhi', 'West Delhi', 'Central Delhi', 'North East Delhi', 'South West Delhi', 'Other'],
-  'Telangana': ['Hyderabad', 'Warangal', 'Nizamabad', 'Khammam', 'Karimnagar', 'Ramagundam', 'Mahbubnagar', 'Nalgonda', 'Adilabad', 'Suryapet', 'Other'],
-  'Gujarat': ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Bhavnagar', 'Jamnagar', 'Junagadh', 'Gandhinagar', 'Anand', 'Navsari', 'Morbi', 'Bharuch', 'Vapi', 'Other'],
-  'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Ghaziabad', 'Agra', 'Varanasi', 'Meerut', 'Prayagraj (Allahabad)', 'Noida', 'Bareilly', 'Aligarh', 'Moradabad', 'Saharanpur', 'Gorakhpur', 'Jhansi', 'Mathura', 'Other'],
-  'West Bengal': ['Kolkata', 'Howrah', 'Siliguri', 'Asansol', 'Durgapur', 'Bardhaman', 'Malda', 'Baharampur', 'Kharagpur', 'Haldia', 'Other'],
-  'Kerala': ['Thiruvananthapuram', 'Kochi', 'Kozhikode', 'Kollam', 'Thrissur', 'Kannur', 'Alappuzha', 'Kottayam', 'Palakkad', 'Malappuram', 'Pathanamthitta', 'Other'],
-  'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Kurnool', 'Rajahmundry', 'Tirupati', 'Kakinada', 'Kadapa', 'Anantapur', 'Eluru', 'Ongole', 'Other'],
-  'Rajasthan': ['Jaipur', 'Jodhpur', 'Kota', 'Bikaner', 'Ajmer', 'Udaipur', 'Bhilwara', 'Alwar', 'Bharatpur', 'Sikar', 'Pali', 'Other'],
-  'Punjab': ['Ludhiana', 'Amritsar', 'Jalandhar', 'Patiala', 'Bathinda', 'Mohali', 'Hoshiarpur', 'Pathankot', 'Moga', 'Other'],
-  'Haryana': ['Gurugram', 'Faridabad', 'Panipat', 'Ambala', 'Yamunanagar', 'Rohtak', 'Hisar', 'Karnal', 'Sonipat', 'Panchkula', 'Bhiwani', 'Sirsa', 'Other'],
-  'Madhya Pradesh': ['Indore', 'Bhopal', 'Jabalpur', 'Gwalior', 'Ujjain', 'Sagar', 'Dewas', 'Satna', 'Ratlam', 'Rewa', 'Singrauli', 'Other'],
-  'Bihar': ['Patna', 'Gaya', 'Bhagalpur', 'Muzaffarpur', 'Purnia', 'Darbhanga', 'Bihar Sharif', 'Arrah', 'Begusarai', 'Katihar', 'Chhapra', 'Other'],
-  'Assam': ['Guwahati', 'Silchar', 'Dibrugarh', 'Jorhat', 'Nagaon', 'Tinsukia', 'Tezpur', 'Bongaigaon', 'Other'],
-  'Odisha': ['Bhubaneswar', 'Cuttack', 'Rourkela', 'Berhampur', 'Sambalpur', 'Puri', 'Balasore', 'Bhadrak', 'Baripada', 'Other'],
-  'Jharkhand': ['Ranchi', 'Jamshedpur', 'Dhanbad', 'Bokaro', 'Hazaribagh', 'Deoghar', 'Giridih', 'Ramgarh', 'Other'],
-  'Chhattisgarh': ['Raipur', 'Bhilai', 'Bilaspur', 'Korba', 'Durg', 'Rajnandgaon', 'Jagdalpur', 'Other'],
-  'Goa': ['Panaji', 'Margao', 'Vasco da Gama', 'Mapusa', 'Ponda', 'Bicholim', 'Other'],
-  'Himachal Pradesh': ['Shimla', 'Dharamshala', 'Mandi', 'Solan', 'Kullu', 'Hamirpur', 'Bilaspur', 'Una', 'Other'],
-  'Uttarakhand': ['Dehradun', 'Haridwar', 'Roorkee', 'Haldwani', 'Rishikesh', 'Nainital', 'Kashipur', 'Rudrapur', 'Other'],
-  'Jammu and Kashmir': ['Srinagar', 'Jammu', 'Anantnag', 'Udhampur', 'Baramulla', 'Kathua', 'Other'],
-  'Puducherry': ['Puducherry', 'Karaikal', 'Mahe', 'Yanam', 'Other'],
+  'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Thane', 'Nashik', 'Kalyan-Dombivli', 'Vasai-Virar', 'Aurangabad', 'Solapur', 'Amravati', 'Kolhapur', 'Navi Mumbai', 'Other'],
+  'Karnataka': ['Bengaluru', 'Mysuru', 'Hubballi-Dharwad', 'Mangaluru', 'Belagavi', 'Gulbarga', 'Davanagere', 'Bellary', 'Shimoga', 'Tumakuru', 'Udupi', 'Other'],
+  'Delhi': ['New Delhi', 'North Delhi', 'South Delhi', 'East Delhi', 'West Delhi', 'Central Delhi', 'Other'],
+  'Telangana': ['Hyderabad', 'Warangal', 'Nizamabad', 'Khammam', 'Karimnagar', 'Other'],
+  'Gujarat': ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Bhavnagar', 'Jamnagar', 'Gandhinagar', 'Anand', 'Other'],
+  'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Ghaziabad', 'Agra', 'Varanasi', 'Meerut', 'Prayagraj', 'Noida', 'Bareilly', 'Other'],
+  'West Bengal': ['Kolkata', 'Howrah', 'Siliguri', 'Asansol', 'Durgapur', 'Other'],
+  'Kerala': ['Thiruvananthapuram', 'Kochi', 'Kozhikode', 'Kollam', 'Thrissur', 'Kannur', 'Alappuzha', 'Kottayam', 'Other'],
+  'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Kurnool', 'Rajahmundry', 'Tirupati', 'Other'],
+  'Rajasthan': ['Jaipur', 'Jodhpur', 'Kota', 'Bikaner', 'Ajmer', 'Udaipur', 'Other'],
+  'Punjab': ['Ludhiana', 'Amritsar', 'Jalandhar', 'Patiala', 'Bathinda', 'Mohali', 'Other'],
+  'Haryana': ['Gurugram', 'Faridabad', 'Panipat', 'Ambala', 'Yamunanagar', 'Rohtak', 'Hisar', 'Karnal', 'Other'],
+  'Madhya Pradesh': ['Indore', 'Bhopal', 'Jabalpur', 'Gwalior', 'Ujjain', 'Other'],
+  'Bihar': ['Patna', 'Gaya', 'Bhagalpur', 'Muzaffarpur', 'Purnia', 'Other'],
+  'Assam': ['Guwahati', 'Silchar', 'Dibrugarh', 'Jorhat', 'Other'],
+  'Odisha': ['Bhubaneswar', 'Cuttack', 'Rourkela', 'Puri', 'Other'],
+  'Goa': ['Panaji', 'Margao', 'Vasco da Gama', 'Mapusa', 'Other'],
+  'Himachal Pradesh': ['Shimla', 'Dharamshala', 'Mandi', 'Solan', 'Other'],
+  'Uttarakhand': ['Dehradun', 'Haridwar', 'Roorkee', 'Haldwani', 'Rishikesh', 'Other'],
+  'Puducherry': ['Puducherry', 'Karaikal', 'Other'],
   'Chandigarh': ['Chandigarh'],
-  'Arunachal Pradesh': ['Itanagar', 'Naharlagun', 'Pasighat', 'Tawang', 'Other'],
-  'Manipur': ['Imphal', 'Churachandpur', 'Thoubal', 'Other'],
-  'Meghalaya': ['Shillong', 'Tura', 'Jowai', 'Other'],
-  'Mizoram': ['Aizawl', 'Lunglei', 'Other'],
-  'Nagaland': ['Kohima', 'Dimapur', 'Mokokchung', 'Other'],
-  'Sikkim': ['Gangtok', 'Namchi', 'Geyzing', 'Other'],
-  'Tripura': ['Agartala', 'Udaipur', 'Dharmanagar', 'Other'],
-  'Andaman and Nicobar Islands': ['Port Blair', 'Other'],
-  'Dadra and Nagar Haveli and Daman and Diu': ['Daman', 'Diu', 'Silvassa', 'Other'],
-  'Ladakh': ['Leh', 'Kargil', 'Other'],
 };
 
 const ALL_COUNTRIES = [
@@ -103,13 +61,8 @@ const ALL_COUNTRIES = [
   'United Kingdom 🇬🇧',
   'United Arab Emirates 🇦🇪',
   'Singapore 🇸🇬',
-  'Malaysia 🇲🇾',
   'Canada 🇨🇦',
   'Australia 🇦🇺',
-  'Germany 🇩🇪',
-  'France 🇫🇷',
-  'Saudi Arabia 🇸🇦',
-  'Sri Lanka 🇱🇰',
   'Other Country 🌐',
 ];
 
@@ -128,16 +81,18 @@ export default function CheckoutPage() {
   } = useCart();
   const { addToast } = useToast();
 
+  const firstInputRef = useRef(null);
   const [couponInput, setCouponInput] = useState('');
+  const [mobileSummaryExpanded, setMobileSummaryExpanded] = useState(false);
 
-  // Extract clean 10-digit phone if available (ignore dummy numbers)
+  // Extract clean 10-digit phone
   const extractPhoneDigits = (raw) => {
     if (!raw || raw.includes('12345') || raw.includes('00000')) return '';
     const digits = raw.replace(/\D/g, '');
     return digits.length >= 10 ? digits.slice(-10) : '';
   };
 
-  const [phoneDigits, setPhoneDigits] = useState('');
+  const [phoneDigits, setPhoneDigits] = useState(extractPhoneDigits(user?.phone));
   const [customCity, setCustomCity] = useState('');
   const [citySearch, setCitySearch] = useState('');
 
@@ -148,7 +103,7 @@ export default function CheckoutPage() {
     city: user?.address?.city || '',
     state: user?.address?.state || 'Tamil Nadu',
     postalCode: user?.address?.postalCode || '',
-    country: 'India',
+    country: 'India 🇮🇳',
   });
 
   const [paymentMethod, setPaymentMethod] = useState('Cash on Delivery (COD)');
@@ -156,6 +111,13 @@ export default function CheckoutPage() {
   const [cityRates, setCityRates] = useState([]);
   const [defaultShippingFee, setDefaultShippingFee] = useState(49);
   const [freeShippingMode, setFreeShippingMode] = useState(false);
+
+  // Auto-focus first input field on load
+  useEffect(() => {
+    if (firstInputRef.current) {
+      firstInputRef.current.focus();
+    }
+  }, []);
 
   useEffect(() => {
     async function fetchShippingRates() {
@@ -186,12 +148,14 @@ export default function CheckoutPage() {
         city: prev.city || user.address?.city || '',
         state: prev.state || user.address?.state || 'Tamil Nadu',
         postalCode: prev.postalCode || user.address?.postalCode || '',
-        country: 'India',
+        country: 'India 🇮🇳',
       }));
+      if (user.phone && !phoneDigits) {
+        setPhoneDigits(extractPhoneDigits(user.phone));
+      }
     }
   }, [user]);
 
-  // Calculate Shipping Fee based on Admin defined City Rate or Default Rate
   const calculateCityShippingFee = (city) => {
     if (freeShippingMode) return 0;
     if (!city) return defaultShippingFee;
@@ -219,10 +183,15 @@ export default function CheckoutPage() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="container text-center py-5">
-        <h2>Your Cart is Empty</h2>
-        <p className="mt-2 text-muted">Add products to your cart before proceeding to checkout.</p>
-        <Link href="/products" className="btn btn-primary mt-3">Browse Products</Link>
+      <div className="container py-5 text-center empty-cart-box">
+        <div className="empty-cart-icon">
+          <ShoppingBag size={48} strokeWidth={1.5} color="var(--text-muted)" />
+        </div>
+        <h2 className="empty-heading">Your Bag is Empty</h2>
+        <p className="empty-desc">Explore Grizzle high-density DTF printed streetwear drops before proceeding to checkout.</p>
+        <Link href="/products" className="btn-street-dark btn-hero-primary mt-3">
+          Explore Products Catalog <ArrowRight size={16} />
+        </Link>
       </div>
     );
   }
@@ -232,7 +201,7 @@ export default function CheckoutPage() {
     setFormData((prev) => {
       const updated = { ...prev, [name]: value };
       if (name === 'state') {
-        updated.city = ''; // Prompt user to select city from all available cities for selected state
+        updated.city = '';
         setCitySearch('');
         setCustomCity('');
       }
@@ -240,7 +209,7 @@ export default function CheckoutPage() {
     });
   };
 
-  const stateCityList = INDIAN_STATES_CITIES[formData.state] || [];
+  const stateCityList = INDIAN_STATES_CITIES[formData.state] || INDIAN_STATES_CITIES['Tamil Nadu'];
   const filteredCities = stateCityList.filter((ct) =>
     ct.toLowerCase().includes(citySearch.trim().toLowerCase())
   );
@@ -255,25 +224,21 @@ export default function CheckoutPage() {
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
 
-    // 1. Mandatory Phone Validation (+91 10-digit Indian Mobile)
     if (!phoneDigits || phoneDigits.length !== 10 || !/^[6-9]\d{9}$/.test(phoneDigits)) {
       addToast('Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9', 'error');
       return;
     }
 
-    // 2. Street Address Minimum 25 characters validation
     if (!formData.street || formData.street.trim().length < 25) {
       addToast('Street Address must be at least 25 characters long for accurate courier delivery', 'error');
       return;
     }
 
-    // 3. Landmark validation
     if (!formData.landmark || !formData.landmark.trim()) {
-      addToast('Please provide a Landmark (nearby famous shop/place)', 'error');
+      addToast('Please provide a Landmark (nearby shop/place)', 'error');
       return;
     }
 
-    // 4. City determination
     const finalCity = (formData.city === 'Other' ? customCity : formData.city)?.trim();
     if (!finalCity) {
       addToast('Please select or enter your City', 'error');
@@ -294,12 +259,6 @@ export default function CheckoutPage() {
 
     try {
       setSubmitting(true);
-
-      if (!cartItems || cartItems.length === 0) {
-        addToast('Your cart is empty. Please add items to your cart before checking out.', 'error');
-        setSubmitting(false);
-        return;
-      }
 
       const orderItems = cartItems.map((item) => {
         const prodId = typeof item.product === 'object' ? (item.product?._id || item.product?.id) : item.product;
@@ -335,7 +294,7 @@ export default function CheckoutPage() {
 
       const data = await res.json();
       if (data.success && data.order) {
-        addToast('Order placed successfully! Delivery details saved to your profile.', 'success');
+        addToast('Order placed successfully! Order confirmation code generated.', 'success');
         clearCart();
         if (refreshUser) refreshUser();
         router.push(`/orders/${data.order._id}`);
@@ -351,605 +310,1301 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="container checkout-page-wrapper">
-      <h1 className="checkout-title"><Lock size={24} /> Cash On Delivery Checkout</h1>
+    <div className="checkout-clean-container">
+      <div className="container">
+        {/* 1. Header & Progress Indicator Bar */}
+        <header className="checkout-header-bar">
+          <div className="brand-title-wrap">
+            <Link href="/" className="brand-logo-txt">GRIZZLE</Link>
+            <span className="secure-tag"><Lock size={13} /> SECURE CHECKOUT</span>
+          </div>
 
-      <div className="checkout-grid">
-        {/* Left Form Column */}
-        <div className="checkout-form-column">
-          <form onSubmit={handlePlaceOrder} className="checkout-form glass-panel">
-            <h3>1. Delivery & Shipping Address (India)</h3>
-
-            <div className="form-grid">
-              {/* Receiver Name */}
-              <div className="form-group span-2">
-                <label className="form-label">Full Receiver Name *</label>
-                <input
-                  type="text"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                  required
-                  
-                  className="form-input"
-                />
-              </div>
-
-              {/* Phone Number with Mandatory +91 Prefix */}
-              <div className="form-group span-2">
-                <label className="form-label d-flex justify-content-between align-items-center">
-                  <span>Mobile Phone Number * (Starts with +91)</span>
-                  <span className={phoneDigits.length === 10 ? "text-success font-bold" : "text-muted"} style={{ fontSize: '0.75rem' }}>
-                    {phoneDigits.length === 10 ? '✓ 10 Digits Valid' : `${phoneDigits.length}/10 digits`}
-                  </span>
-                </label>
-                <div className="phone-input-wrapper">
-                  <span className="phone-prefix-badge">+91 🇮🇳</span>
-                  <input
-                    type="tel"
-                    value={phoneDigits}
-                    onChange={handlePhoneChange}
-                    maxLength={10}
-                    required
-                    
-                    className="phone-number-input"
-                  />
-                </div>
-                <small className="subtext mt-1 d-block">
-                  e.g. 98765 43210 — Enter 10-digit Indian mobile number. Courier OTP & tracking updates sent to +91 {phoneDigits || '9876543210'}.
-                </small>
-              </div>
-
-              {/* Street Address - Minimum 25 characters */}
-              <div className="form-group span-2">
-                <label className="form-label d-flex justify-content-between align-items-center">
-                  <span>Street Address * (Min 25 letters)</span>
-                  <span className={formData.street.length >= 25 ? "text-success font-bold" : "text-danger font-bold"} style={{ fontSize: '0.75rem' }}>
-                    {formData.street.length >= 25 ? '✓ Valid Length' : `Min 25 letters required (${formData.street.length}/25)`}
-                  </span>
-                </label>
-                <textarea
-                  name="street"
-                  rows={3}
-                  value={formData.street}
-                  onChange={handleInputChange}
-                  required
-                  minLength={25}
-                 
-                  className={`form-textarea ${formData.street.length > 0 && formData.street.length < 25 ? 'border-danger' : ''}`}
-                />
-                <small className="subtext mt-1 d-block">
-                  Please provide complete house/flat no., building, street name (At least 25 characters required).
-                </small>
-              </div>
-
-              {/* Landmark under Street Address */}
-              <div className="form-group span-2">
-                <label className="form-label">Landmark (Nearby famous place/shop) *</label>
-                <input
-                  type="text"
-                  name="landmark"
-                  value={formData.landmark}
-                  onChange={handleInputChange}
-                  required
-                 
-                  className="form-input"
-                />
-                <small className="subtext mt-1 d-block">
-                  Helps delivery agent locate your house easily.
-                </small>
-              </div>
-
-              {/* State Selection - Fixed to Tamil Nadu */}
-              <div className="form-group">
-                <label className="form-label">State *</label>
-                <select
-                  name="state"
-                  value="Tamil Nadu"
-                  disabled
-                  className="form-select font-semibold form-input-disabled"
-                >
-                  <option value="Tamil Nadu">Tamil Nadu (TN)</option>
-                </select>
-              </div>
-
-              {/* City Selection dropdown with Live Search Filter */}
-              <div className="form-group span-2">
-                <label className="form-label d-flex justify-content-between align-items-center">
-                  <span>City *</span>
-                  {formData.city && <span className="text-success font-bold" style={{ fontSize: '0.8rem' }}>✓ Selected: {formData.city}</span>}
-                </label>
-
-                {/* City Search Bar */}
-                <div className="city-search-wrapper mb-2">
-                  <Search size={16} className="city-search-icon" />
-                  <input
-                    type="text"
-                   
-                    value={citySearch}
-                    onChange={(e) => setCitySearch(e.target.value)}
-                    className="form-input city-search-input"
-                  />
-                  {citySearch && (
-                    <button
-                      type="button"
-                      onClick={() => setCitySearch('')}
-                      className="clear-search-btn"
-                      title="Clear Search"
-                    >
-                      <X size={14} />
-                    </button>
-                  )}
-                </div>
-
-                <select
-                  name="city"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  required
-                  className="form-select font-semibold"
-                >
-                  <option value="" disabled>
-                    {filteredCities.length > 0
-                      ? `-- Choose from ${filteredCities.length} ${citySearch ? 'Matching' : 'Available'} Cities --`
-                      : '❌ No matching city found. Choose "Other" below'}
-                  </option>
-                  {filteredCities.map((ct) => (
-                    <option key={ct} value={ct}>
-                      {ct}
-                    </option>
-                  ))}
-                </select>
-                <small className="subtext mt-1 d-block">
-                  {citySearch ? `Showing ${filteredCities.length} of ${stateCityList.length} cities.` : 'Type in search box above to instantly find your city name.'}
-                </small>
-              </div>
-
-              {/* If "Other" city is selected, show input */}
-              {formData.city === 'Other' && (
-                <div className="form-group span-2">
-                  <label className="form-label">Specify Your City Name *</label>
-                  <input
-                    type="text"
-                    value={customCity}
-                    onChange={(e) => setCustomCity(e.target.value)}
-                    required
-                   
-                    className="form-input"
-                  />
-                </div>
-              )}
-
-              {/* Postal PIN Code */}
-              <div className="form-group">
-                <label className="form-label">Postal / PIN Code *</label>
-                <input
-                  type="text"
-                  name="postalCode"
-                  value={formData.postalCode}
-                  onChange={handleInputChange}
-                  required
-                  maxLength={6}
-                 
-                  className="form-input"
-                />
-              </div>
-
-              {/* Country Selection Dropdown */}
-              <div className="form-group">
-                <label className="form-label">Country *</label>
-                <select
-                  name="country"
-                  value={formData.country || 'India 🇮🇳'}
-                  onChange={handleInputChange}
-                  required
-                  className="form-select font-bold"
-                >
-                  {ALL_COUNTRIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-              </div>
+          {/* 3-Step Progress Steps */}
+          <nav className="checkout-steps-stepper">
+            <Link href="/cart" className="step-item step-completed">
+              <span className="step-num">✓</span>
+              <span className="step-lbl">1. Bag</span>
+            </Link>
+            <div className="step-connector active" />
+            <div className="step-item step-active">
+              <span className="step-num">2</span>
+              <span className="step-lbl">2. Details &amp; Shipping</span>
             </div>
+            <div className="step-connector" />
+            <div className="step-item step-pending">
+              <span className="step-num">3</span>
+              <span className="step-lbl">3. Confirmation</span>
+            </div>
+          </nav>
+        </header>
 
-            {/* Payment Method - Cash on Delivery */}
-            <div className="payment-method-section mt-4">
-              <h3 className="section-title text-base font-bold mb-2">Payment Method</h3>
-              <div className="cod-badge-container flex items-center gap-3 p-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10">
-                <input type="radio" checked readOnly className="accent-emerald-500" />
-                <div>
-                  <div className="font-bold text-sm text-emerald-400">Cash on Delivery (COD)</div>
-                  <div className="text-xs text-muted">Pay with cash upon package delivery</div>
+        {/* 2. Mobile Collapsible Summary Accordion Bar */}
+        <div className="mobile-order-summary-bar">
+          <button
+            type="button"
+            onClick={() => setMobileSummaryExpanded(!mobileSummaryExpanded)}
+            className="mobile-summary-toggle-btn"
+          >
+            <div className="toggle-left">
+              <div className="thumb-stack-mini">
+                {cartItems.slice(0, 3).map((it, idx) => (
+                  <img
+                    key={idx}
+                    src={it.product?.images?.[0] || '/icon.png'}
+                    alt="Item"
+                    className="stack-img"
+                    style={{ zIndex: 3 - idx }}
+                  />
+                ))}
+              </div>
+              <span className="summary-qty-lbl">
+                {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}
+              </span>
+              {mobileSummaryExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </div>
+            <div className="toggle-right">
+              <span className="toggle-total-price">₹{totalPrice.toFixed(0)}</span>
+            </div>
+          </button>
+
+          {/* Expanded Mobile Summary Content */}
+          {mobileSummaryExpanded && (
+            <div className="mobile-summary-expand-content">
+              <div className="items-list-compact">
+                {cartItems.map((item, idx) => (
+                  <div key={idx} className="item-row-compact">
+                    <img src={item.product?.images?.[0] || '/icon.png'} alt={item.product?.name} className="item-img-sm" />
+                    <div className="item-info-sm">
+                      <span className="item-title-sm">{item.product?.name}</span>
+                      <span className="item-meta-sm">Size: {item.size} • Qty: {item.quantity}</span>
+                    </div>
+                    <span className="item-price-sm">₹{(item.product?.price * item.quantity).toFixed(0)}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Coupon Box Mobile */}
+              <div className="coupon-box-wrap mt-3">
+                {appliedCoupon ? (
+                  <div className="applied-coupon-row">
+                    <div className="coupon-txt-info">
+                      <Tag size={14} className="text-emerald-500" />
+                      <span>{appliedCoupon.code} applied</span>
+                    </div>
+                    <button type="button" onClick={removeCoupon} className="remove-coupon-btn">Remove</button>
+                  </div>
+                ) : (
+                  <form
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      if (!couponInput.trim()) return;
+                      const ok = await applyCoupon(couponInput);
+                      if (ok) setCouponInput('');
+                    }}
+                    className="coupon-input-form"
+                  >
+                    <input
+                      type="text"
+                      placeholder="Promo Coupon Code"
+                      value={couponInput}
+                      onChange={(e) => setCouponInput(e.target.value)}
+                      className="coupon-input-field"
+                    />
+                    <button type="submit" className="coupon-apply-btn">Apply</button>
+                  </form>
+                )}
+              </div>
+
+              {/* Price Breakdown */}
+              <div className="price-breakdown-rows mt-3">
+                <div className="p-row"><span>Items Subtotal</span><span>₹{subtotal.toFixed(0)}</span></div>
+                {combinedSavings > 0 && (
+                  <div className="p-row text-success font-bold">
+                    <span>🎉 Total Savings</span>
+                    <span>-₹{combinedSavings.toFixed(0)}</span>
+                  </div>
+                )}
+                <div className="p-row">
+                  <span>Shipping Fee</span>
+                  <span>{shipping === 0 ? <strong className="text-success">FREE</strong> : `₹${shipping}`}</span>
+                </div>
+                <div className="p-row p-total-row">
+                  <span>Total Payable</span>
+                  <span>₹{totalPrice.toFixed(0)}</span>
                 </div>
               </div>
             </div>
-
-            <button
-              type="submit"
-              disabled={submitting}
-              className="btn btn-primary btn-block btn-lg mt-4 w-full text-center"
-            >
-              {submitting ? 'Placing Order...' : `Confirm Order (₹${totalPrice.toFixed(0)})`}
-            </button>
-          </form>
+          )}
         </div>
 
-        {/* Right Summary Column */}
-        <div className="checkout-summary-column">
-          <div className="summary-card glass-panel">
-            <h3>Order Summary ({cartItems.length} items)</h3>
-
-            <div className="items-mini-list">
-              {cartItems.map((item, idx) => (
-                <div key={idx} className="item-mini-row">
-                  <img src={item.product.images?.[0] || '/placeholder.png'} alt={item.product.name} className="mini-img" />
-                  <div className="mini-info">
-                    <span className="mini-name">{item.product.name}</span>
-                    <span className="mini-specs">Qty: {item.quantity} | Size: {item.size} | {item.color}</span>
+        {/* 3. Main 2-Column Desktop Grid */}
+        <div className="checkout-main-grid">
+          {/* Left Form Column */}
+          <div className="checkout-form-column">
+            <form onSubmit={handlePlaceOrder} className="checkout-form-card">
+              {/* Section 1: Contact & Shipping Address */}
+              <div className="form-section-block">
+                <div className="section-head-row">
+                  <div className="section-step-badge">1</div>
+                  <div>
+                    <h2 className="section-heading">Contact &amp; Shipping Address</h2>
+                    <p className="section-sub">Where should we deliver your Grizzle streetwear package?</p>
                   </div>
-                  <span className="mini-price">₹{(item.product.price * item.quantity).toFixed(0)}</span>
                 </div>
-              ))}
-            </div>
 
-            {/* Coupon Code Input & Offer Application */}
-            <div className="checkout-coupon-box mt-3 mb-3">
-              {appliedCoupon ? (
-                <div className="applied-coupon-pill flex items-center justify-between p-3 rounded-xl background-emerald border border-emerald-500/30">
-                  <div className="flex items-center gap-2">
-                    <span className="text-base">🎟️</span>
-                    <div>
-                      <div className="font-extrabold text-sm text-emerald-400">
-                        {appliedCoupon.code} ({appliedCoupon.discountType === 'percentage' ? `${appliedCoupon.discountValue}% OFF` : `₹${appliedCoupon.discountValue} OFF`})
-                      </div>
-                      <div className="text-xs text-muted">Admin Promo Coupon Applied</div>
+                <div className="clean-form-grid mt-4">
+                  {/* Full Name */}
+                  <div className="form-field-group col-span-2">
+                    <label className="clean-label">Receiver Full Name *</label>
+                    <input
+                      ref={firstInputRef}
+                      type="text"
+                      name="fullName"
+                      placeholder="e.g. Rahul Sharma"
+                      value={formData.fullName}
+                      onChange={handleInputChange}
+                      required
+                      className="clean-input"
+                    />
+                  </div>
+
+                  {/* Phone Number with +91 */}
+                  <div className="form-field-group col-span-2">
+                    <div className="label-flex-row">
+                      <label className="clean-label">Mobile Phone Number *</label>
+                      <span className={phoneDigits.length === 10 ? 'val-status val-success' : 'val-status val-muted'}>
+                        {phoneDigits.length === 10 ? '✓ 10 Digits Valid' : `${phoneDigits.length}/10 Digits`}
+                      </span>
+                    </div>
+                    <div className="phone-prefix-input-box">
+                      <span className="country-prefix">+91 🇮🇳</span>
+                      <input
+                        type="tel"
+                        placeholder="98765 43210"
+                        value={phoneDigits}
+                        onChange={handlePhoneChange}
+                        maxLength={10}
+                        required
+                        className="clean-input phone-field"
+                      />
+                    </div>
+                    <span className="field-hint">Courier dispatch updates &amp; delivery OTP will be sent to +91 {phoneDigits || '9876543210'}.</span>
+                  </div>
+
+                  {/* Street Address */}
+                  <div className="form-field-group col-span-2">
+                    <div className="label-flex-row">
+                      <label className="clean-label">Street Address *</label>
+                      <span className={formData.street.length >= 25 ? 'val-status val-success' : 'val-status val-danger'}>
+                        {formData.street.length >= 25 ? '✓ Valid Address Length' : `Min 25 letters required (${formData.street.length}/25)`}
+                      </span>
+                    </div>
+                    <textarea
+                      name="street"
+                      rows={3}
+                      placeholder="Flat/House No., Building Name, Street, Area Name (At least 25 letters)"
+                      value={formData.street}
+                      onChange={handleInputChange}
+                      required
+                      minLength={25}
+                      className={`clean-input clean-textarea ${formData.street.length > 0 && formData.street.length < 25 ? 'input-error' : ''}`}
+                    />
+                  </div>
+
+                  {/* Landmark */}
+                  <div className="form-field-group col-span-2">
+                    <label className="clean-label">Landmark *</label>
+                    <input
+                      type="text"
+                      name="landmark"
+                      placeholder="Nearby famous shop, temple, park or school"
+                      value={formData.landmark}
+                      onChange={handleInputChange}
+                      required
+                      className="clean-input"
+                    />
+                  </div>
+
+                  {/* State Select */}
+                  <div className="form-field-group col-span-1">
+                    <label className="clean-label">State *</label>
+                    <select
+                      name="state"
+                      value={formData.state}
+                      onChange={handleInputChange}
+                      required
+                      className="clean-select"
+                    >
+                      {Object.keys(INDIAN_STATES_CITIES).map((st) => (
+                        <option key={st} value={st}>{st}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* City Select with Filter Search */}
+                  <div className="form-field-group col-span-1">
+                    <div className="label-flex-row">
+                      <label className="clean-label">City *</label>
+                      {formData.city && <span className="val-status val-success">✓ {formData.city}</span>}
+                    </div>
+
+                    <div className="city-search-box mb-2">
+                      <Search size={14} className="search-icon" />
+                      <input
+                        type="text"
+                        placeholder="Search city..."
+                        value={citySearch}
+                        onChange={(e) => setCitySearch(e.target.value)}
+                        className="clean-input search-input"
+                      />
+                      {citySearch && (
+                        <button type="button" onClick={() => setCitySearch('')} className="clear-search-btn">
+                          <X size={12} />
+                        </button>
+                      )}
+                    </div>
+
+                    <select
+                      name="city"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      required
+                      className="clean-select"
+                    >
+                      <option value="" disabled>-- Select City --</option>
+                      {filteredCities.map((ct) => (
+                        <option key={ct} value={ct}>{ct}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* If Other City Chosen */}
+                  {formData.city === 'Other' && (
+                    <div className="form-field-group col-span-2">
+                      <label className="clean-label">Enter Custom City Name *</label>
+                      <input
+                        type="text"
+                        placeholder="Your City Name"
+                        value={customCity}
+                        onChange={(e) => setCustomCity(e.target.value)}
+                        required
+                        className="clean-input"
+                      />
+                    </div>
+                  )}
+
+                  {/* Postal Pincode */}
+                  <div className="form-field-group col-span-1">
+                    <label className="clean-label">PIN Code *</label>
+                    <input
+                      type="text"
+                      name="postalCode"
+                      placeholder="6-Digit PIN Code"
+                      value={formData.postalCode}
+                      onChange={handleInputChange}
+                      maxLength={6}
+                      required
+                      className="clean-input"
+                    />
+                  </div>
+
+                  {/* Country */}
+                  <div className="form-field-group col-span-1">
+                    <label className="clean-label">Country *</label>
+                    <select
+                      name="country"
+                      value={formData.country}
+                      onChange={handleInputChange}
+                      required
+                      className="clean-select"
+                    >
+                      {ALL_COUNTRIES.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 2: Payment Method Selection */}
+              <div className="form-section-block mt-5">
+                <div className="section-head-row">
+                  <div className="section-step-badge">2</div>
+                  <div>
+                    <h2 className="section-heading">Payment Option</h2>
+                    <p className="section-sub">Select your preferred payment mode</p>
+                  </div>
+                </div>
+
+                <div className="payment-options-grid mt-4">
+                  {/* Option 1: Cash on Delivery */}
+                  <div
+                    onClick={() => setPaymentMethod('Cash on Delivery (COD)')}
+                    className={`payment-option-card ${paymentMethod === 'Cash on Delivery (COD)' ? 'active-option' : ''}`}
+                  >
+                    <div className="option-radio-dot">
+                      {paymentMethod === 'Cash on Delivery (COD)' && <div className="radio-inner" />}
+                    </div>
+                    <div className="option-icon-box">
+                      <Banknote size={22} color={paymentMethod === 'Cash on Delivery (COD)' ? '#dc2626' : 'var(--text-muted)'} />
+                    </div>
+                    <div className="option-text">
+                      <div className="option-title">Cash on Delivery (COD)</div>
+                      <div className="option-subtitle">Pay with cash upon doorstep package delivery</div>
+                    </div>
+                    <span className="badge-cod-tag">POPULAR</span>
+                  </div>
+
+                  {/* Option 2: Online Express Payment */}
+                  <div
+                    onClick={() => setPaymentMethod('Online Payment (UPI / Cards)')}
+                    className={`payment-option-card ${paymentMethod === 'Online Payment (UPI / Cards)' ? 'active-option' : ''}`}
+                  >
+                    <div className="option-radio-dot">
+                      {paymentMethod === 'Online Payment (UPI / Cards)' && <div className="radio-inner" />}
+                    </div>
+                    <div className="option-icon-box">
+                      <CreditCard size={22} color={paymentMethod === 'Online Payment (UPI / Cards)' ? '#dc2626' : 'var(--text-muted)'} />
+                    </div>
+                    <div className="option-text">
+                      <div className="option-title">UPI / Cards / NetBanking</div>
+                      <div className="option-subtitle">Instant payment via GPay, PhonePe, Paytm, Cards</div>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={removeCoupon}
-                    className="btn btn-sm text-xs text-danger font-bold border border-red-500/30 bg-red-500/10 px-2 py-1"
-                  >
-                    Remove
-                  </button>
                 </div>
-              ) : (
-                <form
-                  onSubmit={async (e) => {
-                    e.preventDefault();
-                    if (!couponInput.trim()) return;
-                    const success = await applyCoupon(couponInput);
-                    if (success) setCouponInput('');
-                  }}
-                  className="coupon-form flex gap-2"
-                >
-                  <input
-                    type="text"
-                    placeholder="Have a Coupon Code? (e.g. WELCOME20)"
-                    value={couponInput}
-                    onChange={(e) => setCouponInput(e.target.value)}
-                    className="form-input text-sm uppercase"
-                    style={{ flex: 1, textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '700' }}
-                  />
-                  <button type="submit" className="btn btn-secondary btn-sm font-bold" style={{ whiteSpace: 'nowrap', padding: '0.5rem 0.85rem' }}>
-                    Apply Coupon
-                  </button>
-                </form>
-              )}
-            </div>
-
-            <div className="summary-breakdown">
-              <div className="row"><span>Items Subtotal</span><span>₹{subtotal.toFixed(0)}</span></div>
-              {combinedSavings > 0 && (
-                <div className="row text-success font-bold">
-                  <span>🎉 Total Savings</span>
-                  <span>-₹{combinedSavings.toFixed(0)}</span>
-                </div>
-              )}
-              <div className="row">
-                <span>Shipping ({formData.city || 'City'})</span>
-                <span>{shipping === 0 ? <strong className="text-success">FREE</strong> : `₹${shipping}`}</span>
               </div>
-              <div className="divider" />
-              <div className="row total-row"><span>Total Payable</span><span>₹{totalPrice.toFixed(0)}</span></div>
+
+              {/* Desktop Main Submit Button */}
+              <div className="desktop-submit-wrap mt-5">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="btn-place-order-large"
+                >
+                  {submitting ? 'Placing Order...' : `Place Order — ₹${totalPrice.toFixed(0)}`} <ArrowRight size={18} />
+                </button>
+              </div>
+
+              {/* Trust Strip */}
+              <div className="trust-strip-footer mt-4">
+                <div className="trust-item"><ShieldCheck size={16} className="text-emerald-500" /> 100% Encrypted Checkout</div>
+                <div className="trust-dot">•</div>
+                <div className="trust-item"><Truck size={16} className="text-blue-500" /> Pan-India Express Delivery</div>
+                <div className="trust-dot">•</div>
+                <div className="trust-item"><Banknote size={16} className="text-amber-500" /> Cash on Delivery Available</div>
+              </div>
+
+              {/* WhatsApp Support Link */}
+              <div className="support-link-wrap mt-3">
+                <a
+                  href="https://wa.me/919176281858?text=Hi%20Grizzle%20Support%2C%20I%20have%20a%20question%20about%20my%20checkout"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="whatsapp-support-link"
+                >
+                  <MessageCircle size={15} color="#25d366" />
+                  <span>Need help with your order? <strong>Chat on WhatsApp</strong></span>
+                </a>
+              </div>
+            </form>
+          </div>
+
+          {/* Right Column: Sticky Order Summary Card */}
+          <div className="checkout-summary-column">
+            <div className="sticky-summary-card">
+              <h3 className="summary-card-title">Order Summary</h3>
+
+              {/* Product Thumbnails List */}
+              <div className="summary-items-list">
+                {cartItems.map((item, idx) => (
+                  <div key={idx} className="summary-item-row">
+                    <img src={item.product?.images?.[0] || '/icon.png'} alt={item.product?.name} className="summary-item-img" />
+                    <div className="summary-item-info">
+                      <span className="summary-item-name">{item.product?.name}</span>
+                      <span className="summary-item-specs">Qty: {item.quantity} | Size: {item.size}</span>
+                    </div>
+                    <span className="summary-item-price">₹{(item.product?.price * item.quantity).toFixed(0)}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Estimated Dispatch Badge */}
+              <div className="delivery-estimate-box mt-3">
+                <Truck size={16} className="truck-icon" />
+                <div>
+                  <div className="est-title">Ships in 24-48 Hours</div>
+                  <div className="est-sub">Est. Pan-India Delivery in 3-5 Days</div>
+                </div>
+              </div>
+
+              {/* Promo Coupon Form */}
+              <div className="sidebar-coupon-box mt-3 mb-3">
+                {appliedCoupon ? (
+                  <div className="applied-coupon-banner">
+                    <div className="c-info">
+                      <Tag size={14} className="text-emerald-500" />
+                      <span className="c-code">{appliedCoupon.code}</span>
+                      <span className="c-disc">({appliedCoupon.discountType === 'percentage' ? `${appliedCoupon.discountValue}% OFF` : `₹${appliedCoupon.discountValue} OFF`})</span>
+                    </div>
+                    <button type="button" onClick={removeCoupon} className="c-remove-btn">Remove</button>
+                  </div>
+                ) : (
+                  <form
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      if (!couponInput.trim()) return;
+                      const ok = await applyCoupon(couponInput);
+                      if (ok) setCouponInput('');
+                    }}
+                    className="coupon-form-desktop"
+                  >
+                    <input
+                      type="text"
+                      placeholder="Coupon Code (e.g. WELCOME20)"
+                      value={couponInput}
+                      onChange={(e) => setCouponInput(e.target.value)}
+                      className="coupon-input-desktop"
+                    />
+                    <button type="submit" className="coupon-btn-desktop">Apply</button>
+                  </form>
+                )}
+              </div>
+
+              {/* Price Breakdown */}
+              <div className="summary-price-breakdown">
+                <div className="calc-row">
+                  <span>Subtotal</span>
+                  <span>₹{subtotal.toFixed(0)}</span>
+                </div>
+
+                {combinedSavings > 0 && (
+                  <div className="calc-row text-success font-bold">
+                    <span>🎉 Total Savings</span>
+                    <span>-₹{combinedSavings.toFixed(0)}</span>
+                  </div>
+                )}
+
+                <div className="calc-row">
+                  <span>Shipping Fee</span>
+                  <span>{shipping === 0 ? <strong className="text-success">FREE</strong> : `₹${shipping}`}</span>
+                </div>
+
+                <div className="calc-divider" />
+
+                <div className="calc-row total-pay-row">
+                  <span>Total Payable</span>
+                  <span className="total-val">₹{totalPrice.toFixed(0)}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
+      {/* 4. Mobile Fixed Bottom Sticky Place Order CTA Bar */}
+      <div className="mobile-sticky-checkout-bar">
+        <div className="mobile-bar-price-info">
+          <span className="mobile-bar-total-val">₹{totalPrice.toFixed(0)}</span>
+          <span className="mobile-bar-tax-lbl">Total Payable</span>
+        </div>
+        <button
+          type="button"
+          onClick={handlePlaceOrder}
+          disabled={submitting}
+          className="mobile-bar-place-order-btn"
+        >
+          {submitting ? 'Placing...' : 'PLACE ORDER'} <ArrowRight size={16} />
+        </button>
+      </div>
+
+      {/* Embedded CSS Design Tokens & Styles */}
       <style jsx>{`
-        .checkout-page-wrapper {
-          padding-top: 2rem;
+        .checkout-clean-container {
+          background: var(--bg-primary);
+          min-height: 100vh;
+          padding-top: 1.5rem;
+          padding-bottom: 5rem;
+          color: var(--text-primary);
         }
-        .checkout-title {
-          font-size: 2rem;
+
+        /* ------------------ HEADER & STEPPER ------------------ */
+        .checkout-header-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-bottom: 1.5rem;
           margin-bottom: 2rem;
+          border-bottom: 1px solid var(--border-color);
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+
+        .brand-title-wrap {
           display: flex;
           align-items: center;
           gap: 0.75rem;
+        }
+
+        .brand-logo-txt {
           font-family: 'Outfit', sans-serif;
+          font-size: 1.6rem;
+          font-weight: 900;
+          letter-spacing: 0.08em;
+          color: var(--text-primary);
+          text-decoration: none;
+        }
+
+        .secure-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 0.68rem;
+          font-weight: 800;
+          color: #10b981;
+          background: rgba(16, 185, 129, 0.1);
+          border: 1px solid rgba(16, 185, 129, 0.25);
+          padding: 3px 9px;
+          border-radius: 99px;
+          letter-spacing: 0.05em;
+        }
+
+        .checkout-steps-stepper {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+        }
+
+        .step-item {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          text-decoration: none;
+          font-size: 0.82rem;
+          font-weight: 700;
+          color: var(--text-muted);
+        }
+
+        .step-num {
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          background: var(--bg-tertiary);
+          border: 1px solid var(--border-color);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.72rem;
           font-weight: 800;
         }
 
-        .checkout-grid {
+        .step-completed {
+          color: #10b981;
+        }
+        .step-completed .step-num {
+          background: #10b981;
+          color: #ffffff;
+          border-color: #10b981;
+        }
+
+        .step-active {
+          color: var(--text-primary);
+        }
+        .step-active .step-num {
+          background: var(--accent-primary, #dc2626);
+          color: #ffffff;
+          border-color: var(--accent-primary, #dc2626);
+        }
+
+        .step-connector {
+          width: 28px;
+          height: 2px;
+          background: var(--border-color);
+        }
+        .step-connector.active {
+          background: #10b981;
+        }
+
+        /* ------------------ MOBILE ACCORDION ------------------ */
+        .mobile-order-summary-bar {
+          display: none;
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-color);
+          border-radius: 12px;
+          margin-bottom: 1.5rem;
+          overflow: hidden;
+        }
+
+        .mobile-summary-toggle-btn {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.85rem 1rem;
+          background: transparent;
+          border: none;
+          color: var(--text-primary);
+          cursor: pointer;
+        }
+
+        .toggle-left {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .thumb-stack-mini {
+          display: flex;
+          align-items: center;
+          margin-right: 4px;
+        }
+
+        .stack-img {
+          width: 28px;
+          height: 34px;
+          object-fit: cover;
+          border-radius: 4px;
+          margin-right: -10px;
+          border: 1.5px solid var(--bg-secondary);
+        }
+
+        .summary-qty-lbl {
+          font-size: 0.82rem;
+          font-weight: 700;
+        }
+
+        .toggle-total-price {
+          font-size: 1rem;
+          font-weight: 900;
+          color: var(--accent-primary, #dc2626);
+        }
+
+        .mobile-summary-expand-content {
+          padding: 1rem;
+          border-top: 1px solid var(--border-color);
+          background: var(--bg-tertiary);
+        }
+
+        /* ------------------ MAIN 2-COLUMN GRID ------------------ */
+        .checkout-main-grid {
           display: grid;
           grid-template-columns: 1fr 380px;
+          gap: 2.5rem;
+          align-items: start;
+        }
+
+        .checkout-form-card {
+          display: flex;
+          flex-direction: column;
           gap: 2rem;
         }
 
-        .checkout-form {
-          padding: 2rem;
-          border-radius: var(--radius-lg);
-        }
-        .checkout-form h3 {
-          font-size: 1.2rem;
-          margin-bottom: 1.25rem;
-          padding-bottom: 0.5rem;
-          border-bottom: 1px solid var(--border-color);
-          font-weight: 800;
+        .form-section-block {
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-color);
+          border-radius: 16px;
+          padding: 1.75rem;
+          box-shadow: var(--shadow-sm);
         }
 
-        .form-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1.25rem;
+        .section-head-row {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.85rem;
         }
-        .span-2 { grid-column: span 2; }
 
-        /* Phone input +91 prefix badge */
-        .phone-input-wrapper {
+        .section-step-badge {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: var(--accent-primary, #dc2626);
+          color: #ffffff;
+          font-weight: 900;
+          font-size: 0.95rem;
           display: flex;
           align-items: center;
-          border: 1.5px solid var(--border-color);
-          border-radius: var(--radius-md);
-          overflow: hidden;
-          background: var(--bg-secondary);
-          transition: border-color 0.2s ease;
-        }
-        .phone-input-wrapper:focus-within {
-          border-color: var(--accent-primary);
-          box-shadow: 0 0 0 3px var(--accent-light);
-        }
-        .phone-prefix-badge {
-          padding: 0.65rem 0.85rem;
-          background: var(--bg-tertiary);
-          border-right: 1.5px solid var(--border-color);
-          font-weight: 800;
-          font-size: 0.9rem;
-          color: var(--text-primary);
-          white-space: nowrap;
-          user-select: none;
-        }
-        .phone-number-input {
-          flex: 1;
-          border: none !important;
-          outline: none !important;
-          background: transparent !important;
-          padding: 0.65rem 0.85rem !important;
-          font-size: 0.95rem !important;
-          font-weight: 700 !important;
-          color: var(--text-primary) !important;
+          justify-content: center;
+          flex-shrink: 0;
         }
 
-        /* City Live Search Box */
-        .city-search-wrapper {
+        .section-heading {
+          font-size: 1.15rem;
+          font-weight: 800;
+          margin: 0;
+          color: var(--text-primary);
+          line-height: 1.2;
+        }
+
+        .section-sub {
+          font-size: 0.82rem;
+          color: var(--text-muted);
+          margin-top: 2px;
+        }
+
+        /* ------------------ FORM FIELDS & INPUTS ------------------ */
+        .clean-form-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1.1rem;
+        }
+
+        .col-span-2 { grid-column: span 2; }
+        .col-span-1 { grid-column: span 1; }
+
+        .form-field-group {
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+        }
+
+        .label-flex-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .clean-label {
+          font-size: 0.82rem;
+          font-weight: 700;
+          color: var(--text-secondary);
+        }
+
+        .val-status {
+          font-size: 0.72rem;
+          font-weight: 700;
+        }
+        .val-success { color: #10b981; }
+        .val-danger { color: #ef4444; }
+        .val-muted { color: var(--text-muted); }
+
+        .clean-input, .clean-select, .clean-textarea {
+          width: 100%;
+          padding: 0.75rem 0.95rem;
+          background: var(--bg-primary);
+          border: 1px solid var(--border-color);
+          border-radius: 9px;
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: var(--text-primary);
+          outline: none;
+          transition: all 0.2s ease;
+        }
+
+        .clean-input:focus, .clean-select:focus, .clean-textarea:focus {
+          border-color: var(--accent-primary, #dc2626);
+          box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+        }
+
+        .input-error {
+          border-color: #ef4444 !important;
+        }
+
+        .phone-prefix-input-box {
+          display: flex;
+          align-items: center;
+          background: var(--bg-primary);
+          border: 1px solid var(--border-color);
+          border-radius: 9px;
+          overflow: hidden;
+          transition: all 0.2s ease;
+        }
+
+        .phone-prefix-input-box:focus-within {
+          border-color: var(--accent-primary, #dc2626);
+          box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+        }
+
+        .country-prefix {
+          padding: 0.75rem 0.85rem;
+          background: var(--bg-tertiary);
+          border-right: 1px solid var(--border-color);
+          font-size: 0.85rem;
+          font-weight: 800;
+          color: var(--text-primary);
+          white-space: nowrap;
+        }
+
+        .phone-field {
+          border: none !important;
+          box-shadow: none !important;
+          border-radius: 0 !important;
+        }
+
+        .city-search-box {
           position: relative;
           display: flex;
           align-items: center;
         }
-        .city-search-icon {
+
+        .search-icon {
           position: absolute;
-          left: 12px;
+          left: 10px;
           color: var(--text-muted);
           pointer-events: none;
         }
-        .city-search-input {
-          padding-left: 2.3rem !important;
-          padding-right: 2.2rem !important;
-          font-size: 0.9rem !important;
-          border-color: var(--accent-primary) !important;
+
+        .search-input {
+          padding-left: 2.1rem !important;
+          padding-right: 2rem !important;
+          font-size: 0.82rem !important;
+          height: 36px;
         }
+
         .clear-search-btn {
           position: absolute;
-          right: 10px;
+          right: 8px;
           background: var(--bg-tertiary);
           border: 1px solid var(--border-color);
           color: var(--text-muted);
-          width: 22px;
-          height: 22px;
+          width: 20px;
+          height: 20px;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
         }
-        .clear-search-btn:hover {
-          color: var(--accent-primary);
-          border-color: var(--accent-primary);
+
+        .field-hint {
+          font-size: 0.73rem;
+          color: var(--text-muted);
+          line-height: 1.35;
         }
 
-        .border-danger {
-          border-color: #ef4444 !important;
-        }
-
-        .payment-options {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-        }
-        .payment-card {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          padding: 1rem;
-          border-radius: var(--radius-md);
-          border: 1.5px solid var(--accent-primary);
-          background: var(--accent-light);
-          cursor: pointer;
-        }
-        .payment-method-info {
-          display: flex;
-          flex-direction: column;
-        }
-        .method-name {
-          font-size: 0.95rem;
-        }
-        .method-desc {
-          font-size: 0.8rem;
-          color: var(--text-secondary);
-        }
-
-        .place-order-btn {
-          width: 100%;
-          justify-content: center;
-          padding: 0.9rem;
-          font-size: 1.05rem;
-          font-weight: 800;
-        }
-
-        .summary-card {
-          padding: 1.5rem;
-          border-radius: var(--radius-lg);
-          position: sticky;
-          top: 90px;
-        }
-        .summary-card h3 {
-          font-size: 1.1rem;
-          font-weight: 800;
-          margin-bottom: 1rem;
-          padding-bottom: 0.5rem;
-          border-bottom: 1px solid var(--border-color);
-        }
-
-        .items-mini-list {
+        /* ------------------ PAYMENT OPTIONS CARDS ------------------ */
+        .payment-options-grid {
           display: flex;
           flex-direction: column;
           gap: 0.85rem;
-          max-height: 280px;
-          overflow-y: auto;
-          padding-right: 0.35rem;
         }
-        .item-mini-row {
+
+        .payment-option-card {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
+          gap: 1rem;
+          padding: 1.1rem 1.25rem;
+          background: var(--bg-primary);
+          border: 1.5px solid var(--border-color);
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          position: relative;
         }
-        .mini-img {
-          width: 46px;
-          height: 56px;
-          object-fit: cover;
-          border-radius: var(--radius-sm);
+
+        .payment-option-card:hover {
+          border-color: rgba(220, 38, 38, 0.4);
         }
-        .mini-info {
+
+        .payment-option-card.active-option {
+          border-color: var(--accent-primary, #dc2626);
+          background: rgba(220, 38, 38, 0.04);
+        }
+
+        .option-radio-dot {
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          border: 2px solid var(--border-color);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .active-option .option-radio-dot {
+          border-color: var(--accent-primary, #dc2626);
+        }
+
+        .radio-inner {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: var(--accent-primary, #dc2626);
+        }
+
+        .option-icon-box {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .option-text {
           flex: 1;
           display: flex;
           flex-direction: column;
         }
-        .mini-name { font-size: 0.85rem; font-weight: 700; line-height: 1.2; }
-        .mini-specs { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
-        .mini-price { font-size: 0.85rem; font-weight: 800; color: var(--accent-primary); }
 
-        .summary-breakdown {
+        .option-title {
+          font-size: 0.95rem;
+          font-weight: 800;
+          color: var(--text-primary);
+        }
+
+        .option-subtitle {
+          font-size: 0.78rem;
+          color: var(--text-muted);
+          margin-top: 2px;
+        }
+
+        .badge-cod-tag {
+          font-size: 0.65rem;
+          font-weight: 900;
+          color: #d97706;
+          background: rgba(217, 119, 6, 0.12);
+          border: 1px solid rgba(217, 119, 6, 0.25);
+          padding: 2px 7px;
+          border-radius: 4px;
+          letter-spacing: 0.05em;
+        }
+
+        /* ------------------ BUTTONS & TRUST STRIP ------------------ */
+        .btn-place-order-large {
+          width: 100%;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.6rem;
+          padding: 1.05rem 2rem;
+          background: var(--text-primary);
+          color: var(--bg-primary);
+          font-size: 1.05rem;
+          font-weight: 900;
+          letter-spacing: 0.03em;
+          border: none;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.25s ease;
+          box-shadow: var(--shadow-md);
+        }
+
+        .btn-place-order-large:hover {
+          background: var(--accent-primary, #dc2626);
+          color: #ffffff;
+          transform: translateY(-2px);
+          box-shadow: 0 10px 25px rgba(220, 38, 38, 0.35);
+        }
+
+        .trust-strip-footer {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.75rem;
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: var(--text-muted);
+          flex-wrap: wrap;
+        }
+
+        .trust-item {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .trust-dot {
+          opacity: 0.4;
+        }
+
+        .support-link-wrap {
+          text-align: center;
+        }
+
+        .whatsapp-support-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.8rem;
+          color: var(--text-secondary);
+          text-decoration: none;
+          transition: color 0.2s ease;
+        }
+
+        .whatsapp-support-link:hover {
+          color: #25d366;
+        }
+
+        /* ------------------ STICKY SUMMARY SIDEBAR ------------------ */
+        .sticky-summary-card {
+          position: sticky;
+          top: 90px;
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-color);
+          border-radius: 16px;
+          padding: 1.5rem;
+          box-shadow: var(--shadow-sm);
+        }
+
+        .summary-card-title {
+          font-size: 1.1rem;
+          font-weight: 800;
+          margin: 0 0 1rem 0;
+          padding-bottom: 0.75rem;
+          border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-items-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.85rem;
+          max-height: 260px;
+          overflow-y: auto;
+          padding-right: 4px;
+        }
+
+        .summary-item-row {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .summary-item-img {
+          width: 48px;
+          height: 58px;
+          object-fit: cover;
+          border-radius: 8px;
+          border: 1px solid var(--border-color);
+          background: var(--bg-tertiary);
+        }
+
+        .summary-item-info {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .summary-item-name {
+          font-size: 0.82rem;
+          font-weight: 700;
+          line-height: 1.25;
+          color: var(--text-primary);
+        }
+
+        .summary-item-specs {
+          font-size: 0.72rem;
+          color: var(--text-muted);
+          margin-top: 2px;
+        }
+
+        .summary-item-price {
+          font-size: 0.85rem;
+          font-weight: 800;
+          color: var(--accent-primary, #dc2626);
+        }
+
+        .delivery-estimate-box {
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+          padding: 0.75rem 0.9rem;
+          background: var(--bg-tertiary);
+          border: 1px solid var(--border-color);
+          border-radius: 10px;
+        }
+
+        .truck-icon {
+          color: var(--accent-primary, #dc2626);
+          flex-shrink: 0;
+        }
+
+        .est-title {
+          font-size: 0.78rem;
+          font-weight: 800;
+          color: var(--text-primary);
+          line-height: 1.2;
+        }
+
+        .est-sub {
+          font-size: 0.7rem;
+          color: var(--text-muted);
+        }
+
+        /* Coupon Desktop */
+        .coupon-form-desktop {
+          display: flex;
+          gap: 0.5rem;
+        }
+
+        .coupon-input-desktop {
+          flex: 1;
+          padding: 0.55rem 0.75rem;
+          background: var(--bg-primary);
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+          font-size: 0.8rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          outline: none;
+        }
+
+        .coupon-btn-desktop {
+          padding: 0.55rem 0.95rem;
+          background: var(--bg-tertiary);
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+          font-size: 0.78rem;
+          font-weight: 800;
+          color: var(--text-primary);
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .coupon-btn-desktop:hover {
+          background: var(--text-primary);
+          color: var(--bg-primary);
+        }
+
+        .applied-coupon-banner {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.6rem 0.85rem;
+          background: rgba(16, 185, 129, 0.1);
+          border: 1px solid rgba(16, 185, 129, 0.25);
+          border-radius: 8px;
+        }
+
+        .c-info {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.78rem;
+        }
+
+        .c-code {
+          font-weight: 900;
+          color: #10b981;
+        }
+
+        .c-disc {
+          font-weight: 700;
+          color: var(--text-muted);
+        }
+
+        .c-remove-btn {
+          background: none;
+          border: none;
+          color: #ef4444;
+          font-size: 0.75rem;
+          font-weight: 800;
+          cursor: pointer;
+        }
+
+        /* Breakdown */
+        .summary-price-breakdown {
           display: flex;
           flex-direction: column;
           gap: 0.5rem;
           font-size: 0.85rem;
         }
-        .summary-breakdown .row {
-          display: flex;
-          justify-content: space-between;
-        }
-        .divider {
-          height: 1px;
-          background: var(--border-color);
-          margin: 0.5rem 0;
-        }
-        .total-row {
-          font-size: 1.05rem;
-          font-weight: 900;
-        }
 
-        .security-note {
+        .calc-row {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          font-size: 0.78rem;
-          color: var(--text-muted);
-          margin-top: 1.25rem;
-          padding-top: 0.75rem;
-          border-top: 1px solid var(--border-color);
+          justify-content: space-between;
+          color: var(--text-secondary);
         }
 
-        .font-bold { font-weight: 800; }
-        .font-semibold { font-weight: 600; }
+        .calc-divider {
+          height: 1px;
+          background: var(--border-color);
+          margin: 0.4rem 0;
+        }
 
+        .total-pay-row {
+          font-size: 1.05rem;
+          font-weight: 900;
+          color: var(--text-primary);
+        }
+
+        .total-val {
+          color: var(--accent-primary, #dc2626);
+          font-size: 1.15rem;
+        }
+
+        /* ------------------ MOBILE STICKY BOTTOM BAR ------------------ */
+        .mobile-sticky-checkout-bar {
+          display: none;
+        }
+
+        /* ------------------ RESPONSIVE BREAKPOINTS ------------------ */
         @media (max-width: 900px) {
-          .checkout-page-wrapper {
-            padding-top: 1rem;
-            padding-left: 0.75rem !important;
-            padding-right: 0.75rem !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            box-sizing: border-box !important;
-          }
-          .checkout-title {
-            font-size: 1.35rem;
-            margin-bottom: 1rem;
-          }
-          .checkout-grid {
+          .checkout-main-grid {
             grid-template-columns: 1fr;
-            gap: 1rem;
-            width: 100% !important;
-            max-width: 100% !important;
-            margin: 0 !important;
-            box-sizing: border-box !important;
+            gap: 1.5rem;
           }
-          .checkout-form-column, .checkout-summary-column {
-            width: 100% !important;
-            max-width: 100% !important;
-            box-sizing: border-box !important;
-            margin: 0 !important;
-          }
-          .checkout-form-column {
-            order: 2;
-          }
+
           .checkout-summary-column {
-            order: 1;
+            display: none;
           }
-          .summary-card, .checkout-form {
-            position: relative;
-            top: 0;
-            padding: 1rem !important;
-            margin: 0 !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            box-sizing: border-box !important;
+
+          .mobile-order-summary-bar {
+            display: block;
           }
-          .payment-section, .payment-options, .payment-card {
-            width: 100% !important;
-            max-width: 100% !important;
-            box-sizing: border-box !important;
-            margin-left: 0 !important;
-            margin-right: 0 !important;
+
+          .form-section-block {
+            padding: 1.25rem;
           }
-          .payment-card {
-            padding: 0.85rem !important;
-            gap: 0.75rem !important;
-          }
-          .form-grid {
+
+          .clean-form-grid {
             grid-template-columns: 1fr;
             gap: 0.85rem;
-            width: 100% !important;
-            box-sizing: border-box !important;
           }
-          .span-2 { grid-column: span 1; }
-          .mini-name { font-size: 0.82rem; }
-          .mini-specs { font-size: 0.72rem; }
-          .mini-price { font-size: 0.82rem; }
-          .phone-prefix-badge { padding: 0.55rem 0.65rem; font-size: 0.82rem; }
-          .phone-number-input { padding: 0.55rem 0.65rem !important; font-size: 0.88rem !important; }
+
+          .col-span-1 {
+            grid-column: span 2;
+          }
+
+          .desktop-submit-wrap {
+            display: none;
+          }
+
+          .mobile-sticky-checkout-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 15, 18, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 0.75rem 1rem;
+            z-index: 999;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+          }
+
+          .mobile-bar-price-info {
+            display: flex;
+            flex-direction: column;
+          }
+
+          .mobile-bar-total-val {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: #ffffff;
+          }
+
+          .mobile-bar-tax-lbl {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+          }
+
+          .mobile-bar-place-order-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.75rem 1.4rem;
+            background: var(--accent-primary, #dc2626);
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 900;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+          }
         }
       `}</style>
     </div>
