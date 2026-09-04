@@ -333,45 +333,6 @@ export default function ProductCard({ product, onQuickView }) {
           transform: translateY(0);
         }
 
-        @media (max-width: 768px) {
-          .quick-add-hover-bar {
-            transform: translateY(0);
-            background: rgba(0, 0, 0, 0.75);
-            padding: 6px;
-          }
-          .quick-add-btn {
-            padding: 6px 8px;
-            font-size: 0.68rem;
-          }
-          .card-info-box {
-            padding: 0.65rem 0.75rem;
-            gap: 0.2rem;
-          }
-          .card-product-title {
-            font-size: 0.8rem;
-            line-height: 1.25;
-            min-height: 2rem;
-            max-height: 2.5rem;
-            -webkit-line-clamp: 2;
-          }
-          .card-category-tag {
-            font-size: 0.6rem;
-          }
-          .price-sale {
-            font-size: 0.9rem;
-          }
-          .price-mrp {
-            font-size: 0.72rem;
-          }
-          .card-size-pills {
-            gap: 2px;
-          }
-          .mini-size-btn {
-            font-size: 0.58rem;
-            padding: 1px 4px;
-          }
-        }
-
         .quick-add-btn {
           width: 100%;
           display: flex;
@@ -500,6 +461,48 @@ export default function ProductCard({ product, onQuickView }) {
           background: var(--text-primary);
           color: var(--text-inverse);
           border-color: var(--text-primary);
+        }
+
+        /* Responsive Mobile Scaling — Highest Priority Specificity Overrides */
+        @media (max-width: 768px) {
+          .card-info-box {
+            padding: 0.5rem 0.6rem !important;
+            gap: 0.15rem !important;
+          }
+          .card-product-title {
+            font-size: 0.74rem !important;
+            line-height: 1.25 !important;
+            font-weight: 800 !important;
+            max-height: 1.95rem !important;
+            min-height: auto !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            word-break: break-word !important;
+          }
+          .card-category-tag {
+            font-size: 0.56rem !important;
+          }
+          .price-sale {
+            font-size: 0.82rem !important;
+          }
+          .price-mrp {
+            font-size: 0.65rem !important;
+          }
+          .quick-add-hover-bar {
+            transform: translateY(0) !important;
+            background: rgba(0, 0, 0, 0.75) !important;
+            padding: 4px 6px !important;
+          }
+          .quick-add-btn {
+            padding: 5px 8px !important;
+            font-size: 0.62rem !important;
+          }
+          .mini-size-btn {
+            font-size: 0.56rem !important;
+            padding: 1px 4px !important;
+          }
         }
       `}</style>
     </div>
