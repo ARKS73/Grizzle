@@ -100,9 +100,11 @@ export async function GET(request) {
       currentPage: page,
     };
 
-    setCachedData(cacheKey, responsePayload, 30000);
+    setCachedData(cacheKey, responsePayload, 60000);
 
-    return NextResponse.json(responsePayload);
+    return NextResponse.json(responsePayload, {
+      headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
+    });
   } catch (error) {
     console.error('Fetch products error:', error);
     return NextResponse.json({

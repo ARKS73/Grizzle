@@ -22,7 +22,8 @@ export async function GET(request) {
     if (productId) {
       reviews = await Review.find({ product: productId })
         .sort({ createdAt: -1 })
-        .limit(limit);
+        .limit(limit)
+        .lean();
 
       const authUser = getAuthUser(request);
       if (authUser && authUser.userId) {
@@ -30,7 +31,7 @@ export async function GET(request) {
           user: authUser.userId,
           'orderItems.product': productId,
           status: 'Delivered',
-        });
+        }).lean();
         canReview = Boolean(deliveredOrder);
       }
     } else {
@@ -38,10 +39,14 @@ export async function GET(request) {
       reviews = await Review.find({})
         .populate('product', 'name images category price')
         .sort({ createdAt: -1 })
-        .limit(limit);
+        .limit(limit)
+        .lean();
     }
 
-    return NextResponse.json({ success: true, reviews, canReview });
+    return NextResponse.json(
+      { success: true, reviews, canReview },
+      { headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=120' } }
+    );
   } catch (error) {
     return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }

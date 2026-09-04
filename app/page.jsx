@@ -116,7 +116,7 @@ export default function SinglePageStreetwearStore() {
           prodRes.products.forEach((p) => {
             if (p.images?.[0] && typeof window !== 'undefined') {
               const img = new window.Image();
-              img.src = p.images[0];
+              img.src = getOptimizedImageUrl(p.images[0], 600, 85);
             }
           });
         }
