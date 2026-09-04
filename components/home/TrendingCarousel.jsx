@@ -2,10 +2,12 @@
 
 import React, { useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight, ShoppingBag, Flame, Star, Sparkles } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 
 export default function TrendingCarousel({ products = [] }) {
+  const router = useRouter();
   const scrollRef = useRef(null);
   const { addToCart } = useCart();
 
@@ -60,9 +62,22 @@ export default function TrendingCarousel({ products = [] }) {
             const discountPct = Math.round(((original - product.price) / original) * 100);
 
             return (
-              <div key={product._id} className="trending-card-item">
-                <div className="trending-img-box">
-                  <Link href={`/product/${product._id}`}>
+              <div
+                key={product._id}
+                className="trending-card-item"
+                onTouchStart={() => {
+                  if (product?._id) router.prefetch(`/product/${product._id}`);
+                }}
+              >
+                <div
+                  className="trending-img-box"
+                  onClick={(e) => {
+                    if (!e.defaultPrevented && product?._id) {
+                      router.push(`/product/${product._id}`);
+                    }
+                  }}
+                >
+                  <Link href={`/product/${product._id}`} prefetch={true}>
                     <img
                       src={
                         Array.isArray(product.images) && product.images[0]

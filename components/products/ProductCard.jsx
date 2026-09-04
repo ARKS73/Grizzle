@@ -43,12 +43,23 @@ export default function ProductCard({ product, onQuickView }) {
         setIsHovered(true);
         if (product?._id) router.prefetch(`/product/${product._id}`);
       }}
+      onTouchStart={() => {
+        if (product?._id) router.prefetch(`/product/${product._id}`);
+      }}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Card Media Container */}
-      <div className="card-media-box">
+      <div
+        className="card-media-box"
+        onClick={(e) => {
+          if (!e.defaultPrevented && product?._id) {
+            router.push(`/product/${product._id}`);
+          }
+        }}
+      >
         <Link
           href={`/product/${product._id}`}
+          prefetch={true}
           className="card-media-link"
         >
           {/* Primary Image */}

@@ -1251,10 +1251,20 @@ export default function Navbar() {
           transition: all var(--transition-fast);
           position: relative;
         }
+        .icon-btn :global(svg),
+        .icon-btn svg {
+          color: #ffffff !important;
+          stroke: #ffffff !important;
+        }
         .icon-btn:hover {
           border-color: #dc2626 !important;
           color: #ffffff !important;
           background: rgba(220, 38, 38, 0.25) !important;
+        }
+        .icon-btn:hover :global(svg),
+        .icon-btn:hover svg {
+          color: #ffffff !important;
+          stroke: #ffffff !important;
         }
         .icon-sun { color: #f59e0b; }
         .icon-moon { color: #818cf8; }
